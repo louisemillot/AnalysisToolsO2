@@ -280,7 +280,7 @@ TString contextPtRange(float* PtRange){
 
   std::stringstream ss;
   ss << PtRange[0] << " < #it{p}_{T} < " << PtRange[1];
-  TString textContext((TString)ss.str()); // if I need some more text on the plot
+  TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
   return textContext;
 }
@@ -288,14 +288,10 @@ TString contextPtRange(float* PtRange){
 TString contextJetRadius(float jetRadius){
   std::stringstream ss;
   ss << " R = " << jetRadius;
-  TString textContext((TString)ss.str()); // if I need some more text on the plot
+  TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
   return textContext;
 }
-  // another way one could do inside draw functions
-  // std::stringstream ss;
-  // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext("#splitline{"+RadiusLegend[iRadius]+"}{"+(TString)ss.str()+"}"); // if I need some more text on the plot
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////// QC  plot functions /////////////////////////////////////////////////////////////////////////////////////
@@ -321,17 +317,16 @@ void Draw_Pt_RadiusComparison(int iRun, float* etaRange) {
 
     H1D_jetPt[iRadius] = (TH1D*)H3D_jetRjetPtjetEta->ProjectionY("jetPt_"+RadiusLegend[iRadius]+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high);
     H1D_jetPt_rebinned[iRadius] = (TH1D*)H1D_jetPt[iRadius]->Rebin(1.,"H1D_jetPt_rebinned_"+RadiusLegend[iRadius]);
+
     // NormaliseYieldToNJets(H1D_jetPt_rebinned[iRadius]);
     NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]");
-  // TString textContext(std::string(std::to_string(EtaCutLow)+" < #eta < "+std::to_string(EtaCutHigh))); // if I need some more text on the plot
 
   std::stringstream ss;
   ss << EtaCutLow << " < #eta < " << EtaCutHigh;
-  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+(TString)ss.str()+"}"); // if I need some more text on the plot
-  // TString textContext("#splitline{"+contextDataset(iRun)+"}{"+Form("%f", EtaCutLow)+" < #eta < "+Form("%f", EtaCutHigh)+"}"); doesn't work well, and if I add %.1f then we see 0.O<eta<0.5 instead of 0<eta<0.5
+  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+(TString)ss.str()+"}");
 
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, RadiusLegend, nRadius, textContext, pdfName, texPtX, texNormPtYield, texCollisionDataInfo, "logy");
 }
@@ -355,13 +350,14 @@ void Draw_Eta_RadiusComparison(int iRun, float* PtRange) {
     ibinJetRadius = H3D_jetRjetPtjetEta->GetXaxis()->FindBin(arrayRadius[iRadius]);
     H1D_jetEta[iRadius] = (TH1D*)H3D_jetRjetPtjetEta->ProjectionZ("jetEta_"+RadiusLegend[iRadius]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetEta_rebinned[iRadius] = (TH1D*)H1D_jetEta[iRadius]->Rebin(1.,"H1D_jetEta_rebinned_"+RadiusLegend[iRadius]);
+
     // NormaliseYieldToNJets(H1D_jetEta_rebinned[iRadius]);
     NormaliseYieldToNEvents(H1D_jetEta_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_Eta_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+contextPtRange(PtRange)+"}"); // if I need some more text on the plot
+  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+contextPtRange(PtRange)+"}");
 
   Draw_TH1_Histograms_in_one(H1D_jetEta_rebinned, RadiusLegend, nRadius, textContext, pdfName, texEtaX, texNormEtaYield, texCollisionDataInfo, "");
 }
@@ -385,13 +381,14 @@ void Draw_Phi_RadiusComparison(int iRun, float* PtRange) {
     ibinJetRadius = H3D_jetRjetPtjetPhi->GetXaxis()->FindBin(arrayRadius[iRadius]);
     H1D_jetPhi[iRadius] = (TH1D*)H3D_jetRjetPtjetPhi->ProjectionZ("jetPhi_"+RadiusLegend[iRadius]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetPhi_rebinned[iRadius] = (TH1D*)H1D_jetPhi[iRadius]->Rebin(1.,"H1D_jetPhi_rebinned_"+RadiusLegend[iRadius]);
+
     // NormaliseYieldToNJets(H1D_jetPhi_rebinned[iRadius]);
     NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
  
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_Phi_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+contextPtRange(PtRange)+"}"); // if I need some more text on the plot
+  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+contextPtRange(PtRange)+"}");
 
   Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned, RadiusLegend, nRadius, textContext, pdfName, texPhiX, texNormPhiYield, texCollisionDataInfo, "");
 }
@@ -415,13 +412,14 @@ void Draw_NTracks_RadiusComparison_withPtRange(int iRun, float* PtRange) {
     ibinJetRadius = H3D_jetRjetPtjetNTracks->GetXaxis()->FindBin(arrayRadius[iRadius]);
     H1D_jetNTracks[iRadius] = (TH1D*)H3D_jetRjetPtjetNTracks->ProjectionZ("jetNTracks_"+RadiusLegend[iRadius], ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetNTracks_rebinned[iRadius] = (TH1D*)H1D_jetNTracks[iRadius]->Rebin(1.,"H1D_jetNTracks_rebinned_"+RadiusLegend[iRadius]);
+
     // NormaliseYieldToNJets(H1D_jetNTracks_rebinned[iRadius]);
     NormaliseYieldToNEvents(H1D_jetNTracks_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_NTracks_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+contextPtRange(PtRange)+"}"); // if I need some more text on the plot
+  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+contextPtRange(PtRange)+"}");
 
   Draw_TH1_Histograms_in_one(H1D_jetNTracks_rebinned, RadiusLegend, nRadius, textContext, pdfName, texNTracksX, texNormNTracksYield, texCollisionDataInfo, "");
 }
@@ -445,7 +443,7 @@ void Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(int iRun) {
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_LeadPt");
   // std::stringstream ss;
   // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext(ss.str()); // if I need some more text on the plot
+  // TString textContext(ss.str());
   TString textContext(contextDataset(iRun));
 
   Draw_TH2_Histograms(H2D_jetLeadPt, RadiusLegend, nRadius, textContext, pdfName, texPtX, texLeadPt, texCollisionDataInfo);
@@ -475,7 +473,7 @@ void Draw_JetArea_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_JetArea-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
   // std::stringstream ss;
   // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext(ss.str()); // if I need some more text on the plot
+  // TString textContext(ss.str());
   TString textContext(contextDataset(iRun));
 
   Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetArea, texCollisionDataInfo);
@@ -506,7 +504,7 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_JetNTracks-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext(contextDataset(iRun)); // if I need some more text on the plot
+  TString textContext(contextDataset(iRun));
 
   Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetNTracks, texCollisionDataInfo);
 }
@@ -535,6 +533,7 @@ void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
     
     H1D_jetPt[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionY("jetPt_"+Runs[iRun]+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high);
     H1D_jetPt_rebinned[iRun] = (TH1D*)H1D_jetPt[iRun]->Rebin(1.,"H1D_jetPt_rebinned_"+Runs[iRun]);
+
     // NormaliseYieldToNJets(H1D_jetPt_rebinned[iRun]);
     NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRun], GetNEventsSel8(file_O2Analysis_list[iRun]));
 
@@ -543,14 +542,12 @@ void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
     divideSuccess = H1D_jetPt_rebinned_ratios[iRun]->Divide(H1D_jetPt_rebinned[iRun], H1D_jetPt_rebinned[0]);
   }
 
-  // TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_R="+Form("%.1f", jetRadius)+"_"+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh)+"_pT");
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_RunComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]");
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_RunComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]_ratio");
-  // TString textContext(std::string(std::to_string(EtaCutLow)+" < #eta < "+std::to_string(EtaCutHigh))); // if I need some more text on the plot
 
   std::stringstream ss;
   ss << EtaCutLow << " < #eta < " << EtaCutHigh;
-  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+(TString)ss.str()+"}"); // if I need some more text on the plot
+  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+(TString)ss.str()+"}");
 
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, Runs, nRuns, textContext, pdfName, texPtX, texNormPtYield, texCollisionDataInfo, "logy");
   if (divideSuccess == true) {
@@ -585,6 +582,7 @@ void Draw_Eta_RunComparison(float jetRadius, float* PtRange) {
 
     H1D_jetEta[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionZ("jetEta_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetEta_rebinned[iRun] = (TH1D*)H1D_jetEta[iRun]->Rebin(1.,"H1D_jetEta_rebinned_"+Runs[iRun]);
+
     // NormaliseYieldToNJets(H1D_jetEta_rebinned[iRun]);
     NormaliseYieldToNEvents(H1D_jetEta_rebinned[iRun], GetNEventsSel8(file_O2Analysis_list[iRun]));
 
@@ -593,15 +591,11 @@ void Draw_Eta_RunComparison(float jetRadius, float* PtRange) {
     divideSuccess = H1D_jetEta_rebinned_ratios[iRun]->Divide(H1D_jetEta_rebinned[iRun], H1D_jetEta_rebinned[0]);
   }
 
-  // TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_R="+Form("%.1f", jetRadius)+"_"+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh)+"_pT");
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_RunComp_R="+Form("%.1f", jetRadius)+"_Eta_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_RunComp_R="+Form("%.1f", jetRadius)+"_Eta_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]_ratio");
-  // TString textContext(std::string(std::to_string(PtCutLow)+" < #pt < "+std::to_string(PtCutHigh))); // if I need some more text on the plot
 
-  cout << "ibinJetRadius = " << ibinJetRadius << endl;
-  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}"); // if I need some more text on the plot
+  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}");
 
-  TString xyRangeOption;
   Draw_TH1_Histograms_in_one(H1D_jetEta_rebinned, Runs, nRuns, textContext, pdfName, texEtaX, texNormEtaYield, texCollisionDataInfo, "");
 
   if (divideSuccess == true) {
@@ -636,6 +630,7 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange) {
 
     H1D_jetPhi[iRun] = (TH1D*)H3D_jetRjetPtjetPhi[iRun]->ProjectionZ("jetPhi_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius,ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetPhi_rebinned[iRun] = (TH1D*)H1D_jetPhi[iRun]->Rebin(1.,"H1D_jetPhi_rebinned_"+Runs[iRun]);
+
     // NormaliseYieldToNJets(H1D_jetPhi_rebinned[iRun]);
     NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iRun], GetNEventsSel8(file_O2Analysis_list[iRun]));
 
@@ -644,14 +639,11 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange) {
     divideSuccess = H1D_jetPhi_rebinned_ratios[iRun]->Divide(H1D_jetPhi_rebinned[iRun], H1D_jetPhi_rebinned[0]);
   }
 
-  // TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_R="+Form("%.1f", jetRadius)+"_"+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh)+"_pT");
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_RunComp_R="+Form("%.1f", jetRadius)+"_Phi_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_RunComp_R="+Form("%.1f", jetRadius)+"_Phi_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]_ratio");
-  // TString textContext(std::string(std::to_string(PtCutLow)+" < #pt < "+std::to_string(PtCutHigh))); // if I need some more text on the plot
 
-  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}"); // if I need some more text on the plot
+  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}");
 
-  TString xyRangeOption;
   Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned, Runs, nRuns, textContext, pdfName, texPhiX, texNormPhiYield, texCollisionDataInfo, "");
 
   if (divideSuccess == true) {
@@ -694,6 +686,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iRun, float* etaRange) {
     H1D_jetPt_right[iRadius] = (TH1D*)H3D_jetRjetPtjetEta->ProjectionY("jetPt_right_"+RadiusLegend[iRadius], ibinJetRadius, ibinJetRadius, ibinEta_zero, ibinEta_high);
     H1D_jetPt_left_rebinned[iRadius] = (TH1D*)H1D_jetPt_left[iRadius]->Rebin(1.,"H1D_jetPt_left_rebinned_"+RadiusLegend[iRadius]);
     H1D_jetPt_right_rebinned[iRadius] = (TH1D*)H1D_jetPt_right[iRadius]->Rebin(1.,"H1D_jetPt_right_rebinned_"+RadiusLegend[iRadius]);
+
     // NormaliseYieldToNJets(H1D_jetPt_left_rebinned[iRadius]);
     // NormaliseYieldToNJets(H1D_jetPt_right_rebinned[iRadius]);
     NormaliseYieldToNEvents(H1D_jetPt_left_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
@@ -705,11 +698,9 @@ void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iRun, float* etaRange) {
   }
  
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_pT_etaRightLeftRatio");
-  // TString textContext(std::string(std::to_string(EtaCutLow)+" < #eta < "+std::to_string(EtaCutHigh))); // if I need some more text on the plot
   std::stringstream ss;
   ss << EtaCutLow << " < #eta < " << EtaCutHigh;
-  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+(TString)ss.str()+"}"); // if I need some more text on the plot
-  // TString textContext("#splitline{"+contextDataset(iRun)+"}{"+Form("%f", EtaCutLow)+" < #eta < "+Form("%f", EtaCutHigh)+"}"); doesn't work well, and if I add %.1f then we see 0.O<eta<0.5 instead of 0<eta<0.5
+  TString textContext("#splitline{"+contextDataset(iRun)+"}{"+(TString)ss.str()+"}");
 
   if (divideSuccess == true) {
     Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, RadiusLegend, nRadius, textContext, pdfName, texPtX, texRatioEtaComparison, texCollisionDataInfo, "standardratio");
@@ -764,11 +755,8 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
   }
  
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_RunComp_R="+Form("%.1f", jetRadius)+"_pT_etaRightLeftRatio");
-  // TString textContext(std::string(std::to_string(EtaCutLow)+" < #eta < "+std::to_string(EtaCutHigh))); // if I need some more text on the plot
-  // std::stringstream ss;
-  // ss << EtaCutLow << " < #eta < " << EtaCutHigh;
-  TString textContext(contextJetRadius(jetRadius)); // if I need some more text on the plot
-  // TString textContext("#splitline{"+contextDataset(iRun)+"}{"+Form("%f", EtaCutLow)+" < #eta < "+Form("%f", EtaCutHigh)+"}"); doesn't work well, and if I add %.1f then we see 0.O<eta<0.5 instead of 0<eta<0.5
+
+  TString textContext(contextJetRadius(jetRadius));
 
   if (divideSuccess == true) {
     Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, Runs, nRuns, textContext, pdfName, texPtX, texRatioEtaComparison, texCollisionDataInfo, "standardratio");
@@ -781,5 +769,4 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
 // To-do list:
 // - implement carolina's macro of the gpad thing to automate the division of canvas based on how many plots one wants
 // - change color and markers to make run comparison better
-// - have a version that normalises by event number rather than jet number; maybe make it an option, and have hte macro run automatically for both of them, saving the histograms in different folders; have the folders be created
 // - add info to 2D plots, like R=0.2 or R=0.4 or R=0.6 etc ; and clean them in general, the color scale is truncated and can't read it

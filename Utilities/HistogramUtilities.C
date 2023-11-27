@@ -100,7 +100,6 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
   // draws histograms from collection
   for (Int_t i = 0; i < collectionSize; i++) {
-    // histograms_collection[i]->Draw("hist same p");
     if (i!=0 || strstr(options, "avoidFirst") == NULL) { // if i=0 requires that the option avoidFirst isn't there
       histograms_collection[i]->Draw("same");
       histograms_collection[i]->SetMarkerStyle(markers[i]);
@@ -144,21 +143,13 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
 
   // draws histograms from collection
   for (Int_t i = 0; i < collectionSize; i++) {
-    // histograms_collection[i]->Draw("hist same p");
     canvas->cd(i+1);
     histograms_collection[i]->Draw("colz");
     histograms_collection[i]->SetXTitle(texXtitle->Data());
     histograms_collection[i]->SetYTitle(texYtitle->Data());
-    // histograms_collection[i]->SetMarkerStyle(markers[i]);
-    // histograms_collection[i]->SetMarkerColor(colors[i]);
-    // histograms_collection[i]->SetLineColor(colors[i]);
 
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
-
-  // if (collectionSize >= 2) {
-  //   leg->Draw("same");
-  // }
 
   // adds some text on the plot
   TLatex * textColl = new TLatex (0.18,0.82,texCollisionDataInfo->Data());
