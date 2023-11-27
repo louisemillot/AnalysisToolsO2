@@ -4,7 +4,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void NormaliseYieldToNJets(TH1D* histogram) { 
-  // float dBin = histogram->GetXaxis()->GetBinWidth(1);
   histogram->Scale(1./histogram->GetEntries(),"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
 }
 
@@ -12,6 +11,6 @@ void NormaliseYieldToNEvents(TH1D* histogram, int nEvents) {
   histogram->Scale(1./nEvents,"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
 }
 
-int GetNEvents(TFile* file_O2Analysis, TString analysisWorkflow) {
-  return ((TH1I*)file_O2Analysis->Get(analysisWorkflow+"/h_collisions"))->GetBinContent(2);
+int GetNEventsSel8(TFile* file_O2Analysis) {
+  return ((TH1I*)file_O2Analysis->Get("event-selection-task/hColCounterAcc"))->GetEntries();
 }

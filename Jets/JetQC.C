@@ -322,7 +322,7 @@ void Draw_Pt_RadiusComparison(int iRun, float* etaRange) {
     H1D_jetPt[iRadius] = (TH1D*)H3D_jetRjetPtjetEta->ProjectionY("jetPt_"+RadiusLegend[iRadius]+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high);
     H1D_jetPt_rebinned[iRadius] = (TH1D*)H1D_jetPt[iRadius]->Rebin(1.,"H1D_jetPt_rebinned_"+RadiusLegend[iRadius]);
     // NormaliseYieldToNJets(H1D_jetPt_rebinned[iRadius]);
-    NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRadius], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]");
@@ -356,7 +356,7 @@ void Draw_Eta_RadiusComparison(int iRun, float* PtRange) {
     H1D_jetEta[iRadius] = (TH1D*)H3D_jetRjetPtjetEta->ProjectionZ("jetEta_"+RadiusLegend[iRadius]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetEta_rebinned[iRadius] = (TH1D*)H1D_jetEta[iRadius]->Rebin(1.,"H1D_jetEta_rebinned_"+RadiusLegend[iRadius]);
     // NormaliseYieldToNJets(H1D_jetEta_rebinned[iRadius]);
-    NormaliseYieldToNEvents(H1D_jetEta_rebinned[iRadius], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetEta_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_Eta_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
@@ -386,7 +386,7 @@ void Draw_Phi_RadiusComparison(int iRun, float* PtRange) {
     H1D_jetPhi[iRadius] = (TH1D*)H3D_jetRjetPtjetPhi->ProjectionZ("jetPhi_"+RadiusLegend[iRadius]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetPhi_rebinned[iRadius] = (TH1D*)H1D_jetPhi[iRadius]->Rebin(1.,"H1D_jetPhi_rebinned_"+RadiusLegend[iRadius]);
     // NormaliseYieldToNJets(H1D_jetPhi_rebinned[iRadius]);
-    NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iRadius], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
  
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_Phi_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
@@ -416,7 +416,7 @@ void Draw_NTracks_RadiusComparison_withPtRange(int iRun, float* PtRange) {
     H1D_jetNTracks[iRadius] = (TH1D*)H3D_jetRjetPtjetNTracks->ProjectionZ("jetNTracks_"+RadiusLegend[iRadius], ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetNTracks_rebinned[iRadius] = (TH1D*)H1D_jetNTracks[iRadius]->Rebin(1.,"H1D_jetNTracks_rebinned_"+RadiusLegend[iRadius]);
     // NormaliseYieldToNJets(H1D_jetNTracks_rebinned[iRadius]);
-    NormaliseYieldToNEvents(H1D_jetNTracks_rebinned[iRadius], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetNTracks_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_NTracks_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
@@ -536,7 +536,7 @@ void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
     H1D_jetPt[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionY("jetPt_"+Runs[iRun]+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high);
     H1D_jetPt_rebinned[iRun] = (TH1D*)H1D_jetPt[iRun]->Rebin(1.,"H1D_jetPt_rebinned_"+Runs[iRun]);
     // NormaliseYieldToNJets(H1D_jetPt_rebinned[iRun]);
-    NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRun], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRun], GetNEventsSel8(file_O2Analysis_list[iRun]));
 
     H1D_jetPt_rebinned_ratios[iRun] = (TH1D*)H1D_jetPt_rebinned[iRun]->Clone("H1D_jetPt_rebinned_ratios"+Runs[iRun]);
     H1D_jetPt_rebinned_ratios[iRun]->Reset("M");
@@ -586,7 +586,7 @@ void Draw_Eta_RunComparison(float jetRadius, float* PtRange) {
     H1D_jetEta[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionZ("jetEta_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetEta_rebinned[iRun] = (TH1D*)H1D_jetEta[iRun]->Rebin(1.,"H1D_jetEta_rebinned_"+Runs[iRun]);
     // NormaliseYieldToNJets(H1D_jetEta_rebinned[iRun]);
-    NormaliseYieldToNEvents(H1D_jetEta_rebinned[iRun], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetEta_rebinned[iRun], GetNEventsSel8(file_O2Analysis_list[iRun]));
 
     H1D_jetEta_rebinned_ratios[iRun] = (TH1D*)H1D_jetEta_rebinned[iRun]->Clone("H1D_jetEta_rebinned_ratios"+Runs[iRun]);
     H1D_jetEta_rebinned_ratios[iRun]->Reset("M");
@@ -637,7 +637,7 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange) {
     H1D_jetPhi[iRun] = (TH1D*)H3D_jetRjetPtjetPhi[iRun]->ProjectionZ("jetPhi_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius,ibinJetRadius, ibinPt_low, ibinPt_high);
     H1D_jetPhi_rebinned[iRun] = (TH1D*)H1D_jetPhi[iRun]->Rebin(1.,"H1D_jetPhi_rebinned_"+Runs[iRun]);
     // NormaliseYieldToNJets(H1D_jetPhi_rebinned[iRun]);
-    NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iRun], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iRun], GetNEventsSel8(file_O2Analysis_list[iRun]));
 
     H1D_jetPhi_rebinned_ratios[iRun] = (TH1D*)H1D_jetPhi_rebinned[iRun]->Clone("H1D_jetPhi_rebinned_ratios"+Runs[iRun]);
     H1D_jetPhi_rebinned_ratios[iRun]->Reset("M");
@@ -696,8 +696,8 @@ void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iRun, float* etaRange) {
     H1D_jetPt_right_rebinned[iRadius] = (TH1D*)H1D_jetPt_right[iRadius]->Rebin(1.,"H1D_jetPt_right_rebinned_"+RadiusLegend[iRadius]);
     // NormaliseYieldToNJets(H1D_jetPt_left_rebinned[iRadius]);
     // NormaliseYieldToNJets(H1D_jetPt_right_rebinned[iRadius]);
-    NormaliseYieldToNEvents(H1D_jetPt_left_rebinned[iRadius], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
-    NormaliseYieldToNEvents(H1D_jetPt_right_rebinned[iRadius], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetPt_left_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
+    NormaliseYieldToNEvents(H1D_jetPt_right_rebinned[iRadius], GetNEventsSel8(file_O2Analysis_list[iRun]));
 
     H1D_jetPt_rebinned_ratios[iRadius] = (TH1D*)H1D_jetPt_left_rebinned[iRadius]->Clone("H1D_jetPt_rebinned_ratios"+Runs[iRadius]);
     H1D_jetPt_rebinned_ratios[iRadius]->Reset("M");
@@ -755,8 +755,8 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
     
     // NormaliseYieldToNJets(H1D_jetPt_left_rebinned[iRun]);
     // NormaliseYieldToNJets(H1D_jetPt_right_rebinned[iRun]);
-    NormaliseYieldToNEvents(H1D_jetPt_left_rebinned[iRun], GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
-    NormaliseYieldToNEvents(H1D_jetPt_right_rebinned[iRun],  GetNEvents(file_O2Analysis_list[iRun], analysisWorkflow));
+    NormaliseYieldToNEvents(H1D_jetPt_left_rebinned[iRun], GetNEventsSel8(file_O2Analysis_list[iRun]));
+    NormaliseYieldToNEvents(H1D_jetPt_right_rebinned[iRun],  GetNEventsSel8(file_O2Analysis_list[iRun]));
 
     H1D_jetPt_rebinned_ratios[iRun] = (TH1D*)H1D_jetPt_left_rebinned[iRun]->Clone("H1D_jetPt_rebinned_ratios"+Runs[iRun]);
     H1D_jetPt_rebinned_ratios[iRun]->Reset("M");
