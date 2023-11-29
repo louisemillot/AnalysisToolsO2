@@ -57,29 +57,30 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
 
 
 // Options to be set:
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-// const Int_t nRuns = 9;
-// const TString Runs[nRuns] = {"LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zzi_cpass0"};
-// TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[3]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[4]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[5]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[6]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[7]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Runs[8]+"/AnalysisResults.root")
-//                                       };
-// const TString analysisWorkflow = "jet-finder-charged-qa";
-//////// -------- Flat Phi Periods -------- ////////
+//////// -------- Full Analysis -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const Int_t nRuns = 3;
-const TString Runs[nRuns] = {"LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zzi_cpass0"};
+const Int_t nRuns = 9;
+const TString Runs[nRuns] = {"LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zzi_cpass0"};
 TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root")
+                                      new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[3]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[4]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[5]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[6]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[7]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[8]+"/AnalysisResults.root")
                                       };
 const TString analysisWorkflow = "jet-finder-charged-qa";
+// //////// -------- Flat Phi Periods -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const Int_t nRuns = 3;
+// const TString Runs[nRuns] = {"LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zzi_cpass0"};
+// TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root")
+//                                       };
+// const TString analysisWorkflow = "jet-finder-charged-qa";
 // //////// -------- Cpass2 test -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const Int_t nRuns = 1;
@@ -172,6 +173,7 @@ void JetQC() {
   const int nPtMinCuts = 2;
   float jetPtMinCut;
   float jetPtMinCutArray[nPtMinCuts] = {1., 10.};
+
   for(int iPtMinCut = 0; iPtMinCut < nPtMinCuts; iPtMinCut++){
     jetPtMinCut = jetPtMinCutArray[iPtMinCut];
 
@@ -318,6 +320,10 @@ void Draw_Pt_RadiusComparison(int iRun, float* etaRange) {
   float EtaCutHigh = etaRange[1];
   int ibinEta_low = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutLow);
   int ibinEta_high = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutHigh);
+  if (ibinEta_low == 0) 
+    cout << "WARNING: Pt_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
+  if (ibinEta_high == H3D_jetRjetPtjetEta->GetZaxis()->GetNbins()+1) 
+    cout << "WARNING: Pt_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -352,6 +358,10 @@ void Draw_Eta_RadiusComparison(int iRun, float* PtRange) {
   float PtCutHigh = PtRange[1];
   int ibinPt_low = H3D_jetRjetPtjetEta->GetYaxis()->FindBin(PtCutLow);
   int ibinPt_high = H3D_jetRjetPtjetEta->GetYaxis()->FindBin(PtCutHigh);
+  if (ibinPt_low == 0) 
+    cout << "WARNING: Eta_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
+  if (ibinPt_high == H3D_jetRjetPtjetEta->GetYaxis()->GetNbins()+1) 
+    cout << "WARNING: Eta_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -383,6 +393,10 @@ void Draw_Phi_RadiusComparison(int iRun, float* PtRange) {
   float PtCutHigh = PtRange[1];
   int ibinPt_low = H3D_jetRjetPtjetPhi->GetYaxis()->FindBin(PtCutLow);
   int ibinPt_high = H3D_jetRjetPtjetPhi->GetYaxis()->FindBin(PtCutHigh);
+  if (ibinPt_low == 0) 
+    cout << "WARNING: Phi_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
+  if (ibinPt_high == H3D_jetRjetPtjetPhi->GetYaxis()->GetNbins()) 
+    cout << "WARNING: Phi_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -414,6 +428,10 @@ void Draw_NTracks_RadiusComparison_withPtRange(int iRun, float* PtRange) {
   float PtCutHigh = PtRange[1];
   int ibinPt_low = H3D_jetRjetPtjetNTracks->GetYaxis()->FindBin(PtCutLow);
   int ibinPt_high = H3D_jetRjetPtjetNTracks->GetYaxis()->FindBin(PtCutHigh);
+  if (ibinPt_low == 0) 
+    cout << "WARNING: NTracks_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
+  if (ibinPt_high == H3D_jetRjetPtjetNTracks->GetYaxis()->GetNbins()+1) 
+    cout << "WARNING: NTracks_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -535,6 +553,10 @@ void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
 
     int ibinEta_low = H3D_jetRjetPtjetEta[iRun]->GetZaxis()->FindBin(EtaCutLow);
     int ibinEta_high = H3D_jetRjetPtjetEta[iRun]->GetZaxis()->FindBin(EtaCutHigh);
+    if (ibinEta_low == 0) 
+      cout << "WARNING: Pt_RunComparison is counting the underflow with the chosen etaRange" << endl;
+    if (ibinEta_high == H3D_jetRjetPtjetEta[iRun]->GetZaxis()->GetNbins()+1) 
+      cout << "WARNING: Pt_RunComparison is counting the underflow with the chosen etaRange" << endl;
     ibinJetRadius = H3D_jetRjetPtjetEta[iRun]->GetXaxis()->FindBin(jetRadius);
     
     H1D_jetPt[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionY("jetPt_"+Runs[iRun]+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high);
@@ -584,6 +606,10 @@ void Draw_Eta_RunComparison(float jetRadius, float* PtRange) {
 
     int ibinPt_low = H3D_jetRjetPtjetEta[iRun]->GetYaxis()->FindBin(PtCutLow);
     int ibinPt_high = H3D_jetRjetPtjetEta[iRun]->GetYaxis()->FindBin(PtCutHigh);
+    if (ibinPt_low == 0) 
+      cout << "WARNING: Eta_RunComparison is counting the underflow with the chosen PtRange" << endl;
+    if (ibinPt_high == H3D_jetRjetPtjetEta[iRun]->GetYaxis()->GetNbins()+1) 
+      cout << "WARNING: Eta_RunComparison is counting the underflow with the chosen PtRange" << endl;
     ibinJetRadius = H3D_jetRjetPtjetEta[iRun]->GetXaxis()->FindBin(jetRadius);
 
     H1D_jetEta[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionZ("jetEta_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
@@ -632,6 +658,10 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange) {
 
     int ibinPt_low = H3D_jetRjetPtjetPhi[iRun]->GetYaxis()->FindBin(PtCutLow);
     int ibinPt_high = H3D_jetRjetPtjetPhi[iRun]->GetYaxis()->FindBin(PtCutHigh);
+    if (ibinPt_low == 0) 
+      cout << "WARNING: Phi_RunComparison is counting the underflow with the chosen PtRange" << endl;
+    if (ibinPt_high == H3D_jetRjetPtjetPhi[iRun]->GetYaxis()->GetNbins()+1) 
+      cout << "WARNING: Phi_RunComparison is counting the underflow with the chosen PtRange" << endl;
     ibinJetRadius = H3D_jetRjetPtjetPhi[iRun]->GetXaxis()->FindBin(jetRadius);
 
     H1D_jetPhi[iRun] = (TH1D*)H3D_jetRjetPtjetPhi[iRun]->ProjectionZ("jetPhi_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius,ibinJetRadius, ibinPt_low, ibinPt_high);
@@ -682,6 +712,10 @@ void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iRun, float* etaRange) {
   int ibinEta_low = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutLow);
   int ibinEta_zero = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(0.);
   int ibinEta_high = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutHigh);
+    if (ibinEta_low == 0) 
+      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
+    if (ibinEta_high == H3D_jetRjetPtjetEta->GetZaxis()->GetNbins()+1) 
+      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
   int ibinJetRadius = 0;
 
   bool divideSuccess = false;
@@ -743,6 +777,10 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
     int ibinEta_low = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutLow);
     int ibinEta_zero = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(0.);
     int ibinEta_high = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutHigh);
+    if (ibinEta_low == 0) 
+      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RunComparison is counting the underflow with the chosen etaRange" << endl;
+    if (ibinEta_high == H3D_jetRjetPtjetEta->GetZaxis()->GetNbins()+1) 
+      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RunComparison is counting the underflow with the chosen etaRange" << endl;
 
     ibinJetRadius = H3D_jetRjetPtjetEta->GetXaxis()->FindBin(jetRadius);
 
@@ -778,6 +816,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
 // - change color and markers to make run comparison better
 // - add info to 2D plots, like R=0.2 or R=0.4 or R=0.6 etc ; and clean them in general, the color scale is truncated and can't read it
 // - changer nom run -> period
+// - eta+ vs eta- comparison: make sure the separation bin is chosen so that there's no artificial imbalance
 
 
 
