@@ -57,10 +57,9 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
 
 
 // Options to be set:
-//////// -------- Standard Analysis -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const Int_t nRuns = 9;
-// const TString Runs[nRuns] = {"LHC23zx", "LHC23zy", "LHC23zz", "LHC23zza", "LHC23zzb", "LHC23zze", "LHC23zzf", "LHC23zzg", "LHC23zzi"};
+// const TString Runs[nRuns] = {"LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zzi_cpass0"};
 // TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
 //                                       new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
 //                                       new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root"),
@@ -72,17 +71,26 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
 //                                       new TFile("Datasets/"+Runs[8]+"/AnalysisResults.root")
 //                                       };
 // const TString analysisWorkflow = "jet-finder-charged-qa";
-//////// -------- Apass1 test -------- ////////
+//////// -------- Flat Phi Periods -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const Int_t nRuns = 1;
-const TString Runs[nRuns] = {"LHC23zx_apass_1_FT0_QC"};
-TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root")
+const Int_t nRuns = 3;
+const TString Runs[nRuns] = {"LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zzi_cpass0"};
+TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root")
                                       };
 const TString analysisWorkflow = "jet-finder-charged-qa";
+// //////// -------- Cpass2 test -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const Int_t nRuns = 1;
+// const TString Runs[nRuns] = {"LHC23zzh_cpass2"};
+// TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root")
+//                                       };
+// const TString analysisWorkflow = "jet-finder-charged-qa";
 ////// -------- pre renaming of jet-finder-qa to jet-finder-charged-qa -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const Int_t nRuns = 4;
-// const TString Runs[nRuns] = {"LHC23zx", "LHC23zy", "LHC23zz", "LHC23zzb"};
+// const TString Runs[nRuns] = {"LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zzb_cpass0"};
 // TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
 //                                       new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
 //                                       new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root"),
@@ -164,40 +172,40 @@ void JetQC() {
   const int nPtMinCuts = 2;
   float jetPtMinCut;
   float jetPtMinCutArray[nPtMinCuts] = {1., 10.};
-  // for(int iPtMinCut = 0; iPtMinCut < nPtMinCuts; iPtMinCut++){
-  //   jetPtMinCut = jetPtMinCutArray[iPtMinCut];
+  for(int iPtMinCut = 0; iPtMinCut < nPtMinCuts; iPtMinCut++){
+    jetPtMinCut = jetPtMinCutArray[iPtMinCut];
 
-  //   float ptRange[2] = {jetPtMinCut, 200};
-  //   float PtRangeZoom0[2] = {jetPtMinCut, 100};
-  //   float PtRangeZoom020[2] = {jetPtMinCut, 20};
-  //   float PtRangeZoom2030[2] = {20, 30};
-  //   float PtRangeZoom3040[2] = {30, 40};
-  //   float PtRangeZoom4050[2] = {40, 50};
-  //   float PtRangeZoom5060[2] = {50, 60};
-  //   float PtRangeZoom8090[2] = {80, 90};
+    float ptRange[2] = {jetPtMinCut, 200};
+    float PtRangeZoom0[2] = {jetPtMinCut, 100};
+    float PtRangeZoom020[2] = {jetPtMinCut, 20};
+    float PtRangeZoom2030[2] = {20, 30};
+    float PtRangeZoom3040[2] = {30, 40};
+    float PtRangeZoom4050[2] = {40, 50};
+    float PtRangeZoom5060[2] = {50, 60};
+    float PtRangeZoom8090[2] = {80, 90};
 
-  //   Draw_Eta_RadiusComparison(iRun, ptRange);
-  //   Draw_Phi_RadiusComparison(iRun, ptRange);
-  //   Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
-  //   Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
-  //   Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
-  //   Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
-  //   Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
-  //   Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
-  //   // // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
-  //   Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
-  //   Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
-  //   Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
-  //   Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
+    Draw_Eta_RadiusComparison(iRun, ptRange);
+    Draw_Phi_RadiusComparison(iRun, ptRange);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
+    // // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
+    Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
+    Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
+    Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
+    Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
 
-  //   Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
-  //   Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
-  // }
+    Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
+    Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
+  }
 
-    // Draw_Pt_RadiusComparison(iRun, etaRangeSym);
-    // Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
-    // Draw_Pt_RadiusComparison(iRun, etaRangePos);
-    // Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
+    Draw_Pt_RadiusComparison(iRun, etaRangeSym);
+    Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
+    Draw_Pt_RadiusComparison(iRun, etaRangePos);
+    Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
     Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iRun, etaRangeSym);
     Draw_Pt_ratio_etaNeg_etaPos_RunComparison(jetRadiusForRunComp, etaRangeSym);
 
@@ -272,7 +280,7 @@ void SetStyle(Bool_t graypalette) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TString contextDataset(int iRun){
-  TString texDataset("2023 cpass0 QC "+Runs[iRun]);
+  TString texDataset("2023 QC "+Runs[iRun]);
   return texDataset;
 }
 
@@ -488,8 +496,6 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
   H3D_jetRjetPtjetNTracks = (TH3D*)file_O2Analysis_list[iRun]->Get(analysisWorkflow+"/h3_jet_r_jet_pt_jet_ntracks");
   H3D_jetRjetPtjetNTracks->Sumw2();
 
-  int nbinsYpre = H3D_jetRjetPtjetNTracks->GetZaxis()->GetNbins();
-
   float PtCutLow = PtRange[0];
   float PtCutHigh = PtRange[1];
   int ibinPt_low = H3D_jetRjetPtjetNTracks->GetYaxis()->FindBin(PtCutLow);
@@ -526,7 +532,7 @@ void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
   for(int iRun = 0; iRun < nRuns; iRun++){
 
     H3D_jetRjetPtjetEta[iRun] = (TH3D*)file_O2Analysis_list[iRun]->Get(analysisWorkflow+"/h3_jet_r_jet_pt_jet_eta");
-    H3D_jetRjetPtjetEta[iRun]->Sumw2();
+
     int ibinEta_low = H3D_jetRjetPtjetEta[iRun]->GetZaxis()->FindBin(EtaCutLow);
     int ibinEta_high = H3D_jetRjetPtjetEta[iRun]->GetZaxis()->FindBin(EtaCutHigh);
     ibinJetRadius = H3D_jetRjetPtjetEta[iRun]->GetXaxis()->FindBin(jetRadius);
@@ -575,7 +581,7 @@ void Draw_Eta_RunComparison(float jetRadius, float* PtRange) {
   for(int iRun = 0; iRun < nRuns; iRun++){
 
     H3D_jetRjetPtjetEta[iRun] = (TH3D*)file_O2Analysis_list[iRun]->Get(analysisWorkflow+"/h3_jet_r_jet_pt_jet_eta");
-    H3D_jetRjetPtjetEta[iRun]->Sumw2();
+
     int ibinPt_low = H3D_jetRjetPtjetEta[iRun]->GetYaxis()->FindBin(PtCutLow);
     int ibinPt_high = H3D_jetRjetPtjetEta[iRun]->GetYaxis()->FindBin(PtCutHigh);
     ibinJetRadius = H3D_jetRjetPtjetEta[iRun]->GetXaxis()->FindBin(jetRadius);
@@ -623,7 +629,7 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange) {
   for(int iRun = 0; iRun < nRuns; iRun++){
 
     H3D_jetRjetPtjetPhi[iRun] = (TH3D*)file_O2Analysis_list[iRun]->Get(analysisWorkflow+"/h3_jet_r_jet_pt_jet_phi");
-    H3D_jetRjetPtjetPhi[iRun]->Sumw2();
+
     int ibinPt_low = H3D_jetRjetPtjetPhi[iRun]->GetYaxis()->FindBin(PtCutLow);
     int ibinPt_high = H3D_jetRjetPtjetPhi[iRun]->GetYaxis()->FindBin(PtCutHigh);
     ibinJetRadius = H3D_jetRjetPtjetPhi[iRun]->GetXaxis()->FindBin(jetRadius);
@@ -737,6 +743,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
     int ibinEta_low = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutLow);
     int ibinEta_zero = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(0.);
     int ibinEta_high = H3D_jetRjetPtjetEta->GetZaxis()->FindBin(EtaCutHigh);
+
     ibinJetRadius = H3D_jetRjetPtjetEta->GetXaxis()->FindBin(jetRadius);
 
     H1D_jetPt_left[iRun] = (TH1D*)H3D_jetRjetPtjetEta->ProjectionY("jetPt_left_"+Runs[iRun],ibinJetRadius,ibinJetRadius, ibinEta_low, ibinEta_zero-1);
@@ -770,3 +777,9 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
 // - implement carolina's macro of the gpad thing to automate the division of canvas based on how many plots one wants
 // - change color and markers to make run comparison better
 // - add info to 2D plots, like R=0.2 or R=0.4 or R=0.6 etc ; and clean them in general, the color scale is truncated and can't read it
+// - changer nom run -> period
+
+
+
+
+// option e for projection computes errors
