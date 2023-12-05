@@ -56,6 +56,23 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange);
 void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange);
 
 
+// Analysis settings
+const Int_t nJetType = 3;
+const TString jetType[nJetType] = {"charged", "neutral", "full"};
+const Int_t nJetLevel = 3;
+const TString jetLevel[nJetLevel] = {"data", "mcd", "mcp"};
+const Int_t nRadius = 3;
+const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.4", "R = 0.6"};
+Float_t arrayRadius[nRadius] = {0.2, 0.4, 0.6};
+// const Int_t nRadius = 1;
+// const TString RadiusLegend[nRadius] = {"R = 0.4"};
+// Float_t arrayRadius[nRadius] = {0.4};
+
+// Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
+const Int_t iJetType = 0;
+const Int_t iJetLevel = 0;
+
+
 // Options to be set:
 //////// -------- Full Analysis -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
@@ -71,7 +88,7 @@ TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisRe
                                       new TFile("Datasets/"+Runs[7]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Runs[8]+"/AnalysisResults.root")
                                       };
-const TString analysisWorkflow = "jet-finder-charged-qa";
+TString analysisWorkflow = "jet-finder-"+jetType[iJetType]+"-qa";
 // //////// -------- Flat Phi Periods -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const Int_t nRuns = 3;
@@ -106,21 +123,6 @@ const TString analysisWorkflow = "jet-finder-charged-qa";
 //                                       };
 // const TString analysisWorkflow = "jet-finder-qa";
 
-// Analysis settings
-const Int_t nJetType = 3;
-const TString jetType[nJetType] = {"charged", "neutral", "full"};
-const Int_t nJetLevel = 3;
-const TString jetLevel[nJetLevel] = {"data", "mcd", "mcp"};
-const Int_t nRadius = 3;
-const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.4", "R = 0.6"};
-Float_t arrayRadius[nRadius] = {0.2, 0.4, 0.6};
-// const Int_t nRadius = 1;
-// const TString RadiusLegend[nRadius] = {"R = 0.4"};
-// Float_t arrayRadius[nRadius] = {0.4};
-
-// Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
-const Int_t iJetType = 0;
-const Int_t iJetLevel = 0;
 
 // Commonly used titles
 TString* texRapidity = new TString("y");
