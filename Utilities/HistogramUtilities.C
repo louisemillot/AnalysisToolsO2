@@ -115,14 +115,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   }
 
   // adds some text on the plot
-  TLatex * textColl = new TLatex (0.18,0.82,texCollisionDataInfo->Data()); 
-  textColl->SetTextSize(0.04);
-  textColl->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
-  textColl->Draw();
-  TLatex * text_part = new TLatex (0.18,0.75,Context);
-  text_part->SetTextSize(0.04);
-  text_part->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
-  text_part->Draw();
+  TLatex* textInfo = new TLatex();
+  textInfo->SetTextSize(0.04);
+  textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
+  textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
+  textInfo->DrawLatex(0.18,0.75,Context);
 
   canvas->SaveAs(*pdfName+".pdf");
 
@@ -147,7 +144,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     histograms_collection[i]->Draw("colz");
     histograms_collection[i]->SetXTitle(texXtitle->Data());
     histograms_collection[i]->SetYTitle(texYtitle->Data());
-
+    canvas->cd(i+1)->SetRightMargin(0.18);
     if (strstr(options, "logz") != NULL) {
       gPad->SetLogz(); // sets log scale for the current pad
     }
@@ -160,21 +157,21 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
 
-  // adds some text on the plot
-  TLatex * textColl = new TLatex (0.18,0.82,texCollisionDataInfo->Data());
-  textColl->SetTextSize(0.04);
-  textColl->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
-  textColl->Draw();
-  TLatex * text_part = new TLatex (0.18,0.75,Context);
-  text_part->SetTextSize(0.04);
-  text_part->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
-  text_part->Draw();
-
+  // // adds some text on the plot
+  TLatex* textInfo = new TLatex();
+  textInfo->SetTextSize(0.04);
+  textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
+  for (Int_t i = 0; i < collectionSize; i++) {
+    canvas->cd(i+1);
+    textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
+    textInfo->DrawLatex(0.18,0.75,Context);
+    textInfo->DrawLatex(0.18,0.68,legendList_string[i]);
+  }
   canvas->SaveAs(*pdfName+".pdf");
 
   struct stat st = {0};
-  if (stat("pngFolder/", &st) == -1) {
-      mkdir("pngFolder/", 0700);
+  if (stat("pngFolder/", &st) == -1) { // checks if pngFolder exists in the current directory 
+      mkdir("pngFolder/", 0777); // the argument dictates the permissions; here should give full permissions 
   }
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
 }
