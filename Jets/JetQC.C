@@ -88,6 +88,13 @@ const TString analysisWorkflow = "jet-finder-charged-qa";
 // TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root")
 //                                       };
 // const TString analysisWorkflow = "jet-finder-charged-qa";
+// //////// -------- Cpass1 test -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const Int_t nRuns = 1;
+// const TString Runs[nRuns] = {"LHC23zzh_cpass1"};
+// TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root")
+//                                       };
+// const TString analysisWorkflow = "jet-finder-charged-qa";
 ////// -------- pre renaming of jet-finder-qa to jet-finder-charged-qa -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const Int_t nRuns = 4;
@@ -194,7 +201,7 @@ void JetQC() {
     Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
     Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
     Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
-    // // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
+    // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
     Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
     Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
     Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
@@ -323,7 +330,7 @@ void Draw_Pt_RadiusComparison(int iRun, float* etaRange) {
   if (ibinEta_low == 0) 
     cout << "WARNING: Pt_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
   if (ibinEta_high == H3D_jetRjetPtjetEta->GetZaxis()->GetNbins()+1) 
-    cout << "WARNING: Pt_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
+    cout << "WARNING: Pt_RadiusComparison is counting the overflow with the chosen etaRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -361,7 +368,7 @@ void Draw_Eta_RadiusComparison(int iRun, float* PtRange) {
   if (ibinPt_low == 0) 
     cout << "WARNING: Eta_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
   if (ibinPt_high == H3D_jetRjetPtjetEta->GetYaxis()->GetNbins()+1) 
-    cout << "WARNING: Eta_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
+    cout << "WARNING: Eta_RadiusComparison is counting the overflow with the chosen PtRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -396,7 +403,7 @@ void Draw_Phi_RadiusComparison(int iRun, float* PtRange) {
   if (ibinPt_low == 0) 
     cout << "WARNING: Phi_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
   if (ibinPt_high == H3D_jetRjetPtjetPhi->GetYaxis()->GetNbins()) 
-    cout << "WARNING: Phi_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
+    cout << "WARNING: Phi_RadiusComparison is counting the overflow with the chosen PtRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -431,7 +438,7 @@ void Draw_NTracks_RadiusComparison_withPtRange(int iRun, float* PtRange) {
   if (ibinPt_low == 0) 
     cout << "WARNING: NTracks_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
   if (ibinPt_high == H3D_jetRjetPtjetNTracks->GetYaxis()->GetNbins()+1) 
-    cout << "WARNING: NTracks_RadiusComparison is counting the underflow with the chosen PtRange" << endl;
+    cout << "WARNING: NTracks_RadiusComparison is counting the overflow with the chosen PtRange" << endl;
   int ibinJetRadius = 0;
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
@@ -472,7 +479,7 @@ void Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(int iRun) {
   // TString textContext(ss.str());
   TString textContext(contextDataset(iRun));
 
-  Draw_TH2_Histograms(H2D_jetLeadPt, RadiusLegend, nRadius, textContext, pdfName, texPtX, texLeadPt, texCollisionDataInfo);
+  Draw_TH2_Histograms(H2D_jetLeadPt, RadiusLegend, nRadius, textContext, pdfName, texPtX, texLeadPt, texCollisionDataInfo, "");
 }
 
 void Draw_JetArea_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
@@ -502,7 +509,7 @@ void Draw_JetArea_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
   // TString textContext(ss.str());
   TString textContext(contextDataset(iRun));
 
-  Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetArea, texCollisionDataInfo);
+  Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetArea, texCollisionDataInfo, "");
 }
 
 void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
@@ -530,7 +537,7 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
 
   TString textContext(contextDataset(iRun));
 
-  Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetNTracks, texCollisionDataInfo);
+  Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetNTracks, texCollisionDataInfo, "");
 }
 
 void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
@@ -556,7 +563,7 @@ void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
     if (ibinEta_low == 0) 
       cout << "WARNING: Pt_RunComparison is counting the underflow with the chosen etaRange" << endl;
     if (ibinEta_high == H3D_jetRjetPtjetEta[iRun]->GetZaxis()->GetNbins()+1) 
-      cout << "WARNING: Pt_RunComparison is counting the underflow with the chosen etaRange" << endl;
+      cout << "WARNING: Pt_RunComparison is counting the overflow with the chosen etaRange" << endl;
     ibinJetRadius = H3D_jetRjetPtjetEta[iRun]->GetXaxis()->FindBin(jetRadius);
     
     H1D_jetPt[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionY("jetPt_"+Runs[iRun]+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high);
@@ -609,7 +616,7 @@ void Draw_Eta_RunComparison(float jetRadius, float* PtRange) {
     if (ibinPt_low == 0) 
       cout << "WARNING: Eta_RunComparison is counting the underflow with the chosen PtRange" << endl;
     if (ibinPt_high == H3D_jetRjetPtjetEta[iRun]->GetYaxis()->GetNbins()+1) 
-      cout << "WARNING: Eta_RunComparison is counting the underflow with the chosen PtRange" << endl;
+      cout << "WARNING: Eta_RunComparison is counting the overflow with the chosen PtRange" << endl;
     ibinJetRadius = H3D_jetRjetPtjetEta[iRun]->GetXaxis()->FindBin(jetRadius);
 
     H1D_jetEta[iRun] = (TH1D*)H3D_jetRjetPtjetEta[iRun]->ProjectionZ("jetEta_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high);
@@ -661,7 +668,7 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange) {
     if (ibinPt_low == 0) 
       cout << "WARNING: Phi_RunComparison is counting the underflow with the chosen PtRange" << endl;
     if (ibinPt_high == H3D_jetRjetPtjetPhi[iRun]->GetYaxis()->GetNbins()+1) 
-      cout << "WARNING: Phi_RunComparison is counting the underflow with the chosen PtRange" << endl;
+      cout << "WARNING: Phi_RunComparison is counting the overflow with the chosen PtRange" << endl;
     ibinJetRadius = H3D_jetRjetPtjetPhi[iRun]->GetXaxis()->FindBin(jetRadius);
 
     H1D_jetPhi[iRun] = (TH1D*)H3D_jetRjetPtjetPhi[iRun]->ProjectionZ("jetPhi_"+Runs[iRun]+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius,ibinJetRadius, ibinPt_low, ibinPt_high);
@@ -715,7 +722,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iRun, float* etaRange) {
     if (ibinEta_low == 0) 
       cout << "WARNING: Pt_ratio_etaNeg_etaPos_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
     if (ibinEta_high == H3D_jetRjetPtjetEta->GetZaxis()->GetNbins()+1) 
-      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RadiusComparison is counting the underflow with the chosen etaRange" << endl;
+      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RadiusComparison is counting the overflow with the chosen etaRange" << endl;
   int ibinJetRadius = 0;
 
   bool divideSuccess = false;
@@ -780,7 +787,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
     if (ibinEta_low == 0) 
       cout << "WARNING: Pt_ratio_etaNeg_etaPos_RunComparison is counting the underflow with the chosen etaRange" << endl;
     if (ibinEta_high == H3D_jetRjetPtjetEta->GetZaxis()->GetNbins()+1) 
-      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RunComparison is counting the underflow with the chosen etaRange" << endl;
+      cout << "WARNING: Pt_ratio_etaNeg_etaPos_RunComparison is counting the overflow with the chosen etaRange" << endl;
 
     ibinJetRadius = H3D_jetRjetPtjetEta->GetXaxis()->FindBin(jetRadius);
 

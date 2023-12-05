@@ -5,7 +5,7 @@
 float findMinFloat(float* array, int length);
 float findMaxFloat(float* array, int length);
 void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, Int_t collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]);
-void Draw_TH2_Histograms(TH1D** histograms_collection, const TString* legendList_string, Int_t collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo);
+void Draw_TH2_Histograms(TH1D** histograms_collection, const TString* legendList_string, Int_t collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]);
 
 // Preferred colors and markers
 // const Int_t fillColors[] = {kGray+1,  kRed-10, kBlue-9, kGreen-8, kMagenta-9, kOrange-9,kCyan-8,kYellow-7,}; // for syst bands
