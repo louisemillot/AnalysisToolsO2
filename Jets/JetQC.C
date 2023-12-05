@@ -60,7 +60,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
 //////// -------- Full Analysis -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 const Int_t nRuns = 9;
-const TString Runs[nRuns] = {"LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zzi_cpass0"};
+const TString Runs[nRuns] = {"LHC23zzi_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0"};
 TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root"),
@@ -193,30 +193,30 @@ void JetQC() {
     float PtRangeZoom5060[2] = {50, 60};
     float PtRangeZoom8090[2] = {80, 90};
 
-    Draw_Eta_RadiusComparison(iRun, ptRange);
-    Draw_Phi_RadiusComparison(iRun, ptRange);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
-    // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
+    // Draw_Eta_RadiusComparison(iRun, ptRange);
+    // Draw_Phi_RadiusComparison(iRun, ptRange);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
+    // // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
     Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
     Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
     Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
     Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
 
-    Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
-    Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
+    // Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
+    // Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
   }
 
-    Draw_Pt_RadiusComparison(iRun, etaRangeSym);
-    Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
-    Draw_Pt_RadiusComparison(iRun, etaRangePos);
-    Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
-    Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iRun, etaRangeSym);
-    Draw_Pt_ratio_etaNeg_etaPos_RunComparison(jetRadiusForRunComp, etaRangeSym);
+    // Draw_Pt_RadiusComparison(iRun, etaRangeSym);
+    // Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
+    // Draw_Pt_RadiusComparison(iRun, etaRangePos);
+    // Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
+    // Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iRun, etaRangeSym);
+    // Draw_Pt_ratio_etaNeg_etaPos_RunComparison(jetRadiusForRunComp, etaRangeSym);
 
 }
 
@@ -510,6 +510,12 @@ void Draw_JetArea_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
   TString textContext(contextDataset(iRun));
 
   Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetArea, texCollisionDataInfo, "");
+  TString* pdfNamelogz = new TString(*pdfName + "_logz");
+  Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texJetArea, texCollisionDataInfo, "logz");
+  TString* pdfNamelogy = new TString(*pdfName + "_logx");
+  Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texJetArea, texCollisionDataInfo, "logx");
+  TString* pdfNamelogyz = new TString(*pdfName + "_logxz");
+  Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texJetArea, texCollisionDataInfo, "logxlogz");
 }
 
 void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
@@ -538,6 +544,8 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
   TString textContext(contextDataset(iRun));
 
   Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetNTracks, texCollisionDataInfo, "");
+  TString* pdfNamelogz = new TString(*pdfName + "_logz");
+  Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texJetNTracks, texCollisionDataInfo, "logz");
 }
 
 void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
