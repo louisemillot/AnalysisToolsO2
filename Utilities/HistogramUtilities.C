@@ -148,10 +148,16 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     histograms_collection[i]->SetXTitle(texXtitle->Data());
     histograms_collection[i]->SetYTitle(texYtitle->Data());
 
+    if (strstr(options, "logz") != NULL) {
+      gPad->SetLogz(); // sets log scale for the current pad
+    }
+    if (strstr(options, "logy") != NULL) {
+      gPad->SetLogy();
+    }
+    if (strstr(options, "logx") != NULL) {
+      gPad->SetLogx();
+    }
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
-  }
-  if (strstr(options, "logz") != NULL) {
-    canvas->SetLogz();
   }
 
   // adds some text on the plot
