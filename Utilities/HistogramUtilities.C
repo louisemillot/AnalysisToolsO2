@@ -151,9 +151,9 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
   if (strstr(options, "logz") != NULL) {
-    canvas->SetLogz()
+    canvas->SetLogz();
   }
-  
+
   // adds some text on the plot
   TLatex * textColl = new TLatex (0.18,0.82,texCollisionDataInfo->Data());
   textColl->SetTextSize(0.04);
