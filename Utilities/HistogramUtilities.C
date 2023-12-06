@@ -75,7 +75,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     float deltaMax = max(1-minY, maxY-1);
     minY = max((float)0., 1-deltaMax);
     maxY = 1+deltaMax;
-    yUpMarginScaling = 1.1;
+    yUpMarginScaling = 1.3;
   }
   if (strstr(options, "standardratio") != NULL) {
     minY = 0;
@@ -156,6 +156,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     }
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
+  gStyle->SetPalette(kBird); // a better palette than the kRainbow that was used by default; https://root.cern.ch/doc/master/classTColor.html lists it as one of the better palettes for Colour Vision Deficiencies 
 
   // // adds some text on the plot
   TLatex* textInfo = new TLatex();
