@@ -134,8 +134,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
 void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, Int_t collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
 
-  // canvas settings
-  TCanvas *canvas = new TCanvas ("canvas"+*pdfName, "canvas"+*pdfName, 2800, 800);
+  Double_t width = 2300;
+  Double_t height = 800;
+  auto canvas = new TCanvas("canvas"+*pdfName, "canvas"+*pdfName, width, height);
+  canvas->SetWindowSize(width + (width - canvas->GetWw()), height + (height - canvas->GetWh()));
+
   canvas->Divide(collectionSize,1);
 
   // draws histograms from collection
@@ -144,7 +147,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     histograms_collection[i]->Draw("colz");
     histograms_collection[i]->SetXTitle(texXtitle->Data());
     histograms_collection[i]->SetYTitle(texYtitle->Data());
-    canvas->cd(i+1)->SetRightMargin(0.18);
+    canvas->cd(i+1)->SetRightMargin(0.18); // if the z-axis ever gets hidden, one can play with this
     if (strstr(options, "logz") != NULL) {
       gPad->SetLogz(); // sets log scale for the current pad
     }
