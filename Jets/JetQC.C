@@ -48,6 +48,7 @@ void Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(int iRun);
 void Draw_JetArea_vs_JetPt_RadiusComparison(int iRun, float* PtRange);
 void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange);
 void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iRun, float* etaRange);
+void Draw_JetPhi_vs_JetEta_RadiusComparison(int iRun);
 
 // Run comparison
 void Draw_Pt_RunComparison(float jetRadius, float* etaRange);
@@ -74,21 +75,21 @@ const Int_t iJetLevel = 0;
 
 
 // Options to be set:
-//////// -------- Full Analysis -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const Int_t nRuns = 9;
-const TString Runs[nRuns] = {"LHC23zzi_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0"};
-TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[3]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[4]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[5]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[6]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[7]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Runs[8]+"/AnalysisResults.root")
-                                      };
-TString analysisWorkflow = "jet-finder-"+jetType[iJetType]+"-qa";
+// //////// -------- Full cpass0 Analysis -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const Int_t nRuns = 9;
+// const TString Runs[nRuns] = {"LHC23zzi_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0"};
+// TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[3]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[4]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[5]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[6]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[7]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Runs[8]+"/AnalysisResults.root")
+//                                       };
+// TString analysisWorkflow = "jet-finder-"+jetType[iJetType]+"-qa";
 // //////// -------- Flat Phi Periods -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const Int_t nRuns = 3;
@@ -98,20 +99,15 @@ TString analysisWorkflow = "jet-finder-"+jetType[iJetType]+"-qa";
 //                                       new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root")
 //                                       };
 // const TString analysisWorkflow = "jet-finder-charged-qa";
-// //////// -------- Cpass2 test -------- ////////
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-// const Int_t nRuns = 1;
-// const TString Runs[nRuns] = {"LHC23zzh_cpass2"};
-// TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root")
-//                                       };
-// const TString analysisWorkflow = "jet-finder-charged-qa";
-// //////// -------- Cpass1 test -------- ////////
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-// const Int_t nRuns = 1;
-// const TString Runs[nRuns] = {"LHC23zzh_cpass1"};
-// TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root")
-//                                       };
-// const TString analysisWorkflow = "jet-finder-charged-qa";
+//////// -------- Cpass comparison - 0 vs 1 vs 2  -------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+const Int_t nRuns = 3;
+const TString Runs[nRuns] = {"LHC23zzh_cpass2", "LHC23zzh_cpass1", "LHC23zzh_cpass0"};
+TFile* file_O2Analysis_list[nRuns] = {new TFile("Datasets/"+Runs[0]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[1]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Runs[2]+"/AnalysisResults.root")
+                                      };
+const TString analysisWorkflow = "jet-finder-charged-qa";
 ////// -------- pre renaming of jet-finder-qa to jet-finder-charged-qa -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const Int_t nRuns = 4;
@@ -195,30 +191,31 @@ void JetQC() {
     float PtRangeZoom5060[2] = {50, 60};
     float PtRangeZoom8090[2] = {80, 90};
 
-    // Draw_Eta_RadiusComparison(iRun, ptRange);
-    // Draw_Phi_RadiusComparison(iRun, ptRange);
-    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
-    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
-    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
-    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
-    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
-    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
-    // // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
+    Draw_Eta_RadiusComparison(iRun, ptRange);
+    Draw_Phi_RadiusComparison(iRun, ptRange);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
+    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
+    // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
     Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
-    Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
+    // Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
     Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
-    Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
+    // Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
+    Draw_JetPhi_vs_JetEta_RadiusComparison(iRun);
 
-    // Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
-    // Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
+    Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
+    Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
   }
 
-    // Draw_Pt_RadiusComparison(iRun, etaRangeSym);
-    // Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
-    // Draw_Pt_RadiusComparison(iRun, etaRangePos);
-    // Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
-    // Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iRun, etaRangeSym);
-    // Draw_Pt_ratio_etaNeg_etaPos_RunComparison(jetRadiusForRunComp, etaRangeSym);
+    Draw_Pt_RadiusComparison(iRun, etaRangeSym);
+    Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
+    Draw_Pt_RadiusComparison(iRun, etaRangePos);
+    Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
+    Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iRun, etaRangeSym);
+    Draw_Pt_ratio_etaNeg_etaPos_RunComparison(jetRadiusForRunComp, etaRangeSym);
 
 }
 
@@ -502,7 +499,7 @@ void Draw_JetArea_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
     H3D_jetRjetPtjetArea->GetXaxis()->SetRange(iRadius+1,iRadius+1);
     H3D_jetRjetPtjetArea->GetYaxis()->SetRange(ibinPt_low,ibinPt_high);
     H2D_jetArea[iRadius] = (TH2D*)H3D_jetRjetPtjetArea->Project3D(RadiusLegend[iRadius]+"_jetArea_zy");
-    // H2D_jetArea_rebinned[iRadius] = (TH2D*)H2D_jetArea[iRadius]->Rebin(1.,"H1D_jetArea_rebinned_"+RadiusLegend[iRadius]);
+    // H2D_jetArea_rebinned[iRadius] = (TH2D*)H2D_jetArea[iRadius]->RebinY(2.,"H1D_jetArea_rebinned_"+RadiusLegend[iRadius]);
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_JetArea-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
@@ -548,6 +545,35 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iRun, float* PtRange) {
   Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetNTracks, texCollisionDataInfo, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
   Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texJetNTracks, texCollisionDataInfo, "logz");
+}
+
+void Draw_JetPhi_vs_JetEta_RadiusComparison(int iRun) {
+
+  TH3D* H3D_jetRjetPhijetEta;
+  TH2D* H2D_jetPhijetEta[nRadius];
+  TH2D* H2D_jetPhijetEta_rebinned[nRadius];
+  
+  H3D_jetRjetPhijetEta = (TH3D*)file_O2Analysis_list[iRun]->Get(analysisWorkflow+"/h3_jet_r_jet_eta_jet_phi");
+  H3D_jetRjetPhijetEta->Sumw2();
+
+  for(int iRadius = 0; iRadius < nRadius; iRadius++){
+    H2D_jetPhijetEta[iRadius] = (TH2D*)H3D_jetRjetPhijetEta->Project3D(RadiusLegend[iRadius]+"_jetPhi_jetEta_zy");
+    // H2D_jetPhijetEta_rebinned[iRadius] = (TH2D*)H2D_jetArea[iRadius]->RebinY(2.,"H1D_jetPhi_jetEta_rebinned_"+RadiusLegend[iRadius]);
+  }
+
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_JetPhi-vs-Eta]");
+  // std::stringstream ss;
+  // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
+  // TString textContext(ss.str());
+  TString textContext(contextDataset(iRun));
+
+  Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfName, texEtaX, texPhiX, texCollisionDataInfo, "");
+  // TString* pdfNamelogz = new TString(*pdfName + "_logz");
+  // Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texJetArea, texCollisionDataInfo, "logz");
+  // TString* pdfNamelogy = new TString(*pdfName + "_logx");
+  // Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texJetArea, texCollisionDataInfo, "logx");
+  // TString* pdfNamelogyz = new TString(*pdfName + "_logxz");
+  // Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texJetArea, texCollisionDataInfo, "logxlogz");
 }
 
 void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
@@ -596,7 +622,7 @@ void Draw_Pt_RunComparison(float jetRadius, float* etaRange) {
 
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, Runs, nRuns, textContext, pdfName, texPtX, texNormPtYield, texCollisionDataInfo, "logy");
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, Runs, nRuns, textContext, pdfName_ratio, texPtX, texRatioRuns, texCollisionDataInfo, "standardratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, Runs, nRuns, textContext, pdfName_ratio, texPtX, texRatioRuns, texCollisionDataInfo, "autoratio,avoidFirst");
   }
   else {
     cout << "Divide failed in Draw_Pt_RunComparison" << endl;
@@ -700,7 +726,7 @@ void Draw_Phi_RunComparison(float jetRadius, float* PtRange) {
   Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned, Runs, nRuns, textContext, pdfName, texPhiX, texNormPhiYield, texCollisionDataInfo, "");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned_ratios, Runs, nRuns, textContext, pdfName_ratio, texPhiX, texRatioRuns, texCollisionDataInfo, "standardratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned_ratios, Runs, nRuns, textContext, pdfName_ratio, texPhiX, texRatioRuns, texCollisionDataInfo, "autoratio,avoidFirst");
   }
   else {
     cout << "Divide failed in Draw_Phi_RunComparison" << endl;
@@ -827,6 +853,8 @@ void Draw_Pt_ratio_etaNeg_etaPos_RunComparison(float jetRadius, float* etaRange)
     cout << "Divide failed in Draw_Pt_ratio_etaPos_etaNeg" << endl;
   }
 }
+
+
 
 // To-do list:
 // - implement carolina's macro of the gpad thing to automate the division of canvas based on how many plots one wants
