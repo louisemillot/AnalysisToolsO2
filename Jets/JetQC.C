@@ -191,31 +191,31 @@ void JetQC() {
     float PtRangeZoom5060[2] = {50, 60};
     float PtRangeZoom8090[2] = {80, 90};
 
-    Draw_Eta_RadiusComparison(iRun, ptRange);
-    Draw_Phi_RadiusComparison(iRun, ptRange);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
-    Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
-    // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
-    Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
-    // Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
-    Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
-    // Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
+    // Draw_Eta_RadiusComparison(iRun, ptRange);
+    // Draw_Phi_RadiusComparison(iRun, ptRange);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom0);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom2030);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom3040);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom4050);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom5060);
+    // Draw_NTracks_RadiusComparison_withPtRange(iRun, PtRangeZoom8090);
+    // // Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(iRun); leading pT not implemented yet
+    // Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
+    // // Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom0);
+    // Draw_JetArea_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
+    // // Draw_JetNTracks_vs_JetPt_RadiusComparison(iRun, PtRangeZoom020);
     Draw_JetPhi_vs_JetEta_RadiusComparison(iRun);
 
-    Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
-    Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
+    // Draw_Eta_RunComparison(jetRadiusForRunComp, ptRange);
+    // Draw_Phi_RunComparison(jetRadiusForRunComp, ptRange);
   }
 
-    Draw_Pt_RadiusComparison(iRun, etaRangeSym);
-    Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
-    Draw_Pt_RadiusComparison(iRun, etaRangePos);
-    Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
-    Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iRun, etaRangeSym);
-    Draw_Pt_ratio_etaNeg_etaPos_RunComparison(jetRadiusForRunComp, etaRangeSym);
+    // Draw_Pt_RadiusComparison(iRun, etaRangeSym);
+    // Draw_Pt_RadiusComparison(iRun, etaRangeNeg);
+    // Draw_Pt_RadiusComparison(iRun, etaRangePos);
+    // Draw_Pt_RunComparison(jetRadiusForRunComp, etaRangeSym);
+    // Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iRun, etaRangeSym);
+    // Draw_Pt_ratio_etaNeg_etaPos_RunComparison(jetRadiusForRunComp, etaRangeSym);
 
 }
 
@@ -561,7 +561,7 @@ void Draw_JetPhi_vs_JetEta_RadiusComparison(int iRun) {
     // H2D_jetPhijetEta_rebinned[iRadius] = (TH2D*)H2D_jetArea[iRadius]->RebinY(2.,"H1D_jetPhi_jetEta_rebinned_"+RadiusLegend[iRadius]);
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_JetPhi-vs-Eta]");
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Runs[iRun]+"_JetPhi-vs-Eta");
   // std::stringstream ss;
   // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
   // TString textContext(ss.str());
