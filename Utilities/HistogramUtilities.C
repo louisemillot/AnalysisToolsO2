@@ -98,13 +98,22 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   leg->SetTextSize(gStyle->GetTextSize()*0.3);
   }
 
+  if (collectionSize >= 6) {
+    gStyle->SetPalette(kRainbow); // for the choice of marker's colours; only use this if we have many histograms in the same plot
+  }
+
   // draws histograms from collection
   for (Int_t i = 0; i < collectionSize; i++) {
     if (i!=0 || strstr(options, "avoidFirst") == NULL) { // if i=0 requires that the option avoidFirst isn't there
-      histograms_collection[i]->Draw("same");
+      if (collectionSize >= 6) {
+        histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+      }
+      else {
+        histograms_collection[i]->Draw("same");
+        histograms_collection[i]->SetMarkerColor(colors[i]);
+        histograms_collection[i]->SetLineColor(colors[i]);
+      }
       histograms_collection[i]->SetMarkerStyle(markers[i]);
-      histograms_collection[i]->SetMarkerColor(colors[i]);
-      histograms_collection[i]->SetLineColor(colors[i]);
 
       leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
     }

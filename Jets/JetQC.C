@@ -1032,11 +1032,7 @@ void Draw_Area_PtIntegrated_DatasetComparison(float jetRadius, float* PtRange) {
 
 
 // To-do list:
-// - implement carolina's macro of the gpad thing to automate the division of canvas based on how many plots one wants
-// - change color and markers to make run comparison better
-// - add info to 2D plots, like R=0.2 or R=0.4 or R=0.6 etc ; and clean them in general, the color scale is truncated and can't read it
-// - changer nom run -> period
-// - eta+ vs eta- comparison: make sure the separation bin is chosen so that there's no artificial imbalance
+// - implement carolina's macro of the gpad thing to automate the division of canvas based on how many plots one wants ?
 
 
 
