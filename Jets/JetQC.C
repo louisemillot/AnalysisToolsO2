@@ -169,7 +169,7 @@ const TString* texDatasetsComparisonType = new TString("#eta_{track} cut");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh cpass 11");
 const Int_t nDatasets = 5;
 const TString Datasets[nDatasets] = {"LHC23zzh_eta0.9", "LHC23zzh_eta0.8", "LHC23zzh_eta0.7", "LHC23zzh_eta0.6", "LHC23zzh_eta0.5"};
-const TString DatasetsNames[nDatasets] = {"etaTracks0.9", "etaTracks0.8", "etaTracks0.7", "etaTracks0.6", "etaTracks0.5"};
+const TString DatasetsNames[nDatasets] = {"-0.9 < #eta_{Tracks} < 0.9", "-0.8 < #eta_{Tracks} < 0.8", "-0.7 < #eta_{Tracks} < 0.7", "-0.6 < #eta_{Tracks} < 0.6", "-0.5 < #eta_{Tracks} < 0.5"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
