@@ -34,8 +34,10 @@ void SetStyle(Bool_t graypalette=kFALSE);
 void LoadLibs();
 
 // Plot Utilities
-TString contextDataset(int iDataset);
+TString contextDataset1D(int iDataset, float* variableRange, const char options[]);
+TString contextDatasetComp(float jetRadius, float* variableRange, const char options[]);
 TString contextPtRange(float* PtRange);
+TString contextEtaRange(float* PtRange);
 TString contextJetRadius(float jetRadius);
 
 //////////// QC plot functions
@@ -167,7 +169,7 @@ const TString* texDatasetsComparisonType = new TString("#eta_{track} cut");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh cpass 11");
 const Int_t nDatasets = 5;
 const TString Datasets[nDatasets] = {"LHC23zzh_eta0.9", "LHC23zzh_eta0.8", "LHC23zzh_eta0.7", "LHC23zzh_eta0.6", "LHC23zzh_eta0.5"};
-const TString DatasetsNames[nDatasets] = {"eta0.9", "eta0.8", "eta0.7", "eta0.6", "eta0.5"};
+const TString DatasetsNames[nDatasets] = {"etaTracks0.9", "etaTracks0.8", "etaTracks0.7", "etaTracks0.6", "etaTracks0.5"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
                                       new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
@@ -370,17 +372,42 @@ void SetStyle(Bool_t graypalette) {
 ////////////////////////////////////////////////////////////////////////////// Context Utilities /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-TString contextDataset(int iDataset){
-  TString texDataset("#splitline{2023 QC}{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}");
-  return texDataset;
+TString contextDatasetRadiusComp(int iDataset, float* variableRange, const char options[]){
+  TString texContextDatasetRadiusComp;
+  if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texContextDatasetRadiusComp = "#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextPtRange(variableRange)+"}}";
+  }
+  if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texContextDatasetRadiusComp = "#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextEtaRange(variableRange)+"}}";
+  }
+
+  return texContextDatasetRadiusComp;
+}
+
+TString contextDatasetComp(float jetRadius, float* variableRange, const char options[]){
+  TString texcontextDatasetComp;
+  if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texcontextDatasetComp = "#splitline{"+*texDatasetsComparisonCommonDenominator+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(variableRange)+"}}";
+  }
+  if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texcontextDatasetComp = "#splitline{"+*texDatasetsComparisonCommonDenominator+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(variableRange)+"}}";
+  }
+
+  return texcontextDatasetComp;
 }
 
 TString contextPtRange(float* PtRange){
-
   std::stringstream ss;
   ss << PtRange[0] << " < #it{p}_{T} < " << PtRange[1];
   TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
+  return textContext;
+}
+
+TString contextEtaRange(float* EtaRange){
+  std::stringstream ss;
+  ss << EtaRange[0] << " < #eta < " << EtaRange[1];
+  TString textContext((TString)ss.str());
   return textContext;
 }
 
@@ -427,10 +454,8 @@ void Draw_Pt_RadiusComparison(int iDataset, float* etaRange) {
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]");
 
-  std::stringstream ss;
-  ss << EtaCutLow << " < #eta < " << EtaCutHigh;
-  TString textContext("#splitline{"+contextDataset(iDataset)+"}{"+(TString)ss.str()+"}");
-
+  TString textContext(contextDatasetRadiusComp(iDataset, etaRange, "eta"));
+  
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, RadiusLegend, nRadius, textContext, pdfName, texPtX, texNormPtYield, texCollisionDataInfo, "logy");
 }
 
@@ -464,7 +489,7 @@ void Draw_Eta_RadiusComparison(int iDataset, float* PtRange) {
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_Eta_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext("#splitline{"+contextDataset(iDataset)+"}{"+contextPtRange(PtRange)+"}");
+  TString textContext(contextDatasetRadiusComp(iDataset, PtRange, "pt"));
 
   Draw_TH1_Histograms_in_one(H1D_jetEta_rebinned, RadiusLegend, nRadius, textContext, pdfName, texEtaX, texNormEtaYield, texCollisionDataInfo, "");
 }
@@ -499,7 +524,7 @@ void Draw_Phi_RadiusComparison(int iDataset, float* PtRange) {
  
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_Phi_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext("#splitline{"+contextDataset(iDataset)+"}{"+contextPtRange(PtRange)+"}");
+  TString textContext(contextDatasetRadiusComp(iDataset, PtRange, "pt"));
 
   Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned, RadiusLegend, nRadius, textContext, pdfName, texPhiX, texNormPhiYield, texCollisionDataInfo, "");
 }
@@ -534,34 +559,9 @@ void Draw_NTracks_RadiusComparison_withPtRange(int iDataset, float* PtRange) {
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_NTracks_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext("#splitline{"+contextDataset(iDataset)+"}{"+contextPtRange(PtRange)+"}");
+  TString textContext(contextDatasetRadiusComp(iDataset, PtRange, "pt"));
 
   Draw_TH1_Histograms_in_one(H1D_jetNTracks_rebinned, RadiusLegend, nRadius, textContext, pdfName, texNTracksX, texNormNTracksYield, texCollisionDataInfo, "");
-}
-
-
-void Draw_LeadingTrackPt_vs_JetPt_RadiusComparison(int iDataset) {
-
-  TH3D* H3D_jetRjetPtjetLeadPt;
-  TH2D* H2D_jetLeadPt[nRadius];
-  TH2D* H2D_jetLeadPt_rebinned[nRadius];
-  
-  H3D_jetRjetPtjetLeadPt = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h3_jet_r_jet_pt_leadingtrack_pt"))->Clone("Draw_LeadingTrackPt_vs_JetPt_RadiusComparison"+Datasets[iDataset]);
-  H3D_jetRjetPtjetLeadPt->Sumw2();
-
-  for(int iRadius = 0; iRadius < nRadius; iRadius++){
-    H3D_jetRjetPtjetLeadPt->GetXaxis()->SetRange(iRadius+1,iRadius+1);
-    H2D_jetLeadPt[iRadius] = (TH2D*)H3D_jetRjetPtjetLeadPt->Project3D(RadiusLegend[iRadius]+"_zy");
-    // H2D_jetLeadPt_rebinned[iRadius] = (TH2D*)H2D_jetLeadPt[iRadius]->Rebin(1.,"H1D_jetLeadPt_rebinned_"+RadiusLegend[iRadius]);
-  }
-
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_LeadPt");
-  // std::stringstream ss;
-  // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext(ss.str());
-  TString textContext(contextDataset(iDataset));
-
-  Draw_TH2_Histograms(H2D_jetLeadPt, RadiusLegend, nRadius, textContext, pdfName, texPtX, texLeadPt, texCollisionDataInfo, "");
 }
 
 void Draw_JetArea_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
@@ -586,10 +586,8 @@ void Draw_JetArea_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetArea-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
-  // std::stringstream ss;
-  // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext(ss.str());
-  TString textContext(contextDataset(iDataset));
+
+  TString textContext(contextDatasetRadiusComp(iDataset, PtRange, "pt"));
 
   Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetArea, texCollisionDataInfo, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
@@ -623,7 +621,7 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetNTracks-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
 
-  TString textContext(contextDataset(iDataset));
+  TString textContext(contextDatasetRadiusComp(iDataset, PtRange, "pt"));
 
   Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetNTracks, texCollisionDataInfo, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
@@ -652,10 +650,8 @@ void Draw_JetEta_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetEta-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
-  // std::stringstream ss;
-  // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext(ss.str());
-  TString textContext(contextDataset(iDataset));
+
+  TString textContext(contextDatasetRadiusComp(iDataset, PtRange, "pt"));
 
   Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfName, texPtX, texEtaX, texCollisionDataInfo, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
@@ -683,15 +679,13 @@ void Draw_JetPhi_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
     H3D_jetRjetPtjetPhi->GetXaxis()->SetRange(iRadius+1,iRadius+1);
     H3D_jetRjetPtjetPhi->GetYaxis()->SetRange(ibinPt_low,ibinPt_high);
-    H2D_jetPhi[iRadius] = (TH2D*)H3D_jetRjetPtjetPhi->Project3D(RadiusLegend[iRadius]+"_jetPhi_zy");
+    H2D_jetPhi[iRadius] = (TH2D*)H3D_jetRjetPtjetPhi->Project3D(RadiusLegend[iRadius]+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1])+"_jetPhi_jetPt_zy");
     // H2D_jetPhi_rebinned[iRadius] = (TH2D*)H2D_jetPhi[iRadius]->RebinY(2.,"H1D_jetPhi_rebinned_"+RadiusLegend[iRadius]);
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetPhi-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
-  // std::stringstream ss;
-  // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext(ss.str());
-  TString textContext(contextDataset(iDataset));
+
+  TString textContext(contextDatasetRadiusComp(iDataset, PtRange, "pt"));
 
   Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfName, texPtX, texPhiX, texCollisionDataInfo, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
@@ -708,20 +702,17 @@ void Draw_JetPhi_vs_JetEta_RadiusComparison(int iDataset) {
   TH2D* H2D_jetPhijetEta[nRadius];
   TH2D* H2D_jetPhijetEta_rebinned[nRadius];
   
-  H3D_jetRjetPhijetEta = (TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h3_jet_r_jet_eta_jet_phi");
   H3D_jetRjetPhijetEta = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h3_jet_r_jet_eta_jet_phi"))->Clone("Draw_JetPhi_vs_JetEta_RadiusComparison"+Datasets[iDataset]);
   H3D_jetRjetPhijetEta->Sumw2();
 
   for(int iRadius = 0; iRadius < nRadius; iRadius++){
-    H2D_jetPhijetEta[iRadius] = (TH2D*)H3D_jetRjetPhijetEta->Project3D(RadiusLegend[iRadius]+"_jetPhi_jetEta_zy");
+    H2D_jetPhijetEta[iRadius] = (TH2D*)H3D_jetRjetPhijetEta->Project3D(RadiusLegend[iRadius]+Datasets[iDataset]+"_jetPhi_jetEta_zy");
     // H2D_jetPhijetEta_rebinned[iRadius] = (TH2D*)H2D_jetArea[iRadius]->RebinY(2.,"H1D_jetPhi_jetEta_rebinned_"+RadiusLegend[iRadius]);
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetPhi-vs-Eta");
-  // std::stringstream ss;
-  // ss << PtCutLow << " < #it{p}_{T} < " << PtCutHigh;
-  // TString textContext(ss.str());
-  TString textContext(contextDataset(iDataset));
+
+  TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
   Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfName, texEtaX, texPhiX, texCollisionDataInfo, "");
   // TString* pdfNamelogz = new TString(*pdfName + "_logz");
@@ -772,9 +763,7 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange) {
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]");
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]_ratio");
 
-  std::stringstream ss;
-  ss << EtaCutLow << " < #eta < " << EtaCutHigh;
-  TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+(TString)ss.str()+"}}");
+  TString textContext(contextDatasetComp(jetRadius, etaRange, "eta"));
 
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texNormPtYield, texCollisionDataInfo, "logy");
   if (divideSuccess == true) {
@@ -825,7 +814,7 @@ void Draw_Eta_DatasetComparison(float jetRadius, float* PtRange) {
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Eta_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Eta_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]_ratio");
 
-  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}");
+  TString textContext(contextDatasetComp(jetRadius, PtRange, "pt"));
 
   Draw_TH1_Histograms_in_one(H1D_jetEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, texNormEtaYield, texCollisionDataInfo, "");
 
@@ -877,7 +866,7 @@ void Draw_Phi_DatasetComparison(float jetRadius, float* PtRange) {
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Phi_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Phi_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]_ratio");
 
-  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}");
+  TString textContext(contextDatasetComp(jetRadius, PtRange, "pt"));
 
   Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texNormPhiYield, texCollisionDataInfo, "");
 
@@ -937,9 +926,8 @@ void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iDataset, float* etaRange)
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_pT_etaRightLeftRatio");
-  std::stringstream ss;
-  ss << EtaCutLow << " < #eta < " << EtaCutHigh;
-  TString textContext("#splitline{"+contextDataset(iDataset)+"}{"+(TString)ss.str()+"}");
+
+  TString textContext(contextDatasetRadiusComp(iDataset, etaRange, "eta"));
 
   if (divideSuccess == true) {
     Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, RadiusLegend, nRadius, textContext, pdfName, texPtX, texRatioEtaComparison, texCollisionDataInfo, "standardratio");
@@ -1000,7 +988,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_DatasetComparison(float jetRadius, float* etaRa
  
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_pT_etaRightLeftRatio");
 
-  TString textContext(contextJetRadius(jetRadius));
+  TString textContext(contextDatasetComp(jetRadius, etaRange, "eta"));
 
   if (divideSuccess == true) {
     Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texRatioEtaComparison, texCollisionDataInfo, "standardratio");
@@ -1051,7 +1039,7 @@ void Draw_Area_PtIntegrated_DatasetComparison(float jetRadius, float* PtRange) {
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Area_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]");
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Area_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]_ratio");
 
-  TString textContext("#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}");
+  TString textContext(contextDatasetComp(jetRadius, PtRange, "pt"));
 
   Draw_TH1_Histograms_in_one(H1D_jetArea_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texJetArea, texNormAreaYield, texCollisionDataInfo, "");
 

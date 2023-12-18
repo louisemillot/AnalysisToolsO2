@@ -178,7 +178,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     canvas->cd(i+1);
     textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
     textInfo->DrawLatex(0.18,0.75,Context);
-    textInfo->DrawLatex(0.18,0.68,legendList_string[i]);
+    textInfo->DrawLatex(0.18,0.65,legendList_string[i]);
   }
   canvas->SaveAs(*pdfName+".pdf");
 
