@@ -132,7 +132,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
   canvas->SaveAs(*pdfName+".pdf");
 
-  struct stat st = {0};
+  struct stat st{};
   if (stat("pngFolder/", &st) == -1) {
       mkdir("pngFolder/", 0700);
   }
@@ -182,7 +182,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   }
   canvas->SaveAs(*pdfName+".pdf");
 
-  struct stat st = {0};
+  struct stat st{};
   if (stat("pngFolder/", &st) == -1) { // checks if pngFolder exists in the current directory 
       mkdir("pngFolder/", 0777); // the argument dictates the permissions; here should give full permissions 
   }
