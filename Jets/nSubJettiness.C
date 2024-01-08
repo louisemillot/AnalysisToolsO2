@@ -17,103 +17,31 @@
 // #include "RooUnfoldBayes.h"
 // #include "RooUnfoldBinByBin.h"
 
+//My Libraries
+#include "./nSubJettiness_settings.h"
+#include "../Settings/AxisTitles.h"
+#include "../Utilities/AnalysisUtilities.h"
+#include "../Utilities/HistogramUtilities.h"
+#include "../Utilities/AnalysisUtilities.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
+#include "../Utilities/HistogramUtilities.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
+
 #include<array>
+#include <iomanip>
+#include <sstream>
+#include <string.h>
 using namespace std;
 
 void SetStyle(Bool_t graypalette=kFALSE);
-void myPadSetUp(TPad *currentPad, float currentLeft=0.11, float currentTop=0.04, float currentRight=0.04, float currentBottom=0.15);
-void DrawLogo (Int_t logo=0, Double_t xmin =  0.28, Double_t ymin= 0.68) ;
-void FakeHistosOnlyForExample(TH1*&hstat, TH1*&hsyst, TH1*&hsystCorr);
 void LoadLibs();
 
 void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, Int_t collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle);
 void Draw_DeltaR_nSubAxes(TString* &texXtitle, TString* &texYtitle);
 void Draw_NSubjettiness(TString* &texXtitle, TString* &texYtitle);
 
-// Preferred colors and markers
-const Int_t fillColors[] = {kGray+1,  kRed-10, kBlue-9, kGreen-8, kMagenta-9, kOrange-9,kCyan-8,kYellow-7}; // for syst bands
-const Int_t colors[]     = {kRed+1, kBlack, kBlue+1, kGreen+3, kMagenta+1, kOrange-1,kCyan+2,kYellow+2};
-const Int_t markers[]    = {kOpenCircle,kFullCircle,kFullSquare,kOpenSquare,kOpenDiamond,kOpenCross,kFullCross,kFullDiamond,kFullStar,kOpenStar};
 
-// Options to be set:
-// TFile* file_O2Analysis = new TFile("AnalysisResults_LHC23d4_fullProdHyperloop.root");
-TFile* file_O2Analysis = new TFile("AnalysisResults.root");
-TString* texCollisionDataInfo = new TString("#splitline{pp #sqrt{#it{s}} = 13.6 TeV}{Jet-Jet simulation LHC23d4}");
-const Int_t iJetType = 1;
-const Int_t iJetLevel = 2;
-const Float_t PtCutLow  = 20;
-const Float_t PtCutHigh = 40;
-
-// Permanent Options
-const Int_t nJetType = 4;
-const TString jetType[nJetType] = {"charged", "d0", "neutral", "full"};
-const Int_t nJetLevel = 3;
-const TString jetLevel[nJetLevel] = {"data", "mcd", "mcp"};
-const Int_t nAxisTypes = 3;
-const TString AxisType[nAxisTypes] = {"Kt", "CA", "SD"};
-const TString AxisTypeLegend[nAxisTypes] = {"#it{k}_{T} axes", "C/A axes", "Soft Drop axes"};
-
-Int_t nBinSubRatio[nJetLevel] = {100, 100, 100};
-Double_t SubRatioBinEdges[nJetLevel][200]; // = {{0},{0},{0}}; // 200 just gives some margin
-const Float_t nSubRatioMax = 1.2;
-
-// const Float_t drapidity = 1.; // for now I'm not looking at rapidity differential
-
-// Double_t pTbins[nJetType][20] = {{0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.6, 2.0, 2.4, 3.0},{0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 3.0},{0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 3.0}};
-// Int_t nbinpT[nJetType] = {17,8,8};
-
-
-
-
-// === Commonly used x/ titles: ===
-// rapidity
-TString* texRapidity = new TString("y");
-// pt invariant yields
-TString* texPtX = new TString("#it{p}_{T} (GeV/#it{c})");
-TString* texPtY = new TString("1/#it{N}_{ev} 1/(2#pi#it{p}_{T}) d#it{N}/(d#it{p}_{T}d#it{y}) ((GeV/#it{c})^{-2})");
-// mt invariant yields
-TString* texMtX = new TString("#it{m}_{T} (GeV/#it{c}^{2})");
-TString* texMtY = new TString("1/#it{N}_{ev} 1/(2#pi#it{m}_{T}) d#it{N}/(d#it{m}_{T}d#it{y}) ((GeV/#it{c}^{2})^{-2})"); 
-// Invariant mass with decay products K and pi
-TString* texMassX = new TString("#it{M}_{K#pi} (GeV/#it{c}^{2})");
-TString* texMassY = new TString("d#it{N}/(d#it{M}_{K#pi})");
-// Invariant mass with decay products pi+ and pi-
-TString* texMassPiPiX = new TString("#it{M}_{#it{#pi}^{+}#it{#pi}^{-}} (GeV/#it{c}^{2})");
-TString* texMassPiPiY = new TString("d#it{N}/(d#it{M}_{#it{#pi}^{+}#it{#pi}^{-}})");
-// <pt>, npart
-TString* texMeanPt = new TString("#LT#it{p}_{T}#GT (GeV/#it{c})");
-TString* texMeanNpart = new TString("#LT#it{N}_{part}#GT");
-//AIMERIC TILTES
-TString* texptDifferentialYield = new TString("1/#it{N}_{ev} d#it{N}/d#it{p}_{T} (GeV/#it{c})^{-1}");
-TString* texptDifferentialYield_HEPratio_pseudoEff = new TString("O2/HEP ratio of 1/#it{N}_{ev} d#it{N}/d#it{p}_{T} (GeV/#it{c})^{-1}");
-// TString* texRawYield = new TString("raw yield 1/#it{N}_{ev} d#it{N}/d#it{p}_{T}");
-TString* texRawYield = new TString("d#it{N}/d#it{p}_{T}");
-TString* texCount = new TString("count");
-TString* texSgimaGaussFit = new TString("#sigma of Gaussian fit (GeV/#it{c}^{2})");
-TString* texEfficiency = new TString("Efficiency #it{V0}_{detected}/#it{V0}_{MC} (ratio)");
-TString* texDaughterRecoEfficiency = new TString("Track Reco Efficiency #it{N}_{reco}/#it{N}_{genMC} (ratio)");
-TString* texDaughterPairsRecoEfficiency = new TString("Track Reco Efficiency V0Pairs (ratio)");
-
-TString* texPiMinus = new TString("#pi^{-}");
-TString* texPiPlus = new TString("#pi^{+}");
-
-TString* texProton = new TString("p");
-TString* texAntiProton = new TString("#bar{p}");
-
-TString* texRatio = new TString("ratio");
-TString* texFeeddownRemoved = new TString("Feeddown removed - ratio");
-
-TString* texPseudoEfficiency = new TString("Pseudo efficiency #it{V0}_{detected}/#it{V0}_{expected} (ratio)");
-
-TString* texCountRelativeToMax = new TString("Count normalised to peak maximum");
-
-TString* texPtMeasured = new TString("#it{p}_{T}^{measured} (GeV/#it{c})");
-TString* texPtMC = new TString("#it{p}_{T}^{MC} (GeV/#it{c})");
-
-TString* texNSubJettinessRatio = new TString("#it{#tau_{2}/#tau_{1}}");
-TString* texDeltaR = new TString("#it{#Delta R}");
-TString* texdN_dsubratio = new TString("1/N^{jet} d#it{N}/d(#it{#tau_{2}/#tau_{1}})");
-TString* texdN_dDeltaR = new TString("1/N^{jet} d#it{N}/d(#it{#Delta R})");
+/////////////////////////////////////////////////////
+///////////////////// Main Macro ////////////////////
+/////////////////////////////////////////////////////
 
 void nSubJettiness() {
   // Load necessary libraries
@@ -136,7 +64,10 @@ void nSubJettiness() {
   Draw_DeltaR_nSubAxes(texXtitle, texYtitle);
 }
 
-//________________________________
+/////////////////////////////////////////////////////
+/////////////////// Misc utilities //////////////////
+/////////////////////////////////////////////////////
+
 void LoadLibs() {
   // gSystem->Load("libCore.so");  
   // gSystem->Load("libGeom.so");
@@ -152,54 +83,6 @@ void LoadLibs() {
   // gSystem->Load("libCORRFW");
   // gSystem->Load("libPWGTools");
 }
-
-void DrawLogo (Int_t logo, Double_t xmin, Double_t ymin) {
-
-  // Logo is not needed anymore, now we only write alice preliminary
-  // Logo:
-  // 0: Justr writes "ALICE" (for final data)
-  // Anything eles: writes "ALICE Preliminary"
-
-  TLatex *   tex = new TLatex(xmin,ymin, logo ? "ALICE Preliminary" : "ALICE");
-  tex->SetNDC();
-  tex->SetTextFont(42);
-  tex->Draw();
-
-  // OLD logo
-  //  TPad * currentPad = gPad;
-  // Double_t AliLogo_LowX =xmin;
-  // Double_t AliLogo_LowY = ymin;
-  // Double_t AliLogo_Height = size;
-  // //ALICE logo is a  file that is 821x798 pixels->should be wider than a square
-  // Double_t AliLogo_Width  = (821./798.) * AliLogo_Height * gPad->GetWh() / gPad->GetWw();
-  
-  // TPad *myPadLogo = new TPad("myPadLogo", "Pad for ALICE Logo",AliLogo_LowX,AliLogo_LowY,AliLogo_LowX+AliLogo_Width,AliLogo_LowY+AliLogo_Height);
-  // myPadSetUp(myPadLogo,0,0,0,0);
-  // //myPadLogo->SetFixedAspectRatio(1);
-  // myPadLogo->Draw();
-  // myPadLogo->cd();
-  // if (logo == 0) {
-  //   myPadLogo->SetFillColor(2); // color to first figure out where is the pad then comment !
-  // } else if (logo == 1){
-  //   TASImage *myAliceLogo = new TASImage(performanceLogoPath);
-  //   myAliceLogo->Draw();
-  // } else if (logo == 2) {
-  //   TASImage *myAliceLogo = new TASImage(preliminaryLogoPath);
-  //   myAliceLogo->Draw();
-  // }
-  // // go back to the old pad
-  // currentPad->cd();
-
-}
-
-void myPadSetUp(TPad *currentPad, float currentLeft, float currentTop, float currentRight, float currentBottom){
-  currentPad->SetLeftMargin(currentLeft);
-  currentPad->SetTopMargin(currentTop);
-  currentPad->SetRightMargin(currentRight);
-  currentPad->SetBottomMargin(currentBottom);
-  return;
-}
-
 
 void SetStyle(Bool_t graypalette) {
   cout << "Setting style!" << endl;
@@ -241,15 +124,15 @@ void SetStyle(Bool_t graypalette) {
   gStyle->SetLegendFont(42);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////// Context Utilities /////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//should eventually have textContext variables be written using functions in here. See JetQC.C for examples
 
-
-
-
-
-
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////// nSubjettiness  plot functions ///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Draw_NSubjettiness(TString* &texXtitle, TString* &texYtitle) {
 
@@ -285,7 +168,7 @@ void Draw_NSubjettiness(TString* &texXtitle, TString* &texYtitle) {
   TString* pdfName = new TString("nSubjettiness_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_AxisTypeComparison_"+Form("%.0f", PtCutLow)+"<Pt<"+Form("%.0f", PtCutHigh)+"GeV");
   const TString textContext(jetType[iJetType]+" "+jetLevel[iJetLevel]+" #minus "+Form("%.0f", PtCutLow)+" < Pt < "+Form("%.0f", PtCutHigh)+" GeV");
 
-  Draw_TH1_Histograms_in_one(H1D_NSubjettiness_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle);
+  Draw_TH1_Histograms_in_one(H1D_NSubjettiness_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle, texCollisionDataInfo, "");
 
 }
 
@@ -324,55 +207,56 @@ void Draw_DeltaR_nSubAxes(TString* &texXtitle, TString* &texYtitle) {
   TString* pdfName = new TString("DeltaR_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_AxisTypeComparison_"+Form("%.0f", PtCutLow)+"<Pt<"+Form("%.0f", PtCutHigh)+"GeV");
   const TString textContext(jetType[iJetType]+" "+jetLevel[iJetLevel]+" #minus "+Form("%.0f", PtCutLow)+" < Pt < "+Form("%.0f", PtCutHigh)+" GeV");
 
-  Draw_TH1_Histograms_in_one(H1D_DeltaR_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle);
+  Draw_TH1_Histograms_in_one(H1D_DeltaR_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle, texCollisionDataInfo, "");
 
 }
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, Int_t collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle) {
+// obsolete, now in HistogramUtilities.C
+// void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, Int_t collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle) {
 
-  ////plots
-  TCanvas *canvas = new TCanvas ("canvas"+*pdfName, "canvas"+*pdfName, 800, 800);
-  canvas->cd(0);
+//   ////plots
+//   TCanvas *canvas = new TCanvas ("canvas"+*pdfName, "canvas"+*pdfName, 800, 800);
+//   canvas->cd(0);
 
-  float maxY = 0;
-  float minX = 9999999;
-  float maxX = 0;
-  for (Int_t i = 0; i < collectionSize; i++) {
-    if (maxY < histograms_collection[i]->GetMaximum()) maxY = histograms_collection[i]->GetMaximum();
-    if (minX > histograms_collection[i]->GetXaxis()->GetXmin()) minX = histograms_collection[i]->GetXaxis()->GetXmin();
-    if (maxX < histograms_collection[i]->GetXaxis()->GetXmax()) maxX = histograms_collection[i]->GetXaxis()->GetXmax();
-  }
-  TH1 *hFrame = canvas->DrawFrame(minX,0,maxX,1.8*maxY);
-  hFrame->SetXTitle(texXtitle->Data());
-  hFrame->SetYTitle(texYtitle->Data());
-  TLegend * leg = new TLegend(0.7, 0.75, 0.87, 0.87);
+//   float maxY = 0;
+//   float minX = 9999999;
+//   float maxX = 0;
+//   for (Int_t i = 0; i < collectionSize; i++) {
+//     if (maxY < histograms_collection[i]->GetMaximum()) maxY = histograms_collection[i]->GetMaximum();
+//     if (minX > histograms_collection[i]->GetXaxis()->GetXmin()) minX = histograms_collection[i]->GetXaxis()->GetXmin();
+//     if (maxX < histograms_collection[i]->GetXaxis()->GetXmax()) maxX = histograms_collection[i]->GetXaxis()->GetXmax();
+//   }
+//   TH1 *hFrame = canvas->DrawFrame(minX,0,maxX,1.8*maxY);
+//   hFrame->SetXTitle(texXtitle->Data());
+//   hFrame->SetYTitle(texYtitle->Data());
+//   TLegend * leg = new TLegend(0.7, 0.75, 0.87, 0.87);
 
-  //draw histograms from collection, ignoring first one that is the systematics for second one
-  for (Int_t i = 0; i < collectionSize; i++) {
-    // histograms_collection[i]->Draw("hist same p");
-    histograms_collection[i]->Draw("same");
-    histograms_collection[i]->SetMarkerStyle(markers[i]);
-    histograms_collection[i]->SetMarkerColor(colors[i]);
-    histograms_collection[i]->SetLineColor(colors[i]);
+//   //draw histograms from collection, ignoring first one that is the systematics for second one
+//   for (Int_t i = 0; i < collectionSize; i++) {
+//     // histograms_collection[i]->Draw("hist same p");
+//     histograms_collection[i]->Draw("same");
+//     histograms_collection[i]->SetMarkerStyle(markers[i]);
+//     histograms_collection[i]->SetMarkerColor(colors[i]);
+//     histograms_collection[i]->SetLineColor(colors[i]);
 
-    leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
-  }
+//     leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
+//   }
 
-  leg->SetTextSize(gStyle->GetTextSize()*0.3);
-  cout << "AIMERIC - legend: I should try and change this 0.3 factor to have a nice legend" << endl;
-  if (collectionSize >= 2) {
-    leg->Draw("same");
-  }
+//   leg->SetTextSize(gStyle->GetTextSize()*0.3);
+//   cout << "AIMERIC - legend: I should try and change this 0.3 factor to have a nice legend" << endl;
+//   if (collectionSize >= 2) {
+//     leg->Draw("same");
+//   }
 
-  TLatex * textColl = new TLatex (0.18,0.82,texCollisionDataInfo->Data());
-  textColl->SetTextSize(0.04);
-  textColl->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
-  textColl->Draw();
-  TLatex * text_part = new TLatex (0.18,0.75,Context);
-  text_part->SetTextSize(0.04);
-  text_part->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
-  text_part->Draw();
+//   TLatex * textColl = new TLatex (0.18,0.82,texCollisionDataInfo->Data());
+//   textColl->SetTextSize(0.04);
+//   textColl->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
+//   textColl->Draw();
+//   TLatex * text_part = new TLatex (0.18,0.75,Context);
+//   text_part->SetTextSize(0.04);
+//   text_part->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
+//   text_part->Draw();
 
-  canvas->SaveAs(*pdfName+".pdf");
-}
+//   canvas->SaveAs(*pdfName+".pdf");
+// }
 
