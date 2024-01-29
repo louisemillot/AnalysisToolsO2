@@ -22,7 +22,7 @@ float findMaxFloat(float* array, int length){
   return max;
 }
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, Int_t collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
+void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
   // has options:
   // - "standardratio" : if in the options string, then an additional plot is drawn, the ratio of the histograms in the collection to the first histogram of the collection; the Y range is chosen automatically based on the difference to 1
   // - "autoratio" : if in the options string, then an additional plot is drawn, the ratio of the histograms in the collection to the first histogram of the collection; the Y range is [0,2.2]
@@ -41,7 +41,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // char* ratioOptionCheck = "ratio";
   // char* OptionPtr = &options;
 
-  for (Int_t i = 0; i < collectionSize; i++) {
+  for (int i = 0; i < collectionSize; i++) {
     maxX_collection[i] = histograms_collection[i]->GetXaxis()->GetXmax();
     minX_collection[i] = histograms_collection[i]->GetXaxis()->GetXmin();
     maxY_collection[i] = histograms_collection[i]->GetMaximum();
@@ -58,6 +58,12 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   float maxY = findMaxFloat(maxY_collection, collectionSize);
   float minY = findMinFloat(minY_collection, collectionSize);
   float yUpMarginScaling = 1.4;
+
+
+  if (strstr(options, "customTest") != NULL) {
+    minY = 0.6;
+    yUpMarginScaling = 1.1;
+  }
 
   if (strstr(options, "logy") != NULL) {
     yUpMarginScaling = 100;
@@ -86,7 +92,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   TH1 *hFrame = canvas->DrawFrame(minX,minY,maxX,yUpMarginScaling*maxY);
   if (strstr(options, "logy") != NULL) {
     canvas->SetLogy();
+  }  
+  if (strstr(options, "logx") != NULL) {
+    canvas->SetLogx();
   }
+  
   hFrame->SetXTitle(texXtitle->Data());
   hFrame->SetYTitle(texYtitle->Data());
   // hFrame->GetYaxis()->SetTitleOffset(2);
@@ -103,13 +113,18 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   }
 
   // draws histograms from collection
-  for (Int_t i = 0; i < collectionSize; i++) {
+  for (int i = 0; i < collectionSize; i++) {
     if (i!=0 || strstr(options, "avoidFirst") == NULL) { // if i=0 requires that the option avoidFirst isn't there
       if (collectionSize >= 6) {
         histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
       }
       else {
-        histograms_collection[i]->Draw("same");
+        if (strstr(options, "text") != NULL) {
+          histograms_collection[i]->Draw("same TEXT");
+        }
+        else {
+          histograms_collection[i]->Draw("same");
+        }
         histograms_collection[i]->SetMarkerColor(colors[i]);
         histograms_collection[i]->SetLineColor(colors[i]);
       }
@@ -141,17 +156,17 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
 
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, Int_t collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
 
-  Double_t width = 2300;
-  Double_t height = 800;
+  double width = 2300;
+  double height = 800;
   auto canvas = new TCanvas("canvas"+*pdfName, "canvas"+*pdfName, width, height);
   canvas->SetWindowSize(width + (width - canvas->GetWw()), height + (height - canvas->GetWh()));
 
   canvas->Divide(collectionSize,1);
 
   // draws histograms from collection
-  for (Int_t i = 0; i < collectionSize; i++) {
+  for (int i = 0; i < collectionSize; i++) {
     canvas->cd(i+1);
     histograms_collection[i]->Draw("colz");
     histograms_collection[i]->SetXTitle(texXtitle->Data());
@@ -174,7 +189,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   TLatex* textInfo = new TLatex();
   textInfo->SetTextSize(0.04);
   textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
-  for (Int_t i = 0; i < collectionSize; i++) {
+  for (int i = 0; i < collectionSize; i++) {
     canvas->cd(i+1);
     textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
     textInfo->DrawLatex(0.18,0.75,Context);
