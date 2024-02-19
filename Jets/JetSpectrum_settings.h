@@ -1,6 +1,4 @@
 
-// Bin edge control
-float e_binEdge = 0.00001;
 
 // Analysis settings
 const int nJetType = 3;
@@ -21,7 +19,19 @@ float arrayRadius[nRadius] = {0.2, 0.4, 0.6};
 const int iJetType = 0;
 const int iJetLevel = 0;
 
-const int PtRebinValue = 1;
+
+const int ptRebinValue = 1;
+
+
+// centrality binning for collisions
+const int nCentralityBins = 3;
+const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 90};
+
+// pT binning for jets
+double ptBinsJetsRec[nRadius][20] = {{1.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{1.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{1.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
+int nBinPtJetsRec[nRadius] = {15,15,15};
+double ptBinsJetsGen[nRadius][20] = {{1.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{1.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{1.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
+int nBinPtJetsGen[nRadius] = {15,15,15};
 
 // Options to be set:
 
@@ -47,7 +57,7 @@ const int PtRebinValue = 1;
 // TString analysisWorkflow = "jet-finder-"+jetType[iJetType]+"-qa";
 
 
-//////// -------- Jet Radius comparison -------- ////////
+//////// -------- TestingFile -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 const TString* texDatasetsComparisonType = new TString("");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
