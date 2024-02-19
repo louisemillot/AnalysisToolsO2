@@ -20,6 +20,7 @@
 //My Libraries
 #include "./TrackQC_settings.h"
 #include "../Settings/AxisTitles.h"
+#include "../Settings/GlobalSettings.h"
 #include "../Utilities/AnalysisUtilities.h"
 #include "../Utilities/HistogramUtilities.h"
 #include "../Utilities/AnalysisUtilities.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
@@ -43,6 +44,7 @@ TString contextTrackDatasetComp(const char options[]);
 void Draw_Pt_DatasetComparison();
 void Draw_Eta_DatasetComparison();
 void Draw_Phi_DatasetComparison();
+void Draw_Eta_DatasetComparison_EntriesNorm();
 
 
 /////////////////////////////////////////////////////
@@ -65,6 +67,7 @@ void TrackQC() {
   Draw_Eta_DatasetComparison();
   Draw_Phi_DatasetComparison();
 
+  Draw_Eta_DatasetComparison_EntriesNorm();
 }
 
 /////////////////////////////////////////////////////
@@ -136,10 +139,10 @@ void SetStyle(Bool_t graypalette) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TString contextTrackDatasetComp(const char options[]){
-  TString texcontextDatasetComp;
+  TString texcontextDatasetCompAndRadiusAndVarRange;
   //  if (strstr(options, "track") == NULL) {
-  texcontextDatasetComp = *texDatasetsComparisonCommonDenominator;
-  return texcontextDatasetComp;
+  texcontextDatasetCompAndRadiusAndVarRange = *texDatasetsComparisonCommonDenominator;
+  return texcontextDatasetCompAndRadiusAndVarRange;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +164,7 @@ void Draw_Pt_DatasetComparison() {
 
     H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(1.,"trackPt_rebinned_"+Datasets[iDataset]);
 
-    // NormaliseYieldToNJets(H1D_trackPt_rebinned[iDataset]);
+    // NormaliseYieldToNEntries(H1D_trackPt_rebinned[iDataset]);
     NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], GetNEventsSel8(file_O2Analysis_list[iDataset]));
 
     H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]);
@@ -174,7 +177,7 @@ void Draw_Pt_DatasetComparison() {
 
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texTrackNormPtYield, texCollisionDataInfo, "logy");
+  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texTrackPtYield_EventNorm, texCollisionDataInfo, "logy");
   if (divideSuccess == true) {
     Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, "autoratio,avoidFirst");
   }
@@ -197,9 +200,9 @@ void Draw_Eta_DatasetComparison() {
 
     H1D_trackEta[iDataset] = (TH1D*)((TH1D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
 
-    H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned_"+Datasets[iDataset]);
+    H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned"+Datasets[iDataset]);
 
-    // NormaliseYieldToNJets(H1D_trackEta_rebinned[iDataset]);
+    // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iDataset]);
     NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], GetNEventsSel8(file_O2Analysis_list[iDataset]));
 
     H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]);
@@ -207,14 +210,60 @@ void Draw_Eta_DatasetComparison() {
     divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
   }
 
-  TString* pdfName = new TString("track_Eta_DataComp");
-  TString* pdfName_ratio = new TString("track_Eta_DataComp_ratio");
+  TString* pdfNameEventNorm = new TString("track_Eta_DataComp_EventNorm");
+  TString* pdfNameEventNorm_ratio = new TString("track_Eta_DataComp_EventNorm_ratio");
 
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, texTrackNormEtaYield, texCollisionDataInfo, "");
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, "");
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, "autoratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, "autoratio,avoidFirst");
+  }
+  else {
+    cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
+  }
+}
+
+void Draw_Eta_DatasetComparison_EntriesNorm() {
+
+  TH1D* H1D_trackEta[nDatasets];
+  TH1D* H1D_trackEta_rebinned[nDatasets];
+  
+  TH1D* H1D_trackEta_rebinned_ratios[nDatasets];
+
+  bool divideSuccess = false;
+
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+
+    H1D_trackEta[iDataset] = (TH1D*)((TH1D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
+    // int ibincutlow = H1D_trackEta[iDataset]->GetXaxis()->FindBin(-0.8);
+    // int ibincuthigh = H1D_trackEta[iDataset]->GetXaxis()->FindBin(0.8);
+    // for (int ibin = 1; ibin < ibincutlow; ibin++){
+    //   H1D_trackEta[iDataset]->SetBinContent(ibin, 0);
+    // }
+    // for (int ibin = ibincuthigh; ibin < H1D_trackEta[iDataset]->GetNbinsX(); ibin++){
+    //   H1D_trackEta[iDataset]->SetBinContent(ibin, 0);
+    // }
+
+    H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned_EntriesNorm"+Datasets[iDataset]);
+
+    NormaliseYieldToNEntries(H1D_trackEta_rebinned[iDataset]);
+    // H1D_trackEta_rebinned[iDataset]->Scale(1./H1D_trackEta_rebinned[iDataset]->Integral(1, H1D_trackEta_rebinned[iDataset]->GetNbinsX()),"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
+    // H1D_trackEta_rebinned[iDataset]->Scale(1./H1D_trackEta_rebinned[iDataset]->Integral(ibincutlow, ibincuthigh),"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
+
+    H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios_EntriesNorm"+Datasets[iDataset]);
+    H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
+    divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
+  }
+
+  TString* pdfNameEntriesNorm = new TString("track_Eta_DataComp_EntriesNorm");
+  TString* pdfNameEntriesNorm_ratio = new TString("track_Eta_DataComp_EntriesNorm_ratio");
+
+  TString textContext(contextTrackDatasetComp(""));
+
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texEtaX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, "minYnotZero");
+  if (divideSuccess == true) {
+    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, "autoratio,avoidFirst");
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -236,7 +285,7 @@ void Draw_Phi_DatasetComparison() {
 
     H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]);
 
-    // NormaliseYieldToNJets(H1D_trackPhi_rebinned[iDataset]);
+    // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iDataset]);
     NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], GetNEventsSel8(file_O2Analysis_list[iDataset]));
 
     H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]);
@@ -249,7 +298,7 @@ void Draw_Phi_DatasetComparison() {
 
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackNormPhiYield, texCollisionDataInfo, "");
+  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, "");
   if (divideSuccess == true) {
     Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, "autoratio,avoidFirst");
   }
