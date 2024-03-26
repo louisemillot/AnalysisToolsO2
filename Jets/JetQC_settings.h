@@ -426,16 +426,24 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 
 //////// -------- Run 2 vs Run 3 comparison -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("Run2Run3");
+const TString* texDatasetsComparisonType = new TString("CentralityWindows");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
-const int nDatasets = 3;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass2_Area04_leadConstCut5", "LHC23zzh_apass2_Area04_leadConstCut0", "LHC23zzh_apass2_Area06_leadConstCut0"};
-const TString DatasetsNames[nDatasets] = {"Area04_leadConstCut5", "Area04_leadConstCut0", "Area06_leadConstCut0"};
+const int nDatasets = 6;
+const TString Datasets[nDatasets] = {"LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows"};
+const TString DatasetsNames[nDatasets] = {"central0010", "central1020", "central2030", "central3040", "central4050", "central5090"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
                                         };
-const TString analysisWorkflow = "jet-finder-charged-qa";
-
+const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+                                          "jet-finder-charged-qa_central_1020",
+                                          "jet-finder-charged-qa_central_2030",
+                                          "jet-finder-charged-qa_central_3040",
+                                          "jet-finder-charged-qa_central_4050",
+                                          "jet-finder-charged-qa_central_5090",
+                                          };
 
 
