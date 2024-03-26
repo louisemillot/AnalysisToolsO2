@@ -22,12 +22,7 @@ const int iJetType = 0;
 const int iJetLevel = 0;
 
 
-const int nCentralityBins = 7;
-const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 60, 80, 100};
-// const int nCentralityBins = 3;
-// const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 90};
 
-TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root");
 
 // //////// -------- Track Sel check rough -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
@@ -61,17 +56,17 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 //                                         };
 // const TString analysisWorkflow = "jet-finder-charged-qa";
 
-// //////// -------- Track Sel check small -------- ////////
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-// const TString* texDatasetsComparisonType = new TString("TrackSel");
-// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
-// const int nDatasets = 2;
-// const TString Datasets[nDatasets] = {"LHC23zzh_MMTracks", "LHC23zzh_GlobalTracks"};
-// const TString DatasetsNames[nDatasets] = {"MMTrackSel", "GlobalTrackSel"};
-// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
-//                                         };
-// const TString analysisWorkflow = "jet-finder-charged-qa";
+//////// -------- Track Sel check small -------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+const TString* texDatasetsComparisonType = new TString("TrackSel");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+const int nDatasets = 2;
+const TString Datasets[nDatasets] = {"LHC23zzh_MMTracks", "LHC23zzh_GlobalTracks"};
+const TString DatasetsNames[nDatasets] = {"MMTrackSel", "GlobalTrackSel"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+                                        };
+const TString analysisWorkflow = "track-efficiency";
 
 
 
@@ -92,13 +87,13 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 // const TString analysisWorkflow = "jet-finder-charged-qa";
 
 
-//////// -------- Apass - single -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("Apass2");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh run 544122");
-const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass2"};
-const TString DatasetsNames[nDatasets] = {"apass2"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
-                                        };
-const TString analysisWorkflow = "jet-finder-charged-qa";
+// //////// -------- Apass - single -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("Apass2");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh run 544122");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"LHC23zzh_run544122"};
+// const TString DatasetsNames[nDatasets] = {"apass2"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow = "jet-finder-charged-qa";
