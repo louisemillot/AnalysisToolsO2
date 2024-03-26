@@ -6,7 +6,7 @@
 #include <sstream>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////// Histogram Utilities ///////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////// Various Utilities /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 float findMinFloat(float* array, int length){
@@ -24,6 +24,10 @@ float findMaxFloat(float* array, int length){
   return max;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////// Histogram Operations //////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<double> GetTH1Bins(TH1* H1_histo) {
   std::vector<double> bins;
@@ -58,10 +62,101 @@ TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, 
   return H2D_hist_rebinned;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////// Histogram Context /////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, const char options[]){
+  TString texContextFinal;
+  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{2023 QC}{"+tertiaryContext+"}}";
+  // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{2023 QC}{test"+tertiaryContext+"}}";
+  // texContextFinal = "testtesttestest";
+  return texContextFinal;
+}
+
+TString contextCustomTwoFields(TString mainContext, TString secondaryContext, const char options[]){
+  return contextCustomThreeFields(mainContext, (TString)"" , secondaryContext, options);
+}
+
+TString contextCustomOneField(TString mainContext, const char options[]){
+  return contextCustomTwoFields(mainContext, (TString)"", options);
+}
+
+TString contextPtRange(float* PtRange){
+  std::stringstream ss;
+  ss << PtRange[0] << " < #it{p}_{T} < " << PtRange[1];
+  TString textContext((TString)ss.str());
+  // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
+  return textContext;
+}
+
+TString contextEtaRange(float* EtaRange){
+  std::stringstream ss;
+  ss << EtaRange[0] << " < #eta < " << EtaRange[1];
+  TString textContext((TString)ss.str());
+  return textContext;
+}
+
+TString contextJetRadius(float jetRadius){
+  std::stringstream ss;
+  ss << " R = " << jetRadius;
+  TString textContext((TString)ss.str());
+  // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
+  return textContext;
+}
+
+
+
+
+
+
+TString contextDatasetRadiusCompAndVarRange(TString* mainContext, int iDataset, float* variableRange, const char options[]){
+  TString texcontextDatasetRadiusCompAndVarRange;
+  if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texcontextDatasetRadiusCompAndVarRange = "#splitline{"+*mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextPtRange(variableRange)+"}}";
+  }
+  if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texcontextDatasetRadiusCompAndVarRange = "#splitline{"+*mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextEtaRange(variableRange)+"}}";
+  }
+
+  return texcontextDatasetRadiusCompAndVarRange;
+}
+
+TString contextDatasetCompAndRadiusAndVarRange(TString* mainContext, float jetRadius, float* variableRange, const char options[]){
+  TString texcontextDatasetCompAndRadiusAndVarRange;
+  if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+*mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(variableRange)+"}}";
+  }
+  if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+*mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(variableRange)+"}}";
+  }
+
+  return texcontextDatasetCompAndRadiusAndVarRange;
+}
+
+TString contextDatasetCompAndRadius(TString* mainContext, float jetRadius, const char options[]){
+  TString texcontextDatasetCompAndRadius;
+  texcontextDatasetCompAndRadius = "#splitline{"+*mainContext+"}{"+contextJetRadius(jetRadius)+"}";
+
+  return texcontextDatasetCompAndRadius;
+}
+
+TString contextDatasetComp(TString* mainContext, const char options[]){
+  TString texcontextDatasetComp;
+  texcontextDatasetComp = *mainContext;
+
+  return texcontextDatasetComp;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////// Histogram Drawing /////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[], TF1** optionalFitCollection) {
   // has options:
-  // - "standardratio" : if in the options string, then an additional plot is drawn, the ratio of the histograms in the collection to the first histogram of the collection; the Y range is chosen automatically based on the difference to 1
-  // - "autoratio" : if in the options string, then an additional plot is drawn, the ratio of the histograms in the collection to the first histogram of the collection; the Y range is [0,2.2]
+  // - "autoratio" : if in the options string, the Y range is chosen automatically based on the difference to 1
+  // - "standardratio" : if in the options string, the Y range is [0,2.2]
   // - "logy" : if in the options string, then the y axis of the plot is set to a log scale (except for the ratio plot)
   // - "avoidFirst" : if in the options string, then the first histogram of the collection isn't plotted
 
@@ -74,6 +169,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   float minX_collection[collectionSize];
   float maxX_collection[collectionSize];
 
+  cout << "test1" << endl;
   // char* ratioOptionCheck = "ratio";
   // char* OptionPtr = &options;
 
@@ -98,6 +194,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       minY_collection[i] = histograms_collection[i]->GetMinimum();
     }
   }
+  cout << "test2" << endl;
 
   float maxX = findMaxFloat(maxX_collection, collectionSize);
   float minX = findMinFloat(minX_collection, collectionSize);
@@ -125,6 +222,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     } else {
       minY = 0.;
     }
+  cout << "test3" << endl;
 
     if (strstr(options, "autoratio") != NULL) {
       float deltaMax = max(1-minY, maxY-1);
@@ -148,7 +246,8 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   if (strstr(options, "logx") != NULL) {
     canvas->SetLogx();
   }
-  
+    cout << "test4" << endl;
+
   hFrame->SetXTitle(texXtitle->Data());
   hFrame->SetYTitle(texYtitle->Data());
   // hFrame->GetYaxis()->SetTitleOffset(2);
@@ -165,6 +264,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   if (collectionSize >= 6) {
     gStyle->SetPalette(kRainbow); // for the choice of marker's colours; only use this if we have many histograms in the same plot
   }
+  cout << "test5" << endl;
 
   // draws histograms from collection
   for (int i = 0; i < collectionSize; i++) {
@@ -192,6 +292,17 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   if (collectionSize >= 2) {
     leg->Draw("same");
   }
+  cout << "test6" << endl;
+
+  if (strstr(options, "ratioLine") != NULL) {
+    TLine myline(minX,1,maxX,1);
+    myline.SetLineColor(kBlack);
+    myline.SetLineWidth(1);
+    // myline.SetLineStyle(2);
+    myline.DrawLine(minX,1,maxX,1);
+		canvas->Modified();
+		canvas->Update();
+  }
 
   // adds some text on the plot
   TLatex* textInfo = new TLatex();
@@ -199,6 +310,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
   textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
   textInfo->DrawLatex(0.18,0.75,Context);
+  cout << "test7" << endl;
 
 
   struct stat st1{};
