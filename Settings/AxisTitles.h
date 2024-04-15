@@ -34,6 +34,7 @@ TString* texPtMeasured = new TString("#it{p}_{T}^{measured} (GeV/#it{c})");
 TString* texPtMC = new TString("#it{p}_{T}^{MC} (GeV/#it{c})");
 
 TString* texRatioDatasets = new TString(*texDatasetsComparisonType+"/"+*texDatasetsComparisonType+" "+DatasetsNames[0]); 
+TString* texRatioRun3Run2 = new TString("Run3 / Run2"); 
 
 TString* texRho = new TString("#it{#rho} (GeV/#it{c})");
 TString* texBkgFluctuationRandomCone = new TString("#delta #it{p}_{T} = #it{p}_{T,random cone} - #it{A}_{random cone} * #it{#rho} (GeV/c)");
@@ -52,6 +53,7 @@ TString* texMeanBkgFluctFit = new TString("<#it{#delta pt}>^{fit}");
 
 TString* texRhoMean = new TString("<#it{#rho}>");
 
+TString* texTrackEfficiency = new TString("#epsilon = nTrack_{assoc}^{sel8 coll} / nParticle_{gen}^{sel8 coll}");
 
 //////////////////////////
 ////////// Jets //////////
@@ -88,3 +90,6 @@ TString* texTrackPhiYield_EventNorm = new TString("1/#it{N}_{ev} d#it{N}_{track}
 TString* texTrackPtYield_EntriesNorm = new TString("1/#it{N}_{track} d#it{N}_{track}/d#it{p}_{T} (GeV/#it{c})^{-1}");
 TString* texTrackEtaYield_EntriesNorm = new TString("1/#it{N}_{track} d#it{N}_{track}/d#it{#eta}");
 TString* texTrackPhiYield_EntriesNorm = new TString("1/#it{N}_{track} d#it{N}_{track}/d#it{#phi}");
+TString* texTrackPtYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{p}_{T} (GeV/#it{c})^{-1}");
+TString* texTrackEtaYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{#eta}");
+TString* texTrackPhiYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{#phi}");

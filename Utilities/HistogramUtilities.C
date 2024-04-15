@@ -348,7 +348,7 @@ void Draw_TH1_Histogram(TH1D* H1D_Sigma_asFunctionOf_Centrality, TString Context
   // }
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[], TPolyLine* optionalLine) {
 
   double width = collectionSize*900;
   double height = 800;
@@ -406,6 +406,14 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     }
   }
 
+  if (strstr(options, "drawLines") != NULL) {
+    cout << "optionalLine->GetN() = " << optionalLine->GetN() << endl;
+    if (optionalLine->GetN() > 0) {
+      optionalLine->Draw("");
+      optionalLine->SetLineColor(kRed);
+    }
+  }
+
 
 
   gStyle->SetPalette(kBird); // a better palette than the kRainbow that was used by default; https://root.cern.ch/doc/master/classTColor.html lists it as one of the better palettes for Colour Vision Deficiencies 
@@ -432,4 +440,10 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
       mkdir("pngFolder/", 0700);
   }
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
+}
+
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
+  // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
+  TPolyLine* optionalLine;
+  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, options, optionalLine);
 }

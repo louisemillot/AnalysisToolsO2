@@ -424,26 +424,156 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 //                                         };
 // const TString analysisWorkflow = "jet-finder-charged-qa";
 
-//////// -------- Run 2 vs Run 3 comparison -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("CentralityWindows");
+
+// //////// -------- Run 2 vs Run 3 comparison -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("Run2Run3");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// const int nDatasets = 3;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_Area04_leadConstCut5", "LHC23zzh_apass2_Area04_leadConstCut0", "LHC23zzh_apass2_Area06_leadConstCut0"};
+// const TString DatasetsNames[nDatasets] = {"Area04_leadConstCut5", "Area04_leadConstCut0", "Area06_leadConstCut0"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow = "jet-finder-charged-qa";
+
+// //////// -------- stdRho centrality comparison -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("CentralityWindows");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122 - stdRho");
+// const int nDatasets = 6;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_stdRho_withCentralityCutWindows", "LHC23zzh_apass2_stdRho_withCentralityCutWindows", "LHC23zzh_apass2_stdRho_withCentralityCutWindows", "LHC23zzh_apass2_stdRho_withCentralityCutWindows", "LHC23zzh_apass2_stdRho_withCentralityCutWindows", "LHC23zzh_apass2_stdRho_withCentralityCutWindows"};
+// const TString DatasetsNames[nDatasets] = {"central0010", "central1020", "central2030", "central3040", "central4050", "central5090"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_1020",
+//                                           "jet-finder-charged-qa_central_2030",
+//                                           "jet-finder-charged-qa_central_3040",
+//                                           "jet-finder-charged-qa_central_4050",
+//                                           "jet-finder-charged-qa_central_5090",
+//                                           };
+
+
+// //////// -------- sparseRho centrality comparison -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("CentralityWindows");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122 - sparseRho");
+// const int nDatasets = 6;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sparseRho_withCentralityCutWindows", "LHC23zzh_apass2_sparseRho_withCentralityCutWindows", "LHC23zzh_apass2_sparseRho_withCentralityCutWindows", "LHC23zzh_apass2_sparseRho_withCentralityCutWindows", "LHC23zzh_apass2_sparseRho_withCentralityCutWindows", "LHC23zzh_apass2_sparseRho_withCentralityCutWindows"};
+// const TString DatasetsNames[nDatasets] = {"central0010", "central1020", "central2030", "central3040", "central4050", "central5090"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_1020",
+//                                           "jet-finder-charged-qa_central_2030",
+//                                           "jet-finder-charged-qa_central_3040",
+//                                           "jet-finder-charged-qa_central_4050",
+//                                           "jet-finder-charged-qa_central_5090",
+//                                           };
+
+
+
+// //////// -------- Sparse vs Standard Rho comparison - central 0-10% events -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("sparseVsStd");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sparseRho_withCentralityCutWindows", "LHC23zzh_apass2_stdRho_withCentralityCutWindows"};
+// const TString DatasetsNames[nDatasets] = {"sparseRho", "stdRho"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010"
+//                                           };
+
+
+// //////// -------- Standard Rho - central 0-10% events -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("UpperVsLowerArm");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_inclusive", "LHC23zzh_apass2_lowerArm"};
+// const TString DatasetsNames[nDatasets] = {"inclusive", "lowerArm"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+
+
+
+// //////// -------- Run Comparison - LHC23zzh apass 2 - central 0-10% -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("Run"); 
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh_apass2 - 0-10% - areaCut 0.4");
+// const int nDatasets = 8;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_run544124","LHC23zzh_apass2_run544123","LHC23zzh_apass2_run544122","LHC23zzh_apass2_run544121","LHC23zzh_apass2_run544116","LHC23zzh_apass2_run544098","LHC23zzh_apass2_run544095","LHC23zzh_apass2_run544091"};
+// const TString DatasetsNames[nDatasets] = {"run 544124","run 544123","run 544122","run 544121","run 544116","run 544098","run 544095","run 544091"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root")
+//                                       };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_0010"
+//                                           };
+
+
+// //////// -------- ITSROF and BC and GoodZvtxFT0PV cuts vs before -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("newEvtCuts");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// const int nDatasets = 5;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sel8ITSROFuBCuZvtxCut", "LHC23zzh_apass2_sel8ITSROFuBC", "LHC23zzh_apass2_sel8ITSROF", "LHC23zzh_apass2_sel8", "LHC23zzh_apass2_noSel"};
+// const TString DatasetsNames[nDatasets] = {"sel8ITSROFuBCuZvtxCut", "sel8ITSROFuBC", "sel8ITSROF", "sel8", "noSel"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+//////// -------- ITSROF and BC and GoodZvtxFT0PV cuts vs before -------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+const TString* texDatasetsComparisonType = new TString("newEvtCuts");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
-const int nDatasets = 6;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows", "LHC23zzh_apass2_withCentralityCutWindows"};
-const TString DatasetsNames[nDatasets] = {"central0010", "central1020", "central2030", "central3040", "central4050", "central5090"};
+const int nDatasets = 2;
+const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sel8", "LHC23zzh_apass2_sel8Full"};
+const TString DatasetsNames[nDatasets] = {"sel8", "sel8Full"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
-                                          "jet-finder-charged-qa_central_1020",
-                                          "jet-finder-charged-qa_central_2030",
-                                          "jet-finder-charged-qa_central_3040",
-                                          "jet-finder-charged-qa_central_4050",
-                                          "jet-finder-charged-qa_central_5090",
+const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+                                          "jet-finder-charged-qa"
                                           };
-
-

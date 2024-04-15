@@ -12,6 +12,8 @@
 #include "TRatioPlot.h"
 #include "TLegend.h"
 #include "TH1.h"
+#include "TPolyLine.h"
+
 // #include <RooUnfold.h>
 // #include "RooUnfoldResponse.h"
 // #include "RooUnfoldBayes.h"
@@ -70,6 +72,8 @@ void Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
 void Draw_Rho_vs_LeadingJetPt_DatasetComp();
 void Draw_BkgFluctuations_vs_Centrality_DatasetComp();
 void Draw_SelectedMultiplicity_vs_Centrality_DatasetComp();
+void Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio();
+void Draw_Rho_vs_SelectedMultiplicity_DatasetComp_withCutDemarcation() ;
 
 // Rebin comparison
 void Draw_Area_PtIntegrated_BinningComparison(int iDataset, float jetRadius, float* PtRange);
@@ -130,7 +134,7 @@ void JetQC() {
   // for(int iPtMinCut = 0; iPtMinCut < nPtMinCuts; iPtMinCut++){
   //   jetPtMinCut = jetPtMinCutArray[iPtMinCut];
 
-  //   float ptRange[2] = {jetPtMinCut, 200};
+    float ptRange[2] = {jetPtMinCut, 200};
   //   float PtRangeZoom0[2] = {jetPtMinCut, 100};
   //   float PtRangeZoom020[2] = {jetPtMinCut, 20};
   //   float PtRangeZoom2030[2] = {20, 30};
@@ -139,13 +143,13 @@ void JetQC() {
   //   float PtRangeZoom5060[2] = {50, 60};
   //   float PtRangeZoom8090[2] = {80, 90};
 
-  //   Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
-  //   Draw_Eta_DatasetComparison(jetR02, ptRange, "normEvents");
-  //   Draw_Eta_DatasetComparison(jetR06, ptRange, "normEvents");
-  //   Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
-  //   Draw_Area_PtIntegrated_DatasetComparison(jetRadiusForDataComp, ptRange);
-  //   Draw_Area_PtIntegrated_DatasetComparison(jetR02, ptRange);
-  //   Draw_Area_PtIntegrated_DatasetComparison(jetR06, ptRange);
+    // Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    // Draw_Eta_DatasetComparison(jetR02, ptRange, "normEvents");
+    // Draw_Eta_DatasetComparison(jetR06, ptRange, "normEvents");
+    // Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    // Draw_Area_PtIntegrated_DatasetComparison(jetRadiusForDataComp, ptRange);
+    // Draw_Area_PtIntegrated_DatasetComparison(jetR02, ptRange);
+    // Draw_Area_PtIntegrated_DatasetComparison(jetR06, ptRange);
 
   //   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
   //     Draw_Eta_RadiusComparison(iDataset, ptRange);
@@ -194,18 +198,20 @@ void JetQC() {
 
 
   // ////// Background //////
-  // Draw_Rho_vs_Centrality_DatasetComp();
+  Draw_Rho_vs_Centrality_DatasetComp();
   Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
-  // Draw_BkgFluctuations_vs_Centrality_DatasetComp();
+  // Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio();
+  // Draw_Rho_vs_SelectedMultiplicity_DatasetComp_withCutDemarcation();
+  Draw_BkgFluctuations_vs_Centrality_DatasetComp();
   // // Draw_SelectedMultiplicity_vs_Centrality_DatasetComp();
   // // Draw_Rho_vs_LeadingJetPt_DatasetComp();
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    // Draw_Rho_CentralityProjection(iDataset, "normEntries");
+    Draw_Rho_CentralityProjection(iDataset, "normEntries");
     // Draw_RhoMean_asFunctionOf_Centrality(iDataset,"");
-    // Draw_BkgFluctuations_CentralityProjection(iDataset, "normEntries");
+    Draw_BkgFluctuations_CentralityProjection(iDataset, "normEntries");
     // Draw_BkgFluctuations_withFit_CentralityProjection(iDataset);
     // Draw_Rho_withFit_NTracksProjection(iDataset);
-  // Draw_SelectedMultiplicity_CentralityProjection(iDataset, "normEntries");
+    Draw_SelectedMultiplicity_CentralityProjection(iDataset, "normEntries");
   }
 }
 
@@ -1392,6 +1398,30 @@ void Draw_Rho_vs_SelectedMultiplicity_DatasetComp() {
   Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, "logz,autoRangeSame");
 }
 
+void Draw_Rho_vs_SelectedMultiplicity_DatasetComp_withCutDemarcation() {
+
+  TH2D* H2D_rhoMult[nDatasets];
+  TH2D* H2D_rhoMult_rebinned[nDatasets];
+
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    H2D_rhoMult[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_ntracks_rho"))->Clone("Draw_Rho_vs_Mult"+Datasets[iDataset]);
+    H2D_rhoMult[iDataset]->Sumw2();
+
+    H2D_rhoMult_rebinned[iDataset] = (TH2D*)H2D_rhoMult[iDataset]->RebinX(1.,"H2D_rhoMult_rebinned"+Datasets[iDataset]);
+    // H2D_rhoMult_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_rhoMult_rebinned[iDataset]->FindLastBinAbove(1, 1)); //(asks for the last bin on the x axis (axis number 1) to have strictly more than 1 entry)
+    // H2D_rhoMult_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_rhoMult_rebinned[iDataset]->FindLastBinAbove(1, 2));
+  }
+
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_rho_vs_multiplicitySelected");
+
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+  float lineEdgesX[4] = {0, 500, 1200, 1200};
+  float lineEdgesY[4] = {10, 35, 84, 100};
+  TPolyLine* demarcation = new TPolyLine(4, lineEdgesX, lineEdgesY);
+  Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, "logz,autoRangeSame,drawLines", demarcation);
+}
+
 
 void Draw_Rho_vs_LeadingJetPt_DatasetComp() {
 
@@ -2293,6 +2323,36 @@ void Draw_Pt_Run2Run3Comparison_0010Cent_R040(int iDataset, const char options[]
   Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName2, texPtX, texJetPtYield_EventNorm_CentWindow, texCollisionDataInfo, "logx,logy");
 }
 
+void Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio() {
+
+  TH2D* H2D_rhoMult[nDatasets-1];
+  TH2D* H2D_rhoMult_rebinned[nDatasets-1];
+  TH2D* H2D_rhoMult_ratios[nDatasets-1];
+
+  TH2D* H2D_rhoMult_ref = (TH2D*)((TH2D*)file_O2Analysis_list[0]->Get(analysisWorkflow[0]+"/h2_ntracks_rho"))->Clone("Draw_Rho_vs_Mult_ref"+Datasets[0]);
+  H2D_rhoMult_ref->Sumw2();
+
+  TH2D* H2D_rhoMult_ref_rebinned = (TH2D*)H2D_rhoMult_ref->RebinX(1.,"H2D_rhoMult_ref_rebinned"+Datasets[0]);
+
+  bool divideSuccess = false;
+  for(int iDataset = 0; iDataset < nDatasets-1; iDataset++){
+    H2D_rhoMult[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset+1]->Get(analysisWorkflow[iDataset+1]+"/h2_ntracks_rho"))->Clone("Draw_Rho_vs_Mult"+Datasets[iDataset]);
+    H2D_rhoMult[iDataset]->Sumw2();
+
+    H2D_rhoMult_rebinned[iDataset] = (TH2D*)H2D_rhoMult[iDataset]->RebinX(1.,"H2D_rhoMult_rebinned"+Datasets[iDataset]);
+    // H2D_rhoMult_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_rhoMult_rebinned[iDataset]->FindLastBinAbove(1, 1)); //(asks for the last bin on the x axis (axis number 1) to have strictly more than 1 entry)
+    // H2D_rhoMult_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_rhoMult_rebinned[iDataset]->FindLastBinAbove(1, 2));
+
+    divideSuccess = H2D_rhoMult_ratios[iDataset]->Divide(H2D_rhoMult_rebinned[iDataset], H2D_rhoMult_ref_rebinned);
+    cout << "division of H2 for dataset " << iDataset << " is successful? " << divideSuccess << endl;
+  }
+
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_rho_vs_multiplicitySelected");
+
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+  Draw_TH2_Histograms(H2D_rhoMult_ratios, DatasetsNames, nDatasets-1, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, "logz,autoRangeSame");
+}
 
 // void Draw_Rho_vs_SelectedMultiplicity_CentralityComp(int iDataset) {
 
