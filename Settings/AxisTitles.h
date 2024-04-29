@@ -1,7 +1,7 @@
 // Commonly used titles
 
 ////////////////////////////////////////////
-////////////////// x-axis //////////////////
+////////////////// x-axis ////////////////// not really a good name for the separation anymore
 ////////////////////////////////////////////
 
 TString* texRapidity = new TString("y");
@@ -24,7 +24,7 @@ TString* texPtJetGenX = new TString("#it{p}_{T,jet gen} (GeV/#it{c})");
 
 
 ////////////////////////////////////////////
-////////////////// y-axis //////////////////
+////////////////// y-axis ////////////////// 
 ////////////////////////////////////////////
 
 TString* texPtDifferentialYield = new TString("1/#it{N}_{ev} d#it{N}/d#it{p}_{T} (GeV/#it{c})^{-1}");
@@ -32,6 +32,7 @@ TString* texCount = new TString("count");
 
 TString* texPtMeasured = new TString("#it{p}_{T}^{measured} (GeV/#it{c})");
 TString* texPtMC = new TString("#it{p}_{T}^{MC} (GeV/#it{c})");
+TString* texSigma1Pt = new TString("#sigma(#it{p}_{T})/#it{p}_{T}");
 
 TString* texRatioDatasets = new TString(*texDatasetsComparisonType+"/"+*texDatasetsComparisonType+" "+DatasetsNames[0]); 
 TString* texRatioRun3Run2 = new TString("Run3 / Run2"); 

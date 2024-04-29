@@ -12,6 +12,7 @@
 #include "TRatioPlot.h"
 #include "TLegend.h"
 #include "TH1.h"
+#include "THnSparse.h"
 // #include <RooUnfold.h>
 // #include "RooUnfoldResponse.h"
 // #include "RooUnfoldBayes.h"
@@ -57,6 +58,8 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset);
 void Draw_Phi_DatasetComparison_PtRange(float* PtRange); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 void Draw_Eta_DatasetComparison_PtRange(float* PtRange); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
+void Draw_Sigma1pt_vs_pt_DatasetComp();
+
 /////////////////////////////////////////////////////
 ///////////////////// Main Macro ////////////////////
 /////////////////////////////////////////////////////
@@ -73,21 +76,21 @@ void TrackQC() {
   // TString* Extra = new TString("");
 
 
-  Draw_Pt_DatasetComparison();
-  Draw_Eta_DatasetComparison();
-  Draw_Phi_DatasetComparison();
+  // Draw_Pt_DatasetComparison();
+  // Draw_Eta_DatasetComparison();
+  // Draw_Phi_DatasetComparison();
 
-  // Draw_Eta_DatasetComparison_EntriesNorm();
+  // // Draw_Eta_DatasetComparison_EntriesNorm();
 
 
-  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    Draw_Pt_CentralityComparison(iDataset);
-    Draw_Eta_CentralityComparison(iDataset);
-    Draw_Phi_CentralityComparison(iDataset);
-  }
-  // Draw_Pt_Run2Run3Comparison_0010Cent(iDataset);
-  // Draw_Eta_Run2Run3Comparison_0010Cent(iDataset);
-  // Draw_Phi_Run2Run3Comparison_0010Cent(iDataset);
+  // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+  //   Draw_Pt_CentralityComparison(iDataset);
+  //   Draw_Eta_CentralityComparison(iDataset);
+  //   Draw_Phi_CentralityComparison(iDataset);
+  // }
+  // // Draw_Pt_Run2Run3Comparison_0010Cent(iDataset);
+  // // Draw_Eta_Run2Run3Comparison_0010Cent(iDataset);
+  // // Draw_Phi_Run2Run3Comparison_0010Cent(iDataset);
 
   // float ptRange1[2] = {0.15, 100};
   // Draw_Phi_DatasetComparison_PtRange(ptRange1); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
@@ -101,6 +104,8 @@ void TrackQC() {
   // float ptRange4[2] = {4, 100};
   // Draw_Phi_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
   // Draw_Eta_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
+
+  Draw_Sigma1pt_vs_pt_DatasetComp();
 }
 
 /////////////////////////////////////////////////////
@@ -757,4 +762,32 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
   Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "");
+}
+
+
+
+
+void Draw_Sigma1pt_vs_pt_DatasetComp() {
+  THnSparse* HDsparse_cent_sigma1pt_pt[nDatasets];
+  TH3D* H3D_cent_sigma1pt_pt[nDatasets];
+
+  TH2D* H2D_sigma1pt_pt[nDatasets];
+  TH2D* H2D_sigma1pt_pt_rebinned[nDatasets];
+
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    HDsparse_cent_sigma1pt_pt[iDataset] = (THnSparse*)((THnSparse*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h3sparse_centrality_track_pt_track_sigma1overpt_track"))->Clone("Draw_Sigma1pt_vs_pt_DatasetComp"+Datasets[iDataset]);
+    H2D_sigma1pt_pt[iDataset] = (TH2D*)HDsparse_cent_sigma1pt_pt[iDataset]->Projection(2,1); // 2 is z-, 1 is y-, 0 is x-axis of HDsparse_cent_sigma1pt_pt; Projection asks in the order (y,x)
+    H2D_sigma1pt_pt[iDataset]->Sumw2();
+
+    // H2D_sigma1pt_pt_rebinned[iDataset] = (TH2D*)H2D_sigma1pt_pt[iDataset]->RebinX(1.,"H2D_sigma1pt_pt_rebinned"+Datasets[iDataset]);
+    // H2D_sigma1pt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigma1pt_pt_rebinned[iDataset]->GetNbinsX()-10);
+    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigma1pt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+  }
+
+  TString* pdfName = new TString("track_sigma1pt_vs_pt_DataComp");
+
+  // TString textContext(contextDatasetComp(""));
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+  Draw_TH2_Histograms(H2D_sigma1pt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigma1Pt, texCollisionDataInfo, drawnWindowAuto, "logz,autoRangeSame"); // ?
 }
