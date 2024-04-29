@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sstream>
+#include<array>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Various Utilities /////////////////////////////////////////////////////////////////////////////////////
@@ -84,6 +85,8 @@ TString contextCustomOneField(TString mainContext, const char options[]){
 
 TString contextPtRange(float* PtRange){
   std::stringstream ss;
+  ss.setf(std::ios::fixed);
+  ss.precision(0);
   ss << PtRange[0] << " < #it{p}_{T} < " << PtRange[1];
   TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
@@ -153,7 +156,7 @@ TString contextDatasetComp(TString* mainContext, const char options[]){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[], TF1** optionalFitCollection) {
+void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[], TF1** optionalFitCollection) {
   // has options:
   // - "autoratio" : if in the options string, the Y range is chosen automatically based on the difference to 1
   // - "standardratio" : if in the options string, the Y range is [0,2.2]
@@ -169,7 +172,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   float minX_collection[collectionSize];
   float maxX_collection[collectionSize];
 
-  cout << "test1" << endl;
+  // cout << "test1" << endl;
   // char* ratioOptionCheck = "ratio";
   // char* OptionPtr = &options;
 
@@ -177,65 +180,86 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     if (strstr(options, "autoXrange") != NULL) {
       maxX_collection[i] = histograms_collection[i]->FindLastBinAbove(0, 1);
       minX_collection[i] = histograms_collection[i]->FindFirstBinAbove(0,1);
+      // cout << "test1.1a" << endl;
     }
     else {
       maxX_collection[i] = histograms_collection[i]->GetXaxis()->GetXmax();
       minX_collection[i] = histograms_collection[i]->GetXaxis()->GetXmin();
+      // cout << "test1.1b" << endl;
     }
     maxY_collection[i] = histograms_collection[i]->GetMaximum();
+    // cout << "test1.2" << endl;
     
     if (strstr(options, "logy") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
       minY_collection[i] = histograms_collection[i]->GetMinimum(1E-10);
+      // cout << "test1.3a" << endl;
     }
     else if (strstr(options, "minYnotZero") != NULL) {
       minY_collection[i] = histograms_collection[i]->GetMinimum(GLOBAL_epsilon); // asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+      // cout << "test1.3b" << endl;
     }
     else {
       minY_collection[i] = histograms_collection[i]->GetMinimum();
+      // cout << "test1.3c" << endl;
     }
   }
-  cout << "test2" << endl;
+  // cout << "test2" << endl;
 
-  float maxX = findMaxFloat(maxX_collection, collectionSize);
-  float minX = findMinFloat(minX_collection, collectionSize);
-  float maxY = findMaxFloat(maxY_collection, collectionSize);
-  float minY = findMinFloat(minY_collection, collectionSize);
-  float yUpMarginScaling = 1.4;
-  float yDownMarginScaling = 1;
+  float yUpMarginScaling, yDownMarginScaling;
+  float maxX, minX, maxY, minY;
+  if (std::equal(std::begin(drawnWindow), std::end(drawnWindow), std::begin(drawnWindowAuto), std::end(drawnWindowAuto))) {
+    yUpMarginScaling = 1.4;
+    yDownMarginScaling = 1;
+    maxX = findMaxFloat(maxX_collection, collectionSize);
+    minX = findMinFloat(minX_collection, collectionSize);
+    maxY = findMaxFloat(maxY_collection, collectionSize);
+    minY = findMinFloat(minY_collection, collectionSize);
 
-
-
-  if (strstr(options, "logy") != NULL) {
-    yUpMarginScaling = 100;
-    if (minY < 0) {
-    } 
-    else if (minY < 1E-10) { // if minY is 0 logY won't like it
-      minY = minY+1E-10 ;
-    }
-    else {
-      minY = minY-1E-10 ; // to be sure to see the point?
-    }
-  } else {
-    if (minY < 0 || strstr(options, "minYnotZero") != NULL) {
-      minY > 0 ? yDownMarginScaling = 0.95 : yDownMarginScaling = 1.05;
-      yUpMarginScaling = 1.1;
+    if (strstr(options, "logy") != NULL) {
+      yUpMarginScaling = 100;
+      if (minY < 0) {
+      } 
+      else if (minY < 1E-10) { // if minY is 0 logY won't like it
+        minY = minY+1E-10 ;
+      }
+      else {
+        minY = minY-1E-10 ; // to be sure to see the point?
+      }
     } else {
-      minY = 0.;
-    }
-  cout << "test3" << endl;
+      if (minY < 0 || strstr(options, "minYnotZero") != NULL) {
+        minY > 0 ? yDownMarginScaling = 0.95 : yDownMarginScaling = 1.05;
+        yUpMarginScaling = 1.1;
+      } else {
+        minY = 0.;
+      }
+    // cout << "test3" << endl;
 
-    if (strstr(options, "autoratio") != NULL) {
-      float deltaMax = max(1-minY, maxY-1);
-      minY = max((float)0., 1-deltaMax);
-      maxY = 1+deltaMax;
-      yUpMarginScaling = 1.3;
+      if (strstr(options, "autoratio") != NULL) {
+        float deltaMax = max(1-minY, maxY-1);
+        minY = max((float)0., 1-deltaMax);
+        maxY = 1+deltaMax;
+        yUpMarginScaling = 1.3;
+      }
+      if (strstr(options, "standardratio") != NULL) {
+        minY = 0;
+        maxY = 2;
+        yUpMarginScaling = 1.1;
+      }
+      if (strstr(options, "efficiency") != NULL) {
+        minY = 0;
+        maxY = 1.5;
+        yUpMarginScaling = 1.1;
+      }
     }
-    if (strstr(options, "standardratio") != NULL) {
-      minY = 0;
-      maxY = 2;
-      yUpMarginScaling = 1.1;
-    }
+  } else { // if not drawnWindowAuto, then set the window to match the one entered in drawnWindow
+    yUpMarginScaling = 1;
+    yDownMarginScaling = 1;
+    minX = drawnWindow[0][0];
+    maxX = drawnWindow[0][1];
+    minY = drawnWindow[1][0];
+    maxY = drawnWindow[1][1];
   }
+
 
 
 
@@ -246,7 +270,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   if (strstr(options, "logx") != NULL) {
     canvas->SetLogx();
   }
-    cout << "test4" << endl;
+    // cout << "test4" << endl;
 
   hFrame->SetXTitle(texXtitle->Data());
   hFrame->SetYTitle(texYtitle->Data());
@@ -264,7 +288,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   if (collectionSize >= 6) {
     gStyle->SetPalette(kRainbow); // for the choice of marker's colours; only use this if we have many histograms in the same plot
   }
-  cout << "test5" << endl;
+  // cout << "test5" << endl;
 
   // draws histograms from collection
   for (int i = 0; i < collectionSize; i++) {
@@ -284,6 +308,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   }
   if (strstr(options, "fit") != NULL) {
     for (int i = 0; i < collectionSize; i++) {
+      optionalFitCollection[i]->SetNpx(2000);
       optionalFitCollection[i]->Draw("same");
       optionalFitCollection[i]->SetLineColor(histograms_collection[i]->GetLineColor());
     }
@@ -292,7 +317,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   if (collectionSize >= 2) {
     leg->Draw("same");
   }
-  cout << "test6" << endl;
+  // cout << "test6" << endl;
 
   if (strstr(options, "ratioLine") != NULL) {
     TLine myline(minX,1,maxX,1);
@@ -304,13 +329,25 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 		canvas->Update();
   }
 
+  if (strstr(options, "150MevLine") != NULL) {
+    float lineEdgesX[4] = {0.150, 0.150};
+    float lineEdgesY[4] = {0, yUpMarginScaling*maxY};
+    TPolyLine* Line150Mev = new TPolyLine(2, lineEdgesX, lineEdgesY);
+    cout << "Line150Mev->GetN() = " << Line150Mev->GetN() << endl;
+    if (Line150Mev->GetN() > 0) {
+      Line150Mev->Draw("");
+      Line150Mev->SetLineColor(kBlack);
+    }
+  }
+
+
   // adds some text on the plot
   TLatex* textInfo = new TLatex();
   textInfo->SetTextSize(0.04);
   textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
   textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
   textInfo->DrawLatex(0.18,0.75,Context);
-  cout << "test7" << endl;
+  // cout << "test7" << endl;
 
 
   struct stat st1{};
@@ -330,17 +367,17 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // }
 }
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
+void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
   TF1* optionalFitCollectionDummy[collectionSize];
-  Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, options, optionalFitCollectionDummy);
+  Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options, optionalFitCollectionDummy);
 }
 
-void Draw_TH1_Histogram(TH1D* H1D_Sigma_asFunctionOf_Centrality, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
+void Draw_TH1_Histogram(TH1D* H1D_Sigma_asFunctionOf_Centrality, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
   TH1D* singleHistArray[1] = {H1D_Sigma_asFunctionOf_Centrality};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
-  Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, options);
+  Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options);
 
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
@@ -348,7 +385,7 @@ void Draw_TH1_Histogram(TH1D* H1D_Sigma_asFunctionOf_Centrality, TString Context
   // }
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[], TPolyLine* optionalLine) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[], TPolyLine* optionalLine) {
 
   double width = collectionSize*900;
   double height = 800;
@@ -376,33 +413,45 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
 
-  if (strstr(options, "autoRangeSame") != NULL) {
-    int maxXbin = 0;
-    int maxYbin = 0;
-    int symBinLimitMin = 9999999;
-    for (int i = 0; i < collectionSize; i++) {
-      if (maxXbin < histograms_collection[i]->FindLastBinAbove(1, 1)) {
-        maxXbin = histograms_collection[i]->FindLastBinAbove(1, 1);// (asks for the first/last bin on the x axis (axis number 1) to have strictly more than 1 entry)
+  if (std::equal(std::begin(drawnWindow), std::end(drawnWindow), std::begin(drawnWindowAuto), std::end(drawnWindowAuto))) {
+    if (strstr(options, "autoRangeSame") != NULL) {
+      int maxXbin = 0;
+      int maxYbin = 0;
+      int symBinLimitMin = 9999999;
+      for (int i = 0; i < collectionSize; i++) {
+        if (maxXbin < histograms_collection[i]->FindLastBinAbove(1, 1)) {
+          maxXbin = histograms_collection[i]->FindLastBinAbove(1, 1);// (asks for the first/last bin on the x axis (axis number 1) to have strictly more than 1 entry)
+        }
+        if (maxYbin < histograms_collection[i]->FindLastBinAbove(1, 2)) {
+          maxYbin = histograms_collection[i]->FindLastBinAbove(1, 2);// (asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+        }
+        if (strstr(options, "autoRangeSameSym") != NULL) {
+          int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(1, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(1, 2)));
+          if (symBinLimitMin > symBinLimit) {
+            symBinLimitMin = symBinLimit;
+          }
+        }
       }
-      if (maxYbin < histograms_collection[i]->FindLastBinAbove(1, 2)) {
-        maxYbin = histograms_collection[i]->FindLastBinAbove(1, 2);// (asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
-      }
-      if (strstr(options, "autoRangeSameSym") != NULL) {
-        int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(1, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(1, 2)));
-        if (symBinLimitMin > symBinLimit) {
-          symBinLimitMin = symBinLimit;
+      for (int i = 0; i < collectionSize; i++) {
+        if (strstr(options, "autoRangeSameSym") != NULL) {
+          int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(1, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(1, 2))); //(asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+          histograms_collection[i]->GetYaxis()->SetRange(symBinLimitMin, histograms_collection[i]->GetNbinsY() - symBinLimitMin); //getting symmetric window around 0 on Y axis
+        }
+        else {
+          histograms_collection[i]->GetXaxis()->SetRange(1, maxXbin);
+          histograms_collection[i]->GetYaxis()->SetRange(1, maxYbin);
         }
       }
     }
+    // else draws with unchanged histogram window
+  } else { // if not drawnWindowAuto, then set the window to match the one entered in drawnWindow
+    int minX = drawnWindow[0][0];
+    int maxX = drawnWindow[0][1];
+    int minY = drawnWindow[1][0];
+    int maxY = drawnWindow[1][1];
     for (int i = 0; i < collectionSize; i++) {
-      if (strstr(options, "autoRangeSameSym") != NULL) {
-        int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(1, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(1, 2))); //(asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
-        histograms_collection[i]->GetYaxis()->SetRange(symBinLimitMin, histograms_collection[i]->GetNbinsY() - symBinLimitMin); //getting symmetric window around 0 on Y axis
-      }
-      else {
-        histograms_collection[i]->GetXaxis()->SetRange(1, maxXbin);
-        histograms_collection[i]->GetYaxis()->SetRange(1, maxYbin);
-      }
+      histograms_collection[i]->GetXaxis()->SetRangeUser(minX, maxX);
+      histograms_collection[i]->GetYaxis()->SetRangeUser(minY, maxY);
     }
   }
 
@@ -442,8 +491,8 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, const char options[]) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
   TPolyLine* optionalLine;
-  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, options, optionalLine);
+  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options, optionalLine);
 }

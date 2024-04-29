@@ -3,8 +3,8 @@
 // float GLOBAL_epsilon = 0.00001;
 
 // Analysis settings
-const int nJetFinderQaType = 4;
-const TString jetFinderQaHistType[nJetFinderQaType] = {"", "_rhoareasubtracted", "_rhoareasubtracted_areacut", "_eventwiseconstituentsubtracted"};
+const int nJetFinderQaType = 3;
+const TString jetFinderQaHistType[nJetFinderQaType] = {"", "_rhoareasubtracted", "_eventwiseconstituentsubtracted"};
 const int nJetType = 3;
 const TString jetType[nJetType] = {"charged", "neutral", "full"};
 const int nJetLevel = 3;
@@ -24,12 +24,12 @@ const int iJetType = 0;
 const int iJetLevel = 0;
 
 // Choice of jet QA type (uncorrected jets, background corrected jet (rho area version), background corrected jet (rho area version) with area cut)
-const int iJetFinderQaType = 0;
+const int iJetFinderQaType = 1;
 
 const float areaDisplayMax[nRadius] = {0.5, 1, 1.5};
 
-const int nCentralityBins = 7;
-const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 60, 80, 100};
+const int nCentralityBins = 6;
+const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 50, 90};
 // const int nCentralityBins = 3;
 // const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 90};
 
@@ -564,13 +564,57 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-//////// -------- ITSROF and BC and GoodZvtxFT0PV cuts vs before -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("newEvtCuts");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// //////// -------- sel8 vs sel8Full - ITSROF and BC and GoodZvtxFT0PV cuts vs before -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("newEvtCuts");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sel8", "LHC23zzh_apass2_sel8Full"};
+// const TString DatasetsNames[nDatasets] = {"sel8", "sel8Full"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+// //////// -------- sel8Full - apass2 - centrality comp -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("centralityWindow");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sel8Full", "LHC23zzh_apass2_sel8Full"};
+// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_5090"
+//                                           };
+
+// //////// -------- apass3 vs apass 2 with sel8Full -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("apass3v2");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh run 544122");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sel8Full", "LHC23zzh_apass3_sel8Full"};
+// const TString DatasetsNames[nDatasets] = {"apass2", "apass3"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+
+
+//////// -------- Run 2 vs Run 3 comparison -------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV or 5.02 TeV"); 
+const TString* texDatasetsComparisonType = new TString("Run2Run3");
+const TString* texDatasetsComparisonCommonDenominator = new TString("");
 const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sel8", "LHC23zzh_apass2_sel8Full"};
-const TString DatasetsNames[nDatasets] = {"sel8", "sel8Full"};
+const TString Datasets[nDatasets] = {"LHC23zzh_apass3_sel8Full", "LHC18q"};
+const TString DatasetsNames[nDatasets] = {"LHC23zzh", "LHC18q"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };
