@@ -86,8 +86,10 @@ TString contextCustomOneField(TString mainContext, const char options[]){
 TString contextPtRange(float* PtRange){
   std::stringstream ss;
   ss.setf(std::ios::fixed);
+  ss.precision(2);
+  ss << PtRange[0] << " < #it{p}_{T} < ";
   ss.precision(0);
-  ss << PtRange[0] << " < #it{p}_{T} < " << PtRange[1];
+  ss << PtRange[1];
   TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
   return textContext;

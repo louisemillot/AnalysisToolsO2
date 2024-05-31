@@ -143,11 +143,11 @@ void JetQC() {
   //   float PtRangeZoom5060[2] = {50, 60};
   //   float PtRangeZoom8090[2] = {80, 90};
 
-    Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
-    Draw_Eta_DatasetComparison(jetR02, ptRange, "normEvents");
-    Draw_Eta_DatasetComparison(jetR06, ptRange, "normEvents");
-    Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
-    Draw_Area_PtIntegrated_DatasetComparison(jetRadiusForDataComp, ptRange);
+    // Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    // Draw_Eta_DatasetComparison(jetR02, ptRange, "normEvents");
+    // Draw_Eta_DatasetComparison(jetR06, ptRange, "normEvents");
+    // Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    // Draw_Area_PtIntegrated_DatasetComparison(jetRadiusForDataComp, ptRange);
     // Draw_Area_PtIntegrated_DatasetComparison(jetR02, ptRange);
     // Draw_Area_PtIntegrated_DatasetComparison(jetR06, ptRange);
 
@@ -162,18 +162,18 @@ void JetQC() {
     //   // Draw_NTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom8090);
 
       // 2D plots
-      Draw_JetArea_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
-      Draw_JetNTracks_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
-      Draw_JetPhi_vs_JetEta_RadiusComparison(iDataset);
-      Draw_JetEta_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
-      Draw_JetPhi_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
+      // Draw_JetArea_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
+      // Draw_JetNTracks_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
+      // Draw_JetPhi_vs_JetEta_RadiusComparison(iDataset);
+      // Draw_JetEta_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
+      // Draw_JetPhi_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
     }
   
   //   // Draw_Area_PtIntegrated_BinningComparison(iDataset, 0.6, ptRange);
   }
 
-  Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
-  Draw_Pt_ratio_etaNeg_etaPos_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
+  // Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
+  // Draw_Pt_ratio_etaNeg_etaPos_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
   
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
     // Draw_Pt_RadiusComparison(iDataset, etaRangeSym);
@@ -198,20 +198,20 @@ void JetQC() {
 
 
   ////// Background //////
-  Draw_Rho_vs_Centrality_DatasetComp();
-  Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
+  // Draw_Rho_vs_Centrality_DatasetComp();
+  // Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
   // Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio();
   Draw_BkgFluctuations_vs_Centrality_DatasetComp();
-  Draw_SelectedMultiplicity_vs_Centrality_DatasetComp();
+  // Draw_SelectedMultiplicity_vs_Centrality_DatasetComp();
   // Draw_Rho_vs_LeadingJetPt_DatasetComp();
   std::array<std::array<float, 2>, 2> drawnWindowBkgFluctZoom = {{{-20, 20}, 
                                                                   {0.001, 12}}}; // xmin, ymin, xmax, ymax
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    // Draw_Rho_withFit_NTracksProjection(iDataset); // don't use, not really finished, nor really important I think
-    Draw_Rho_CentralityProjection(iDataset, "normEntries");
-    // Draw_RhoMean_asFunctionOf_Centrality(iDataset,"");
+  //   // Draw_Rho_withFit_NTracksProjection(iDataset); // don't use, not really finished, nor really important I think
+  //   Draw_Rho_CentralityProjection(iDataset, "normEntries");
+  //   // Draw_RhoMean_asFunctionOf_Centrality(iDataset,"");
     Draw_BkgFluctuations_withFit_CentralityProjection(iDataset, drawnWindowBkgFluctZoom);
-    // Draw_SelectedMultiplicity_CentralityProjection(iDataset, "normEntries");
+  //   // Draw_SelectedMultiplicity_CentralityProjection(iDataset, "normEntries");
   }
 }
 

@@ -28,10 +28,10 @@ const int iJetFinderQaType = 1;
 
 const float areaDisplayMax[nRadius] = {0.5, 1, 1.5};
 
-const int nCentralityBins = 6;
-const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 50, 90};
-// const int nCentralityBins = 3;
-// const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 90};
+// const int nCentralityBins = 6;
+// const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 50, 90};
+const int nCentralityBins = 3;
+const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 90};
 
  
 const int nTracksBins = 11;
@@ -608,16 +608,53 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 
 
 
-//////// -------- Run 2 vs Run 3 comparison -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV or 5.02 TeV"); 
-const TString* texDatasetsComparisonType = new TString("Run2Run3");
+// //////// -------- Run 2 vs Run 3 comparison -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV or 5.02 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("Run2Run3");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass3_sel8Full", "LHC18q"};
+// const TString DatasetsNames[nDatasets] = {"LHC23zzh", "LHC18q"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+// //////// -------- sel8Full vs GoodZvtxFT0PV vs sel8 -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("newEvtCuts");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass 2 run 544122");
+// const int nDatasets = 4;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_sel8", "LHC23zzh_apass2_sel8uZvtxCut", "LHC23zzh_apass2_sel8uBC", "LHC23zzh_apass2_sel8Full"};
+// const TString DatasetsNames[nDatasets] = {"sel8", "sel8uZvtxCut", "sel8uBC", "sel8Full"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+
+//////// -------- sel8Full - apass 3 - centrality comp -------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+const TString* texDatasetsComparisonType = new TString("centralityWindow");
 const TString* texDatasetsComparisonCommonDenominator = new TString("");
 const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass3_sel8Full", "LHC18q"};
-const TString DatasetsNames[nDatasets] = {"LHC23zzh", "LHC18q"};
+const TString Datasets[nDatasets] = {"LHC23zzh_apass3_sel8Full", "LHC23zzh_apass3_sel8Full"};
+// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+const TString DatasetsNames[nDatasets] = {"", ""};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_5090"
+//                                           };
 const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
                                           "jet-finder-charged-qa"
                                           };

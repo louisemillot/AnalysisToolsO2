@@ -59,6 +59,7 @@ void Draw_Phi_DatasetComparison_PtRange(float* PtRange); //works only on modifie
 void Draw_Eta_DatasetComparison_PtRange(float* PtRange); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
 void Draw_Sigma1pt_vs_pt_DatasetComp();
+void Draw_Sigma1pt_nonGlobal_uniformTracks();
 
 /////////////////////////////////////////////////////
 ///////////////////// Main Macro ////////////////////
@@ -88,9 +89,11 @@ void TrackQC() {
   //   Draw_Eta_CentralityComparison(iDataset);
   //   Draw_Phi_CentralityComparison(iDataset);
   // }
-  // // Draw_Pt_Run2Run3Comparison_0010Cent(iDataset);
-  // // Draw_Eta_Run2Run3Comparison_0010Cent(iDataset);
-  // // Draw_Phi_Run2Run3Comparison_0010Cent(iDataset);
+  // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+  //   Draw_Pt_Run2Run3Comparison_0010Cent(iDataset);
+  //   Draw_Eta_Run2Run3Comparison_0010Cent(iDataset);
+  //   Draw_Phi_Run2Run3Comparison_0010Cent(iDataset);
+  // }
 
   // float ptRange1[2] = {0.15, 100};
   // Draw_Phi_DatasetComparison_PtRange(ptRange1); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
@@ -106,6 +109,7 @@ void TrackQC() {
   // Draw_Eta_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
   Draw_Sigma1pt_vs_pt_DatasetComp();
+  Draw_Sigma1pt_nonGlobal_uniformTracks();
 }
 
 /////////////////////////////////////////////////////
@@ -207,7 +211,7 @@ void Draw_Pt_DatasetComparison() {
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_pt"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
+    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_pt"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
     H1D_trackPt[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackPt_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
 
 
@@ -249,7 +253,7 @@ void Draw_Eta_DatasetComparison() {
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
 
-    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
+    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
     H1D_trackEta[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
 
     H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned"+Datasets[iDataset]);
@@ -288,7 +292,7 @@ void Draw_Eta_DatasetComparison_EntriesNorm() {
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
+    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
     H1D_trackEta[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
 
     H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned_EntriesNorm"+Datasets[iDataset]);
@@ -328,7 +332,7 @@ void Draw_Phi_DatasetComparison() {
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
+    H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
     H1D_trackPhi[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackPhi_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
 
     H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]);
@@ -369,7 +373,7 @@ void Draw_Eta_DatasetComparison_PtRange(float* PtRange) { //works only on modifi
   float PtCutLow =0;
   float PtCutHigh = 0;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    H3D_trackPtEtaPhi[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h_track_pt_track_eta_track_phi"))->Clone("Draw_Eta_DatasetComparison_PtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
+    H3D_trackPtEtaPhi[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h_track_pt_track_eta_track_phi"))->Clone("Draw_Eta_DatasetComparison_PtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
 
     PtCutLow = PtRange[0];
     PtCutHigh = PtRange[1];
@@ -420,7 +424,7 @@ void Draw_Phi_DatasetComparison_PtRange(float* PtRange) { //works only on modifi
   float PtCutLow =0;
   float PtCutHigh = 0;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    H3D_trackPtEtaPhi[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h_track_pt_track_eta_track_phi"))->Clone("Draw_Phi_DatasetComparison_PtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
+    H3D_trackPtEtaPhi[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h_track_pt_track_eta_track_phi"))->Clone("Draw_Phi_DatasetComparison_PtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
 
     PtCutLow = PtRange[0];
     PtCutHigh = PtRange[1];
@@ -463,7 +467,7 @@ void Draw_Pt_CentralityComparison(int iDataset) {
   TH1D* H1D_trackPt[nCentralityBins];
   TH1D* H1D_trackPt_rebinned[nCentralityBins];
   
-  H3D_trackPttrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_pt"))->Clone("Draw_Pt_CentralityComparison"+Datasets[iDataset]);
+  H3D_trackPttrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_pt"))->Clone("Draw_Pt_CentralityComparison"+Datasets[iDataset]);
   H3D_trackPttrackCent->Sumw2();
 
   int ibinCent_low, ibinCent_high;
@@ -501,7 +505,7 @@ void Draw_Eta_CentralityComparison(int iDataset) {
   TH1D* H1D_trackEta[nCentralityBins];
   TH1D* H1D_trackEta_rebinned[nCentralityBins];
   
-  H3D_trackEtatrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_eta"))->Clone("Draw_Eta_CentralityComparison"+Datasets[iDataset]);
+  H3D_trackEtatrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_CentralityComparison"+Datasets[iDataset]);
   H3D_trackEtatrackCent->Sumw2();
 
   int ibinCent_low, ibinCent_high;
@@ -535,7 +539,7 @@ void Draw_Phi_CentralityComparison(int iDataset) {
   TH1D* H1D_trackPhi[nCentralityBins];
   TH1D* H1D_trackPhi_rebinned[nCentralityBins];
   
-  H3D_trackPhitrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_phi"))->Clone("Draw_Phi_CentralityComparison"+Datasets[iDataset]);
+  H3D_trackPhitrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_CentralityComparison"+Datasets[iDataset]);
   H3D_trackPhitrackCent->Sumw2();
 
   int ibinCent_low, ibinCent_high;
@@ -569,23 +573,24 @@ void Draw_Pt_Run2Run3Comparison_0010Cent(int iDataset) {
 
   int ibinCent_low, ibinCent_high;
 
-
+  cout << "o2physics" << endl;
   // O2Physics Run 3
 
   TH2D* H3D_trackPttrackCent;
   TH1D* H1D_trackPt;
   TH1D* H1D_trackPt_rebinned;
 
-  H3D_trackPttrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_pt"))->Clone("Draw_Pt_CentralityComparison"+Datasets[iDataset]);
+  H3D_trackPttrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_pt"))->Clone("Draw_Pt_CentralityComparison"+DatasetsNames[iDataset]);
   H3D_trackPttrackCent->Sumw2();
 
   ibinCent_low = H3D_trackPttrackCent->GetXaxis()->FindBin((double)0 + GLOBAL_epsilon);
-  ibinCent_high = H3D_trackPttrackCent->GetXaxis()->FindBin((double)10 - GLOBAL_epsilon)-1;
-  H1D_trackPt = (TH1D*)H3D_trackPttrackCent->ProjectionY("trackPt_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
-  H1D_trackPt_rebinned = (TH1D*)H1D_trackPt->Rebin(1.,"trackPt_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
+  ibinCent_high = H3D_trackPttrackCent->GetXaxis()->FindBin((double)10 - GLOBAL_epsilon);
+  H1D_trackPt = (TH1D*)H3D_trackPttrackCent->ProjectionY("trackPt_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
+  H1D_trackPt_rebinned = (TH1D*)H1D_trackPt->Rebin(1.,"trackPt_rebinned_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
   NormaliseYieldToNEvents(H1D_trackPt_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10));
 
+  cout << "aliPhysics" << endl;
   // AliPhysics Run 2
 
   TH1D* H1D_run2_trackPt;
@@ -603,15 +608,17 @@ void Draw_Pt_Run2Run3Comparison_0010Cent(int iDataset) {
 
   H1D_run2_trackPt_rebinned->Scale(1./nEvents_CentWindow,"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
 
+  cout << "ratio" << endl;
   // ratio
 
   TH1D* H1D_trackVar_rebinned_ratio;
   bool divideSuccess = false;
 
-  H1D_trackVar_rebinned_ratio = (TH1D*)H1D_trackPt_rebinned->Clone("trackVar_rebinned_ratios"+Datasets[iDataset]);
+  H1D_trackVar_rebinned_ratio = (TH1D*)H1D_trackPt_rebinned->Clone("trackVar_rebinned_ratios"+DatasetsNames[iDataset]);
   H1D_trackVar_rebinned_ratio->Reset("M");
   divideSuccess = H1D_trackVar_rebinned_ratio->Divide(H1D_trackPt_rebinned, H1D_run2_trackPt_rebinned);
 
+  cout << "plotting" << endl;
   // plotting
   TH1D* hist_list[2] = {H1D_trackPt_rebinned, H1D_run2_trackPt_rebinned};
   TString RunCompLegend[2];
@@ -626,13 +633,13 @@ void Draw_Pt_Run2Run3Comparison_0010Cent(int iDataset) {
   ss.str("");
   ss.clear();
 
-  TString* pdfName = new TString("track_Run2_vs_Run3_"+Datasets[iDataset]+"_Pt");
-  TString* pdfName_ratio = new TString("track_Run2_vs_Run3_"+Datasets[iDataset]+"_Pt_ratio");
+  TString* pdfName = new TString("track_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_@cent[00,10]_Pt");
+  TString* pdfName_ratio = new TString("track_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_@cent[00,10]_Pt_ratio");
 
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
   Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logy");
-  TString* pdfName2 = new TString("track_Run2_vs_Run3_"+Datasets[iDataset]+"_Pt_logx");
+  TString* pdfName2 = new TString("track_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_@cent[00,10]_Pt_logx");
   Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName2, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
   if (divideSuccess == true) {
     Draw_TH1_Histogram(H1D_trackVar_rebinned_ratio, textContext, pdfName_ratio, texPtX, texRatioRun3Run2, texCollisionDataInfo, drawnWindowAuto, "autoratio, logx, ratioLine");
@@ -653,13 +660,13 @@ void Draw_Eta_Run2Run3Comparison_0010Cent(int iDataset) {
   TH1D* H1D_trackEta;
   TH1D* H1D_trackEta_rebinned;
 
-  H3D_trackEtatrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_eta"))->Clone("Draw_Eta_CentralityComparison"+Datasets[iDataset]);
+  H3D_trackEtatrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_CentralityComparison"+DatasetsNames[iDataset]);
   H3D_trackEtatrackCent->Sumw2();
 
   ibinCent_low = H3D_trackEtatrackCent->GetXaxis()->FindBin((double)0 + GLOBAL_epsilon);
-  ibinCent_high = H3D_trackEtatrackCent->GetXaxis()->FindBin((double)10 - GLOBAL_epsilon)-1;
-  H1D_trackEta = (TH1D*)H3D_trackEtatrackCent->ProjectionY("trackEta_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
-  H1D_trackEta_rebinned = (TH1D*)H1D_trackEta->Rebin(1.,"trackEta_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
+  ibinCent_high = H3D_trackEtatrackCent->GetXaxis()->FindBin((double)10 - GLOBAL_epsilon);
+  H1D_trackEta = (TH1D*)H3D_trackEtatrackCent->ProjectionY("trackEta_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
+  H1D_trackEta_rebinned = (TH1D*)H1D_trackEta->Rebin(1.,"trackEta_rebinned_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
   NormaliseYieldToNEvents(H1D_trackEta_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10));
 
@@ -696,7 +703,7 @@ void Draw_Eta_Run2Run3Comparison_0010Cent(int iDataset) {
 
 
 
-  TString* pdfName = new TString("track_Run2_vs_Run3_"+Datasets[iDataset]+"_Eta");
+  TString* pdfName = new TString("track_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_@cent[00,10]_Eta");
 
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
@@ -714,13 +721,13 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
   TH1D* H1D_trackPhi;
   TH1D* H1D_trackPhi_rebinned;
 
-  H3D_trackPhitrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h2_centrality_track_phi"))->Clone("Draw_Phi_CentralityComparison"+Datasets[iDataset]);
+  H3D_trackPhitrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_CentralityComparison"+DatasetsNames[iDataset]);
   H3D_trackPhitrackCent->Sumw2();
 
   ibinCent_low = H3D_trackPhitrackCent->GetXaxis()->FindBin((double)0 + GLOBAL_epsilon);
-  ibinCent_high = H3D_trackPhitrackCent->GetXaxis()->FindBin((double)10 - GLOBAL_epsilon)-1;
-  H1D_trackPhi = (TH1D*)H3D_trackPhitrackCent->ProjectionY("trackPhi_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
-  H1D_trackPhi_rebinned = (TH1D*)H1D_trackPhi->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
+  ibinCent_high = H3D_trackPhitrackCent->GetXaxis()->FindBin((double)10 - GLOBAL_epsilon);
+  H1D_trackPhi = (TH1D*)H3D_trackPhitrackCent->ProjectionY("trackPhi_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
+  H1D_trackPhi_rebinned = (TH1D*)H1D_trackPhi->Rebin(1.,"trackPhi_rebinned_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
   NormaliseYieldToNEvents(H1D_trackPhi_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10));
 
@@ -757,7 +764,7 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
 
 
 
-  TString* pdfName = new TString("track_Run2_vs_Run3_"+Datasets[iDataset]+"_Phi");
+  TString* pdfName = new TString("track_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_@cent[00,10]_Phi");
 
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
@@ -768,15 +775,15 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
 
 
 void Draw_Sigma1pt_vs_pt_DatasetComp() {
-  THnSparse* HDsparse_cent_sigma1pt_pt[nDatasets];
+  TH3D* HDsparse_cent_sigma1pt_pt[nDatasets];
   TH3D* H3D_cent_sigma1pt_pt[nDatasets];
 
   TH2D* H2D_sigma1pt_pt[nDatasets];
   TH2D* H2D_sigma1pt_pt_rebinned[nDatasets];
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    HDsparse_cent_sigma1pt_pt[iDataset] = (THnSparse*)((THnSparse*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow+"/h3sparse_centrality_track_pt_track_sigma1overpt_track"))->Clone("Draw_Sigma1pt_vs_pt_DatasetComp"+Datasets[iDataset]);
-    H2D_sigma1pt_pt[iDataset] = (TH2D*)HDsparse_cent_sigma1pt_pt[iDataset]->Projection(2,1); // 2 is z-, 1 is y-, 0 is x-axis of HDsparse_cent_sigma1pt_pt; Projection asks in the order (y,x)
+    HDsparse_cent_sigma1pt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_sigma1overpt"))->Clone("Draw_Sigma1pt_vs_pt_DatasetComp"+Datasets[iDataset]);
+    H2D_sigma1pt_pt[iDataset] = (TH2D*)HDsparse_cent_sigma1pt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigma1pt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
     H2D_sigma1pt_pt[iDataset]->Sumw2();
 
     // H2D_sigma1pt_pt_rebinned[iDataset] = (TH2D*)H2D_sigma1pt_pt[iDataset]->RebinX(1.,"H2D_sigma1pt_pt_rebinned"+Datasets[iDataset]);
@@ -790,4 +797,40 @@ void Draw_Sigma1pt_vs_pt_DatasetComp() {
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
   Draw_TH2_Histograms(H2D_sigma1pt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigma1Pt, texCollisionDataInfo, drawnWindowAuto, "logz,autoRangeSame"); // ?
+}
+
+void Draw_Sigma1pt_nonGlobal_uniformTracks() {
+  // function hardcoded for the case: dataset1, dataset2 = globalTracks, uniformTracks
+  if (nDatasets != 2) {
+    cout << "Draw_Sigma1pt_nonGlobal_uniformTracks should only be run with nDatasets = 2" << endl;
+  }
+  TH3D* HDsparse_cent_sigma1pt_pt[nDatasets];
+  TH3D* H3D_cent_sigma1pt_pt[nDatasets];
+
+  TH2D* H2D_sigma1pt_pt[nDatasets];
+  TH2D* H2D_sigma1pt_pt_rebinned[nDatasets];
+
+  TH2D* H2D_sigma1pt_pt_nonGlobal_uniformTracks[1];
+
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    HDsparse_cent_sigma1pt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_sigma1overpt"))->Clone("Draw_Sigma1pt_vs_pt_DatasetComp"+Datasets[iDataset]);
+    H2D_sigma1pt_pt[iDataset] = (TH2D*)HDsparse_cent_sigma1pt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigma1pt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+    H2D_sigma1pt_pt[iDataset]->Sumw2();
+
+    // H2D_sigma1pt_pt_rebinned[iDataset] = (TH2D*)H2D_sigma1pt_pt[iDataset]->RebinX(1.,"H2D_sigma1pt_pt_rebinned"+Datasets[iDataset]);
+    // H2D_sigma1pt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigma1pt_pt_rebinned[iDataset]->GetNbinsX()-10);
+    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigma1pt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+  }
+
+  H2D_sigma1pt_pt_nonGlobal_uniformTracks[0] = (TH2D*)H2D_sigma1pt_pt[1]->Clone("H2D_sigma1pt_pt_nonGlobal_uniformTracks");
+  // H2D_sigma1pt_pt_nonGlobal_uniformTracks[0]->Scale(-1.);
+  H2D_sigma1pt_pt_nonGlobal_uniformTracks[0]->Add(H2D_sigma1pt_pt[0],-1.);
+
+  TString* pdfName = new TString("Draw_Sigma1pt_nonGlobal_uniformTracks");
+
+  // TString textContext(contextDatasetComp(""));
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+  TString DatasetsName[1] = {"nonGlobal uniformTracks"};
+
+  Draw_TH2_Histograms(H2D_sigma1pt_pt_nonGlobal_uniformTracks, DatasetsName, 1, textContext, pdfName, texPtX, texSigma1Pt, texCollisionDataInfo, drawnWindowAuto, "logz,autoRangeSame"); // ?
 }

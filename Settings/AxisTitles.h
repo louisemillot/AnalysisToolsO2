@@ -21,6 +21,11 @@ TString* texLeadJetPt = new TString("#it{p}_{T,lead jet} (GeV/#it{c})");
 TString* texPtJetRecX = new TString("#it{p}_{T,jet rec} (GeV/#it{c})");
 TString* texPtJetGenX = new TString("#it{p}_{T,jet gen} (GeV/#it{c})");
 
+TString* texVx = new TString("part Vx");
+TString* texVy = new TString("part Vy");
+TString* texVz = new TString("part Vz");
+
+TString* texIUy = new TString("track IU y (cm)");
 
 
 ////////////////////////////////////////////
@@ -55,6 +60,13 @@ TString* texMeanBkgFluctFit = new TString("<#it{#delta pt}>^{fit}");
 TString* texRhoMean = new TString("<#it{#rho}>");
 
 TString* texTrackEfficiency = new TString("#epsilon = nTrack_{assoc}^{sel8 coll} / nParticle_{gen}^{sel8 coll}");
+
+TString* texPartVxYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dV_{x}");
+TString* texPartVyYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dV_{y}");
+TString* texPartVzYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dV_{z}");
+
+TString* texPartYYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dy");
+
 
 //////////////////////////
 ////////// Jets //////////
