@@ -41,25 +41,46 @@ std::vector<double> GetTH1Bins(TH1* H1_histo) {
   return bins;
 }
 
-TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY){
+TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, bool debug = false){
+  if (debug == true) {cout << "___________ begin RebinVariableBins2D, nBinsX = " << nBinsX << ", nBinsY = " << nBinsY << endl;}
+  // int debugCount = 0;
 
   TH2D H2D_hist_rebinned("H2D_hist_rebinned", "H2D_hist_rebinned", nBinsX, binsX, nBinsY, binsY);
-
-  for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){
-    for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){
-      H2D_hist_rebinned.Fill(H2D_hist->GetXaxis()->GetBinCenter(iBinX), H2D_hist->GetYaxis()->GetBinCenter(iBinY), H2D_hist->GetBinContent(iBinX, iBinY));
+  // cout << "H2D_hist->GetEntries() = " << H2D_hist->GetEntries() << endl;
+  // for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){
+  //   for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){
+  //     for (int iEntries_bin = 1; iEntries_bin <= H2D_hist->GetBinContent(iBinX, iBinY); iEntries_bin++){ // doing this loop because using fill(x, y, weight = H2D_hist->GetBinContent(iBinX, iBinY)) instead doesn't increment the number of entries by N=weight but by N=1.
+  //       H2D_hist_rebinned.Fill(H2D_hist_rebinned.FindBin(H2D_hist->GetXaxis()->GetBinCenter(iBinX)), H2D_hist_rebinned.FindBin(H2D_hist->GetYaxis()->GetBinCenter(iBinY))); // only works if histogram isn't weighted
+  //       debugCount += 1;
+  //     }
+  //   }
+  // }
+  // cout << "debugCount = " << debugCount << endl;
+  int ibinX_low, ibinX_high, ibinY_low, ibinY_high;
+  // for(int iBinX = 1; iBinX <= nBinsX; iBinX++){
+  for(int iBinX = 0; iBinX <= nBinsX+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
+    if (debug == true) {cout << "iBinX = " << iBinX << endl;}
+    // for(int iBinY = 1; iBinY <= nBinsY; iBinY++){
+    for(int iBinY = 0; iBinY <= nBinsY+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
+      ibinX_low = H2D_hist->GetXaxis()->FindBin(H2D_hist_rebinned.GetXaxis()->GetBinLowEdge(iBinX) ); // according to definition of getbinlowedge, it does work for under/overflows by giving the low edge of bin 1 minus the bin width (calculated assuming bins of equal sizes in all the axis); in fact, it works regardless of the value of iBin even for Nbin+2 or more (https://root.cern.ch/doc/master/classTAxis.html#a6d2d17ef00382842f58e88f356516a0d)
+      ibinX_high = H2D_hist->GetXaxis()->FindBin(H2D_hist_rebinned.GetXaxis()->GetBinLowEdge(iBinX+1)) - 1;
+      ibinY_low = H2D_hist->GetYaxis()->FindBin(H2D_hist_rebinned.GetYaxis()->GetBinLowEdge(iBinY) );
+      ibinY_high = H2D_hist->GetYaxis()->FindBin(H2D_hist_rebinned.GetYaxis()->GetBinLowEdge(iBinY+1) ) - 1;
+      H2D_hist_rebinned.SetBinContent(iBinX, iBinY, H2D_hist->Integral(ibinX_low, ibinX_high, ibinY_low, ibinY_high));
+      if (debug == true) {cout << "ibinX_low = " << ibinX_low << ", ibinX_high = " << ibinX_high << ", ibinY_low = " << ibinY_low << ", ibinY_high = " << ibinY_high << "         --------          H2D_hist_rebinned(iBinX, iBinY) = " << H2D_hist_rebinned.GetBinContent(iBinX, iBinY) << endl;}
     }
   }
-  cout << "RebinVariableBins2D - what of the errors" << endl;
-  cout << "H2D_hist_rebinned nbins X =" << H2D_hist_rebinned.GetNbinsX() << endl;
+  H2D_hist_rebinned.ResetStats(); // setbincontent interacts weirdly with getentries(); resetstats makes it so that getentries gives the sum of bin contents correctly
+  if (debug == true) {cout << "RebinVariableBins2D - what of the errors" << endl;}
+  if (debug == true) {cout << "H2D_hist nbins X =" << H2D_hist->GetNbinsX() << endl;}
+  if (debug == true) {cout << "H2D_hist_rebinned nbins X =" << H2D_hist_rebinned.GetNbinsX() << endl;}
 
   std::stringstream ss;
   ss << H2D_hist->GetName() << "_RebinVariableBins2D";
   TString histName((TString)ss.str());
 
-  // H2D_hist->Reset("M");
-  // H2D_hist = (TH2D*)(&H2D_hist_rebinned)->Clone(histName);
-  // cout << "H2D_hist nbins X =" << H2D_hist->GetNbinsX() << endl;
+  if (debug == true) {cout << "___________ end RebinVariableBins2D" << endl;}
+
   return H2D_hist_rebinned;
 }
 
@@ -152,6 +173,18 @@ TString contextDatasetComp(TString* mainContext, const char options[]){
 
   return texcontextDatasetComp;
 }
+
+void CentralityLegend(TString* centralityLegend, const float arrayCentralityIntervals[][2], int nCentralityBins){
+  std::stringstream ss;
+  ss.precision(2);
+  for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
+    ss << "" << arrayCentralityIntervals[iCentralityBin][0] << "-" << arrayCentralityIntervals[iCentralityBin][1] << "%";
+    centralityLegend[iCentralityBin] = (TString)ss.str();
+    ss.str("");
+    ss.clear();
+  }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Histogram Drawing /////////////////////////////////////////////////////////////////////////////////////
@@ -375,15 +408,15 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options, optionalFitCollectionDummy);
 }
 
-void Draw_TH1_Histogram(TH1D* H1D_Sigma_asFunctionOf_Centrality, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
-  TH1D* singleHistArray[1] = {H1D_Sigma_asFunctionOf_Centrality};
+void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
+  TH1D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
   Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options);
 
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
-  //   cout << "H1D_Sigma_asFunctionOf_Centrality->GetBinContent(iCentralityBin) = " << H1D_Sigma_asFunctionOf_Centrality->GetBinContent(iCentralityBin) << endl;
+  //   cout << "histogram->GetBinContent(iCentralityBin) = " << histogram->GetBinContent(iCentralityBin) << endl;
   // }
 }
 
@@ -465,10 +498,15 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     }
   }
 
-
+  cout << "---------------- TH2 drawing; getting min and max test:" << endl;
+  for (int i = 0; i < collectionSize; i++) {
+    histograms_collection[i]->GetZaxis()->SetRangeUser(histograms_collection[i]->GetMinimum(GLOBAL_epsilon), histograms_collection[i]->GetMaximum());
+    cout << "min = " << histograms_collection[i]->GetMinimum(GLOBAL_epsilon) << ", max = " << histograms_collection[i]->GetMaximum() << endl;
+  }
 
   gStyle->SetPalette(kBird); // a better palette than the kRainbow that was used by default; https://root.cern.ch/doc/master/classTColor.html lists it as one of the better palettes for Colour Vision Deficiencies 
-
+  gStyle->SetNumberContours(100);
+  
   // // adds some text on the plot
   TLatex* textInfo = new TLatex();
   textInfo->SetTextSize(0.04);
@@ -497,4 +535,17 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
   TPolyLine* optionalLine;
   Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options, optionalLine);
+}
+
+
+void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
+  TH2D* singleHistArray[1] = {histogram};
+  TString dummyLegend[1] = {(TString)""};
+  int dummyCollectionSize = 1;
+  Draw_TH2_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options);
+
+
+  // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
+  //   cout << "histogram->GetBinContent(iCentralityBin) = " << histogram->GetBinContent(iCentralityBin) << endl;
+  // }
 }

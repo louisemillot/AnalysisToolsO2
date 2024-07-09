@@ -16,7 +16,6 @@ float arrayRadius[nRadius] = {0.2, 0.4, 0.6};
 // const int nRadius = 9;
 // const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.25", "R = 0.3", "R = 0.35", "R = 0.4", "R = 0.45", "R = 0.5", "R = 0.55", "R = 0.6"};
 // float arrayRadius[nRadius] = {0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6};
-const TString dummyName[1] = {""};
 // Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
 const int iJetType = 0;
 const int iJetLevel = 0;
@@ -176,18 +175,95 @@ const double deltaEtaMcVsTrackEfficiency = 0;
 //                                           };
 
 
-//////// -------- LHC24b1 vs ppJetAnchored -------- ////////
+// //////// -------- LHC24b1 vs ppJetAnchored -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("TrackSel");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh_apass3");
+// const int nDatasets = 3;
+// const TString Datasets[nDatasets] = {"AnalysisResults_LHC24b1_noTrackSel", "AnalysisResults_ppJets_likeLHC24b1_noTrackSel", "AnalysisResults_unanchored_ppJets"};
+// const TString DatasetsNames[nDatasets] = {"LHC24b1", "ppJetsAnchored", "ppJetsUnanchored"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile(Datasets[0]+".root"),
+//                                         new TFile(Datasets[1]+".root"),
+//                                         new TFile(Datasets[2]+".root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"qa-event-track/Tracks",
+//                                           "qa-event-track/Tracks",
+//                                           "qa-event-track/Tracks"
+//                                           };
+
+// //////// -------- Track efficiency calculation dcaz cut comparison - avec DCAz cut 2cm-------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("EfficiencyCalc");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24d2");
+// const int nDatasets = 15;
+// const TString Datasets[nDatasets] = {"LHC24d2_3", "LHC24d2_3", "LHC24d2_3", "LHC24d2_2", "LHC24d2_1", "LHC24d2_2", "LHC24d2_1", "LHC24d2_2", "LHC24d2_1", "LHC24d2_3", "LHC24d2_3", "LHC24d2_3", "LHC24d2_2", "LHC24d2_2", "LHC24d2_1"};
+// const TString DatasetsNames[nDatasets] = {"uniform DCAz 0.005", "uniform DCAz 0.01", "uniform DCAz 0.03", "uniform DCAz 0.05", "uniform DCAz 0.1", "uniform DCAz 0.2", "uniform DCAz 0.5", "uniform DCAz 1.0", "uniform DCAz 2.0", "global DCAz 0.005", "global DCAz 0.01", "global DCAz 0.03", "global DCAz 0.05", "global DCAz 1.0", "global DCAz 2.0"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[11]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[12]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[13]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[14]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"track-efficiency_uniformTracks_DCAz0005",
+//                                             "track-efficiency_uniformTracks_DCAxyz001",
+//                                             "track-efficiency_uniformTracks_DCAz003",
+//                                             "track-efficiency_uniformTracks_DCAxy005_id13159",
+//                                             "track-efficiency_uniformTracks_DCAxy01_id13159",
+//                                             "track-efficiency_uniformTracks_DCAxy02_id13159",
+//                                             "track-efficiency_uniformTracks_DCAxy05_id13159",
+//                                             "track-efficiency_uniformTracks_DCAxy1_id13159",
+//                                             "track-efficiency_id13159",
+//                                             "track-efficiency_globalTracks_DCAz0005",
+//                                             "track-efficiency_globalTracks_DCAz001",
+//                                             "track-efficiency_globalTracks_DCAz003",
+//                                             "track-efficiency_globalTracks_DCAxy005_id13171",
+//                                             "track-efficiency_globalTracks_DCAxy1_id13171",
+//                                             "track-efficiency_id13171",
+//                                           };
+
+
+//////// -------- Track efficiency calculation dcaz cut comparison - avec DCAz cut sans 2cm-------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("TrackSel");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh_apass3");
-const int nDatasets = 3;
-const TString Datasets[nDatasets] = {"AnalysisResults_LHC24b1_noTrackSel", "AnalysisResults_ppJets_likeLHC24b1_noTrackSel", "AnalysisResults_unanchored_ppJets"};
-const TString DatasetsNames[nDatasets] = {"LHC24b1", "ppJetsAnchored", "ppJetsUnanchored"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile(Datasets[0]+".root"),
-                                        new TFile(Datasets[1]+".root"),
-                                        new TFile(Datasets[2]+".root")
+const TString* texDatasetsComparisonType = new TString("EfficiencyCalc");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24d2");
+const int nDatasets = 13;
+const TString Datasets[nDatasets] = {"LHC24d2_3", "LHC24d2_3", "LHC24d2_3", "LHC24d2_2", "LHC24d2_1", "LHC24d2_2", "LHC24d2_1", "LHC24d2_2", "LHC24d2_3", "LHC24d2_3", "LHC24d2_3", "LHC24d2_2", "LHC24d2_2"};
+const TString DatasetsNames[nDatasets] = {"uniform DCAz 0.005", "uniform DCAz 0.01", "uniform DCAz 0.03", "uniform DCAz 0.05", "uniform DCAz 0.1", "uniform DCAz 0.2", "uniform DCAz 0.5", "uniform DCAz 1.0", "global DCAz 0.005", "global DCAz 0.01", "global DCAz 0.03", "global DCAz 0.05", "global DCAz 1.0"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[11]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[12]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"qa-event-track/Tracks",
-                                          "qa-event-track/Tracks",
-                                          "qa-event-track/Tracks"
+const TString analysisWorkflow[nDatasets] = {"track-efficiency_uniformTracks_DCAz0005",
+                                            "track-efficiency_uniformTracks_DCAxyz001",
+                                            "track-efficiency_uniformTracks_DCAz003",
+                                            "track-efficiency_uniformTracks_DCAxy005_id13159",
+                                            "track-efficiency_uniformTracks_DCAxy01_id13159",
+                                            "track-efficiency_uniformTracks_DCAxy02_id13159",
+                                            "track-efficiency_uniformTracks_DCAxy05_id13159",
+                                            "track-efficiency_uniformTracks_DCAxy1_id13159",
+                                            "track-efficiency_globalTracks_DCAz0005",
+                                            "track-efficiency_globalTracks_DCAz001",
+                                            "track-efficiency_globalTracks_DCAz003",
+                                            "track-efficiency_globalTracks_DCAxy005_id13171",
+                                            "track-efficiency_globalTracks_DCAxy1_id13171"
                                           };

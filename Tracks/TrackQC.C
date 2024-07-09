@@ -58,8 +58,13 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset);
 void Draw_Phi_DatasetComparison_PtRange(float* PtRange); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 void Draw_Eta_DatasetComparison_PtRange(float* PtRange); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
-void Draw_Sigma1pt_vs_pt_DatasetComp();
-void Draw_Sigma1pt_nonGlobal_uniformTracks();
+void Draw_Sigmapt_vs_pt_DatasetComp();
+
+void Draw_Sigmapt_vs_pt_DatasetComp_legacyTH3();
+void Draw_Sigmapt_nonGlobal_uniformTracks_legacyTH3();
+void Draw_Sigmapt_nonGlobal_uniformTracks_fromSubtraction_legacyTH3();
+void Draw_Sigmapt_nonGlobal_uniformTracks_centralEta_legacyTH3();
+void Draw_Sigmapt_vs_pt_DatasetComp_centralEta_legacyTH3();
 
 /////////////////////////////////////////////////////
 ///////////////////// Main Macro ////////////////////
@@ -108,8 +113,11 @@ void TrackQC() {
   // Draw_Phi_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
   // Draw_Eta_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
-  Draw_Sigma1pt_vs_pt_DatasetComp();
-  Draw_Sigma1pt_nonGlobal_uniformTracks();
+  Draw_Sigmapt_vs_pt_DatasetComp();
+  // Draw_Sigmapt_nonGlobal_uniformTracks();
+  // Draw_Sigmapt_nonGlobal_uniformTracks_fromSubtraction();
+  // Draw_Sigmapt_nonGlobal_uniformTracks_centralEta();
+  // Draw_Sigmapt_vs_pt_DatasetComp_centralEta();
 }
 
 /////////////////////////////////////////////////////
@@ -774,63 +782,280 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
 
 
 
-void Draw_Sigma1pt_vs_pt_DatasetComp() {
-  TH3D* HDsparse_cent_sigma1pt_pt[nDatasets];
-  TH3D* H3D_cent_sigma1pt_pt[nDatasets];
+void Draw_Sigmapt_vs_pt_DatasetComp_legacyTH3() {
+  TH3D* HDsparse_cent_sigmapt_pt[nDatasets];
+  TH3D* H3D_cent_sigmapt_pt[nDatasets];
 
-  TH2D* H2D_sigma1pt_pt[nDatasets];
-  TH2D* H2D_sigma1pt_pt_rebinned[nDatasets];
+  TH2D* H2D_sigmapt_pt[nDatasets];
+  TH2D* H2D_sigmapt_pt_rebinned[nDatasets];
+
+  TH1D* H1D_sigmapt_pt_X_forMedian[nDatasets];
+
+  TH1D* H1D_sigmapt_pt_mean[nDatasets];
+  TH1D* H1D_sigmapt_pt_mean_withProfile[nDatasets];
+  TH1D* H1D_sigmapt_pt_median[nDatasets];
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    HDsparse_cent_sigma1pt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_sigma1overpt"))->Clone("Draw_Sigma1pt_vs_pt_DatasetComp"+Datasets[iDataset]);
-    H2D_sigma1pt_pt[iDataset] = (TH2D*)HDsparse_cent_sigma1pt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigma1pt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
-    H2D_sigma1pt_pt[iDataset]->Sumw2();
+    HDsparse_cent_sigmapt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_sigmapt"))->Clone("Draw_Sigmapt_vs_pt_DatasetComp"+Datasets[iDataset]);
+    H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+    H2D_sigmapt_pt[iDataset]->Sumw2();
 
-    // H2D_sigma1pt_pt_rebinned[iDataset] = (TH2D*)H2D_sigma1pt_pt[iDataset]->RebinX(1.,"H2D_sigma1pt_pt_rebinned"+Datasets[iDataset]);
-    // H2D_sigma1pt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigma1pt_pt_rebinned[iDataset]->GetNbinsX()-10);
-    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigma1pt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+    // H2D_sigmapt_pt_rebinned[iDataset] = (TH2D*)H2D_sigmapt_pt[iDataset]->RebinX(1.,"H2D_sigmapt_pt_rebinned"+Datasets[iDataset]);
+    // H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigmapt_pt_rebinned[iDataset]->GetNbinsX()-10);
+    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigmapt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+
+    H1D_sigmapt_pt_mean[iDataset] = (TH1D*)HDsparse_cent_sigmapt_pt[iDataset]->ProjectionY("H1D_sigmapt_pt_mean"+Datasets[iDataset], 0, -1, 0, -1, "e");
+    H1D_sigmapt_pt_median[iDataset] = (TH1D*)HDsparse_cent_sigmapt_pt[iDataset]->ProjectionY("H1D_sigmapt_pt_median"+Datasets[iDataset], 0, -1, 0, -1, "e");
+    
+    H1D_sigmapt_pt_mean_withProfile[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProfileX("H1D_sigmapt_pt_mean_withProfile"+Datasets[iDataset], 0, -1, "e");
+
+
+
+    // get mean of sigmapt
+    for(int iBin = 1; iBin <= H1D_sigmapt_pt_mean[iDataset]->GetNbinsX(); iBin++){
+      H2D_sigmapt_pt[iDataset]->GetXaxis()->SetRange(iBin,iBin);
+
+      H1D_sigmapt_pt_mean[iDataset]->SetBinContent(iBin, H2D_sigmapt_pt[iDataset]->GetMean(2));
+      H1D_sigmapt_pt_mean[iDataset]->SetBinError(iBin, H2D_sigmapt_pt[iDataset]->GetMeanError(2));
+      // use TH1::GetMean(axisNumber 1/2/3), GetMeanError() after using setrange
+    }
+
+    // median instead of mean:
+    double x, q;
+    q = 0.5;
+    for(int iBin = 1; iBin <= H1D_sigmapt_pt_median[iDataset]->GetNbinsX(); iBin++){
+      // H2D_sigmapt_pt[iDataset]->GetXaxis()->SetRange(iBin,iBin);
+      H1D_sigmapt_pt_X_forMedian[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H2D_sigmapt_pt_X"+Datasets[iDataset], iBin, iBin, "e");
+
+      H1D_sigmapt_pt_X_forMedian[iDataset]->GetQuantiles(1, &x, &q);
+      H1D_sigmapt_pt_median[iDataset]->SetBinContent(iBin, x);
+      H1D_sigmapt_pt_median[iDataset]->SetBinError(iBin, 0.0001); // no idea how to get the error on the median calculation
+    }
+
   }
 
-  TString* pdfName = new TString("track_sigma1pt_vs_pt_DataComp");
+  TString* pdfName = new TString("track_sigmapt_vs_pt_DataComp");
+  TString* pdfName_logy = new TString("track_sigmapt_vs_pt_DataComp_logy");
+
+  TString* pdfName_mean = new TString("track_sigmapt_mean_vs_pt_DataComp");
+  TString* pdfName_mean_logy = new TString("track_sigmapt_mean_vs_pt_DataComp_logy");
+
+  TString* pdfName_mean_withProfile = new TString("track_sigmapt_mean_vs_pt_DataComp_withProfile");
+  TString* pdfName_mean_withProfile_logy = new TString("track_sigmapt_mean_vs_pt_DataComp_withProfile_logy");
+
+  TString* pdfName_median = new TString("track_sigmapt_median_vs_pt_DataComp");
+  TString* pdfName_median_logy = new TString("track_sigmapt_median_vs_pt_DataComp_logy");
 
   // TString textContext(contextDatasetComp(""));
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH2_Histograms(H2D_sigma1pt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigma1Pt, texCollisionDataInfo, drawnWindowAuto, "logz,autoRangeSame"); // ?
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logz,autoRangeSame"); // ?
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName_logy, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logy,logz,autoRangeSame"); // ?
+
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean, DatasetsNames, nDatasets, textContext, pdfName_mean, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean, DatasetsNames, nDatasets, textContext, pdfName_mean_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx");
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
 }
 
-void Draw_Sigma1pt_nonGlobal_uniformTracks() {
-  // function hardcoded for the case: dataset1, dataset2 = globalTracks, uniformTracks
-  if (nDatasets != 2) {
-    cout << "Draw_Sigma1pt_nonGlobal_uniformTracks should only be run with nDatasets = 2" << endl;
-  }
-  TH3D* HDsparse_cent_sigma1pt_pt[nDatasets];
-  TH3D* H3D_cent_sigma1pt_pt[nDatasets];
+void Draw_Sigmapt_nonGlobal_uniformTracks_legacyTH3() {
+  TH3D* HDsparse_cent_sigmapt_pt[nDatasets];
+  TH3D* H3D_cent_sigmapt_pt[nDatasets];
 
-  TH2D* H2D_sigma1pt_pt[nDatasets];
-  TH2D* H2D_sigma1pt_pt_rebinned[nDatasets];
-
-  TH2D* H2D_sigma1pt_pt_nonGlobal_uniformTracks[1];
+  TH2D* H2D_sigmapt_pt[nDatasets];
+  TH2D* H2D_sigmapt_pt_rebinned[nDatasets];
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    HDsparse_cent_sigma1pt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_sigma1overpt"))->Clone("Draw_Sigma1pt_vs_pt_DatasetComp"+Datasets[iDataset]);
-    H2D_sigma1pt_pt[iDataset] = (TH2D*)HDsparse_cent_sigma1pt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigma1pt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
-    H2D_sigma1pt_pt[iDataset]->Sumw2();
+    HDsparse_cent_sigmapt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_sigmapt_nonGlobal_uniformTracks"))->Clone("Draw_Sigmapt_vs_pt_DatasetComp"+Datasets[iDataset]);
+    H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+    H2D_sigmapt_pt[iDataset]->Sumw2();
 
-    // H2D_sigma1pt_pt_rebinned[iDataset] = (TH2D*)H2D_sigma1pt_pt[iDataset]->RebinX(1.,"H2D_sigma1pt_pt_rebinned"+Datasets[iDataset]);
-    // H2D_sigma1pt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigma1pt_pt_rebinned[iDataset]->GetNbinsX()-10);
-    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigma1pt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+    // H2D_sigmapt_pt_rebinned[iDataset] = (TH2D*)H2D_sigmapt_pt[iDataset]->RebinX(1.,"H2D_sigmapt_pt_rebinned"+Datasets[iDataset]);
+    // H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigmapt_pt_rebinned[iDataset]->GetNbinsX()-10);
+    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigmapt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
   }
 
-  H2D_sigma1pt_pt_nonGlobal_uniformTracks[0] = (TH2D*)H2D_sigma1pt_pt[1]->Clone("H2D_sigma1pt_pt_nonGlobal_uniformTracks");
-  // H2D_sigma1pt_pt_nonGlobal_uniformTracks[0]->Scale(-1.);
-  H2D_sigma1pt_pt_nonGlobal_uniformTracks[0]->Add(H2D_sigma1pt_pt[0],-1.);
+  TString* pdfName = new TString("track_sigmapt_nonGlobal_uniformTracks_fromWorkflow");
 
-  TString* pdfName = new TString("Draw_Sigma1pt_nonGlobal_uniformTracks");
+  // TString textContext(contextDatasetComp(""));
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logz,autoRangeSame"); // ?
+}
+
+void Draw_Sigmapt_nonGlobal_uniformTracks_fromSubtraction_legacyTH3() {
+  // function hardcoded for the case: dataset1, dataset2 = globalTracks, uniformTracks
+  if (nDatasets != 2) {
+    cout << "Draw_Sigmapt_nonGlobal_uniformTracks should only be run with nDatasets = 2" << endl;
+  }
+  TH3D* HDsparse_cent_sigmapt_pt[nDatasets];
+  TH3D* H3D_cent_sigmapt_pt[nDatasets];
+
+  TH2D* H2D_sigmapt_pt[nDatasets];
+  TH2D* H2D_sigmapt_pt_rebinned[nDatasets];
+
+  TH2D* H2D_sigmapt_pt_nonGlobal_uniformTracks[1];
+
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    HDsparse_cent_sigmapt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_sigmapt"))->Clone("Draw_Sigmapt_nonGlobal_uniformTracks_subtract"+Datasets[iDataset]);
+    H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+    H2D_sigmapt_pt[iDataset]->Sumw2();
+
+    // H2D_sigmapt_pt_rebinned[iDataset] = (TH2D*)H2D_sigmapt_pt[iDataset]->RebinX(1.,"H2D_sigmapt_pt_rebinned"+Datasets[iDataset]);
+    // H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigmapt_pt_rebinned[iDataset]->GetNbinsX()-10);
+    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigmapt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+  }
+
+  H2D_sigmapt_pt_nonGlobal_uniformTracks[0] = (TH2D*)H2D_sigmapt_pt[1]->Clone("H2D_sigmapt_pt_nonGlobal_uniformTracks");
+  // H2D_sigmapt_pt_nonGlobal_uniformTracks[0]->Scale(-1.);
+  H2D_sigmapt_pt_nonGlobal_uniformTracks[0]->Add(H2D_sigmapt_pt[0],-1.);
+
+  TString* pdfName = new TString("track_sigmapt_nonGlobal_uniformTracks_fromSubtraction");
 
   // TString textContext(contextDatasetComp(""));
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
   TString DatasetsName[1] = {"nonGlobal uniformTracks"};
 
-  Draw_TH2_Histograms(H2D_sigma1pt_pt_nonGlobal_uniformTracks, DatasetsName, 1, textContext, pdfName, texPtX, texSigma1Pt, texCollisionDataInfo, drawnWindowAuto, "logz,autoRangeSame"); // ?
+  Draw_TH2_Histograms(H2D_sigmapt_pt_nonGlobal_uniformTracks, DatasetsName, 1, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx, logz,autoRangeSame"); // ?
+}
+
+
+void Draw_Sigmapt_nonGlobal_uniformTracks_centralEta_legacyTH3() {
+  TH3D* HDsparse_cent_sigmapt_pt[nDatasets];
+  TH3D* H3D_cent_sigmapt_pt[nDatasets];
+
+  TH2D* H2D_sigmapt_pt[nDatasets];
+  TH2D* H2D_sigmapt_pt_rebinned[nDatasets];
+
+  int ibinEta_low, ibinEta_high;
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    HDsparse_cent_sigmapt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_eta_track_pt_track_sigmapt_nonGlobal_uniformTracks"))->Clone("Draw_Sigmapt_nonGlobal_uniformTracks_centralEta"+Datasets[iDataset]);
+
+    ibinEta_low = HDsparse_cent_sigmapt_pt[iDataset]->GetXaxis()->FindBin((double)(-0.1) + GLOBAL_epsilon);
+    ibinEta_high = HDsparse_cent_sigmapt_pt[iDataset]->GetXaxis()->FindBin((double)0.1 - GLOBAL_epsilon);
+    HDsparse_cent_sigmapt_pt[iDataset]->GetXaxis()->SetRange(ibinEta_low, ibinEta_high);
+    H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+    H2D_sigmapt_pt[iDataset]->Sumw2();
+
+    // H2D_sigmapt_pt_rebinned[iDataset] = (TH2D*)H2D_sigmapt_pt[iDataset]->RebinX(1.,"H2D_sigmapt_pt_rebinned"+Datasets[iDataset]);
+    // H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigmapt_pt_rebinned[iDataset]->GetNbinsX()-10);
+    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigmapt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+  }
+
+  TString* pdfName = new TString("track_sigmapt_nonGlobal_uniformTracks_@eta[-0.1;0.1]");
+
+  // TString textContext(contextDatasetComp(""));
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logz,autoRangeSame"); // ?
+}
+
+void Draw_Sigmapt_vs_pt_DatasetComp_centralEta_legacyTH3() {
+  TH3D* HDsparse_cent_sigmapt_pt[nDatasets];
+  TH3D* H3D_cent_sigmapt_pt[nDatasets];
+
+  TH2D* H2D_sigmapt_pt[nDatasets];
+  TH2D* H2D_sigmapt_pt_rebinned[nDatasets];
+
+  int ibinEta_low, ibinEta_high;
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    HDsparse_cent_sigmapt_pt[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_eta_track_pt_track_sigmapt"))->Clone("Draw_Sigmapt_vs_pt_DatasetComp_centralEta"+Datasets[iDataset]);
+
+    ibinEta_low = HDsparse_cent_sigmapt_pt[iDataset]->GetXaxis()->FindBin((double)(-0.1) + GLOBAL_epsilon);
+    ibinEta_high = HDsparse_cent_sigmapt_pt[iDataset]->GetXaxis()->FindBin((double)0.1 - GLOBAL_epsilon);
+    HDsparse_cent_sigmapt_pt[iDataset]->GetXaxis()->SetRange(ibinEta_low, ibinEta_high);
+    H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+    H2D_sigmapt_pt[iDataset]->Sumw2();
+  }
+
+  TString* pdfName = new TString("track_sigmapt_vs_pt_DataComp_@eta[-0.1;0.1]");
+
+  // TString textContext(contextDatasetComp(""));
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logz,autoRangeSame"); // ?
+}
+
+
+
+void Draw_Sigmapt_vs_pt_DatasetComp() {
+  TH3D* HDsparse_cent_sigmapt_pt[nDatasets];
+  TH3D* H3D_cent_sigmapt_pt[nDatasets];
+
+  TH2D* H2D_sigmapt_pt[nDatasets];
+  TH2D* H2D_sigmapt_pt_rebinned[nDatasets];
+
+  TH1D* H1D_sigmapt_pt_X_forMedian[nDatasets];
+
+  TH1D* H1D_sigmapt_pt_mean[nDatasets];
+  TH1D* H1D_sigmapt_pt_mean_withProfile[nDatasets];
+  TH1D* H1D_sigmapt_pt_median[nDatasets];
+
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    H2D_sigmapt_pt[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_track_pt_track_sigmapt"))->Clone("Draw_Sigmapt_vs_pt_DatasetComp"+Datasets[iDataset]);
+    // H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+    // H2D_sigmapt_pt[iDataset]->Sumw2();
+
+    // H2D_sigmapt_pt_rebinned[iDataset] = (TH2D*)H2D_sigmapt_pt[iDataset]->RebinX(1.,"H2D_sigmapt_pt_rebinned"+Datasets[iDataset]);
+    // H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigmapt_pt_rebinned[iDataset]->GetNbinsX()-10);
+    // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigmapt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+    H1D_sigmapt_pt_mean[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H1D_sigmapt_pt_mean"+Datasets[iDataset], 0, -1, "e");
+    H1D_sigmapt_pt_median[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H1D_sigmapt_pt_median"+Datasets[iDataset], 0, -1, "e");
+    
+    H1D_sigmapt_pt_mean_withProfile[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProfileX("H1D_sigmapt_pt_mean_withProfile"+Datasets[iDataset], 0, -1, "e");
+
+
+
+    // get mean of sigmapt
+    for(int iBin = 1; iBin <= H1D_sigmapt_pt_mean[iDataset]->GetNbinsX(); iBin++){
+      H2D_sigmapt_pt[iDataset]->GetXaxis()->SetRange(iBin,iBin);
+
+      H1D_sigmapt_pt_mean[iDataset]->SetBinContent(iBin, H2D_sigmapt_pt[iDataset]->GetMean(2));
+      H1D_sigmapt_pt_mean[iDataset]->SetBinError(iBin, H2D_sigmapt_pt[iDataset]->GetMeanError(2));
+      // use TH1::GetMean(axisNumber 1/2/3), GetMeanError() after using setrange
+    }
+
+    // median instead of mean:
+    double x, q;
+    q = 0.5;
+    for(int iBin = 1; iBin <= H1D_sigmapt_pt_median[iDataset]->GetNbinsX(); iBin++){
+      // H2D_sigmapt_pt[iDataset]->GetXaxis()->SetRange(iBin,iBin);
+      H1D_sigmapt_pt_X_forMedian[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H2D_sigmapt_pt_X"+Datasets[iDataset], iBin, iBin, "e");
+
+      H1D_sigmapt_pt_X_forMedian[iDataset]->GetQuantiles(1, &x, &q);
+      H1D_sigmapt_pt_median[iDataset]->SetBinContent(iBin, x);
+      H1D_sigmapt_pt_median[iDataset]->SetBinError(iBin, 0.0001); // no idea how to get the error on the median calculation
+    }
+  }
+
+  TString* pdfName = new TString("track_sigmapt_vs_pt_DataComp");
+  TString* pdfName_logy = new TString("track_sigmapt_vs_pt_DataComp_logy");
+
+  TString* pdfName_mean = new TString("track_sigmapt_mean_vs_pt_DataComp");
+  TString* pdfName_mean_logy = new TString("track_sigmapt_mean_vs_pt_DataComp_logy");
+
+  TString* pdfName_mean_withProfile = new TString("track_sigmapt_mean_vs_pt_DataComp_withProfile");
+  TString* pdfName_mean_withProfile_logy = new TString("track_sigmapt_mean_vs_pt_DataComp_withProfile_logy");
+
+  TString* pdfName_median = new TString("track_sigmapt_median_vs_pt_DataComp");
+  TString* pdfName_median_logy = new TString("track_sigmapt_median_vs_pt_DataComp_logy");
+
+  // TString textContext(contextDatasetComp(""));
+  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logz,autoRangeSame"); // ?
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName_logy, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logy,logz,autoRangeSame"); // ?
+
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean, DatasetsNames, nDatasets, textContext, pdfName_mean, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean, DatasetsNames, nDatasets, textContext, pdfName_mean_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx");
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
 }

@@ -37,7 +37,14 @@ TString* texCount = new TString("count");
 
 TString* texPtMeasured = new TString("#it{p}_{T}^{measured} (GeV/#it{c})");
 TString* texPtMC = new TString("#it{p}_{T}^{MC} (GeV/#it{c})");
-TString* texSigma1Pt = new TString("#sigma(#it{p}_{T})/#it{p}_{T}");
+TString* texPtRec = new TString("#it{p}_{T}^{rec} (GeV/#it{c})");
+TString* texEtaMC = new TString("#eta^{MC}");
+TString* texEtaRec = new TString("#eta^{rec}");
+TString* texPhiMC = new TString("#phi^{MC} (rad)");
+TString* texPhiRec = new TString("#phi^{rec} (rad)");
+TString* texSigmaPt = new TString("#sigma(#it{p}_{T})/#it{p}_{T}");
+TString* texSigmaPtMean = new TString("<#sigma(#it{p}_{T})/#it{p}_{T}>");
+TString* texSigmaPtMedian = new TString("median(#sigma(#it{p}_{T})/#it{p}_{T})");
 
 TString* texRatioDatasets = new TString(*texDatasetsComparisonType+"/"+*texDatasetsComparisonType+" "+DatasetsNames[0]); 
 TString* texRatioRun3Run2 = new TString("Run3 / Run2"); 
@@ -60,6 +67,10 @@ TString* texMeanBkgFluctFit = new TString("<#it{#delta pt}>^{fit}");
 TString* texRhoMean = new TString("<#it{#rho}>");
 
 TString* texTrackEfficiency = new TString("#epsilon = nTrack_{assoc}^{sel8 coll} / nParticle_{gen}^{sel8 coll}");
+TString* texTrackPurity = new TString("#epsilon = nTrack_{signal} / (nTrack_{signal}+nTrack_{background})");
+
+TString* texJetEfficiency = new TString("#epsilon = nJet_{mcd,matched}^{sel8 coll} / nJet_{mcp}^{sel8 coll}");
+TString* texJetPurity = new TString("#epsilon = nJet_{signal} / (nJet_{signal}+nJet_{background})");
 
 TString* texPartVxYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dV_{x}");
 TString* texPartVyYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dV_{y}");
@@ -94,6 +105,11 @@ TString* texJetRatioTRDvsNoTRD = new TString("(#it{N}_{jet}^{ #eta > 0} / #it{N}
 TString* texNGhost = new TString("#it{N}_{ghost}");
 TString* texBinSpacing = new TString("Area steps");
 TString* texJetRatioAreaJetVsNGhost = new TString("#it{A}_{jet}^{O2}/ #it{A}_{jet}^{0.005*nGhost}");
+
+TString* texRatioUnfoldedMcp = new TString("unfolded / mcp");
+
+TString* texTrackEfficiencyRatioEtaComparison = new TString("#epsilon^{ #eta > 0} / #epsilon^{ #eta < 0}");
+TString* texTrackPurityRatioEtaComparison = new TString("purity^{ #eta > 0} / #purity^{ #eta < 0}");
 
 ////////////////////////////
 ////////// Tracks //////////

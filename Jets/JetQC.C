@@ -172,7 +172,7 @@ void JetQC() {
   //   // Draw_Area_PtIntegrated_BinningComparison(iDataset, 0.6, ptRange);
   }
 
-  // Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
+  Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
   // Draw_Pt_ratio_etaNeg_etaPos_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
   
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
@@ -205,7 +205,7 @@ void JetQC() {
   // Draw_SelectedMultiplicity_vs_Centrality_DatasetComp();
   // Draw_Rho_vs_LeadingJetPt_DatasetComp();
   std::array<std::array<float, 2>, 2> drawnWindowBkgFluctZoom = {{{-20, 20}, 
-                                                                  {0.001, 12}}}; // xmin, ymin, xmax, ymax
+                                                                  {0.001, 12}}}; // {{xmin, xmax}, {ymin, ymax}}
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
   //   // Draw_Rho_withFit_NTracksProjection(iDataset); // don't use, not really finished, nor really important I think
   //   Draw_Rho_CentralityProjection(iDataset, "normEntries");
@@ -689,10 +689,12 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, const char opti
   bool divideSuccess = false;
 
   TString* yAxisLabel;
-
+  cout << "test0" << endl;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    cout << "test0.1" << endl;
 
     H3D_jetRjetPtjetEta[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_r_jet_pt_jet_eta"+jetFinderQaHistType[iJetFinderQaType]))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+jetRadius+Form("%.1f", etaRange[0])+"<eta<"+Form("%.1f", etaRange[1]));
+    cout << "test0.2" << endl;
 
     int ibinEta_low = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutLow);
     int ibinEta_high = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutHigh);
@@ -701,9 +703,11 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, const char opti
     if (ibinEta_high == H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->GetNbins()+1) 
       cout << "WARNING: Pt_DatasetComparison is counting the overflow with the chosen etaRange" << endl;
     ibinJetRadius = H3D_jetRjetPtjetEta[iDataset]->GetXaxis()->FindBin(jetRadius+GLOBAL_epsilon);
-    
+    cout << "test0.3" << endl;
+ 
     H1D_jetPt[iDataset] = (TH1D*)H3D_jetRjetPtjetEta[iDataset]->ProjectionY("jetPt_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high, "e");
     H1D_jetPt_rebinned[iDataset] = (TH1D*)H1D_jetPt[iDataset]->Rebin(1.,"jetPt_rebinned_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
+    cout << "test0.35" << endl;
 
     if (strstr(options, "normEntries") != NULL) {
       NormaliseYieldToNEntries(H1D_jetPt_rebinned[iDataset]);
@@ -713,11 +717,13 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, const char opti
       NormaliseYieldToNEvents(H1D_jetPt_rebinned[iDataset], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
       yAxisLabel = texJetPtYield_EventNorm;
     }
+    cout << "test0.4" << endl;
 
     H1D_jetPt_rebinned_ratios[iDataset] = (TH1D*)H1D_jetPt_rebinned[iDataset]->Clone("jetPt_rebinned_ratios"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
     H1D_jetPt_rebinned_ratios[iDataset]->Reset("M");
     divideSuccess = H1D_jetPt_rebinned_ratios[iDataset]->Divide(H1D_jetPt_rebinned[iDataset], H1D_jetPt_rebinned[0]);
   }
+  cout << "test1" << endl;
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
   TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]+"_ratio");
