@@ -1008,16 +1008,22 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
   //==================== Build response matrix: shift deltaPt by pT gen along the pT rec axis ====================//
   int ibinZeroFluct= H1D_fluctuations->FindBin(0+GLOBAL_epsilon);
   
-  for(int iBinRec = 1; iBinRec <= H2D_response.GetNbinsX(); iBinRec++){
-    for(int iBinGen = 1; iBinGen <= H2D_response.GetNbinsY(); iBinGen++){
-      double ptGen = H2D_response.GetYaxis()->GetBinCenter(iBinGen);
-      double ptRec_low = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec);
-      double ptRec_up = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec+1);
+  for(int iBinGen = 1; iBinGen <= H2D_response.GetNbinsX(); iBinGen++){
+    for(int iBinRec = 1; iBinRec <= H2D_response.GetNbinsY(); iBinRec++){
+      double ptGen = H2D_response.GetXaxis()->GetBinCenter(iBinGen);
+      double ptRec_low = H2D_response.GetYaxis()->GetBinLowEdge(iBinRec);
+      double ptRec_up = H2D_response.GetYaxis()->GetBinLowEdge(iBinRec+1);
       // double xPtRecWidth = H2D_response->GetXaxis()->GetBinWidth(iBinRec);
       // if (ibinZero + (iBinRec - iBinGen) <= H1D_fluctuations_highRes->GetNbinsX()) { // make sure it's within bin range
-      H2D_response.SetBinContent(iBinRec, iBinGen, H1D_fluctuations->Integral(H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon), H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen + GLOBAL_epsilon))); 
+      H2D_response.SetBinContent(iBinGen, iBinRec, H1D_fluctuations->Integral(H1D_fluctuations->GetYaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon), H1D_fluctuations->GetYaxis()->FindBin(ptRec_up - ptGen + GLOBAL_epsilon))); 
       // cout << "FluctResp(" << iBinRec << ", " << iBinGen << ") = " << H2D_response.GetBinContent(iBinRec, iBinGen) << endl;
         // H2D_response_highRes->SetBinError(iBinRec, iBinGen, something); 
+    }
+  }
+
+  for(int iBinRec = 1; iBinRec <= H2D_response.GetNbinsX(); iBinRec++){
+    for(int iBinGen = 1; iBinGen <= H2D_response.GetNbinsY(); iBinGen++){
+      H2D_response.SetBinContent(iBinRec, iBinGen, H2D_response.GetBinContent(iBinRec, iBinGen));
     }
   }
   // }
