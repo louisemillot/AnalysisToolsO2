@@ -1658,7 +1658,7 @@ void Draw_Pt_TestSpectrum_unfolded(int iDataset, int iRadius, const char options
     H1D_jetPt_ratio_measured[iCent] = (TH1D*)H1D_jetPt_measured[iCent]->Clone("H1D_jetPt_ratio_measured"+partialUniqueSpecifier);
     divideSuccessMeasured[iCent] = H1D_jetPt_ratio_measured[iCent]->Divide(H1D_jetPt_unfolded[iCent]);
     for(int iBin = 1; iBin <= H1D_jetPt_ratio_measured[iCent]->GetNbinsX(); iBin++){
-      cout << "ratio measured/unfolded bin contents: " << H1D_jetPt_ratio_measured[iCent]->GetBinContent(iBin) << endl;
+      cout << "ratio folded/unfolded bin contents: " << H1D_jetPt_ratio_measured[iCent]->GetBinContent(iBin) << endl;
       cout << "nevents rec, mcd, mcp = " << GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect)  << endl;
     }
 
@@ -1691,7 +1691,7 @@ void Draw_Pt_TestSpectrum_unfolded(int iDataset, int iRadius, const char options
 
 
     // comparison with raw measured
-  TString unfoldedMeasuredCompLegend[2] = {"unfolded data", "measured raw"};
+  TString unfoldedMeasuredCompLegend[2] = {"unfolded data", "folded truth"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
     TString* pdfName_measuredComp = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]"+"_Pt_TestRefold_measuredComp");
     Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_measuredComp[iCent], unfoldedMeasuredCompLegend, 2, textContext, pdfName_measuredComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
