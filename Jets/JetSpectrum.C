@@ -863,7 +863,7 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
 
   // TH2D *H2D_PtResponseMatrix = new TH2D("H2D_PtResponseMatrix", "H2D_PtResponseMatrix", nbinpT, pTbins, nbinpT, pTbins);
   // si je fais une multiplication de fluct(mcpBins, mcdBins) x det(mcpBins, mcdBins) il faut que mcpBins == mcdBins ou la multiplication de matrice fonctionne pas
-  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin = (TH2D*)H2D_jetPtResponseMatrix_fluctuations->Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined_preRebin"+partialUniqueSpecifier);
+  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin = (TH2D*)H2D_jetPtResponseMatrix_fluctuations->Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined_preRebin"+partialUniqueSpecifier); // OK because I have them both have a fine binning, same for both, before I multiply them
   H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->Reset("M");
 
   // // matrix product of fluct response times det response; assumes the two are of the same size binning wise
