@@ -1021,11 +1021,6 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
     }
   }
 
-  for(int iBinRec = 1; iBinRec <= H2D_response.GetNbinsX(); iBinRec++){
-    for(int iBinGen = 1; iBinGen <= H2D_response.GetNbinsY(); iBinGen++){
-      H2D_response.SetBinContent(iBinRec, iBinGen, H2D_response.GetBinContent(iBinRec, iBinGen));
-    }
-  }
   // }
   //========================================= Build response matrix end =========================================//
 
