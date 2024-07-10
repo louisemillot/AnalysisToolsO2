@@ -7,6 +7,7 @@
 
 void NormaliseYieldToNEntries(TH1D* histogram) { // also takes care of the transformation of raw count to dCount/dQuantity (like dN/dpT), thanks to option "width"
   histogram->Scale(1./histogram->GetEntries(),"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
+  cout << "takes overflow/underflow into account; am I sure that is what I want?" << endl;
 }
 
 void NormaliseYieldToIntegral(TH1D* histogram) { // also takes care of the transformation of raw count to dCount/dQuantity (like dN/dpT), thanks to option "width"
