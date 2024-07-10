@@ -891,8 +891,8 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
       matrixSum_error_iGen_iRec = 0;
       // matrix multiplication: detector response matrix times background fluctuation response matrix
       for (int iMatrix = 0; iMatrix <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsX()+1; iMatrix++){ // 0 and n+1 take underflow and overflow into account
-        matrixSum_iGen_iRec += H2D_jetPtResponseMatrix_fluctuations->GetBinContent(iBinGen, iMatrix) * H2D_jetPtResponseMatrix_detectorResponse->GetBinContent(iMatrix, iBinRec);
-        matrixSum_error_iGen_iRec += pow(H2D_jetPtResponseMatrix_fluctuations->GetBinError(iBinGen, iMatrix), 2) + pow(H2D_jetPtResponseMatrix_detectorResponse->GetBinError(iMatrix, iBinRec), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated
+        matrixSum_iGen_iRec += H2D_jetPtResponseMatrix_fluctuations->GetBinContent(iMatrix, iBinGen) * H2D_jetPtResponseMatrix_detectorResponse->GetBinContent(iBinRec, iMatrix); // Careful: xy of hist and ij of Resp(i,j) are inverted !
+        matrixSum_error_iGen_iRec += pow(H2D_jetPtResponseMatrix_fluctuations->GetBinError(iMatrix, iBinGen), 2) + pow(H2D_jetPtResponseMatrix_detectorResponse->GetBinError(iBinRec, iMatrix), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated
       }
       // cout << "iBinRec, iBinGen, matrixSum_iGen_iRec = " << iBinRec << ", " << iBinGen << ", " << matrixSum_iGen_iRec << endl;
       H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->SetBinContent(iBinGen, iBinRec, matrixSum_iGen_iRec);
