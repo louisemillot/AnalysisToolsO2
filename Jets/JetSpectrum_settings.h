@@ -28,7 +28,7 @@ const int ptRebinValue = 1;
 // const float arrayCentralityIntervals[nCentralityBins][2] = {{0, 10}, {50, 90}};
 const int nCentralityBins = 1;
 const float arrayCentralityIntervals[nCentralityBins][2] = {{50, 90}}; // for now uses this because pp sim I got has all its h3_jet_r_jet_pt_centrality entries below 0
-const bool doNormalisation = 1;
+const bool doNormalisation = 0;
 
 // // pT binning for jets - gen = rec
 // double ptBinsJetsRec[nRadius][30] = {{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
