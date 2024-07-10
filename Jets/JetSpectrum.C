@@ -941,8 +941,8 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
   int ibinJetRadius = H3D_jetRpartPtdetPt->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
   H3D_jetRpartPtdetPt->GetXaxis()->SetRange(ibinJetRadius, ibinJetRadius);
 
-  // project H3D onto a H2D, option "yz" means y goes on y-axis while z goes on x-axis, and so H2D_gen_det_geoMatched will be (x=mcd, y=mcp)
-  H2D_gen_det_geoMatched = (TH2D*)H3D_jetRpartPtdetPt->Project3D(partialUniqueSpecifier+"_genrec_e_yz"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
+  // project H3D onto a H2D, option "zy" means z goes on y-axis while y goes on x-axis, and so H2D_gen_det_geoMatched will be (x=mcp, y=mcd)
+  H2D_gen_det_geoMatched = (TH2D*)H3D_jetRpartPtdetPt->Project3D(partialUniqueSpecifier+"_genrec_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
 
   // keep (gen, gen) for the bins; rec will be introduced in the fluctuation response, and by multiplication will stay in the combined matrix
   TH2D* H2D_response = (TH2D*)RebinVariableBins2D(H2D_gen_det_geoMatched, nBinPtJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], ptBinsJetsFine[iRadius]).Clone("Get_PtResponseMatrix_detectorResponse_rebinned"+partialUniqueSpecifier);
@@ -950,9 +950,9 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
 
   // Normalisation of the response matrix: each pt gen slice is normalised to unity
   double genSliceNorm = 1;
-  for(int iBinY = 1; iBinY <= H2D_response->GetNbinsY(); iBinY++){
-    genSliceNorm = H2D_response->Integral(1, H2D_response->GetNbinsX(), iBinY, iBinY);
-    for(int iBinX = 1; iBinX <= H2D_response->GetNbinsX(); iBinX++){
+  for(int iBinX = 1; iBinX <= H2D_response->GetNbinsX(); iBinX++){
+    genSliceNorm = H2D_response->Integral(1, H2D_response->GetNbinsY(), iBinX, iBinX);
+    for(int iBinY = 1; iBinY <= H2D_response->GetNbinsY(); iBinY++){
       H2D_response->SetBinContent(iBinX, iBinY, H2D_response->GetBinContent(iBinX, iBinY) * 1./genSliceNorm);
       H2D_response->SetBinError(iBinX, iBinY, H2D_response->GetBinError(iBinX, iBinY) * 1./genSliceNorm);
       // cout << "H2D_response(" << iBinX << ", " << iBinY << ") = " << H2D_response->GetBinContent(iBinX, iBinY) << endl;
