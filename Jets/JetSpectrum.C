@@ -125,8 +125,8 @@ void JetSpectrum() {
 
   // Draw_Pt_efficiency_jets(iDataset, iRadius, "");
 
-  // Draw_Pt_spectrum_unfolded(iDataset, iRadius, "evtNorm");
-  Draw_Pt_TestSpectrum_unfolded(iDataset, iRadius, "evtNorm");
+  Draw_Pt_spectrum_unfolded(iDataset, iRadius, "evtNorm");
+  // Draw_Pt_TestSpectrum_unfolded(iDataset, iRadius, "evtNorm");
 
 
 }
@@ -1199,13 +1199,22 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   //  "measured" and/or "truth" can be specified as 0 (1D case only) or an empty histograms (no entries) as a shortcut
   //  to indicate, respectively, no fakes and/or no inefficiency.
 
-  RooUnfoldResponse* response = new RooUnfoldResponse(mcdMatched, mcp, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
+
+  // based on https://github.com/alisw/AliPhysics/blob/master/PWGLF/FORWARD/analysis2/scripts/UnfoldMult.C
+  TH1D* responseProjY = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionY(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projY", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY());
+  TH1D* responseProjX = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionX(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projX", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX());
+  TH2D* responseTranspose = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_fluctuations).Clone(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_transposed");
+
+  RooUnfoldResponse* response = new RooUnfoldResponse(responseProjY, responseProjX, responseTranspose); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
+
+  // // meh not sure it's true ; first two arguments of RooUnfoldResponse should be the reco and truth events (here jets) used to when filling the response matrix
+  // RooUnfoldResponse* response = new RooUnfoldResponse(mcdMatched, mcp, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
   // RooUnfoldResponse* response = new RooUnfoldResponse(mcdMatched, 0, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account
   // RooUnfoldResponse* response = new RooUnfoldResponse(projX, projY, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, "", ""); // measured and mcp_rebinned are here to take inneficiencies and fakes into account
   cout << "Get_Pt_spectrum_unfolded(): should I use response->UseOverflow() ? using it gives a ratio unfolded/mcp much higher than without using it" << endl;
   // response->UseOverflow();
 
-  // RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
+  RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
   // RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
   // RooUnfold* unfold = new RooUnfoldSvd(response, measured, 8); // that's how it is done in hiroki yokoyama's thesis
   // unfold->IncludeSystematics(RooUnfolding::kAll);
@@ -1213,7 +1222,7 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   // TH1D* hist_unfold = (TH1D*)unfold->Hreco()->Clone("hist_unfold");
 
   // works but too simplistic; doesn't account for bin migration
-  RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
+  // RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
   TH1D* hist_unfold = static_cast<TH1D*>(unfold->Hreco(RooUnfold::kCovariance));
 
   // RooUnfoldBinByBin unfold(*H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, measured);
@@ -1309,13 +1318,18 @@ void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int
   //  "measured" and/or "truth" can be specified as 0 (1D case only) or an empty histograms (no entries) as a shortcut
   //  to indicate, respectively, no fakes and/or no inefficiency.
 
-  RooUnfoldResponse* response = new RooUnfoldResponse(mcdMatched, mcp, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
+  // based on https://github.com/alisw/AliPhysics/blob/master/PWGLF/FORWARD/analysis2/scripts/UnfoldMult.C
+  TH1D* responseProjY = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionY(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projY", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY());
+  TH1D* responseProjX = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionX(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projX", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX());
+  TH2D* responseTranspose = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_fluctuations).Clone(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_transposed");
+
+  RooUnfoldResponse* response = new RooUnfoldResponse(responseProjY, responseProjX, responseTranspose); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
   // RooUnfoldResponse* response = new RooUnfoldResponse(mcdMatched, 0, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account
   // RooUnfoldResponse* response = new RooUnfoldResponse(projX, projY, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, "", ""); // measured and mcp_rebinned are here to take inneficiencies and fakes into account
   cout << "Get_Pt_spectrum_unfolded(): should I use response->UseOverflow() ? using it gives a ratio unfolded/mcp much higher than without using it" << endl;
   // response->UseOverflow();
 
-  // RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
+  RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
   // RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
   // RooUnfold* unfold = new RooUnfoldSvd(response, measured, 8); // that's how it is done in hiroki yokoyama's thesis
   // unfold->IncludeSystematics(RooUnfolding::kAll);
@@ -1323,7 +1337,7 @@ void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int
   // TH1D* hist_unfold = (TH1D*)unfold->Hreco()->Clone("hist_unfold");
 
   // works but too simplistic; doesn't account for bin migration
-  RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
+  // RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
   TH1D* hist_unfold = static_cast<TH1D*>(unfold->Hreco(RooUnfold::kCovariance));
 
   // RooUnfoldBinByBin unfold(*H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, measured);
@@ -1338,7 +1352,8 @@ void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int
   cout << "unfolded NbinsX = " << H1D_jetPt_unfolded->GetNbinsX() << endl;
 
   // only do this norm if Get_Pt_spectrum_bkgCorrected_preWidthScaling is given "" as options instead of "evtNorm" 
-  NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
+  // NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
+  NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
 }
 
 void Get_Pt_TestSpectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, const char options[]) {
@@ -1840,3 +1855,9 @@ void Draw_Pt_TestSpectrum_unfolded(int iDataset, int iRadius, const char options
 
 
 // matrix multiplication: think about whether I really want to include over/underflows
+
+
+// FUCK 
+// Warning: RooUnfoldResponse measured X truth is 15 X 10, but matrix is 10 X 15
+// except my TH2 has 15 lines and 10 columns ... so I guess that's not what roounfold wants
+

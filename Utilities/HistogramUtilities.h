@@ -9,6 +9,7 @@ float findMaxFloat(float* array, int length);
 
 std::vector<double> GetTH1Bins(TH1 H1_histo);
 TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, float* binsX, float* binsY);
+TH2D GetTransposeHistogram(TH2D* inputHist);
 
 TString contextCustom(TString* mainContext, TString* secondaryContext, TString* tertiaryContext, const char options[]);
 TString contextCustom(TString* mainContext, TString* secondaryContext, const char options[]);

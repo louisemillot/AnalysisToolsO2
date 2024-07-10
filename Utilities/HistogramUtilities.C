@@ -84,6 +84,25 @@ TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, 
   return H2D_hist_rebinned;
 }
 
+TH2D GetTransposeHistogram(TH2D* inputHist){
+  int nBinsX = inputHist->GetNbinsX();
+  int nBinsY = inputHist->GetNbinsY();
+  std::vector<double> vectorBinsX = GetTH1Bins(inputHist->ProjectionX(inputHist->GetName()+(TString)"projX", 1, nBinsX));
+  std::vector<double> vectorBinsY = GetTH1Bins(inputHist->ProjectionY(inputHist->GetName()+(TString)"projY", 1, nBinsY));
+  double* binsX = &vectorBinsX[0];
+  double* binsY = &vectorBinsY[0];
+
+  TH2D transposedHist("inputHist_transposed", "inputHist_transposed", nBinsX, binsX, nBinsY, binsY);
+  for(int iBinX = 0; iBinX <= nBinsX+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
+    for(int iBinY = 0; iBinY <= nBinsY+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
+      transposedHist.SetBinContent(iBinX, iBinY, inputHist->GetBinContent(iBinY, iBinX));
+      transposedHist.SetBinError(iBinX, iBinY, inputHist->GetBinError(iBinY, iBinX));
+    }
+  }
+  return transposedHist;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Histogram Context /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
