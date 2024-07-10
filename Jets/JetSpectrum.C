@@ -1015,7 +1015,7 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
       double ptRec_up = H2D_response.GetYaxis()->GetBinLowEdge(iBinRec+1);
       // double xPtRecWidth = H2D_response->GetXaxis()->GetBinWidth(iBinRec);
       // if (ibinZero + (iBinRec - iBinGen) <= H1D_fluctuations_highRes->GetNbinsX()) { // make sure it's within bin range
-      H2D_response.SetBinContent(iBinGen, iBinRec, H1D_fluctuations->Integral(H1D_fluctuations->GetYaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon), H1D_fluctuations->GetYaxis()->FindBin(ptRec_up - ptGen + GLOBAL_epsilon))); 
+      H2D_response.SetBinContent(iBinGen, iBinRec, H1D_fluctuations->Integral(H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon), H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen + GLOBAL_epsilon))); 
       // cout << "FluctResp(" << iBinRec << ", " << iBinGen << ") = " << H2D_response.GetBinContent(iBinRec, iBinGen) << endl;
         // H2D_response_highRes->SetBinError(iBinRec, iBinGen, something); 
     }
