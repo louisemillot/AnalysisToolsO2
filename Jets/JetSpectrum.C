@@ -310,7 +310,7 @@ void Get_Pt_spectrum_bkgCorrected_preWidthScaling(TH1D* &H1D_jetPt, int iDataset
   }
   cout << "GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset]) = " << GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId) << endl;
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt);
+    NormaliseYieldToNEntries(H1D_jetPt);
   }
 }
 
@@ -339,7 +339,7 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(TH1D* &H1D_jetPt, i
   }
   cout << "GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset]) = " << GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId) << endl;
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt);
+    NormaliseYieldToNEntries(H1D_jetPt);
   }
 }
 
@@ -386,11 +386,11 @@ void Get_Pt_spectrum_mcp_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     
-    // NormaliseYieldToIntegral(H1D_jetPt_mcp);
+    // NormaliseYieldToNEntries(H1D_jetPt_mcp);
     
   }
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt_mcp);
+    NormaliseYieldToNEntries(H1D_jetPt_mcp);
   }
 }
 
@@ -438,11 +438,11 @@ void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iD
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     
-    // NormaliseYieldToIntegral(H1D_jetPt_mcp);
+    // NormaliseYieldToNEntries(H1D_jetPt_mcp);
     
   }
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt_mcp);
+    NormaliseYieldToNEntries(H1D_jetPt_mcp);
   }
 }
 
@@ -498,10 +498,10 @@ void Get_Pt_spectrum_mcpMatched_preWidthScaling(TH1D* &H1D_jetPt_mcpMatched, int
     // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
-    // NormaliseYieldToIntegral(H1D_jetPt_mcpMatched);
+    // NormaliseYieldToNEntries(H1D_jetPt_mcpMatched);
   }
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt_mcpMatched);
+    NormaliseYieldToNEntries(H1D_jetPt_mcpMatched);
   }
 
 }
@@ -558,10 +558,10 @@ void Get_Pt_spectrum_mcdMatched_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int
     // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
-    // NormaliseYieldToIntegral(H1D_jetPt_mcdMatched);
+    // NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
   }
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt_mcdMatched);
+    NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
   }
 
 }
@@ -667,11 +667,11 @@ void Get_Pt_spectrum_mcp_folded_preWidthScaling(TH1D* &H1D_jetPt_mcp_folded, int
     // NormaliseYieldToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     
-    // NormaliseYieldToIntegral(H1D_jetPt_mcp_folded);
+    // NormaliseYieldToNEntries(H1D_jetPt_mcp_folded);
     
   }
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt_mcp_folded);
+    NormaliseYieldToNEntries(H1D_jetPt_mcp_folded);
   }
 }
 
@@ -747,11 +747,11 @@ void Get_Pt_spectrum_mcp_folded_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp_
     // NormaliseYieldToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     
-    // NormaliseYieldToIntegral(H1D_jetPt_mcp_folded);
+    // NormaliseYieldToNEntries(H1D_jetPt_mcp_folded);
     
   }
   if (strstr(options, "entriesNorm") != NULL) {
-    NormaliseYieldToIntegral(H1D_jetPt_mcp_folded);
+    NormaliseYieldToNEntries(H1D_jetPt_mcp_folded);
   }
 }
 
@@ -914,7 +914,7 @@ void Get_PtResponseMatrix_Fluctuations_coarseBinningBeforeMult_obsolete(TH2D* &H
   ibinCent_high = H2D_fluctuations_centrality->GetXaxis()->FindBin(centRange[1]);
   H1D_fluctuations = (TH1D*)H2D_fluctuations_centrality->ProjectionY("bkgFluctuationCentrality_highRes_"+partialUniqueSpecifier, ibinCent_low, ibinCent_high);
 
-  NormaliseYieldToIntegral(H1D_fluctuations); // normalising fluctuations to 1
+  NormaliseYieldToNEntries(H1D_fluctuations); // normalising fluctuations to 1
     
   TH2D H2D_response = TH2D("H2D_response_"+partialUniqueSpecifier, "H2D_response_"+partialUniqueSpecifier, nBinPtJetsRec[iRadius], ptBinsJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius]); // actually doesn't work if original histogram has fixed bin size
 
@@ -1089,7 +1089,7 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
   ibinCent_high = H2D_fluctuations_centrality->GetXaxis()->FindBin(centRange[1]);
   H1D_fluctuations = (TH1D*)H2D_fluctuations_centrality->ProjectionY("bkgFluctuationCentrality_highRes_"+partialUniqueSpecifier, ibinCent_low, ibinCent_high);
 
-  NormaliseYieldToIntegral(H1D_fluctuations); // normalising fluctuations to 1
+  NormaliseYieldToNEntries(H1D_fluctuations); // normalising fluctuations to 1
     
   TH2D H2D_response = TH2D("H2D_response_"+partialUniqueSpecifier, "H2D_response_"+partialUniqueSpecifier, nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius]); // actually doesn't work if original histogram has fixed bin size
 
@@ -1118,6 +1118,7 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
   // cout << "H2D_jetPtResponseMatrix_fluctuations nbins X =" << H2D_jetPtResponseMatrix_fluctuations->GetNbinsX() << endl;
   // cout << "H2D_jetPtResponseMatrix_fluctuations_rebinned nbins X =" << H2D_jetPtResponseMatrix_fluctuations_rebinned.GetNbinsX() << endl;
   // H2D_jetPtResponseMatrix_fluctuations = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix_fluctuations, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius]).Clone("H2D_jetPtResponseMatrix_fluctuations_rebinned_"+partialUniqueSpecifier);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
