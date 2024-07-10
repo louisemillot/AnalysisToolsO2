@@ -639,10 +639,10 @@ void Get_Pt_spectrum_mcp_folded_preWidthScaling(TH1D* &H1D_jetPt_mcp_folded, int
   // matrix product of fluct response times truth; assumes the two are of the same size binning wise
   // Careful: xy of hist and ij of Resp(i,j) are inverted ! hist(j,i) = matrix(i,j) and so if vector(i)=SUM(matrixA(i,k)vector(k)) then hist(i)=SUM(histA(k,i)histB(k)), and if we replace j,i by gen,rec we get hist(iX)=SUM(histA(k,iX)histB(k))
   double matrixElementSum_iX, matrixElementSum_error_iX;
-  for(int iBinX = 0; iBinX <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsY()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
+  for(int iBinX = 1; iBinX <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsY(); iBinX++){ // 0 and n+1 take underflow and overflow into account
     matrixElementSum_iX = 0;
     matrixElementSum_error_iX = 0;
-    for (int iMatrix = 0; iMatrix <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsX()+1; iMatrix++){ // 0 and n+1 take underflow and overflow into account
+    for (int iMatrix = 1; iMatrix <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsX(); iMatrix++){ // 0 and n+1 take underflow and overflow into account
       matrixElementSum_iX += H2D_jetPtResponseMatrix_fluctuations->GetBinContent(iMatrix, iBinX) * H1D_jetPt_mcp_fineBin->GetBinContent(iMatrix); 
       matrixElementSum_error_iX += pow(H2D_jetPtResponseMatrix_fluctuations->GetBinError(iMatrix, iBinX), 2) + pow(H1D_jetPt_mcp_fineBin->GetBinError(iMatrix), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated
     }
@@ -719,10 +719,10 @@ void Get_Pt_spectrum_mcp_folded_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp_
   // matrix product of fluct response times truth; assumes the two are of the same size binning wise
   // Careful: xy of hist and ij of Resp(i,j) are inverted ! hist(j,i) = matrix(i,j) and so if vector(i)=SUM(matrixA(i,k)vector(k)) then hist(i)=SUM(histA(k,i)histB(k)), and if we replace j,i by gen,rec we get hist(iX)=SUM(histA(k,iX)histB(k))
   double matrixElementSum_iX, matrixElementSum_error_iX;
-  for(int iBinX = 0; iBinX <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsY()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
+  for(int iBinX = 1; iBinX <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsY(); iBinX++){ // 0 and n+1 take underflow and overflow into account
     matrixElementSum_iX = 0;
     matrixElementSum_error_iX = 0;
-    for (int iMatrix = 0; iMatrix <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsX()+1; iMatrix++){ // 0 and n+1 take underflow and overflow into account
+    for (int iMatrix = 1; iMatrix <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsX(); iMatrix++){ // 0 and n+1 take underflow and overflow into account
       matrixElementSum_iX += H2D_jetPtResponseMatrix_fluctuations->GetBinContent(iMatrix, iBinX) * H1D_jetPt_mcp_fineBin->GetBinContent(iMatrix); 
       matrixElementSum_error_iX += pow(H2D_jetPtResponseMatrix_fluctuations->GetBinError(iMatrix, iBinX), 2) + pow(H1D_jetPt_mcp_fineBin->GetBinError(iMatrix), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated
     }
@@ -802,8 +802,8 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined_coarseBinningBeforeMul
 
   // matrix product of fluct response times det response; assumes the two are of the same size binning wise
   double matrixElementSum_iRec_iGen, matrixElementSum_error_iRec_iGen;
-  for(int iBinRec = 0; iBinRec <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX()+1; iBinRec++){ // 0 and n+1 take underflow and overflow into account
-    for(int iBinGen = 0; iBinGen <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY()+1; iBinGen++){ // 0 and n+1 take underflow and overflow into account
+  for(int iBinRec = 1; iBinRec <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX(); iBinRec++){ // 0 and n+1 take underflow and overflow into account
+    for(int iBinGen = 1; iBinGen <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY(); iBinGen++){ // 0 and n+1 take underflow and overflow into account
       matrixElementSum_iRec_iGen = 0;
       matrixElementSum_error_iRec_iGen = 0;
       // matrix multiplication: detector response matrix times background fluctuation response matrix
@@ -975,11 +975,11 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   // matrix product of fluct response times det response; assumes the two are of the same size binning wise
   // Careful: xy of hist and ij of Resp(i,j) are inverted ! hist(j,i) = matrix(i,j) and so if matrix(i,j)=SUM(matrixA(i,k)matrixB(k,j)) then hist(j,i)=SUM(histA(k,i)histB(j,k)), and if we replace j,i by gen,rec we get hist(gen,rec)=SUM(histA(k,rec)histB(gen,k))
   double matrixElementSum_iGen_iRec, matrixElementSum_error_iGen_iRec;
-  for(int iBinGen = 0; iBinGen <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->GetNbinsX()+1; iBinGen++){ // 0 and n+1 take underflow and overflow into account
-    for(int iBinRec = 0; iBinRec <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->GetNbinsY()+1; iBinRec++){ // 0 and n+1 take underflow and overflow into account
+  for(int iBinGen = 1; iBinGen <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->GetNbinsX(); iBinGen++){ // 0 and n+1 take underflow and overflow into account
+    for(int iBinRec = 1; iBinRec <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->GetNbinsY(); iBinRec++){ // 0 and n+1 take underflow and overflow into account
       matrixElementSum_iGen_iRec = 0;
       matrixElementSum_error_iGen_iRec = 0;
-      for (int iMatrix = 0; iMatrix <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsX()+1; iMatrix++){ // 0 and n+1 take underflow and overflow into account
+      for (int iMatrix = 1; iMatrix <= H2D_jetPtResponseMatrix_fluctuations->GetNbinsX(); iMatrix++){ // 0 and n+1 take underflow and overflow into account
         matrixElementSum_iGen_iRec += H2D_jetPtResponseMatrix_fluctuations->GetBinContent(iMatrix, iBinRec) * H2D_jetPtResponseMatrix_detectorResponse->GetBinContent(iBinGen, iMatrix); 
         matrixElementSum_error_iGen_iRec += pow(H2D_jetPtResponseMatrix_fluctuations->GetBinError(iMatrix, iBinRec), 2) + pow(H2D_jetPtResponseMatrix_detectorResponse->GetBinError(iBinGen, iMatrix), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated
       }
