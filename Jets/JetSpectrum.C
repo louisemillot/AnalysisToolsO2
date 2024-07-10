@@ -992,7 +992,7 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
   TH2D* H2D_fluctuations_centrality;
   TH1D* H1D_fluctuations;
 
-  H2D_fluctuations_centrality = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h2_centrality_rhorandomcone"))->Clone("Get_PtResponseMatrix_Fluctuations"+Datasets[iDataset]);
+  H2D_fluctuations_centrality = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h2_centrality_rhorandomconewithoutleadingjet"))->Clone("Get_PtResponseMatrix_Fluctuations"+Datasets[iDataset]);
   H2D_fluctuations_centrality->Sumw2();
 
   int ibinCent_low, ibinCent_high;
