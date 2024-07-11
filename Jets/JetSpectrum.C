@@ -114,9 +114,9 @@ void JetSpectrum() {
 
   // Draw_Pt_spectrum_raw(iDataset, iRadius, "evtNorm");
 
-  // Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
-  // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
-  // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius);
+  Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
+  Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
+  Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius);
 
   // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, "evtNorm"); // NOT FIXED YET - result meaningless
 
@@ -991,19 +991,28 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsGen[iRadius], nBinPtJetsRec[iRadius], ptBinsJetsGen[iRadius], ptBinsJetsRec[iRadius]).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
 
 
-  if (doNormalisation) {
-    // Normalisation of the combined response matrix: y-axis is weighted by the prior, the y-projection of the detector response matrix, the generator-level jet spectrum
-    TH2D* H2D_jetPtResponseMatrix_detectorResponse_rebinned = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix_detectorResponse, nBinPtJetsGen[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius], ptBinsJetsGen[iRadius]).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
-    TH1D* priorSpectrum = (TH1D*)H2D_jetPtResponseMatrix_detectorResponse_rebinned->ProjectionY("priorSpectrum"+partialUniqueSpecifier, 1, H2D_jetPtResponseMatrix_detectorResponse_rebinned->GetNbinsX());
+  if (doNormalisation) { // should I not take the bin width into account? else some bins after normalisation will still have values above 1? eh why though, shouldnt be true
+
+    //  Hiroki's version
+
+    // Normalisation of the combined response matrix: y-axis is weighted by the prior, the generator-level jet spectrum, at step 3 of detResp construction in hiroki's thesis (ie before matching to fill response and normalisation of pt-gen axis to unity)
+    
+    // old // TH2D* H2D_jetPtResponseMatrix_detectorResponse_rebinned = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix_detectorResponse, nBinPtJetsGen[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius], ptBinsJetsGen[iRadius]).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
+    // old // TH1D* priorSpectrum = (TH1D*)H2D_jetPtResponseMatrix_detectorResponse_rebinned->ProjectionY("priorSpectrum"+partialUniqueSpecifier, 1, H2D_jetPtResponseMatrix_detectorResponse_rebinned->GetNbinsX());
+
+    TH1D* priorSpectrum;
+    Get_Pt_spectrum_mcp(priorSpectrum, iDataset, iRadius, "evtNorm"); // _recBinning if needed ; 
+    cout << "maybe need to have priorSpectrum normalised to number of events? or maybe I shouldn't?" << endl;
+
     cout << "prior weighting of combined response matrix: should I keep under/overflows in the projection? Should I normalise the over/underflow bins as well?" << endl;
     cout << "prior and combined resp are correlated -> I should put that into the error calculation" << endl;
     double combinedResponseContent, priorSpectrumContent;
     double combinedResponseError, priorSpectrumError;
-    for(int iBinY = 1; iBinY <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY(); iBinY++){
-      priorSpectrumContent = priorSpectrum->GetBinContent(iBinY);
-      priorSpectrumError = priorSpectrum->GetBinError(iBinY);
-      cout << "is ibinY = " << iBinY << " overflow? " << priorSpectrum->IsBinOverflow(iBinY) << endl;
-      for(int iBinX = 1; iBinX <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX(); iBinX++){
+    for(int iBinX = 1; iBinX <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX(); iBinX++){
+      priorSpectrumContent = priorSpectrum->GetBinContent(iBinX);
+      priorSpectrumError = priorSpectrum->GetBinError(iBinX);
+      cout << "is iBinX = " << iBinX << " overflow? " << priorSpectrum->IsBinOverflow(iBinX) << endl;
+      for(int iBinY = 1; iBinY <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY(); iBinY++){
         combinedResponseContent = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetBinContent(iBinX, iBinY);
         combinedResponseError = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetBinError(iBinX, iBinY);
         H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->SetBinContent(iBinX, iBinY, combinedResponseContent * 1./priorSpectrumContent);
@@ -1205,7 +1214,8 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   TH1D* responseProjX = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionX(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projX", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX());
   TH2D* responseTranspose = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_fluctuations).Clone(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_transposed");
 
-  RooUnfoldResponse* response = new RooUnfoldResponse(responseProjY, responseProjX, responseTranspose); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
+  // RooUnfoldResponse* response = new RooUnfoldResponse(responseProjY, responseProjX, responseTranspose); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
+  RooUnfoldResponse* response = new RooUnfoldResponse(mcdMatched, mcp, responseTranspose); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
 
   // // meh not sure it's true ; first two arguments of RooUnfoldResponse should be the reco and truth events (here jets) used to when filling the response matrix
   // RooUnfoldResponse* response = new RooUnfoldResponse(mcdMatched, mcp, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
