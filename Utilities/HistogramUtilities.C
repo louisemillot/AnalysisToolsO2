@@ -282,8 +282,8 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
   
   std::vector<double> vectorBinsX_AB = GetTH1Bins(histB->ProjectionX(histB->GetName()+(TString)"projX", 1, nBinsX_B));
   std::vector<double> vectorBinsY_AB = GetTH1Bins(histA->ProjectionY(histA->GetName()+(TString)"projY", 1, nBinsY_A));
-  double* binsX_AB = &vectorBinsX[0];
-  double* binsY_AB = &vectorBinsY[0];
+  double* binsX_AB = &vectorBinsX_AB[0];
+  double* binsY_AB = &vectorBinsY_AB[0];
   int nBinsX_AB = nBinsX_B;
   int nBinsY_AB = nBinsY_A;
 

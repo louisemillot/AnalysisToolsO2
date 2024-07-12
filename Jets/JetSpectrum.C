@@ -1172,12 +1172,12 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfol
   divideSuccess = Get_Pt_JetEfficiency(H1D_jetEfficiency, iDataset, iRadius, centRange, options);
   Get_ResponseMatrix_Pt_KinematicEffiency(H1D_kinematicEfficiency, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, partialUniqueSpecifier);
 
-  if (divideSuccess){
-    H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency);
-  } else {
-    cout << "################## H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency) failed because Get_Pt_JetEfficiency() FAILED!!!!! ##################" << endl;
-  }
-  H1D_jetPt_unfolded->Multiply(H1D_kinematicEfficiency);
+  // if (divideSuccess){
+  //   H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency);
+  // } else {
+  //   cout << "################## H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency) failed because Get_Pt_JetEfficiency() FAILED!!!!! ##################" << endl;
+  // }
+  // H1D_jetPt_unfolded->Multiply(H1D_kinematicEfficiency);
 
 
   for(int iBinY = 1; iBinY <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY(); iBinY++){
