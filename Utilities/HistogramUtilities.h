@@ -8,8 +8,16 @@ float findMinFloat(float* array, int length);
 float findMaxFloat(float* array, int length);
 
 std::vector<double> GetTH1Bins(TH1 H1_histo);
-TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, float* binsX, float* binsY);
+TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY);
+TH2D RebinVariableBins2D_ySlicePriorWeighted(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, TH1D* H1D_priorSpectrum);
+TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, bool debug);
+TH2D RebinVariableBins2D_ySlicePriorWeighted(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, TH1D* H1D_priorSpectrum, bool debug);
+void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist);
+
+// weird stuff happening here with optional debug thing, maybe remove it completely
 TH2D GetTransposeHistogram(TH2D* inputHist);
+TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB);
+TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU);
 
 TString contextCustom(TString* mainContext, TString* secondaryContext, TString* tertiaryContext, const char options[]);
 TString contextCustom(TString* mainContext, TString* secondaryContext, const char options[]);

@@ -69,6 +69,8 @@ TString* texRhoMean = new TString("<#it{#rho}>");
 TString* texTrackEfficiency = new TString("#epsilon = nTrack_{assoc}^{sel8 coll} / nParticle_{gen}^{sel8 coll}");
 TString* texTrackPurity = new TString("#epsilon = nTrack_{signal} / (nTrack_{signal}+nTrack_{background})");
 
+
+TString* texJetKinematicEfficiency = new TString("Jet kinematic efficiency");
 TString* texJetEfficiency = new TString("#epsilon = nJet_{mcd,matched}^{sel8 coll} / nJet_{mcp}^{sel8 coll}");
 TString* texJetPurity = new TString("#epsilon = nJet_{signal} / (nJet_{signal}+nJet_{background})");
 
