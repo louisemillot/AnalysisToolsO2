@@ -21,7 +21,7 @@ float arrayRadius[nRadius] = {0.2, 0.4, 0.6};
 
 // Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
 const int iJetType = 0;
-const int iJetLevel = 0;
+const int iJetLevel = 1;
 
 // Choice of jet QA type (uncorrected jets, background corrected jet (rho area version), background corrected jet (rho area version) with area cut)
 const int iJetFinderQaType = 0;
@@ -660,22 +660,42 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 //                                           };
 
 
+// //////// -------- sel8Full - apass 3 - centrality comp -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("efficiencyDiscardingUpdate");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("");
+// const int nDatasets = 3;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass2_preEffUpdate", "LHC23zzh_apass2_postEffUpdate_eps=1.0", "LHC23zzh_apass2_postEffUpdate_eps=0.5"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"preEffUpdate", "postEffUpdate eps=1.0", "postEffUpdate eps=0.5"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
+//                                         };
+// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+// //                                           "jet-finder-charged-qa_central_5090"
+// //                                           };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+
 //////// -------- sel8Full - apass 3 - centrality comp -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("efficiencyDiscardingUpdate");
+const TString* texDatasetsComparisonType = new TString("MC");
 const TString* texDatasetsComparisonCommonDenominator = new TString("");
-const int nDatasets = 3;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass2_preEffUpdate", "LHC23zzh_apass2_postEffUpdate_eps=1.0", "LHC23zzh_apass2_postEffUpdate_eps=0.5"};
+const int nDatasets = 1;
+const TString Datasets[nDatasets] = {"LHC23zzh_MC_LHC23k6d"};
 // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"preEffUpdate", "postEffUpdate eps=1.0", "postEffUpdate eps=0.5"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
+const TString DatasetsNames[nDatasets] = {"LHC23k6d"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                         };
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
 //                                           "jet-finder-charged-qa_central_5090"
 //                                           };
-const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
-                                          "jet-finder-charged-qa",
-                                          "jet-finder-charged-qa"
+const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
                                           };
+
+const TString trainId = "";
+                                        

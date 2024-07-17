@@ -108,8 +108,10 @@ TString* texNGhost = new TString("#it{N}_{ghost}");
 TString* texBinSpacing = new TString("Area steps");
 TString* texJetRatioAreaJetVsNGhost = new TString("#it{A}_{jet}^{O2}/ #it{A}_{jet}^{0.005*nGhost}");
 
+TString* texRatioUnfolded = new TString("ratio to unfolded");
 TString* texRatioMcpUnfolded = new TString("mcp / unfolded");
 TString* texRatioMeasuredUnfolded = new TString("measured / unfolded");
+TString* texRatioRefoldedMeasured = new TString("refolded / measured");
 
 
 TString* texTrackEfficiencyRatioEtaComparison = new TString("#epsilon^{ #eta > 0} / #epsilon^{ #eta < 0}");

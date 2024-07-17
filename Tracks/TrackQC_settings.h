@@ -197,12 +197,20 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 const TString* texDatasetsComparisonType = new TString("global/uniform");
 const TString* texDatasetsComparisonCommonDenominator = new TString("");
-const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform"};
-const TString DatasetsNames[nDatasets] = {"data global", "data uniform"};
+const int nDatasets = 4;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
+const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
+const TString DatasetsNames[nDatasets] = {"data global", "data uniform", "data itsOnly", "data globalWithoutTpcCrossedRows"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
                                         };
 const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+                                          "track-efficiency",
+                                          "track-efficiency",
                                           "track-efficiency"
                                           };
+
+const TString trainId = "";
+            

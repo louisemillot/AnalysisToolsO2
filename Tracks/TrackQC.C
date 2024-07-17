@@ -82,9 +82,9 @@ void TrackQC() {
   // TString* Extra = new TString("");
 
 
-  // Draw_Pt_DatasetComparison();
-  // Draw_Eta_DatasetComparison();
-  // Draw_Phi_DatasetComparison();
+  Draw_Pt_DatasetComparison();
+  Draw_Eta_DatasetComparison();
+  Draw_Phi_DatasetComparison();
 
   // // Draw_Eta_DatasetComparison_EntriesNorm();
 
@@ -488,7 +488,7 @@ void Draw_Pt_CentralityComparison(int iDataset) {
     H1D_trackPt[iCentralityBin] = (TH1D*)H3D_trackPttrackCent->ProjectionY("trackPt_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
     H1D_trackPt_rebinned[iCentralityBin] = (TH1D*)H1D_trackPt[iCentralityBin]->Rebin(1.,"trackPt_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
-    NormaliseYieldToNEvents(H1D_trackPt_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1]));
+    NormaliseYieldToNEvents(H1D_trackPt_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1], trainId));
 
     ss << "Cent " << arrayCentralityBinning[iCentralityBin] << " - " << arrayCentralityBinning[iCentralityBin+1] << " ";
     CentralityLegend[iCentralityBin] = (TString)ss.str();
@@ -526,7 +526,7 @@ void Draw_Eta_CentralityComparison(int iDataset) {
     H1D_trackEta[iCentralityBin] = (TH1D*)H3D_trackEtatrackCent->ProjectionY("trackEta_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
     H1D_trackEta_rebinned[iCentralityBin] = (TH1D*)H1D_trackEta[iCentralityBin]->Rebin(1.,"trackEta_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
-    NormaliseYieldToNEvents(H1D_trackEta_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1]));
+    NormaliseYieldToNEvents(H1D_trackEta_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1], trainId));
 
     ss << "Cent " << arrayCentralityBinning[iCentralityBin] << " - " << arrayCentralityBinning[iCentralityBin+1] << " ";
     CentralityLegend[iCentralityBin] = (TString)ss.str();
@@ -560,7 +560,7 @@ void Draw_Phi_CentralityComparison(int iDataset) {
     H1D_trackPhi[iCentralityBin] = (TH1D*)H3D_trackPhitrackCent->ProjectionY("trackPhi_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
     H1D_trackPhi_rebinned[iCentralityBin] = (TH1D*)H1D_trackPhi[iCentralityBin]->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
-    NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1]));
+    NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1], trainId));
 
     ss << "Cent " << arrayCentralityBinning[iCentralityBin] << " - " << arrayCentralityBinning[iCentralityBin+1] << " ";
     CentralityLegend[iCentralityBin] = (TString)ss.str();
@@ -596,7 +596,7 @@ void Draw_Pt_Run2Run3Comparison_0010Cent(int iDataset) {
   H1D_trackPt = (TH1D*)H3D_trackPttrackCent->ProjectionY("trackPt_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
   H1D_trackPt_rebinned = (TH1D*)H1D_trackPt->Rebin(1.,"trackPt_rebinned_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
-  NormaliseYieldToNEvents(H1D_trackPt_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10));
+  NormaliseYieldToNEvents(H1D_trackPt_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10, trainId));
 
   cout << "aliPhysics" << endl;
   // AliPhysics Run 2
@@ -676,7 +676,7 @@ void Draw_Eta_Run2Run3Comparison_0010Cent(int iDataset) {
   H1D_trackEta = (TH1D*)H3D_trackEtatrackCent->ProjectionY("trackEta_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
   H1D_trackEta_rebinned = (TH1D*)H1D_trackEta->Rebin(1.,"trackEta_rebinned_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
-  NormaliseYieldToNEvents(H1D_trackEta_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10));
+  NormaliseYieldToNEvents(H1D_trackEta_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10, trainId));
 
   // AliPhysics Run 2
 
@@ -737,7 +737,7 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
   H1D_trackPhi = (TH1D*)H3D_trackPhitrackCent->ProjectionY("trackPhi_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
   H1D_trackPhi_rebinned = (TH1D*)H1D_trackPhi->Rebin(1.,"trackPhi_rebinned_"+DatasetsNames[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
-  NormaliseYieldToNEvents(H1D_trackPhi_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10));
+  NormaliseYieldToNEvents(H1D_trackPhi_rebinned, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, 10, trainId));
 
   // AliPhysics Run 2
 
@@ -988,6 +988,7 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
 
   TH2D* H2D_sigmapt_pt[nDatasets];
   TH2D* H2D_sigmapt_pt_rebinned[nDatasets];
+  TH2D* H2D_sigmapt_pt_rebinned_simple[nDatasets];
 
   TH1D* H1D_sigmapt_pt_X_forMedian[nDatasets];
 
@@ -995,41 +996,60 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   TH1D* H1D_sigmapt_pt_mean_withProfile[nDatasets];
   TH1D* H1D_sigmapt_pt_median[nDatasets];
 
+  double rebin_xMin = 0;
+  double rebin_xMiddle = 10;
+  double rebin_xMax = 100;
+  int rebin_nLeft = 50;
+  int rebin_nRight = 10;
+  int nbinsX;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
     H2D_sigmapt_pt[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_track_pt_track_sigmapt"))->Clone("Draw_Sigmapt_vs_pt_DatasetComp"+Datasets[iDataset]);
     // H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
     // H2D_sigmapt_pt[iDataset]->Sumw2();
 
-    // H2D_sigmapt_pt_rebinned[iDataset] = (TH2D*)H2D_sigmapt_pt[iDataset]->RebinX(1.,"H2D_sigmapt_pt_rebinned"+Datasets[iDataset]);
+    H2D_sigmapt_pt_rebinned_simple[iDataset] = (TH2D*)H2D_sigmapt_pt[iDataset]->RebinX(1.,"H2D_sigmapt_pt_rebinnedSimple"+Datasets[iDataset]);
     // H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_sigmapt_pt_rebinned[iDataset]->GetNbinsX()-10);
     // H2D_rhoCentrality_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_sigmapt_pt_rebinned[iDataset]->FindLastBinAbove(1, 2)); //(asks for the last bin on the y axis (axis number 2) to have strictly more than 1 entry)
-    H1D_sigmapt_pt_mean[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H1D_sigmapt_pt_mean"+Datasets[iDataset], 0, -1, "e");
-    H1D_sigmapt_pt_median[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H1D_sigmapt_pt_median"+Datasets[iDataset], 0, -1, "e");
-    
-    H1D_sigmapt_pt_mean_withProfile[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProfileX("H1D_sigmapt_pt_mean_withProfile"+Datasets[iDataset], 0, -1, "e");
+
+    // H1D_sigmapt_pt_median[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionX("H1D_sigmapt_pt_median"+Datasets[iDataset], 0, -1, "e");
+    // H1D_sigmapt_pt_median[iDataset]->Reset("M");
+    // cout << "testC" << endl;
+ 
+
+    std::vector<double> ybinsVector = GetTH1Bins((TH1D*)H2D_sigmapt_pt_rebinned_simple[iDataset]->ProjectionY("H1D_sigmapt_pt_mean"+Datasets[iDataset], 0, -1, "e"));
+    double* ybins_kept = &ybinsVector[0];
+    std::vector<double> xbinsVector = MakeVariableBinning_twoWidths(rebin_xMin, rebin_nLeft, rebin_xMiddle, rebin_xMax, rebin_nRight); // xMin, nLeft, xMiddle, xMax, nRight
+    double* xbins_new = &xbinsVector[0];
+    nbinsX = rebin_nLeft + rebin_nRight;
+    H2D_sigmapt_pt_rebinned[iDataset] = (TH2D*)RebinVariableBins2D(H2D_sigmapt_pt_rebinned_simple[iDataset], nbinsX, H2D_sigmapt_pt_rebinned_simple[iDataset]->GetNbinsY(), xbins_new, ybins_kept).Clone("H2D_sigmapt_pt_rebinned"+Datasets[iDataset]);
+    H1D_sigmapt_pt_mean_withProfile[iDataset] = (TH1D*)H2D_sigmapt_pt_rebinned[iDataset]->ProfileX("H1D_sigmapt_pt_rebinned_mean_withProfile"+Datasets[iDataset], 0, -1, "e");
 
 
+    H1D_sigmapt_pt_mean[iDataset] = (TH1D*)H2D_sigmapt_pt_rebinned[iDataset]->ProjectionX("H1D_sigmapt_pt_mean"+Datasets[iDataset], 0, -1, "e");
+    H1D_sigmapt_pt_mean[iDataset]->Reset("M");
 
     // get mean of sigmapt
     for(int iBin = 1; iBin <= H1D_sigmapt_pt_mean[iDataset]->GetNbinsX(); iBin++){
-      H2D_sigmapt_pt[iDataset]->GetXaxis()->SetRange(iBin,iBin);
+      H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->SetRange(iBin,iBin);
 
-      H1D_sigmapt_pt_mean[iDataset]->SetBinContent(iBin, H2D_sigmapt_pt[iDataset]->GetMean(2));
-      H1D_sigmapt_pt_mean[iDataset]->SetBinError(iBin, H2D_sigmapt_pt[iDataset]->GetMeanError(2));
+      H1D_sigmapt_pt_mean[iDataset]->SetBinContent(iBin, H2D_sigmapt_pt_rebinned[iDataset]->GetMean(2));
+      H1D_sigmapt_pt_mean[iDataset]->SetBinError(iBin, H2D_sigmapt_pt_rebinned[iDataset]->GetMeanError(2));
       // use TH1::GetMean(axisNumber 1/2/3), GetMeanError() after using setrange
     }
 
-    // median instead of mean:
-    double x, q;
-    q = 0.5;
-    for(int iBin = 1; iBin <= H1D_sigmapt_pt_median[iDataset]->GetNbinsX(); iBin++){
-      // H2D_sigmapt_pt[iDataset]->GetXaxis()->SetRange(iBin,iBin);
-      H1D_sigmapt_pt_X_forMedian[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H2D_sigmapt_pt_X"+Datasets[iDataset], iBin, iBin, "e");
+    // // median instead of mean:
+    // double x, q;
+    // q = 0.5;
+    // for(int iBin = 1; iBin <= H1D_sigmapt_pt_median[iDataset]->GetNbinsX(); iBin++){
+    //   // H2D_sigmapt_pt[iDataset]->GetXaxis()->SetRange(iBin,iBin);
+    //   H1D_sigmapt_pt_X_forMedian[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionY("H2D_sigmapt_pt_X"+Datasets[iDataset], iBin, iBin, "e");
 
-      H1D_sigmapt_pt_X_forMedian[iDataset]->GetQuantiles(1, &x, &q);
-      H1D_sigmapt_pt_median[iDataset]->SetBinContent(iBin, x);
-      H1D_sigmapt_pt_median[iDataset]->SetBinError(iBin, 0.0001); // no idea how to get the error on the median calculation
-    }
+    //   H1D_sigmapt_pt_X_forMedian[iDataset]->GetQuantiles(1, &x, &q);
+    //   H1D_sigmapt_pt_median[iDataset]->SetBinContent(iBin, x);
+    //   H1D_sigmapt_pt_median[iDataset]->SetBinError(iBin, 0.0001); // no idea how to get the error on the median calculation
+    // }
+
+    cout << "max bin" << H2D_sigmapt_pt_rebinned[iDataset]->GetXaxis()->GetBinLowEdge(nbinsX) << endl;
   }
 
   TString* pdfName = new TString("track_sigmapt_vs_pt_DataComp");
@@ -1041,14 +1061,15 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   TString* pdfName_mean_withProfile = new TString("track_sigmapt_mean_vs_pt_DataComp_withProfile");
   TString* pdfName_mean_withProfile_logy = new TString("track_sigmapt_mean_vs_pt_DataComp_withProfile_logy");
 
-  TString* pdfName_median = new TString("track_sigmapt_median_vs_pt_DataComp");
-  TString* pdfName_median_logy = new TString("track_sigmapt_median_vs_pt_DataComp_logy");
+  // TString* pdfName_median = new TString("track_sigmapt_median_vs_pt_DataComp");
+  // TString* pdfName_median_logy = new TString("track_sigmapt_median_vs_pt_DataComp_logy");
 
   // TString textContext(contextDatasetComp(""));
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logz,autoRangeSame"); // ?
-  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName_logy, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowAuto, "logx,logy,logz,autoRangeSame"); // ?
+  std::array<std::array<float, 2>, 2> drawnWindowSigma = {{{0.1, 100}, {0.001, 50}}}; // {{xmin, xmax}, {ymin, ymax}}
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowSigma, "logx,logz,autoRangeSame"); // ?
+  Draw_TH2_Histograms(H2D_sigmapt_pt, DatasetsNames, nDatasets, textContext, pdfName_logy, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowSigma, "logx,logy,logz,autoRangeSame"); // ?
 
   Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean, DatasetsNames, nDatasets, textContext, pdfName_mean, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
   Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean, DatasetsNames, nDatasets, textContext, pdfName_mean_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
@@ -1056,6 +1077,8 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
   Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
 
-  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx");
-  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx");
+  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
 }
+
+

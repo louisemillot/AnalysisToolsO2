@@ -7,7 +7,9 @@
 float findMinFloat(float* array, int length);
 float findMaxFloat(float* array, int length);
 
+std::vector<double> MakeVariableBinning_twoWidths(double xMin, int nLeft, double xMiddle, double xMax, int nRight);
 std::vector<double> GetTH1Bins(TH1 H1_histo);
+
 TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY);
 TH2D RebinVariableBins2D_ySlicePriorWeighted(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, TH1D* H1D_priorSpectrum);
 TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, bool debug);

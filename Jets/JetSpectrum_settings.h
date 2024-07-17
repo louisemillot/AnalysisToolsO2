@@ -28,7 +28,9 @@ const int ptRebinValue = 1;
 // const float arrayCentralityIntervals[nCentralityBins][2] = {{0, 10}, {50, 90}};
 const int nCentralityBins = 1;
 const float arrayCentralityIntervals[nCentralityBins][2] = {{50, 90}}; // for now uses this because pp sim I got has all its h3_jet_r_jet_pt_centrality entries below 0
-const bool doNormalisation = 1;
+const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
+const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
+
 
 // // pT binning for jets - gen = rec
 // double ptBinsJetsRec[nRadius][30] = {{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
@@ -42,6 +44,12 @@ const bool doNormalisation = 1;
 // double ptBinsJetsGen[nRadius][30] = {{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
 // int nBinPtJetsGen[nRadius] = {14,14,14};
 
+// pT binning for jets - gen = rec - start at 5 but rec has a smaller window ; good to check stuff without worrying about a badly setup normalisation by pt bin width
+double ptBinsJetsRec[nRadius][30] = {{30., 40., 50., 60., 70., 80., 100., 120.},{30., 40., 50., 60., 70., 80., 100., 120.},{30., 40., 50., 60., 70., 80., 100., 120.}};
+int nBinPtJetsRec[nRadius] = {7,7,7};
+double ptBinsJetsGen[nRadius][30] = {{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
+int nBinPtJetsGen[nRadius] = {14,14,14};
+
 
 // // pT binning for jets - hiroki layout
 // double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.}};
@@ -50,13 +58,13 @@ const bool doNormalisation = 1;
 // int nBinPtJetsGen[nRadius] = {10,10,10};
 
 
-// pT binning for jets - hiroki for gen but one more rec bin at 110
-double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.}};
-int nBinPtJetsRec[nRadius] = {15,15,15};
-double ptBinsJetsGen[nRadius][30] = {{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
-int nBinPtJetsGen[nRadius] = {10,10,10};
-// double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
-// int nBinPtJetsGen[nRadius] = {9,9,9};
+// // pT binning for jets - hiroki for gen but one more rec bin at 110
+// double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.}};
+// int nBinPtJetsRec[nRadius] = {15,15,15};
+// double ptBinsJetsGen[nRadius][30] = {{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
+// int nBinPtJetsGen[nRadius] = {10,10,10};
+// // double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
+// // int nBinPtJetsGen[nRadius] = {9,9,9};
 
 // // pT binning for jets - hiroki for rec but finer gen binning (shouldn't have finer gen binning for unfolding, as that gen binning is what the unfolded spectrum will have)
 // double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.}};

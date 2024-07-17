@@ -119,8 +119,8 @@ void JetSpectrum() {
   int iRadius = 1;
 
 
-  // Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
-  // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
+  Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
+  Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
   Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius);
 
   // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, "evtNorm"); // NOT FIXED YET - result meaningless
@@ -308,10 +308,10 @@ void Get_Pt_spectrum_bkgCorrected_preWidthScaling(TH1D* &H1D_jetPt, int iDataset
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_bkgCorrected_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ibinJetRadius, ibinJetRadius, binCentEdges[0], binCentEdges[1]);
+  H1D_jetPt_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_bkgCorrected_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ibinJetRadius, ibinJetRadius, binCentEdges[0], binCentEdges[1], "e");
   H1D_jetPt = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_bkgCorrected_rebinned_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ptBinsJetsRec[iRadius]);
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
     NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
   }
@@ -337,10 +337,10 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(TH1D* &H1D_jetPt, i
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_bkgCorrected_genBinning_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ibinJetRadius, ibinJetRadius, binCentEdges[0], binCentEdges[1]);
+  H1D_jetPt_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_bkgCorrected_genBinning_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ibinJetRadius, ibinJetRadius, binCentEdges[0], binCentEdges[1], "e");
   H1D_jetPt = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_bkgCorrected_rebinned_genBinning_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ptBinsJetsGen[iRadius]);
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
     NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
   }
@@ -382,13 +382,13 @@ void Get_Pt_spectrum_mcp_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcp_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1);
+  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcp_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1, "e");
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcp_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
 
 
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
@@ -433,13 +433,13 @@ void Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int i
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcp_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1);
+  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcp_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1, "e");
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsFine[iRadius],"jetPt_mcp_rebinned_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsFine[iRadius]);
 
 
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
@@ -485,13 +485,13 @@ void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iD
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcp_rebinRec_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1);
+  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcp_rebinRec_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1, "e");
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_mcp_rebinnedRec_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsRec[iRadius]);
 
 
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
@@ -541,7 +541,7 @@ void Get_Pt_spectrum_mcpMatched_preWidthScaling(TH1D* &H1D_jetPt_mcpMatched, int
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_mcpMatched_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcpMatched_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1);
+  H1D_jetPt_mcpMatched_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcpMatched_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1, "e");
 
   // should be rebinned using rec bins, because in the unfolding it'll be given to RooUnfoldResponse(mcpMatched, mcp, response) to get the efficiency 
   H1D_jetPt_mcpMatched = (TH1D*)H1D_jetPt_mcpMatched_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcpMatched_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
@@ -552,7 +552,7 @@ void Get_Pt_spectrum_mcpMatched_preWidthScaling(TH1D* &H1D_jetPt_mcpMatched, int
 
 
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
@@ -601,7 +601,7 @@ void Get_Pt_spectrum_mcdMatched_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_mcdMatched_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionZ("jetPt_mcdMatched_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1);
+  H1D_jetPt_mcdMatched_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionZ("jetPt_mcdMatched_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1, "e");
 
   // should be rebinned using rec bins, because in the unfolding it'll be given to RooUnfoldResponse(mcdMatched, mcp, response) to get the efficiency 
   H1D_jetPt_mcdMatched = (TH1D*)H1D_jetPt_mcdMatched_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_mcdMatched_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsRec[iRadius]);
@@ -612,7 +612,7 @@ void Get_Pt_spectrum_mcdMatched_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int
 
 
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
@@ -626,36 +626,50 @@ void Get_Pt_spectrum_mcdMatched_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int
 
 void Get_Pt_spectrum_bkgCorrected(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_bkgCorrected_preWidthScaling(H1D_jetPt, iDataset, iRadius, centRange, options);
-  TransformRawHistToYield(H1D_jetPt);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt);
+  }
 }
 
 void Get_Pt_spectrum_mcp(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcp_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
-  TransformRawHistToYield(H1D_jetPt_mcp);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_mcp);
+  }
 }
 
 void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
-  TransformRawHistToYield(H1D_jetPt_mcp);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_mcp);
+  }
 }
 
 void Get_Pt_spectrum_mcdMatched(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcdMatched_preWidthScaling(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
-  TransformRawHistToYield(H1D_jetPt_mcdMatched);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_mcdMatched);
+  }
 }
 void Get_Pt_spectrum_mcpMatched(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcpMatched_preWidthScaling(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
-  TransformRawHistToYield(H1D_jetPt_mcpMatched);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_mcpMatched);
+  }
 }
 
 void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcp_recBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
-  TransformRawHistToYield(H1D_jetPt_mcp);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_mcp);
+  }
 }
 
 void Get_Pt_spectrum_bkgCorrected_genBinning(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(H1D_jetPt, iDataset, iRadius, centRange, options);
-  TransformRawHistToYield(H1D_jetPt);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt);
+  }
 }
 
 
@@ -692,7 +706,7 @@ void Get_Pt_spectrum_mcp_folded_preWidthScaling(TH1D* &H1D_jetPt_mcp_folded, int
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("H1D_jetPt_mcp_defaultBin_"+partialUniqueSpecifier, ibinJetRadius, ibinJetRadius, 0, -1);
+  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("H1D_jetPt_mcp_defaultBin_"+partialUniqueSpecifier, ibinJetRadius, ibinJetRadius, 0, -1, "e");
   H1D_jetPt_mcp_fineBin = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsFine[iRadius],"H1D_jetPt_mcp_fineBin_"+partialUniqueSpecifier, ptBinsJetsFine[iRadius]);
 
   TH2D* H2D_jetPtResponseMatrix_fluctuations;
@@ -726,7 +740,7 @@ void Get_Pt_spectrum_mcp_folded_preWidthScaling(TH1D* &H1D_jetPt_mcp_folded, int
 
 
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt_mcp_folded, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
@@ -772,7 +786,7 @@ void Get_Pt_spectrum_mcp_folded_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp_
 
   int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
 
-  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("H1D_jetPt_mcp_defaultBin_"+partialUniqueSpecifier, ibinJetRadius, ibinJetRadius, 0, -1);
+  H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("H1D_jetPt_mcp_defaultBin_"+partialUniqueSpecifier, ibinJetRadius, ibinJetRadius, 0, -1, "e");
   H1D_jetPt_mcp_fineBin = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsFine[iRadius],"H1D_jetPt_mcp_fineBin_"+partialUniqueSpecifier, ptBinsJetsFine[iRadius]);
 
   TH2D* H2D_jetPtResponseMatrix_fluctuations;
@@ -806,7 +820,7 @@ void Get_Pt_spectrum_mcp_folded_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp_
 
 
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     // NormaliseYieldToNEvents(H1D_jetPt_mcp_folded, GetNEventsGen(file_O2Analysis_list[iDataset]));
     // NormaliseYieldToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     NormaliseRawHistToNEvents(H1D_jetPt_mcp_folded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
@@ -821,12 +835,16 @@ void Get_Pt_spectrum_mcp_folded_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp_
 
 void Get_Pt_spectrum_mcp_folded(TH1D* &H1D_jetPt_mcp_folded, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_mcp_folded_preWidthScaling(H1D_jetPt_mcp_folded, iDataset, iRadius, centRange, options);
-  TransformRawHistToYield(H1D_jetPt_mcp_folded);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_mcp_folded);
+  }
 }
 
 void Get_Pt_spectrum_mcp_folded_genBinning(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_mcp_folded_genBinning_preWidthScaling(H1D_jetPt, iDataset, iRadius, centRange, options);
-  TransformRawHistToYield(H1D_jetPt);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -864,6 +882,10 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   // matrix product of fluct response times det response; assumes the two are of the same size binning wise
   // Careful: xy of hist and ij of Resp(i,j) are inverted ! hist(j,i) = matrix(i,j) and so if matrix(i,j)=SUM(matrixA(i,k)matrixB(k,j)) then hist(j,i)=SUM(histA(k,i)histB(j,k)), and if we replace j,i by gen,rec we get hist(gen,rec)=SUM(histA(k,rec)histB(gen,k))
   TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin = (TH2D*)GetMatrixProductTH2xTH2(H2D_jetPtResponseMatrix_fluctuations, H2D_jetPtResponseMatrix_detectorResponse).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined_preRebin"+partialUniqueSpecifier);
+  // sigma(detectorResponse) is often very very big (100, 1000, 10000) or just nan, while its value is small (0.001)
+
+
+
   // cout << "bin(topleft 1,N) = " << H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->GetBinContent(1,H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->GetNbinsY()) << endl;
   // cout << "bin(bottom left 1,1) = " << H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin->GetBinContent(1,1) << endl;
 
@@ -882,12 +904,11 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   // }
 
   TH1D* priorSpectrum;
-  if (doNormalisation) { // should I not take the bin width into account? else some bins after normalisation will still have values above 1? eh why though, shouldnt be true
-    Get_Pt_spectrum_mcp_fineBinning(priorSpectrum, iDataset, iRadius, "evtNorm"); // _recBinning if needed ; 
-    cout << "am I sure I don't want the width scaling there" << endl;
- } else {
-    Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(priorSpectrum, iDataset, iRadius, ""); // _recBinning if needed ; 
- }
+  Get_Pt_spectrum_mcp_fineBinning(priorSpectrum, iDataset, iRadius, ""); 
+  // normalising priorSpectrum with evtNorm doesn't change anything as the weighting does prior_content(i)/prior_integral()
+  // dividing priorSpectrum by binwidth doesn't change anything for the same reason
+
+
   H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D_ySlicePriorWeighted(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrum).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
   NormaliseYSlicesAsProbaDensity(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined);
 
@@ -925,14 +946,27 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
 
   // Normalisation of the response matrix: each pt gen slice is normalised to unity
   double genSliceNorm = 1;
+  double H2D_hist_content, H2D_hist_contentError, H2D_hist_contentErrorA, H2D_hist_contentErrorB, genSliceNormError;
+  double debugError, debugContent;
   for(int iBinY = 1; iBinY <= H2D_response->GetNbinsY(); iBinY++){
-    genSliceNorm = H2D_response->Integral(1, H2D_response->GetNbinsX(), iBinY, iBinY);
+    genSliceNorm = H2D_response->IntegralAndError(1, H2D_response->GetNbinsX(), iBinY, iBinY, genSliceNormError);
     for(int iBinX = 1; iBinX <= H2D_response->GetNbinsX(); iBinX++){
-      H2D_response->SetBinContent(iBinX, iBinY, H2D_response->GetBinContent(iBinX, iBinY) * 1./genSliceNorm);
-      H2D_response->SetBinError(iBinX, iBinY, H2D_response->GetBinError(iBinX, iBinY) * 1./genSliceNorm);
-      // cout << "H2D_response(" << iBinX << ", " << iBinY << ") = " << H2D_response->GetBinContent(iBinX, iBinY) << endl;
+      H2D_hist_content = H2D_response->GetBinContent(iBinX, iBinY);
+      H2D_hist_contentError = H2D_response->GetBinError(iBinX, iBinY);
+      debugError = H2D_hist_contentError;
+      debugContent = H2D_hist_content;
+      H2D_hist_content == 0 ? H2D_hist_contentErrorA = 0 : H2D_hist_contentErrorA = H2D_hist_contentError*H2D_hist_contentError / (H2D_hist_content*H2D_hist_content);
+      genSliceNorm == 0 ? H2D_hist_contentErrorB = 0 : H2D_hist_contentErrorB = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
+      genSliceNorm == 0 ? H2D_hist_content = 0 : H2D_hist_content = H2D_response->GetBinContent(iBinX, iBinY) * 1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? here yes because if integral of slice is 0 then the whole line is has 0 entry so it s ok
+      // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------          detResponseError = " << debugError << ", detResponseContent = " << debugContent << ", genSliceNormError = " << genSliceNormError << ", genSliceNorm = " << genSliceNorm << endl;
+      H2D_response->SetBinContent(iBinX, iBinY, H2D_hist_content);
+      H2D_response->SetBinError(iBinX, iBinY, sqrt(H2D_hist_content*H2D_hist_content * (H2D_hist_contentErrorA + H2D_hist_contentErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
+      // cout << "                                 --------          normalised detResponseContent = " << H2D_response->GetBinContent(iBinX, iBinY) << ", normalised detResponseError = " << H2D_response->GetBinError(iBinX, iBinY) << endl;
+      // cout << " " << endl;
     }
   }
+
+  cout << "errors here should probably be reduced to take into account correlations, as the normalisation factor is built from same matrix" << endl;
 
   // H2D_jetPtResponseMatrix_detectorResponse = (TH2D*)H2D_gen_det_geoMatched_rebinned->Clone("H2D_jetPtResponseMatrix_detectorResponse"+partialUniqueSpecifier); // should be using the one below; this one is just a test
   H2D_jetPtResponseMatrix_detectorResponse = (TH2D*)H2D_response->Clone("H2D_jetPtResponseMatrix_detectorResponse"+partialUniqueSpecifier); 
@@ -954,6 +988,16 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
   cout << "############ ----test---- H2D_gen_det_geoMatched->Integral(100, 200, 100, 200) = " << H2D_gen_det_geoMatched->Integral(100, 200, 100, 200) << endl;
   cout << "############ ----test---- H3D_jetRpartPtdetPt->Integral(1, 1, 100, 200, 100, 200) = " << H3D_jetRpartPtdetPt->Integral(1, 1, 100, 200, 100, 200) << endl;
 
+  cout << "............................................................." <<endl;
+  cout << "............................................................." <<endl;
+  // for(int iBinX = 1; iBinX <= H2D_jetPtResponseMatrix_detectorResponse->GetNbinsX(); iBinX++){ // 0 and n+1 would take underflow and overflow into account, don't want that
+  //   for(int iBinY = 1; iBinY <= H2D_jetPtResponseMatrix_detectorResponse->GetNbinsY(); iBinY++){ // 0 and n+1 would take underflow and overflow into account, don't want that
+  //     cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------          detResponseContent = " << H2D_jetPtResponseMatrix_detectorResponse->GetBinContent(iBinX, iBinY) << ", detResponseError = " << H2D_jetPtResponseMatrix_detectorResponse->GetBinError(iBinX, iBinY) << endl;
+  //   }
+  // }
+  cout << "............................................................." <<endl;
+  cout << "............................................................." <<endl;
+
   // its better but the matrix is pretty empty at high pt; why???
   // gotta "normalise the projection on the pgen T -axis to unity" for each pt gen
 }
@@ -974,7 +1018,7 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
 
   ibinCent_low = H2D_fluctuations_centrality->GetXaxis()->FindBin(centRange[0]);
   ibinCent_high = H2D_fluctuations_centrality->GetXaxis()->FindBin(centRange[1]);
-  H1D_fluctuations = (TH1D*)H2D_fluctuations_centrality->ProjectionY("bkgFluctuationCentrality_highRes_"+partialUniqueSpecifier, ibinCent_low, ibinCent_high);
+  H1D_fluctuations = (TH1D*)H2D_fluctuations_centrality->ProjectionY("bkgFluctuationCentrality_highRes_"+partialUniqueSpecifier, ibinCent_low, ibinCent_high, "e");
 
   NormaliseYieldToNEntries(H1D_fluctuations); // normalising fluctuations to 1
     
@@ -982,7 +1026,7 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
 
   //==================== Build response matrix: shift deltaPt by pT gen along the pT rec axis ====================//
   int ibinZeroFluct= H1D_fluctuations->FindBin(0+GLOBAL_epsilon);
-  
+  double integralError;
   for(int iBinRec = 1; iBinRec <= H2D_response.GetNbinsX(); iBinRec++){
     for(int iBinGen = 1; iBinGen <= H2D_response.GetNbinsY(); iBinGen++){
       double ptGen = H2D_response.GetYaxis()->GetBinCenter(iBinGen);
@@ -990,9 +1034,9 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
       double ptRec_up = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec+1);
       // double xPtRecWidth = H2D_response->GetXaxis()->GetBinWidth(iBinRec);
       // if (ibinZero + (iBinRec - iBinGen) <= H1D_fluctuations_highRes->GetNbinsX()) { // make sure it's within bin range
-      H2D_response.SetBinContent(iBinRec, iBinGen, H1D_fluctuations->Integral(H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon), H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen + GLOBAL_epsilon))); 
+      H2D_response.SetBinContent(iBinRec, iBinGen, H1D_fluctuations->IntegralAndError(H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon), H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen + GLOBAL_epsilon), integralError)); 
       // cout << "FluctResp(" << iBinRec << ", " << iBinGen << ") = " << H2D_response.GetBinContent(iBinRec, iBinGen) << endl;
-        // H2D_response_highRes->SetBinError(iBinRec, iBinGen, something); 
+      H2D_response.SetBinError(iBinRec, iBinGen, integralError); 
     }
   }
 
@@ -1017,7 +1061,7 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
 
 
 void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH2D* H2D_jetPtResponseMatrix, TString name_H1D_kinematicEfficiency){
-  H1D_kinematicEfficiency = H2D_jetPtResponseMatrix->ProjectionY("H1D_kinematicEfficiency"+name_H1D_kinematicEfficiency, 1, H2D_jetPtResponseMatrix->GetNbinsX());
+  H1D_kinematicEfficiency = H2D_jetPtResponseMatrix->ProjectionY("H1D_kinematicEfficiency"+name_H1D_kinematicEfficiency, 1, H2D_jetPtResponseMatrix->GetNbinsX(), "e");
 }
 
 bool  Get_Pt_JetEfficiency(TH1D* &H1D_jetEfficiency, int iDataset, int iRadius, float* centRange, const char options[]){
@@ -1082,11 +1126,7 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   Get_PtResponseMatrix_DetectorAndFluctuationsCombined(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, H2D_jetPtResponseMatrix_detectorResponse, H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius, centRange);
 
   cout << "RooUnfoldResponse setting - start" << endl;
-  // // based on https://github.com/alisw/AliPhysics/blob/master/PWGLF/FORWARD/analysis2/scripts/UnfoldMult.C
-  // TH1D* responseProjY = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionY(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projY", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY());
-  // TH1D* responseProjX = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionX(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projX", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX());
-  // RooUnfoldResponse* response = new RooUnfoldResponse(responseProjX, responseProjY, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
-
+  // // based on Marta's work: https://twiki.cern.ch/twiki/bin/viewauth/ALICE/JEJetSpectrumUnfolding
   RooUnfoldResponse* response = new RooUnfoldResponse(0, 0, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // measured and mcp_rebinned are here to take inneficiencies and fakes into account; or is it really what's happening? 'Alternatively, the response matrix can be constructed from a pre-existing TH2D 2-dimensional histogram (with truth and measured distribution TH1D histograms for normalisation).' from https://hepunx.rl.ac.uk/~adye/software/unfold/RooUnfold.html, and I'm already normalising so maybe tehre's no need for more normalisation
   cout << "RooUnfoldResponse setting - end" << endl;
 
@@ -1097,8 +1137,8 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   cout << "Get_Pt_spectrum_unfolded(): should I use response->UseOverflow() ? using it gives a ratio unfolded/mcp much higher than without using it" << endl;
   // response->UseOverflow();
 
+  // note about unfolding: if SUM(Mkj over k)=1 then it's also true for the inverse of M (can easily demosntrate it, just write it);
   RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
-  // RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
   // RooUnfold* unfold = new RooUnfoldSvd(response, measured, 8); // that's how it is done in hiroki yokoyama's thesis
   // unfold->IncludeSystematics(RooUnfolding::kAll);
   // TH1D* hist_unfold = (TH1D*)unfold.Hunfold();
@@ -1121,7 +1161,7 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   cout << "mcp NbinsX = " << mcp->GetNbinsX() << endl;
   cout << "unfolded NbinsX = " << H1D_jetPt_unfolded->GetNbinsX() << endl;
 
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1144,7 +1184,9 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
 
 void Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_unfolded_preWidthScaling(H1D_jetPt_unfolded, iDataset, iRadius, centRange, options);
-  TransformRawHistToYield(H1D_jetPt_unfolded); // see width comments at beginning of Get_Pt_spectrum_unfolded
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_unfolded); // see width comments at beginning of Get_Pt_spectrum_unfolded
+  }
 }
 
 
@@ -1172,13 +1214,13 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfol
   divideSuccess = Get_Pt_JetEfficiency(H1D_jetEfficiency, iDataset, iRadius, centRange, options);
   Get_ResponseMatrix_Pt_KinematicEffiency(H1D_kinematicEfficiency, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, partialUniqueSpecifier);
 
-  // if (divideSuccess){
-  //   H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency);
-  // } else {
-  //   cout << "################## H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency) failed because Get_Pt_JetEfficiency() FAILED!!!!! ##################" << endl;
-  // }
-  // H1D_jetPt_unfolded->Multiply(H1D_kinematicEfficiency);
-
+  if (divideSuccess){
+    H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency);
+  } else {
+    cout << "################## H1D_jetPt_unfolded->Multiply(H1D_jetEfficiency) failed because Get_Pt_JetEfficiency() FAILED!!!!! ##################" << endl;
+  }
+  H1D_jetPt_unfolded->Multiply(H1D_kinematicEfficiency);
+  cout << "note: if I remove the multiplication by efficiencies from teh refolded calculation, it then matches with the unfolded" << endl;
 
   for(int iBinY = 1; iBinY <= H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY(); iBinY++){
     cout << "combinedMatrix integral of slice iBinY = " << iBinY << " is: " << H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Integral(0, -1, iBinY, iBinY) << endl;
@@ -1188,7 +1230,7 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfol
 
   //not sure I should normalise --> probably not as H1D_jetPt_unfolded is already normalised in Get_Pt_spectrum_unfolded_preWidthScaling
 
-  // if (strstr(options, "evtNorm") != NULL) {
+  // if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
   //   // NormaliseYieldToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsGen(file_O2Analysis_list[iDataset]));
   //   // NormaliseYieldToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
   //   NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
@@ -1205,7 +1247,9 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfol
 
 void Get_Pt_spectrum_unfoldedThenRefolded(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, options);
-  TransformRawHistToYield(H1D_jetPt_unfoldedThenRefolded); // see width comments at beginning of Get_Pt_spectrum_unfolded
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_unfoldedThenRefolded); // see width comments at beginning of Get_Pt_spectrum_unfolded
+  }
 }
 
 void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, const char options[]) {
@@ -1281,8 +1325,8 @@ void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int
   //  to indicate, respectively, no fakes and/or no inefficiency.
 
   // based on https://github.com/alisw/AliPhysics/blob/master/PWGLF/FORWARD/analysis2/scripts/UnfoldMult.C
-  TH1D* responseProjY = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionY(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projY", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY());
-  TH1D* responseProjX = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionX(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projX", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX());
+  TH1D* responseProjY = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionY(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projY", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsY(), "e");
+  TH1D* responseProjX = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->ProjectionX(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetName()+(TString)"_projX", 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->GetNbinsX(), "e");
 
 
   cout << "RooUnfoldResponse setting - start" << endl;
@@ -1292,7 +1336,7 @@ void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int
   // RooUnfoldResponse* response = new RooUnfoldResponse(projX, projY, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, "", ""); // measured and mcp_rebinned are here to take inneficiencies and fakes into account
   cout << "Get_Pt_spectrum_unfolded(): should I use response->UseOverflow() ? using it gives a ratio unfolded/mcp much higher than without using it" << endl;
   // response->UseOverflow();
-  RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
+  // RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
   // RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
   // RooUnfold* unfold = new RooUnfoldSvd(response, measured, 8); // that's how it is done in hiroki yokoyama's thesis
   // unfold->IncludeSystematics(RooUnfolding::kAll);
@@ -1300,7 +1344,7 @@ void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int
   // TH1D* hist_unfold = (TH1D*)unfold->Hreco()->Clone("hist_unfold");
 
   // works but too simplistic; doesn't account for bin migration
-  // RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
+  RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
   TH1D* hist_unfold = static_cast<TH1D*>(unfold->Hreco(RooUnfold::kCovariance));
 
   // RooUnfoldBinByBin unfold(*H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, measured);
@@ -1321,7 +1365,9 @@ void Get_Pt_TestSpectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int
 
 void Get_Pt_TestSpectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_TestSpectrum_unfolded_preWidthScaling(H1D_jetPt_unfolded, iDataset, iRadius, centRange, options);
-  TransformRawHistToYield(H1D_jetPt_unfolded); // see width comments at beginning of Get_Pt_spectrum_unfolded
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_unfolded); // see width comments at beginning of Get_Pt_spectrum_unfolded
+  }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////// Spectrum plotting functions ///////////////////////////////////////////////////////////////////////////////
@@ -1350,7 +1396,7 @@ void Draw_Pt_spectrum_raw(int iDataset, int iRadius, const char options[]) {
 
   TString* yAxisLabel;
   yAxisLabel = texCount;
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     yAxisLabel = texJetPtYield_EventNorm;
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1378,7 +1424,7 @@ void Draw_Pt_spectrum_mcp(int iDataset, int iRadius, const char options[]) {
 
   TString* yAxisLabel;
   yAxisLabel = texCount;
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     yAxisLabel = texJetPtYield_EventNorm;
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1401,7 +1447,7 @@ void Draw_Pt_spectrum_mcdMatched(int iDataset, int iRadius, const char options[]
 
   TString* yAxisLabel;
   yAxisLabel = texCount;
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     yAxisLabel = texJetPtYield_EventNorm;
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1464,7 +1510,7 @@ void Draw_kinematicEfficiency(int iDataset, int iRadius) {
     // H1D_kinematicEfficiency[iCent] = H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined[iCent]->ProjectionY("H1D_kinematicEfficiency"+jetType[iJetType]+"_"+Datasets[iDataset], 1, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined[iCent]->GetNbinsX());
   }
   TString* pdfName = new TString("kinematicEfficiency_"+partialUniqueSpecifier+"_centralityComp");
-  // TString* pdfName_logz = new TString("kinematicEfficiency_"+jetType[iJetType]+"_"+Datasets[iDataset]+"_centralityComp_logz");
+  // TString* pdfName_logz = new TString("kinematicEfficiency_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_centralityComp_logz");
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
@@ -1489,10 +1535,10 @@ void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
     centRange[1] = arrayCentralityIntervals[iCent][1];
     Get_PtResponseMatrix_Fluctuations(H2D_jetPtResponseMatrix_fluctuations[iCent], iDataset, iRadius, centRange);
   }
-  TString* pdfName_logz = new TString("background_responseMatrices_"+jetType[iJetType]+"_"+Datasets[iDataset]+"_centralityComp_logz");
-  TString* pdfNameFullRes_logz = new TString("background_responseMatrices_"+jetType[iJetType]+"_"+Datasets[iDataset]+"_centralityComp_FullRes_logz");
-  TString* pdfName = new TString("background_responseMatrices_"+jetType[iJetType]+"_"+Datasets[iDataset]+"_centralityComp");
-  TString* pdfNameFullRes = new TString("background_responseMatrices_"+jetType[iJetType]+"_"+Datasets[iDataset]+"_centralityComp_FullRes");
+  TString* pdfName_logz = new TString("background_responseMatrices_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_centralityComp_logz");
+  TString* pdfNameFullRes_logz = new TString("background_responseMatrices_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_centralityComp_FullRes_logz");
+  TString* pdfName = new TString("background_responseMatrices_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_centralityComp");
+  TString* pdfNameFullRes = new TString("background_responseMatrices_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_centralityComp_FullRes");
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
@@ -1511,7 +1557,7 @@ void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius) {
   Get_PtResponseMatrix_detectorResponse(H2D_jetPtResponseMatrix_detectorResponse, iDataset, iRadius);
 
   TString* pdfName = new TString("detectorResponse_responseMatrices_"+jetType[iJetType]+"_"+Datasets[iDataset]);
-  TString* pdfName_logz = new TString("detectorResponse_responseMatrices_"+jetType[iJetType]+"_"+Datasets[iDataset]+"_logz");
+  TString* pdfName_logz = new TString("detectorResponse_responseMatrices_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_logz");
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
@@ -1538,8 +1584,8 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
     Get_PtResponseMatrix_detectorResponse(H2D_jetPtResponseMatrix_detectorResponse[iCent], iDataset, iRadius);
     Get_PtResponseMatrix_DetectorAndFluctuationsCombined(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined[iCent], H2D_jetPtResponseMatrix_detectorResponse[iCent], H2D_jetPtResponseMatrix_fluctuations[iCent], iDataset, iRadius, centRange);
   }
-  TString* pdfName = new TString("detectorAndFluctuationsCombined_responseMatrices_"+jetType[iRadius]+"_"+Datasets[iDataset]+"_centralityComp");
-  TString* pdfName_logz = new TString("detectorAndFluctuationsCombined_responseMatrices_"+jetType[iRadius]+"_"+Datasets[iDataset]+"_centralityComp_logz");
+  TString* pdfName = new TString("detectorAndFluctuationsCombined_responseMatrices_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_centralityComp");
+  TString* pdfName_logz = new TString("detectorAndFluctuationsCombined_responseMatrices_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_centralityComp_logz");
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
@@ -1554,6 +1600,7 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
 void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, const char options[]) {
 
   TH1D* H1D_jetPt_measured[nCentralityBins];
+  TH1D* H1D_jetPt_measured_genBinning[nCentralityBins];
   TH1D* H1D_jetPt_unfolded[nCentralityBins];
   TH1D* H1D_jetPt_unfoldedThenRefolded[nCentralityBins];
   TH1D* H1D_jetPt_unfolded_mcpComp[nCentralityBins][2];
@@ -1562,8 +1609,11 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, const char options[]) 
   TH1D* H1D_jetPt_mcp;
   TH1D* H1D_jetPt_ratio_mcp[nCentralityBins];
   TH1D* H1D_jetPt_ratio_measured[nCentralityBins];
+  TH1D* H1D_jetPt_ratio_measuredRefolded[nCentralityBins];
+
   bool divideSuccessMcp[nCentralityBins];
   bool divideSuccessMeasured[nCentralityBins];
+  bool divideSuccessMeasuredRefolded[nCentralityBins];
   float centRange[2];
   TString partialUniqueSpecifier;
 
@@ -1576,33 +1626,39 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, const char options[]) 
     partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]";
     
     Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iCent], iDataset, iRadius, centRange, options);
+    // Get_Pt_spectrum_unfolded_preWidthScaling(H1D_jetPt_unfolded[iCent], iDataset, iRadius, centRange, options);
 
     // comparison with raw measured
-    Get_Pt_spectrum_bkgCorrected_genBinning(H1D_jetPt_measured[iCent], iDataset, iRadius, centRange, options);
+    Get_Pt_spectrum_bkgCorrected_genBinning(H1D_jetPt_measured_genBinning[iCent], iDataset, iRadius, centRange, options);
     H1D_jetPt_unfolded_measuredComp[iCent][0] = (TH1D*)H1D_jetPt_unfolded[iCent]->Clone("H1D_jetPt_unfolded_measuredComp"+partialUniqueSpecifier);
-    H1D_jetPt_unfolded_measuredComp[iCent][1] = (TH1D*)H1D_jetPt_measured[iCent]->Clone("H1D_jetPt_measured_measuredComp"+partialUniqueSpecifier);
-    H1D_jetPt_ratio_measured[iCent] = (TH1D*)H1D_jetPt_measured[iCent]->Clone("H1D_jetPt_ratio_measured"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_measuredComp[iCent][1] = (TH1D*)H1D_jetPt_measured_genBinning[iCent]->Clone("H1D_jetPt_measured_genBinning_measuredComp"+partialUniqueSpecifier);
+    H1D_jetPt_ratio_measured[iCent] = (TH1D*)H1D_jetPt_measured_genBinning[iCent]->Clone("H1D_jetPt_ratio_measured"+partialUniqueSpecifier);
     divideSuccessMeasured[iCent] = H1D_jetPt_ratio_measured[iCent]->Divide(H1D_jetPt_unfolded[iCent]);
-    for(int iBin = 1; iBin <= H1D_jetPt_ratio_measured[iCent]->GetNbinsX(); iBin++){
-      cout << "ratio measured/unfolded bin contents: " << H1D_jetPt_ratio_measured[iCent]->GetBinContent(iBin) << endl;
-      cout << "nevents rec, mcd, mcp = " << GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect)  << endl;
-    }
+    // for(int iBin = 1; iBin <= H1D_jetPt_ratio_measured[iCent]->GetNbinsX(); iBin++){
+    //   cout << "ratio measured/unfolded bin contents: " << H1D_jetPt_ratio_measured[iCent]->GetBinContent(iBin) << endl;
+    //   cout << "nevents rec, mcd, mcp = " << GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect)  << endl;
+    // }
 
     // comparison with mcp truth
     H1D_jetPt_unfolded_mcpComp[iCent][0] = (TH1D*)H1D_jetPt_unfolded[iCent]->Clone("H1D_jetPt_unfolded_mcpComp"+partialUniqueSpecifier);
     H1D_jetPt_unfolded_mcpComp[iCent][1] = (TH1D*)H1D_jetPt_mcp->Clone("H1D_jetPt_unfolded_mcpComp"+partialUniqueSpecifier);
     H1D_jetPt_ratio_mcp[iCent] = (TH1D*)H1D_jetPt_mcp->Clone("H1D_jetPt_ratio_mcp"+partialUniqueSpecifier);
     divideSuccessMcp[iCent] = H1D_jetPt_ratio_mcp[iCent]->Divide(H1D_jetPt_unfolded[iCent]);
-    for(int iBin = 1; iBin <= H1D_jetPt_ratio_mcp[iCent]->GetNbinsX(); iBin++){
-      cout << "ratio mcp/unfolded bin contents: " << H1D_jetPt_ratio_mcp[iCent]->GetBinContent(iBin) << endl;
-      cout << "nevents rec, mcd, mcp = " << GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect)  << endl;
-    }
+    // for(int iBin = 1; iBin <= H1D_jetPt_ratio_mcp[iCent]->GetNbinsX(); iBin++){
+    //   cout << "ratio mcp/unfolded bin contents: " << H1D_jetPt_ratio_mcp[iCent]->GetBinContent(iBin) << endl;
+    //   cout << "nevents rec, mcd, mcp = " << GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect) << ", " << GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect)  << endl;
+    // }
 
     // comparison with refolded
+    Get_Pt_spectrum_bkgCorrected(H1D_jetPt_measured[iCent], iDataset, iRadius, centRange, options);
+    // Get_Pt_spectrum_bkgCorrected_preWidthScaling(H1D_jetPt_measured[iCent], iDataset, iRadius, centRange, options);
     Get_Pt_spectrum_unfoldedThenRefolded(H1D_jetPt_unfoldedThenRefolded[iCent], iDataset, iRadius, centRange, options);
-    H1D_jetPt_unfolded_refoldedComp[iCent][0] = (TH1D*)H1D_jetPt_unfolded[iCent]->Clone("H1D_jetPt_unfolded_refoldedComp"+partialUniqueSpecifier);
-    H1D_jetPt_unfolded_refoldedComp[iCent][1] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iCent]->Clone("H1D_jetPt_refolded_refoldedComp"+partialUniqueSpecifier);
-    H1D_jetPt_unfolded_refoldedComp[iCent][2] = (TH1D*)H1D_jetPt_measured[iCent]->Clone("H1D_jetPt_measured_refoldedComp"+partialUniqueSpecifier);
+    // Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(H1D_jetPt_unfoldedThenRefolded[iCent], iDataset, iRadius, centRange, options);
+    // H1D_jetPt_unfolded_refoldedComp[iCent][0] = (TH1D*)H1D_jetPt_unfolded[iCent]->Clone("H1D_jetPt_unfolded_refoldedComp"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_refoldedComp[iCent][0] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iCent]->Clone("H1D_jetPt_refolded_refoldedComp"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_refoldedComp[iCent][1] = (TH1D*)H1D_jetPt_measured[iCent]->Clone("H1D_jetPt_measured_refoldedComp"+partialUniqueSpecifier);
+    H1D_jetPt_ratio_measuredRefolded[iCent] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iCent]->Clone("H1D_jetPt_ratio_refoldedComp"+partialUniqueSpecifier);
+    divideSuccessMeasuredRefolded[iCent] = H1D_jetPt_ratio_measuredRefolded[iCent]->Divide(H1D_jetPt_measured[iCent]);
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded");
@@ -1611,8 +1667,8 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, const char options[]) 
 
   TString centralityLegend[nCentralityBins]; CentralityLegend(centralityLegend, arrayCentralityIntervals, nCentralityBins);
 
-  TString* yAxisLabel;
-  if (strstr(options, "evtNorm") != NULL) {
+  TString* yAxisLabel = texCount;
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     yAxisLabel = texJetPtYield_EventNorm;
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1623,7 +1679,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, const char options[]) 
 
 
     // comparison with raw measured
-  TString unfoldedMeasuredCompLegend[2] = {"unfolded data", "measured raw"};
+  TString unfoldedMeasuredCompLegend[2] = {"unfolded data", "measured raw (gen binning)"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
     TString* pdfName_measuredComp = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]"+"_Pt_unfolded_measuredComp");
     Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_measuredComp[iCent], unfoldedMeasuredCompLegend, 2, textContext, pdfName_measuredComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
@@ -1660,10 +1716,20 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, const char options[]) 
   }
 
   // comparison with refolded
-  TString unfoldedRefoldedCompLegend[3] = {"unfolded", "refolded", "measured"};
+  TString unfoldedRefoldedCompLegend[2] = {"refolded", "measured"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
     TString* pdfName_refoldedComp = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]"+"_Pt_unfolded_RefoldedComp");
-    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_refoldedComp[iCent], unfoldedRefoldedCompLegend, 3, textContext, pdfName_refoldedComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_refoldedComp[iCent], unfoldedRefoldedCompLegend, 2, textContext, pdfName_refoldedComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
+  }
+  bool divideSuccessRefoldedComp_boolsum = true;
+  for(int iCent = 0; iCent < nCentralityBins; iCent++){
+    if (!(divideSuccessMeasuredRefolded[iCent])) {
+      divideSuccessRefoldedComp_boolsum = false;
+    }
+  }
+  if (divideSuccessRefoldedComp_boolsum){
+    TString* pdfName_ratio_refoldedComp = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_ratioRefoldedUnfolded");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measuredRefolded, centralityLegend, nCentralityBins, textContext, pdfName_ratio_refoldedComp, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
   }
 }
 
@@ -1720,7 +1786,7 @@ void Draw_Pt_TestSpectrum_unfolded(int iDataset, int iRadius, const char options
   TString centralityLegend[nCentralityBins]; CentralityLegend(centralityLegend, arrayCentralityIntervals, nCentralityBins);
 
   TString* yAxisLabel;
-  if (strstr(options, "evtNorm") != NULL) {
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
     yAxisLabel = texJetPtYield_EventNorm;
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1887,3 +1953,5 @@ void Draw_Pt_TestSpectrum_unfolded(int iDataset, int iRadius, const char options
 // Warning: RooUnfoldResponse measured X truth is 15 X 10, but matrix is 10 X 15
 // except my TH2 has 15 lines and 10 columns ... so I guess that's not what roounfold wants
 
+////// as I always wonder:
+// shouldn't I incorporate over/underflows properly, and even in the matrix product it's ok maybe?

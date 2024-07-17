@@ -48,7 +48,6 @@ const TString AxisTypeLegend[nAxisTypes] = {"#it{k}_{T} axes", "C/A axes", "C/A 
 // const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.25", "R = 0.3", "R = 0.35", "R = 0.4", "R = 0.45", "R = 0.5", "R = 0.55", "R = 0.6"};
 // float arrayRadius[nRadius] = {0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6};
 
-const TString dummyName[1] = {""};
 // Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
 const int iJetType = 0;
 const int iJetLevel = 0;
