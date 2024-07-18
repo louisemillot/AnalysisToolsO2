@@ -34,6 +34,7 @@ TString contextDatasetCompAndRadius(TString* mainContext, float jetRadius, const
 TString contextDatasetComp(TString* mainContext, const char options[]);
 
 void CentralityLegend(TString* centralityLegend, const float** arrayCentralityIntervals, int nCentralityBins);
+void IterationLegend(TString* iterationLegend, int nIterationmax);
 
 
 void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[], TF1** optionalFitCollection);
