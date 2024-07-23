@@ -200,7 +200,7 @@ const TString* texDatasetsComparisonCommonDenominator = new TString("");
 const int nDatasets = 4;
 // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
 const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
-const TString DatasetsNames[nDatasets] = {"data global", "data uniform", "data itsOnly", "data globalWithoutTpcCrossedRows"};
+const TString DatasetsNames[nDatasets] = {"global", "uniform", "itsOnly", "globalWithBadTPCCrossedRows"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),

@@ -28,8 +28,8 @@ const float arrayCentralityIntervals[nCentralityBins][2] = {{50, 90}}; // for no
 const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
 const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
-char prior[] = "measuredPrior";     // prior options: mcpPrior, mcdPrior, measuredPrior
-char unfoldMethod[] = "Svd"; // unfolding method options: Bayes, Svd, BinByBin
+char mergingPrior[] = "mcpPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging
+char unfoldMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
 char normMethod[] = "evtNorm";
 char optionsAnalysis[100] = "";
 
@@ -40,11 +40,14 @@ char optionsAnalysis[100] = "";
 // double ptBinsJetsGen[nRadius][30] = {{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
 // int nBinPtJetsGen[nRadius] = {15,15,15};
 
-// // pT binning for jets - gen = rec - start at 5
+// // WORKS FINE WITH SVD
+// // WORKS FINE WITH SVD
+// // pT binning for jets - gen = rec - start at 5 // does work for svd even though 
 // double ptBinsJetsRec[nRadius][30] = {{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
 // int nBinPtJetsRec[nRadius] = {14,14,14};
 // double ptBinsJetsGen[nRadius][30] = {{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
 // int nBinPtJetsGen[nRadius] = {14,14,14};
+
 
 // // pT binning for jets - gen = rec - start at 5 but rec has a smaller window ; good to check stuff without worrying about a badly setup normalisation by pt bin width
 // double ptBinsJetsRec[nRadius][30] = {{30., 40., 50., 60., 70., 80., 100., 120.},{30., 40., 50., 60., 70., 80., 100., 120.},{30., 40., 50., 60., 70., 80., 100., 120.}};
@@ -53,26 +56,41 @@ char optionsAnalysis[100] = "";
 // int nBinPtJetsGen[nRadius] = {14,14,14};
 
 
-// // pT binning for jets - hiroki layout
-// double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.}};
-// int nBinPtJetsRec[nRadius] = {14,14,14};
-// double ptBinsJetsGen[nRadius][30] = {{0.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{0.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{0.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
-// int nBinPtJetsGen[nRadius] = {10,10,10};
 
-
-// pT binning for jets - hiroki for gen but one more rec bin at 110
-double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.}};
-int nBinPtJetsRec[nRadius] = {15,15,15};
-double ptBinsJetsGen[nRadius][30] = {{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
-int nBinPtJetsGen[nRadius] = {10,10,10};
+// pT binning for jets - hiroki tweak gen start at 10GeV , bin 140-200 subdivided
+double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120.}};
+int nBinPtJetsRec[nRadius] = {16,16,16};
+double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 200.},{10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 200.},{10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 200.}};
+int nBinPtJetsGen[nRadius] = {14,14,14};
 // double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
 // int nBinPtJetsGen[nRadius] = {9,9,9};
 
+
+// // pT binning for jets - hiroki for gen but one more rec bin at 110 ; preferred way
+// double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120.}};
+// int nBinPtJetsRec[nRadius] = {15,15,15};
+// double ptBinsJetsGen[nRadius][30] = {{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
+// int nBinPtJetsGen[nRadius] = {10,10,10};
+// // double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
+// // int nBinPtJetsGen[nRadius] = {9,9,9};
+
+
+// // // DOESNT WORK WITH SVD 
+// // pT binning for jets - hiroki for gen but one more rec bin at 110 and has a 5 and 200 bins for rec
+// double ptBinsJetsRec[nRadius][30] = {{5., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120., 200.},{5., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120., 200.},{5., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 110., 120., 200.}};
+// int nBinPtJetsRec[nRadius] = {17,17,17};
+// double ptBinsJetsGen[nRadius][30] = {{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{5.0, 10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
+// int nBinPtJetsGen[nRadius] = {10,10,10};
+// // double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.},{10., 20., 30., 40., 50., 60., 70., 90., 120., 200.}};
+// // int nBinPtJetsGen[nRadius] = {9,9,9};
+
+// // WORKS FINE WITH SVD but weird distribs
+// // WORKS FINE WITH SVD but wierd distribs
 // // pT binning for jets - hiroki for rec but finer gen binning (shouldn't have finer gen binning for unfolding, as that gen binning is what the unfolded spectrum will have)
 // double ptBinsJetsRec[nRadius][30] = {{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.},{30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120.}};
 // int nBinPtJetsRec[nRadius] = {14,14,14};
-// double ptBinsJetsGen[nRadius][22] = {{0.0, 5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120., 200.},{0.0, 5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120., 200.},{0.0, 5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120., 200.}};
-// int nBinPtJetsGen[nRadius] = {21,21,21};
+// double ptBinsJetsGen[nRadius][22] = {{5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120., 200.},{5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120., 200.},{5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 100., 120., 200.}};
+// int nBinPtJetsGen[nRadius] = {20,20,20};
 
 // // pT binninb for jets tests
 // int nBinPtJetsRec[nRadius] = {14,14,14};
@@ -200,8 +218,8 @@ int nBinPtJetsGen[nRadius] = {10,10,10};
 //                                        200}};
                             
 
-int nBinPtJetsFine[nRadius] = {195,195,195};
-double ptBinsJetsFine[nRadius][201] = {{ 5.,  6.,  7.,  8.,  9.,
+int nBinPtJetsFine[nRadius] = {190,190,190}; // for now stays at 10 as start, because the pp gen I use has a cut at 5GeV for jets
+double ptBinsJetsFine[nRadius][201] = {{
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -222,7 +240,7 @@ double ptBinsJetsFine[nRadius][201] = {{ 5.,  6.,  7.,  8.,  9.,
                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
                                        200},
-                                     {   5.,  6.,  7.,  8.,  9.,
+                                     {
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -243,7 +261,7 @@ double ptBinsJetsFine[nRadius][201] = {{ 5.,  6.,  7.,  8.,  9.,
                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
                                        200},
-                                     {   5.,  6.,  7.,  8.,  9.,
+                                     {
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
