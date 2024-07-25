@@ -128,6 +128,7 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
   TH2D H2D_hist_rebinned("H2D_hist_rebinned", "H2D_hist_rebinned", nBinsX, binsX, nBinsY, binsY);
   H2D_hist_rebinned.Sumw2();
 
+  TH2D* H2D_hist_temp = (TH2D*)H2D_hist->Clone(H2D_hist->GetName()+(TString)"_temp"); // needs this as its content will be changed for the weighting, we do not want to modify H2D_hist
 
   // declaration of variables used when calculating content and error of histograms
   double H2D_hist_content;
@@ -139,16 +140,16 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
   // prior weighting
   double priorWeightedSpectrumContent = 0;
   double priorWeightedSpectrumError = 0;
-  for(int iBinXFine = 0; iBinXFine <= H2D_hist->GetNbinsX()+1; iBinXFine++){ // 0 and n+1 take underflow and overflow into account
+  for(int iBinXFine = 0; iBinXFine <= H2D_hist_temp->GetNbinsX()+1; iBinXFine++){ // 0 and n+1 take underflow and overflow into account
     // if (debug == true) {cout << "iBinXFine = " << iBinXFine << endl;}
     priorWeightedSpectrumContent = H1D_priorSpectrum->GetBinContent(iBinXFine);
     priorWeightedSpectrumError = H1D_priorSpectrum->GetBinError(iBinXFine);
-    for(int iBinYFine = 0; iBinYFine <= H2D_hist->GetNbinsY()+1; iBinYFine++){ // 0 and n+1 take underflow and overflow into account
+    for(int iBinYFine = 0; iBinYFine <= H2D_hist_temp->GetNbinsY()+1; iBinYFine++){ // 0 and n+1 take underflow and overflow into account
       // if (debug == true) {cout << "     iBinYFine = " << iBinYFine << endl;}
-      H2D_hist_content = H2D_hist->GetBinContent(iBinXFine, iBinYFine);
-      H2D_hist_contentError = H2D_hist->GetBinError(iBinXFine, iBinYFine);
-      H2D_hist->SetBinContent(iBinXFine, iBinYFine, H2D_hist_content * priorWeightedSpectrumContent);
-      H2D_hist->SetBinError(iBinXFine, iBinYFine, sqrt( priorWeightedSpectrumContent*priorWeightedSpectrumContent * H2D_hist_contentError*H2D_hist_contentError + H2D_hist_content*H2D_hist_content * priorWeightedSpectrumError*priorWeightedSpectrumError));
+      H2D_hist_content = H2D_hist_temp->GetBinContent(iBinXFine, iBinYFine);
+      H2D_hist_contentError = H2D_hist_temp->GetBinError(iBinXFine, iBinYFine);
+      H2D_hist_temp->SetBinContent(iBinXFine, iBinYFine, H2D_hist_content * priorWeightedSpectrumContent);
+      H2D_hist_temp->SetBinError(iBinXFine, iBinYFine, sqrt( priorWeightedSpectrumContent*priorWeightedSpectrumContent * H2D_hist_contentError*H2D_hist_contentError + H2D_hist_content*H2D_hist_content * priorWeightedSpectrumError*priorWeightedSpectrumError));
       // cout << "iBinXFine = " << iBinXFine << ", iBinYFine = " << iBinYFine << "         --------          priorWeightedSpectrumContent = " << priorWeightedSpectrumContent << ", H2D_hist_contentError = " << H2D_hist_contentError << endl;
       // cout << "                                         --------          priorWeightedSpectrumError = " << priorWeightedSpectrumError << ", H2D_hist_content = " << H2D_hist_content << endl;
       // cout << "                                         --------          H2hist resulting error (B2*SigmaA2 + A2*SigmaB2) = " << H2D_hist->GetBinError(iBinXFine, iBinYFine) << endl;
@@ -169,38 +170,57 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
     if (debug == true) {cout << "iBinY = " << iBinY << endl;}
     yLowEdgeRebin = H2D_hist_rebinned.GetYaxis()->GetBinLowEdge(iBinY);
     yHighEdgeRebin = H2D_hist_rebinned.GetYaxis()->GetBinLowEdge(iBinY+1);
-    yLowEdgeRebin < binsY[0] ? ibinY_low = 0 : ibinY_low = H2D_hist->GetYaxis()->FindBin(yLowEdgeRebin); // according to definition of getbinlowedge, it does work for under/overflows by giving the low edge of bin 1 minus the bin width (calculated assuming bins of equal sizes in all the axis); in fact, it works regardless of the value of iBin even for Nbin+2 or more (https://root.cern.ch/doc/master/classTAxis.html#a6d2d17ef00382842f58e88f356516a0d)
-    yHighEdgeRebin > binsY[nBinsY] ? ibinY_high =  H2D_hist->GetNbinsY()+1 : ibinY_high = H2D_hist->GetYaxis()->FindBin(yHighEdgeRebin) - 1;
+    yLowEdgeRebin < binsY[0] ? ibinY_low = 0 : ibinY_low = H2D_hist_temp->GetYaxis()->FindBin(yLowEdgeRebin); // according to definition of getbinlowedge, it does work for under/overflows by giving the low edge of bin 1 minus the bin width (calculated assuming bins of equal sizes in all the axis); in fact, it works regardless of the value of iBin even for Nbin+2 or more (https://root.cern.ch/doc/master/classTAxis.html#a6d2d17ef00382842f58e88f356516a0d)
+    yHighEdgeRebin > binsY[nBinsY] ? ibinY_high =  H2D_hist_temp->GetNbinsY()+1 : ibinY_high = H2D_hist_temp->GetYaxis()->FindBin(yHighEdgeRebin) - 1;
 
     for(int iBinX = 0; iBinX <= nBinsX+1; iBinX++){ // overflow and underflow are taken care of later in the function (in the truncation part)
     // for(int iBinX = 0; iBinX <= nBinsX+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
       // if (debug == true) {cout << "     iBinX = " << iBinX << endl;}
       xLowEdgeRebin = H2D_hist_rebinned.GetXaxis()->GetBinLowEdge(iBinX);
       xHighEdgeRebin = H2D_hist_rebinned.GetXaxis()->GetBinLowEdge(iBinX+1);
-      xLowEdgeRebin < binsX[0] ? ibinX_low = 0 : ibinX_low = H2D_hist->GetXaxis()->FindBin(xLowEdgeRebin); // according to definition of getbinlowedge, this takes into account under/overflows thanks to FindBin() giving the low edge of bin 1 minus the bin width (calculated assuming bins of equal sizes in all the axis); in fact, it works regardless of the value of iBin even for Nbin+2 or more (https://root.cern.ch/doc/master/classTAxis.html#a6d2d17ef00382842f58e88f356516a0d)
-      xHighEdgeRebin > binsX[nBinsX] ? ibinX_high =  H2D_hist->GetNbinsX()+1 : ibinX_high = H2D_hist->GetXaxis()->FindBin(xHighEdgeRebin) - 1;
+      xLowEdgeRebin < binsX[0] ? ibinX_low = 0 : ibinX_low = H2D_hist_temp->GetXaxis()->FindBin(xLowEdgeRebin); // according to definition of getbinlowedge, this takes into account under/overflows thanks to FindBin() giving the low edge of bin 1 minus the bin width (calculated assuming bins of equal sizes in all the axis); in fact, it works regardless of the value of iBin even for Nbin+2 or more (https://root.cern.ch/doc/master/classTAxis.html#a6d2d17ef00382842f58e88f356516a0d)
+      xHighEdgeRebin > binsX[nBinsX] ? ibinX_high =  H2D_hist_temp->GetNbinsX()+1 : ibinX_high = H2D_hist_temp->GetXaxis()->FindBin(xHighEdgeRebin) - 1;
 
       // dividing by prior integral over the xbin to make the weighting done before a probability
       priorBinNorm = H1D_priorSpectrum->IntegralAndError(ibinX_low, ibinX_high, priorBinNormError);
       for(int iBinYFine = ibinY_low; iBinYFine <= ibinY_high; iBinYFine++){
         for(int iBinXFine = ibinX_low; iBinXFine <= ibinX_high; iBinXFine++){
-          H2D_hist_content = H2D_hist->GetBinContent(iBinXFine, iBinYFine);
-          H2D_hist_contentError = H2D_hist->GetBinError(iBinXFine, iBinYFine);
+          H2D_hist_content = H2D_hist_temp->GetBinContent(iBinXFine, iBinYFine);
+          H2D_hist_contentError = H2D_hist_temp->GetBinError(iBinXFine, iBinYFine);
           H2D_hist_content == 0 ? H2D_hist_contentErrorA = 0 : H2D_hist_contentErrorA = H2D_hist_contentError*H2D_hist_contentError / (H2D_hist_content*H2D_hist_content);
           priorBinNorm == 0     ? H2D_hist_contentErrorB = 0 : H2D_hist_contentErrorB = priorBinNormError*priorBinNormError / (priorBinNorm*priorBinNorm);
           priorBinNorm == 0 ? H2D_hist_content = 0 : H2D_hist_content = H2D_hist_content * 1./priorBinNorm; // do I really give the value 0 if denominator is 0 ?
-          H2D_hist->SetBinContent(iBinXFine, iBinYFine, H2D_hist_content);
-          H2D_hist->SetBinError(iBinXFine, iBinYFine, sqrt(H2D_hist_content*H2D_hist_content * (H2D_hist_contentErrorA + H2D_hist_contentErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
+          H2D_hist_temp->SetBinContent(iBinXFine, iBinYFine, H2D_hist_content);
+          H2D_hist_temp->SetBinError(iBinXFine, iBinYFine, sqrt(H2D_hist_content*H2D_hist_content * (H2D_hist_contentErrorA + H2D_hist_contentErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
           // cout << "iBinXFine = " << iBinXFine << ", iBinYFine = " << iBinYFine << "         --------          H2D_histPostReweight_contentError = " << H2D_hist_contentError << ", priorBinNormError = " << priorBinNormError << ", H2D_histPreReweight_contentError = " << debugTest11 << endl;
           // cout << "                                         --------          H2D_histReweighted_content = " << H2D_hist_content << ", priorBinNorm = " << priorBinNorm << ", H2D_histPreReweight_content = " << debugTest12 << endl;
         }
       }
-      hist2D_rebinned_content = H2D_hist->IntegralAndError(ibinX_low, ibinX_high, ibinY_low, ibinY_high, hist2D_rebinned_error);
+      hist2D_rebinned_content = H2D_hist_temp->IntegralAndError(ibinX_low, ibinX_high, ibinY_low, ibinY_high, hist2D_rebinned_error);
       H2D_hist_rebinned.SetBinContent(iBinX, iBinY, hist2D_rebinned_content);
       H2D_hist_rebinned.SetBinError(iBinX, iBinY, hist2D_rebinned_error);
       if (debug == true) {cout << "ibinX_low = " << ibinX_low << ", ibinX_high = " << ibinX_high << ", ibinY_low = " << ibinY_low << ", ibinY_high = " << ibinY_high << "         --------          H2D_hist_rebinned(" << iBinX <<", "<< iBinY <<") = " << H2D_hist_rebinned.GetBinContent(iBinX, iBinY) << "                      --- priorBinNorm = " << priorBinNorm << "                                (xLowEdgeRebin, xHighEdgeRebin) = (" << xLowEdgeRebin << ", " << xHighEdgeRebin << "), (yLowEdgeRebin, yHighEdgeRebin) = (" << yLowEdgeRebin << ", " << yHighEdgeRebin << ")" << endl;}
     }
   }
+
+
+  if (debug == true) {
+  // il semble se passer quelque chose à 30GeV et 120GeV, limites des recbins;
+  // en fait, il y a des démarcations pour chaque bin de recbins; elles sont juste plus visible pour les grand bins puisque le steeply falling spectrum as plus de temps pour diminuer lorsque l'on va de gauche à droite
+  //  ça me semble ok et normal, pas pathologique
+
+  TString* pdfName_preRebin = new TString("H2D_hist_temp");
+  TString* pdfName_preRebin_logz = new TString("H2D_hist_temp_logz");
+
+  TString textContext_preRebin((TString)"");
+
+  // Draw_TH2_Histograms(H2D_jetPtResponseMatrix_detectorResponse, centralityLegend, nCentralityBins, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, "logz");
+
+
+  Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
+  }
+
   // cout << "##############################################" << endl;
   // cout << "######## taking care of truncation ###########" << endl;
   // cout << "##############################################" << endl;
@@ -301,6 +321,7 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
 
 
 void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist){
+  cout << "Normalising y-slices" << endl;
   // Normalisation of the H2D_hist 2D histogram: each pt gen slice is normalised to unity, takes underflow into account if it's present
   double genSliceNorm = 1;
   double genSliceNormError;
@@ -329,75 +350,81 @@ void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist){
       H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
       // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  H2D_hist->GetBinContent(iBinX, iBinY) = " << H2D_hist->GetBinContent(iBinX, iBinY) << endl;
     }
-    // cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(1, N) = " << H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY) << endl;
-    // cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(0,-1) = " << H2D_hist->Integral(0, -1, iBinY, iBinY) << endl;
-    // cout << "genSliceNorm = " << genSliceNorm << ", underflow = " << H2D_hist->GetBinContent(0, iBinY) << ", overflow = " << H2D_hist->GetBinContent(H2D_hist->GetNbinsX()+1, iBinY) << endl;
+    cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(1, N) = " << H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY) << endl;
+    cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(0,-1) = " << H2D_hist->Integral(0, -1, iBinY, iBinY) << endl;
+    cout << "genSliceNorm = " << genSliceNorm << ", underflow = " << H2D_hist->GetBinContent(0, iBinY) << ", overflow = " << H2D_hist->GetBinContent(H2D_hist->GetNbinsX()+1, iBinY) << endl;
 
   }
-
-
-  // // ideally I use this but right now genSliceNorm integral between 0 and -1 doesn't work well; possibly because jet cut at 5GeV in the dataset I see? shame
-  // for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
-  //   genSliceNorm = H2D_hist->IntegralAndError(0, H2D_hist->GetNbinsX()+1, iBinY, iBinY, genSliceNormError);
-  //   // cout << "iBinY = " << iBinY << "         --------  genSliceNorm = " << genSliceNorm << endl;
-  //   // genSliceNorm = H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY);
-  //   // dpT = H2D_hist->GetYaxis()->GetBinWidth(iBinY);
-  //   // cout << "iBinY = " << iBinY << "         --------          genSliceNorm = " << genSliceNorm << " ----  1/dpT*genSliceNorm = " << genSliceNorm*1./dpT << ", dpT = " << dpT << endl;
-  //   for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
-  //     H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
-  //     genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
-  //     genSliceNorm == 0 ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
-  //     H2D_hist->SetBinContent(iBinX, iBinY, binContent);
-  //     H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
-  //     // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  H2D_hist->GetBinContent(iBinX, iBinY) = " << H2D_hist->GetBinContent(iBinX, iBinY) << endl;
-  //   }
-  //   cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(1, N) = " << H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY) << endl;
-  //   cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(0,-1) = " << H2D_hist->Integral(0, -1, iBinY, iBinY) << endl;
-  //   cout << "genSliceNorm = " << genSliceNorm << endl;
-  // }
 } 
 
 
 
 void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum){
+  cout << "Weighting y-slices" << endl;
+  // ACTUALLY I DONT THINK THIS SHOULD BE USED, THE PRIOR SEEMS TO BE SET UP DIFFERENTLY
+  // looks like I shouldn't wieght the under and overflows, or it puts too much weight on the overflow
+  // maybe I should make the kinematic efficiency matrix before any re-weighting
+
+  // actually what's important here is that the y-projection is the prior
+
   // weights y-slices with priorSpectrum 
   double genSliceNormError;
-  double genSliceNorm = priorSpectrum->IntegralAndError(0, -1, genSliceNormError);
+  // double genSliceNorm = priorSpectrum->IntegralAndError(0, -1, genSliceNormError);
+  double genSliceNorm = priorSpectrum->IntegralAndError(1, priorSpectrum->GetNbinsX(), genSliceNormError);
 
   double binContent, binError, binErrorA, binErrorB;
 
   // multiplication
-  for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
-    for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
-      binContent = H2D_hist->GetBinContent(iBinX, iBinY) * priorSpectrum->GetBinContent(iBinX); // do I really give the value 0 if denominator is 0 ? 
+  // for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
+  //   for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
+  for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
+    for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
+      binContent = H2D_hist->GetBinContent(iBinX, iBinY) * priorSpectrum->GetBinContent(iBinY); // do I really give the value 0 if denominator is 0 ? 
       H2D_hist->SetBinContent(iBinX, iBinY, binContent);
-      H2D_hist->SetBinError(iBinX, iBinY, sqrt(priorSpectrum->GetBinContent(iBinX)*priorSpectrum->GetBinContent(iBinX) * H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) + binContent*binContent * priorSpectrum->GetBinError(iBinX)*priorSpectrum->GetBinError(iBinX))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
+      H2D_hist->SetBinError(iBinX, iBinY, sqrt(priorSpectrum->GetBinContent(iBinY)*priorSpectrum->GetBinContent(iBinY) * H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) + binContent*binContent * priorSpectrum->GetBinError(iBinY)*priorSpectrum->GetBinError(iBinY))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
       // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  H2D_hist->GetBinContent(iBinX, iBinY) = " << H2D_hist->GetBinContent(iBinX, iBinY) << endl;
     }
   }
 
   // note: the matrix is not normalised to 1 in y-slices yet!
 
-
-
-
-
-
-  // // division
+  // division
   // for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
   //   for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
-  //     H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
-  //     genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
-  //     genSliceNorm == 0 ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
-  //     H2D_hist->SetBinContent(iBinX, iBinY, binContent);
-  //     H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
-  //     // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  H2D_hist->GetBinContent(iBinX, iBinY) = " << H2D_hist->GetBinContent(iBinX, iBinY) << endl;
-  //   }
-  //   cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(1, N) = " << H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY) << endl;
-  //   cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(0,-1) = " << H2D_hist->Integral(0, -1, iBinY, iBinY) << endl;
-  //   cout << "genSliceNorm = " << genSliceNorm << ", underflow = " << H2D_hist->GetBinContent(0, iBinY) << ", overflow = " << H2D_hist->GetBinContent(H2D_hist->GetNbinsX()+1, iBinY) << endl;
-  // }
+  for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
+    for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
+      H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
+      genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
+      genSliceNorm == 0 ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
+      H2D_hist->SetBinContent(iBinX, iBinY, binContent);
+      H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
+      // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  H2D_hist->GetBinContent(iBinX, iBinY) = " << H2D_hist->GetBinContent(iBinX, iBinY) << endl;
+    }
+    cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(1, N) = " << H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY) << endl;
+    cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(0,-1) = " << H2D_hist->Integral(0, -1, iBinY, iBinY) << endl;
+    cout << "genSliceNorm = " << genSliceNorm << ", underflow = " << H2D_hist->GetBinContent(0, iBinY) << ", overflow = " << H2D_hist->GetBinContent(H2D_hist->GetNbinsX()+1, iBinY) << endl;
+  }
 } 
+
+
+// TH2* AliAnaChargedJetResponseMaker::NormalizeResponsMatrixYaxisWithPrior(TH2 *h2RM, TH1 *hPrior) {
+//   //
+//   // Normalize such that the Y projection is the prior
+//   //
+
+//   //  TH1D *hProjRespY = (TH1D*)h2RM->ProjectionY("hProjRespY");
+//   double intPrior = hPrior->Integral();//"width");
+//   for (Int_t jbin = 1; jbin <= h2RM->GetNbinsY(); jbin++) {
+//     //    double corr = hPrior->GetBinContent(jbin)/hProjRespY->GetBinContent(jbin);
+//       for (Int_t ibin = 1; ibin <= h2RM->GetNbinsX(); ibin++) {
+// 	double content = h2RM->GetBinContent(ibin,jbin);
+// 	//	h2RM->SetBinContent(ibin,jbin,content*corr);
+// 	h2RM->SetBinContent(ibin,jbin,hPrior->GetBinContent(jbin)/hPrior->GetBinWidth(jbin)/intPrior*content);
+//     }
+//   }
+
+//   return h2RM;
+// }
 
 TH2D GetTransposeHistogram(TH2D* inputHist){
   int nBinsX = inputHist->GetNbinsX();
@@ -453,17 +480,32 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
     for(int iBinY = 0; iBinY <= nBinsY_AB+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
       productContent_iBinX_iBinY = 0;
       productError2_iBinX_iBinY = 0;
-      for(int iBinK = 0; iBinK <= nBinsK+1; iBinK++){ // 0 and n+1 take underflow and overflow into account
-        productContent_iBinX_iBinY += histA->GetBinContent(iBinX, iBinK) * histB->GetBinContent(iBinK, iBinY); 
-        productError2_iBinX_iBinY += pow(histB->GetBinContent(iBinK, iBinY), 2)*pow(histA->GetBinError(iBinX, iBinK), 2) + pow(histA->GetBinContent(iBinX, iBinK), 2)*pow(histB->GetBinError(iBinK, iBinY), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated    
-        // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  iBinK = " << iBinK << "        B = " << histB->GetBinContent(iBinX, iBinK) << ", sigmaA = " << histA->GetBinError(iBinX, iBinK) << ", A = " << histA->GetBinContent(iBinK, iBinY) << ", sigmaB = " << histB->GetBinError(iBinK, iBinY) << endl;
+      if (0 < iBinX && iBinX < nBinsX_AB+1 && 0 < iBinY && iBinY < nBinsY_AB+1) { // reason we do this, is because we don't want the under/ofverflows spread inside the matrix when we multiply, which happens when we do ; by separating it, we can still have the under/overflows calculated correctly in the else case, so that we can use them for the kinematic efficiency
+        // ideally I want to take the over/underflows into account; or at least have them save how much of the distrib is cut
+        // maybe I have them be recalculated with the product, but I don't let them be part of the sum for the non-under/overflow parts of the final matrix
+        for(int iBinK = 1; iBinK <= nBinsK; iBinK++){ // 0 and n+1 take underflow and overflow into account
+        // for(int iBinK = 0; iBinK <= nBinsK+1; iBinK++){ // 0 and n+1 take underflow and overflow into account
+          productContent_iBinX_iBinY += histA->GetBinContent(iBinX, iBinK) * histB->GetBinContent(iBinK, iBinY); 
+          productError2_iBinX_iBinY += pow(histB->GetBinContent(iBinK, iBinY), 2)*pow(histA->GetBinError(iBinX, iBinK), 2) + pow(histA->GetBinContent(iBinX, iBinK), 2)*pow(histB->GetBinError(iBinK, iBinY), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated    
+          // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  iBinK = " << iBinK << "        B = " << histB->GetBinContent(iBinX, iBinK) << ", sigmaA = " << histA->GetBinError(iBinX, iBinK) << ", A = " << histA->GetBinContent(iBinK, iBinY) << ", sigmaB = " << histB->GetBinError(iBinK, iBinY) << endl;
+        }
+      } else {
+        // for(int iBinK = 1; iBinK <= nBinsK; iBinK++){ // 0 and n+1 take underflow and overflow into account
+        for(int iBinK = 0; iBinK <= nBinsK+1; iBinK++){ // 0 and n+1 take underflow and overflow into account
+          productContent_iBinX_iBinY += histA->GetBinContent(iBinX, iBinK) * histB->GetBinContent(iBinK, iBinY); 
+          productError2_iBinX_iBinY += pow(histB->GetBinContent(iBinK, iBinY), 2)*pow(histA->GetBinError(iBinX, iBinK), 2) + pow(histA->GetBinContent(iBinX, iBinK), 2)*pow(histB->GetBinError(iBinK, iBinY), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated    
+          // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  iBinK = " << iBinK << "        B = " << histB->GetBinContent(iBinX, iBinK) << ", sigmaA = " << histA->GetBinError(iBinX, iBinK) << ", A = " << histA->GetBinContent(iBinK, iBinY) << ", sigmaB = " << histB->GetBinError(iBinK, iBinY) << endl;
+        }
       }
+
       histAB.SetBinContent(iBinX, iBinY, productContent_iBinX_iBinY);
       histAB.SetBinError(iBinX, iBinY, sqrt(productError2_iBinX_iBinY));  
       // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------                    productContent_iBinX_iBinY = " << productContent_iBinX_iBinY << ", productError2_iBinX_iBinY = " << productError2_iBinX_iBinY << endl;
     }
   }
   return histAB;
+
+
 }
 
 TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
