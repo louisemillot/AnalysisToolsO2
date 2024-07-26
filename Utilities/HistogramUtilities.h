@@ -16,6 +16,7 @@ TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, 
 TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, TH1D* H1D_priorSpectrum, bool debug);
 void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist);
 void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum);
+void TransformRawResponseToYieldResponse(TH2D* H2D_hist);
 
 // weird stuff happening here with optional debug thing, maybe remove it completely
 TH2D GetTransposeHistogram(TH2D* inputHist);

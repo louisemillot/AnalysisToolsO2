@@ -29,7 +29,7 @@ const bool doEvtNorm = 1;                               //  as of now, only chan
 const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
 char mergingPrior[] = "mcpPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior
-char unfoldingPrior[] = "measuredPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior
+char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior
 char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
 char normMethod[] = "evtNorm";
 char optionsAnalysis[100] = "";
