@@ -145,7 +145,7 @@ void JetSpectrum() {
   // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
 
-  // Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
+  Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
 
   Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
 
@@ -561,6 +561,36 @@ void Get_Pt_spectrum_mcd_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iD
   }
 }
 
+void Get_Pt_spectrum_mcd_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]) {
+  TH3D* H3D_jetRjetPtcolCent;
+  TH1D* H1D_jetPt_mcd_defaultBin;
+  // TH1D* H1D_jetPt_raw[nRadius];
+
+  //////// without centrality; sadly we don't have a mcd version that gives centrality info, so gotta use one with all centralities (though one can edit the cent window in the jetfinderqa options)
+  H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect->Get(analysisWorkflowMC+"/h3_jet_r_jet_pt_jet_eta"))->Clone("Get_Pt_spectrum_mcd_preWidthScaling"+Datasets[iDataset]);
+  H3D_jetRjetPtcolCent->Sumw2();
+
+  int ibinJetRadius = H3D_jetRjetPtcolCent->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
+
+  H1D_jetPt_mcd_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_mcd_genBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 0, -1, "e");
+
+  H1D_jetPt_mcd = (TH1D*)H1D_jetPt_mcd_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcd_rebinned_genBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
+
+
+
+  if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
+    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsGen(file_O2Analysis_list[iDataset]));
+    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
+    NormaliseRawHistToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
+    
+    // NormaliseYieldToNEntries(H1D_jetPt_mcd);
+    
+  }
+  if (strstr(options, "entriesNorm") != NULL) {
+    NormaliseYieldToNEntries(H1D_jetPt_mcd);
+  }
+}
+
 
 void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
   TH3D* H3D_jetRjetPtcolCent;
@@ -763,6 +793,13 @@ void Get_Pt_spectrum_mcd_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRa
 
 void Get_Pt_spectrum_mcd_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcd_recBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
+  if (doWidthScaling) {
+    TransformRawHistToYield(H1D_jetPt_mcp);
+  }
+}
+
+void Get_Pt_spectrum_mcd(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
+  Get_Pt_spectrum_mcd_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
   if (doWidthScaling) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
@@ -1057,6 +1094,7 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   //   }
   // }
 
+  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm"+partialUniqueSpecifier);
 
   TString* pdfName = new TString("responseMatrix_combined_preNorm"+jetType[iJetType]+"_"+Datasets[iDataset]);
   TString* pdfName_logz = new TString("responseMatrix_combined_preNorm"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_logz");
@@ -1065,21 +1103,22 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
 
   // Draw_TH2_Histograms(H2D_jetPtResponseMatrix_detectorResponse, centralityLegend, nCentralityBins, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, "logz");
 
-  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
-  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
   // matrix looks weird here but it's just because there's no bin width correction
 
 
   NormaliseYSlicesAsProbaDensity(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined);
 
+  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting"+partialUniqueSpecifier);
 
   pdfName = new TString("responseMatrix_combined_preWeighting"+jetType[iJetType]+"_"+Datasets[iDataset]);
   pdfName_logz = new TString("responseMatrix_combined_preWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_logz");
 
   // Draw_TH2_Histograms(H2D_jetPtResponseMatrix_detectorResponse, centralityLegend, nCentralityBins, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, "logz");
 
-  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
-  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
 
 
 
@@ -1091,15 +1130,15 @@ void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDatase
   // prior choice; none by default (flat)
   TH1D* priorSpectrumWeighting;
   if (strstr(options, "mcpPriorUnfolding") != NULL) {
-    Get_Pt_spectrum_mcp_recBinning(priorSpectrumWeighting, iDataset, iRadius, ""); 
+    Get_Pt_spectrum_mcp_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, ""); 
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
   }
   if (strstr(options, "mcdPriorUnfolding") != NULL) {
-    Get_Pt_spectrum_mcd_recBinning(priorSpectrumWeighting, iDataset, iRadius, "");
+    Get_Pt_spectrum_mcd_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, "");
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
   }
   if (strstr(options, "measuredPriorUnfolding") != NULL) {
-    Get_Pt_spectrum_bkgCorrected(priorSpectrumWeighting, iDataset, iRadius, centRange, "");
+    Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, centRange, "");
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
   }
   // NormaliseYSlicesAsProbaDensity(H2D_jetPtResponseMatrix);
@@ -1205,11 +1244,12 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
 
 void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH2D* H2D_jetPtResponseMatrix_fineBinning, TString name_H1D_kinematicEfficiency, int iRadius){
   // assumes the response matrix has the fine binning, and will get the kinematic efficiency for rec axis binning equals to ptBinsJetsRec
+  cout << "Get_ResponseMatrix_Pt_KinematicEffiency" << endl; 
   
   int ibinRec_min = H2D_jetPtResponseMatrix_fineBinning->GetXaxis()->FindBin(ptBinsJetsRec[iRadius][0]);
-  int ibinRec_max = H2D_jetPtResponseMatrix_fineBinning->GetXaxis()->FindBin(ptBinsJetsRec[iRadius][nBinPtJetsRec[iRadius]]);
+  int ibinRec_max = H2D_jetPtResponseMatrix_fineBinning->GetXaxis()->FindBin(ptBinsJetsRec[iRadius][nBinPtJetsRec[iRadius]])-1;
 
-  cout << "ibinRec_min = " << ibinRec_min << ", ibinRec_max = " << ibinRec_max << endl;
+  cout << "ibinRec_min = " << ibinRec_min << ", ibinRec_max = " << ibinRec_max << ", ptmin = " << ptBinsJetsRec[iRadius][0] << ", ptmax = " << ptBinsJetsRec[iRadius][nBinPtJetsRec[iRadius]] << endl;
 
   TH1D* H1D_kinematicEfficiency_preRebin = H2D_jetPtResponseMatrix_fineBinning->ProjectionY("H1D_kinematicEfficiency_preRebin"+name_H1D_kinematicEfficiency, ibinRec_min, ibinRec_max, "e");
   
@@ -1297,6 +1337,8 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   ReweightResponseMatrixWithPrior(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, iDataset, iRadius, centRange, options);
 
 
+  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting"+partialUniqueSpecifier);
+
   TString* pdfNamePost = new TString("responseMatrix_combined_postWeighting"+jetType[iJetType]+"_"+Datasets[iDataset]);
   TString* pdfNamePost_logz = new TString("responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_logz");
 
@@ -1304,8 +1346,8 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
 
   // Draw_TH2_Histograms(H2D_jetPtResponseMatrix_detectorResponse, centralityLegend, nCentralityBins, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, "logz");
 
-  Draw_TH2_Histogram((TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("responseMatrix_combined_postWeighting"), textContextPost, pdfNamePost, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
-  Draw_TH2_Histogram((TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("responseMatrix_combined_postWeighting"), textContextPost, pdfNamePost_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting, textContextPost, pdfNamePost, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting, textContextPost, pdfNamePost_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
 
 
 
@@ -1377,6 +1419,7 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
   }
 
 
+  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding"+partialUniqueSpecifier);
 
   TString* pdfName = new TString("responseMatrix_combined_postUnfolding"+jetType[iJetType]+"_"+Datasets[iDataset]);
   TString* pdfName_logz = new TString("responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+"_logz");
@@ -1385,8 +1428,8 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
 
   // Draw_TH2_Histograms(H2D_jetPtResponseMatrix_detectorResponse, centralityLegend, nCentralityBins, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, "logz");
 
-  Draw_TH2_Histogram((TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("responseMatrix_combined_postUnfolding"), textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
-  Draw_TH2_Histogram((TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("responseMatrix_combined_postUnfolding"), textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
 
 
 }

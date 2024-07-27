@@ -338,16 +338,16 @@ void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist){
   //   }
   // }
   double binContent, binError, binErrorA, binErrorB;
-  // for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
-  for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
-    genSliceNorm = H2D_hist->IntegralAndError(1, H2D_hist->GetNbinsX(), iBinY, iBinY, genSliceNormError); // what I want ideally
+  for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
+  // for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
+    genSliceNorm = H2D_hist->IntegralAndError(0, H2D_hist->GetNbinsX()+1, iBinY, iBinY, genSliceNormError); // what I want ideally
     // genSliceNorm = H2D_hist->IntegralAndError(1, H2D_hist->GetNbinsX(), iBinY, iBinY, genSliceNormError);
     // cout << "iBinY = " << iBinY << "         --------  genSliceNorm = " << genSliceNorm << endl;
     // genSliceNorm = H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY);
     // dpT = H2D_hist->GetYaxis()->GetBinWidth(iBinY);
     // cout << "iBinY = " << iBinY << "         --------          genSliceNorm = " << genSliceNorm << " ----  1/dpT*genSliceNorm = " << genSliceNorm*1./dpT << ", dpT = " << dpT << endl;
-    // for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
-    for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
+    for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
+    // for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
       H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
       genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
       genSliceNorm == 0 ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
@@ -368,18 +368,16 @@ void TransformRawResponseToYieldResponse(TH2D* H2D_hist){
 
   cout << "Dividing Response by bin widths" << endl;
 
-  double binError;
+  double widthX, widthY;
   // for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
-  for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ 
-    for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){
-      H2D_hist->SetBinContent(iBinX, iBinY, H2D_hist->IntegralAndError(iBinX, iBinX, iBinY, iBinY, binError, "width"));
-      H2D_hist->SetBinError(iBinX, iBinY, binError); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
-      // cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------  H2D_hist->GetBinContent(iBinX, iBinY) = " << H2D_hist->GetBinContent(iBinX, iBinY) << endl;
-    }
-    // cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(1, N) = " << H2D_hist->Integral(1, H2D_hist->GetNbinsX(), iBinY, iBinY) << endl;
-    // cout << "iBinY = " << iBinY << " -------- checking kinematic efficiency: Integral(0,-1) = " << H2D_hist->Integral(0, -1, iBinY, iBinY) << endl;
-    // cout << "genSliceNorm = " << genSliceNorm << ", underflow = " << H2D_hist->GetBinContent(0, iBinY) << ", overflow = " << H2D_hist->GetBinContent(H2D_hist->GetNbinsX()+1, iBinY) << endl;
+  for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){
+    widthX = H2D_hist->GetXaxis()->GetBinWidth(iBinX);
+    for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){
+      widthY = H2D_hist->GetYaxis()->GetBinWidth(iBinY);
 
+      H2D_hist->SetBinContent(iBinX, iBinY, H2D_hist->GetBinContent(iBinX, iBinY) *1./widthX *1./widthY);
+      H2D_hist->SetBinError(iBinX, iBinY, H2D_hist->GetBinError(iBinX, iBinY) *1./widthX *1./widthY); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
+    }
   }
 } 
 
