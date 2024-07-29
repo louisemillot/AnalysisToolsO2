@@ -9,12 +9,14 @@ const int nJetType = 3;
 const TString jetType[nJetType] = {"charged", "neutral", "full"};
 const int nJetLevel = 3;
 const TString jetLevel[nJetLevel] = {"data", "mcd", "mcp"};
-const int nRadius = 3;
-const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.4", "R = 0.6"};
-float arrayRadius[nRadius] = {0.2, 0.4, 0.6};
-// const int nRadius = 1;
-// const TString RadiusLegend[nRadius] = {"R = 0.4"};
-// float arrayRadius[nRadius] = {0.4};
+// const int nRadius = 3;
+// const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.4", "R = 0.6"};
+// float arrayRadius[nRadius] = {0.2, 0.4, 0.6};
+// const float areaDisplayMax[nRadius] = {0.5, 1, 1.5};
+const int nRadius = 1;
+const TString RadiusLegend[nRadius] = {"R = 0.2"};
+float arrayRadius[nRadius] = {0.2};
+const float areaDisplayMax[nRadius] = {0.5};
 // const int nRadius = 9;
 // const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.25", "R = 0.3", "R = 0.35", "R = 0.4", "R = 0.45", "R = 0.5", "R = 0.55", "R = 0.6"};
 // float arrayRadius[nRadius] = {0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6};
@@ -26,12 +28,11 @@ const int iJetLevel = 0;
 // Choice of jet QA type (uncorrected jets, background corrected jet (rho area version), background corrected jet (rho area version) with area cut)
 const int iJetFinderQaType = 0;
 
-const float areaDisplayMax[nRadius] = {0.5, 1, 1.5};
 
 // const int nCentralityBins = 6;
 // const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 50, 90};
 const int nCentralityBins = 3;
-const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 90};
+const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 80};
 
  
 const int nTracksBins = 11;
@@ -701,22 +702,43 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
                                         
 
 
-//////// -------- sel8Full - apass 3 - centrality comp -------- ////////
+// //////// -------- sel8Full - apass 3 - centrality comp -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("MC");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24d2");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC24d2_sel8_and_sel8Full", "LHC24d2_sel8_and_sel8Full"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"sel8Full", "sel8"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                         };
+// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+// //                                           "jet-finder-charged-qa_central_5090"
+// //                                           };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                             "jet-finder-charged-qa_sel8"
+//                                           };
+
+// const TString trainId = "";
+
+
+//////// -------- LHC23zzh - apass 4 -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
 const TString* texDatasetsComparisonType = new TString("MC");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24d2");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
 const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"LHC24d2_sel8_and_sel8Full", "LHC24d2_sel8_and_sel8Full"};
+const TString Datasets[nDatasets] = {"LHC23zzh_apass4_run544116", "LHC23zzh_apass4_run544123"};
 // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"sel8Full", "sel8"};
+const TString DatasetsNames[nDatasets] = {"run544116", "run544123"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
 //                                           "jet-finder-charged-qa_central_5090"
 //                                           };
 const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
-                                            "jet-finder-charged-qa_sel8"
+                                            "jet-finder-charged-qa"
                                           };
 
 const TString trainId = "";

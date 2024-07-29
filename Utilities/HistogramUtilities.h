@@ -18,6 +18,10 @@ void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist);
 void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum);
 void TransformRawResponseToYieldResponse(TH2D* H2D_hist);
 
+
+TH2* NormalizeResponsMatrixYaxisWithPrior(TH2 *h2RM, TH1 *hPrior);
+TH2D* RebinVariableBins2D_aliPhysics(TH2D* hRMFine, int nBinsX, int nBinsY, double* binsX, double* binsY, bool useFunctionWeight);
+
 // weird stuff happening here with optional debug thing, maybe remove it completely
 TH2D GetTransposeHistogram(TH2D* inputHist);
 TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB);

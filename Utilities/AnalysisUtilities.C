@@ -9,16 +9,23 @@ void NormaliseYieldToNEntries(TH1D* histogram) { // also takes care of the trans
   histogram->Scale(1./histogram->GetEntries(),"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
   cout << "takes overflow/underflow into account; am I sure that is what I want?" << endl;
 }
+void NormaliseRawHistToNEntries(TH1D* histogram) {
+  histogram->Scale(1./histogram->GetEntries(),"");
+  cout << "takes overflow/underflow into account; am I sure that is what I want?" << endl;
+}
 
 void NormaliseYieldToIntegral(TH1D* histogram) { // also takes care of the transformation of raw count to dCount/dQuantity (like dN/dpT), thanks to option "width"
   histogram->Scale(1./histogram->Integral("width"),"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
+}
+void NormaliseRawHistToIntegral(TH1D* histogram) { 
+  histogram->Scale(1./histogram->Integral("width"),"");
 }
 
 
 void NormaliseYieldToNEvents(TH1D* histogram, int nEvents) { // also takes care of the transformation of raw count to dCount/dQuantity (like dN/dpT), thanks to option "width"
   histogram->Scale(1./nEvents,"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
 }
-void NormaliseRawHistToNEvents(TH1D* histogram, int nEvents) { // also takes care of the transformation of raw count to dCount/dQuantity (like dN/dpT), thanks to option "width"
+void NormaliseRawHistToNEvents(TH1D* histogram, int nEvents) { 
   histogram->Scale(1./nEvents,""); // If option contains "width" the bin contents and errors are divided by the bin width.
 }
 

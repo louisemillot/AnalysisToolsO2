@@ -3,9 +3,11 @@
 
 // Analysis Utilities
 void NormaliseYieldToNEntries(TH1D* histogram);
+void NormaliseRawHistToNEntries(TH1D* histogram);
 void NormaliseYieldToNEvents(TH1D* histogram, int nEvents);
 void NormaliseRawHistToNEvents(TH1D* histogram, int nEvents);
 void NormaliseYieldToIntegral(TH1D* histogram);
+void NormaliseRawHistToIntegral(TH1D* histogram);
 int GetNEvents(TFile* file_O2Analysis, TString analysisWorkflow);
 int GetNEventsGen(TFile* file_O2Analysis);
 int GetNEventsSelected_JetFramework(TFile* file_O2Analysis);
