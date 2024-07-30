@@ -293,7 +293,7 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
   // cout << "##############################################" << endl;
   // cout << "######## taking care of truncation ###########" << endl;
   // cout << "##############################################" << endl;
-  // // Store gen truncations in x-underflow and overflow for each pT_gen (y-axis); needed for NormaliseYSlicesAsProbaDensity
+  // // Store gen truncations in x-underflow and overflow for each pT_gen (y-axis); needed for NormaliseYSlicesToOne
   // // I don't like the fact I couldn't add it to the above, but whatever, for now
   // double hist2D_rebinned_underflowContent, hist2D_rebinned_overflowContent;
   // double hist2D_rebinned_underflowError, hist2D_rebinned_underflowErrorA, hist2D_rebinned_underflowErrorB;
@@ -389,7 +389,7 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
 
 
 // here if I dont include the under/overflows I have a weird behaviour at low pt gen; but then that looks like what marta actually did; see her non orig response histogram, also https://github.com/alisw/AliPhysics/blob/5e4a7731040f3f2739d98091d5549a44c2ae4e44/PWGJE/PWGJE/AliAnaChargedJetResponseMaker.cxx#L769
-void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist){ 
+void NormaliseYSlicesToOne(TH2D* H2D_hist){ 
   // normalise only what is inside the gen bins, not outside
   // see AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin
 
@@ -439,7 +439,7 @@ void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist){
 
   }
 } 
-void NormaliseYSlicesAsProbaDensityNoUnderOverFlows(TH2D* H2D_hist){ 
+void NormaliseYSlicesToOneNoUnderOverFlows(TH2D* H2D_hist){ 
   cout << "Normalising y-slices" << endl;
   double genSliceNorm = 1;
   double genSliceNormError;
@@ -456,6 +456,46 @@ void NormaliseYSlicesAsProbaDensityNoUnderOverFlows(TH2D* H2D_hist){
   }
 } 
 
+void NormaliseXSlicesToOne(TH2D* H2D_hist){ 
+  // normalise only what is inside the gen bins, not outside
+  // see AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin
+
+  cout << "Normalising x-slices" << endl;
+  // Normalisation of the H2D_hist 2D histogram: each pt rec slice is normalised to unity, takes underflow into account if it's present
+  double genSliceNorm = 1;
+  double genSliceNormError;
+  double binContent, binError, binErrorA, binErrorB;
+  for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
+    genSliceNorm = H2D_hist->IntegralAndError(iBinX, iBinX, 0, H2D_hist->GetNbinsY()+1, genSliceNormError);
+    for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
+      H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
+      genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
+      genSliceNorm == 0 ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
+      H2D_hist->SetBinContent(iBinX, iBinY, binContent);
+      H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
+    }
+  }
+} 
+void NormaliseXSlicesToOneNoUnderOverFlows(TH2D* H2D_hist){ 
+  // normalise only what is inside the gen bins, not outside
+  // see AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin
+
+  cout << "Normalising x-slices" << endl;
+  // Normalisation of the H2D_hist 2D histogram: each pt rec slice is normalised to unity, takes underflow into account if it's present
+  double genSliceNorm = 1;
+  double genSliceNormError;
+  double binContent, binError, binErrorA, binErrorB;
+  for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
+    genSliceNorm = H2D_hist->IntegralAndError(iBinX, iBinX, 1, H2D_hist->GetNbinsY(), genSliceNormError);
+    for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
+      H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
+      genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
+      genSliceNorm == 0 ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
+      H2D_hist->SetBinContent(iBinX, iBinY, binContent);
+      H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
+    }
+  }
+} 
 
 void TransformRawResponseToYieldResponse(TH2D* H2D_hist){ 
   // normalise only what is inside the gen bins, not outside
@@ -505,12 +545,6 @@ void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum){
 
   // actually what's important here is that the y-projection is the prior
 
-  // weights y-slices with priorSpectrum 
-  double genSliceNormError;
-  // double genSliceNorm = priorSpectrum->IntegralAndError(0, -1, genSliceNormError);
-  double genSliceNorm = priorSpectrum->IntegralAndError(1, priorSpectrum->GetNbinsX(), genSliceNormError); // I think we only prior the 1, N bins
-
-
   double binContent, binError, binErrorA, binErrorB;
 
   // //DEBUG before weighting
@@ -548,11 +582,18 @@ void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum){
   }
 
   // division
+
+  // weights y-slices with priorSpectrum 
+  double genSliceNorm, genSliceNormError;
+  // double genSliceNorm = priorSpectrum->IntegralAndError(0, -1, genSliceNormError);
+  genSliceNorm = priorSpectrum->IntegralAndError(1, priorSpectrum->GetNbinsX(), genSliceNormError); // I think we only prior the 1, N bins
+
   // cout << "division" << endl;
   // for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
   //   for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
-  for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
-    for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
+  for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
+    // genSliceNorm = H2D_hist->IntegralAndError(iBinX, iBinX, 1, priorSpectrum->GetNbinsY(), genSliceNormError);
+    for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
       H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
       genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
       genSliceNorm == 0 ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 

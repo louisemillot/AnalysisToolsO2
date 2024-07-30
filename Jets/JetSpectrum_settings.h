@@ -28,8 +28,8 @@ const float arrayCentralityIntervals[nCentralityBins][2] = {{50, 90}}; // for no
 const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
 const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
-char mergingPrior[] = "testAliPhysics";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+char mergingPrior[] = "mcpPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
+char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
 char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
 char normMethod[] = "evtNorm";
 char optionsAnalysis[100] = "";
@@ -318,6 +318,37 @@ TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/An
 TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted/AnalysisResults.root");
 
 const TString trainId = "_id12436";
+// const TString trainId = "_id12832";
+// const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
 const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
 
 const TString analysisWorkflowMC = "jet-finder-charged-qa";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Sum(Mik * Gen_k, k) = Rec_i 
+
+// I want Sum(Rec_i, i) = Sum(Gen_i, i)
+
+// Sum(Sum(Mik * Gen_k, k), i) = Sum(Rec_i, i)
+// Sum(Sum(Mik, i) * Gen_k, k) = Sum(Rec_i, i)
+// so I want Sum(Mik, i) = 1
+

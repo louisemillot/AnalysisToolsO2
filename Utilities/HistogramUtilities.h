@@ -14,7 +14,9 @@ TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, 
 TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, TH1D* H1D_priorSpectrum);
 TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, bool debug);
 TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY, TH1D* H1D_priorSpectrum, bool debug);
-void NormaliseYSlicesAsProbaDensity(TH2D* H2D_hist);
+void NormaliseYSlicesToOne(TH2D* H2D_hist);
+void NormaliseXSlicesToOne(TH2D* H2D_hist);
+void NormaliseXSlicesToOneNoUnderOverFlows(TH2D* H2D_hist);
 void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum);
 void TransformRawResponseToYieldResponse(TH2D* H2D_hist);
 
