@@ -723,14 +723,37 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 // const TString trainId = "";
 
 
-//////// -------- LHC23zzh - apass 4 -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// //////// -------- LHC23zzh - apass 4 -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("MC");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_run544116", "LHC23zzh_apass4_run544123"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"run544116", "run544123"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+// //                                           "jet-finder-charged-qa_central_5090"
+// //                                           };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                             "jet-finder-charged-qa"
+//                                           };
+
+// const TString trainId = "";
+
+
+
+
+//////// -------- pp MC sel8MC vs sel8Full apass6 anchorr? -------- ////////
+TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
 const TString* texDatasetsComparisonType = new TString("MC");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24b1b");
 const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass4_run544116", "LHC23zzh_apass4_run544123"};
+const TString Datasets[nDatasets] = {"LHC24b1b_sel8MC_train239181", "LHC24b1b_sel8Full_train239409"};
 // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"run544116", "run544123"};
+const TString DatasetsNames[nDatasets] = {"sel8MC", "sel8Full"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };

@@ -1,5 +1,3 @@
-
-
 // Analysis settings
 const int nJetType = 3;
 const TString jetType[nJetType] = {"charged", "neutral", "full"};
@@ -8,31 +6,106 @@ const TString jetLevel[nJetLevel] = {"data", "mcd", "mcp"};
 const int nRadius = 3;
 const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.4", "R = 0.6"};
 float arrayRadius[nRadius] = {0.2, 0.4, 0.6};
-// const int nRadius = 1;
-// const TString RadiusLegend[nRadius] = {"R = 0.4"};
-// float arrayRadius[nRadius] = {0.4};
-// const int nRadius = 9;
-// const TString RadiusLegend[nRadius] = {"R = 0.2", "R = 0.25", "R = 0.3", "R = 0.35", "R = 0.4", "R = 0.45", "R = 0.5", "R = 0.55", "R = 0.6"};
-// float arrayRadius[nRadius] = {0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6};
-
+const double etaAnalysisRange[2] = {-0.5, 0.5};
 // Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
 const int iJetType = 0;
 const int iJetLevel = 0;
-
-
 // centrality binning for collisions
 // const int nCentralityBins = 2;
 // const float arrayCentralityIntervals[nCentralityBins][2] = {{0, 10}, {50, 90}};
 const int nCentralityBins = 1;
-const float arrayCentralityIntervals[nCentralityBins][2] = {{50, 90}}; // for now uses this because pp sim I got has all its h3_jet_r_jet_pt_centrality entries below 0
+const float arrayCentralityIntervals[nCentralityBins][2] = {{50, 90}};
+
+
+
+
+
+
+////////////////////////////////////////////////
+////////// Unfolding settings - start //////////
+////////////////////////////////////////////////
+
+
 const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
 const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
-char mergingPrior[] = "mcpPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-char unfoldingPrior[] = "measuredPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
+char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
 char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
-char normMethod[] = "evtNorm";
+char normMethod[] = "evtNorm"; // evtNorm, noNorm
 char optionsAnalysis[100] = "";
+
+const bool isPbPb = false; // if false -> pp
+const bool ppMcIsWeighted = false; // use if the MC has been weighted to have more high pt jets?
+int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active
+bool applyFakes = true;
+const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
+const bool useYSliceNorm = false;
+const bool scaleRespByWidth = false;
+
+const bool normDetRespByNEvts = false;
+const bool normGenAndMeasByNEvts = normDetRespByNEvts;
+const bool normunfoldedByNEvts = normDetRespByNEvts;
+
+const bool useInitialResponseMethod = true; // discrepancy false true here seems to be that I do not model fakes in my initial method
+const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
+
+
+// // save for PbPb that works, ish?
+// const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
+// const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
+
+// char mergingPrior[] = "mcpPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
+// char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+// char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
+// char normMethod[] = "evtNorm"; // evtNorm, noNorm
+// char optionsAnalysis[100] = "";
+
+// const bool isPbPb = true; // if false -> pp
+// const bool ppMcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
+// int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active
+// const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
+// const bool useYSliceNorm = false; // helps measuredPriorUnfolding with useInitialResponseMethod = true; but mcpPriorUnfolding isn't great
+// const bool useInitialResponseMethod = true; // if false, applyEfficiencies must be 0, if true it must be 3
+// bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
+
+// // less used, test purposes
+// const bool scaleRespByWidth = false; // test purposes
+// const bool normDetRespByNEvts = false; // test purposes
+// const bool normGenAndMeasByNEvts = false; // test purposes
+// // end of save
+
+// // Save of settings working for pp with // Joonsuk binning
+// const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
+// const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
+
+// char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
+// char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+// char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
+// char normMethod[] = "evtNorm"; // evtNorm, noNorm
+// char optionsAnalysis[100] = "";
+
+// const bool isPbPb = false; // if false -> pp
+// const bool ppMcIsWeighted = false; // use if the MC has been weighted to have more high pt jets?
+// int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active
+// const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
+// const bool useYSliceNorm = false;
+// const bool scaleRespByWidth = false;
+// const bool normDetRespByNEvts = false;
+
+// const bool useInitialResponseMethod = true;
+// const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
+// // end of save
+
+////////////////////////////////////////////////
+////////// Unfolding settings - end ////////////
+////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////
+//////////////// pt binning options ////////////
+////////////////////////////////////////////////
 
 
 // // pT binning for jets - gen = rec
@@ -41,14 +114,28 @@ char optionsAnalysis[100] = "";
 // double ptBinsJetsGen[nRadius][30] = {{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
 // int nBinPtJetsGen[nRadius] = {15,15,15};
 
-// tests
-// WORKS FINE WITH SVD
-// WORKS FINE WITH SVD
-// pT binning for jets - gen = rec - start at 10 // does work for svd even though 
-double ptBinsJetsRec[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140.},{10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140.},{10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140.}};
-int nBinPtJetsRec[nRadius] = {13,13,13};
-double ptBinsJetsGen[nRadius][30] = {{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 150., 160., 170., 180., 190., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 150., 160., 170., 180., 190., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 150., 160., 170., 180., 190., 200.}};
-int nBinPtJetsGen[nRadius] = {20,20,20};
+
+
+// // tests
+// // WORKS FINE WITH SVD
+// // WORKS FINE WITH SVD
+// // pT binning for jets - gen = rec - start at 10 // does work for svd even though 
+// double ptBinsJetsRec[nRadius][30] = {{20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140.},{20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140.},{20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140.}};
+// int nBinPtJetsRec[nRadius] = {12,12,12};
+// double ptBinsJetsGen[nRadius][30] = {{5., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 150., 160., 170., 180., 190., 200.},{5., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 150., 160., 170., 180., 190., 200.},{5., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 110., 120., 130., 140., 150., 160., 170., 180., 190., 200.}};
+// int nBinPtJetsGen[nRadius] = {20,20,20};
+
+// Joonsuk binning
+double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+int nBinPtJetsRec[nRadius] = {20,20,20};
+double ptBinsJetsGen[nRadius][30] = {{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+int nBinPtJetsGen[nRadius] = {25,25,25};
+
+
+// Double_t ptbin[21] = {5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200};
+// Double_t ptbinGen[26] = {0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200};
+// Int_t nptBins = sizeof(ptbin) / sizeof(ptbin[0]) - 1;
+// Int_t nptBinsGen = sizeof(ptbinGen) / sizeof(ptbinGen[0]) - 1;
 
 
 // // pT binning for jets - gen = rec - start at 5 but rec has a smaller window ; good to check stuff without worrying about a badly setup normalisation by pt bin width
@@ -217,6 +304,8 @@ int nBinPtJetsGen[nRadius] = {20,20,20};
                             
 
 int nBinPtJetsFine[nRadius] = {200,200,200};
+// int nBinPtJetsFine[nRadius] = {195,195,195};
+// double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
 double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
@@ -238,6 +327,7 @@ double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 
                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
                                        200},
+                                    //  {05., 06., 07., 08., 09.,
                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
@@ -259,6 +349,7 @@ double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 
                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
                                        200},
+                                    //  {05., 06., 07., 08., 09.,
                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
@@ -281,43 +372,55 @@ double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 
                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
                                        200}}; // shift+option+left click hold lets one edit columns in vs code
 
-// Options to be set:
 
 
-// //////// -------- Full cpass0 Analysis -------- ////////
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////       file access choice       ////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// //////// -------- Pb-Pb -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-// const TString* texDatasetsComparisonType = new TString("Period"); 
-// const TString* texDatasetsComparisonCommonDenominator = new TString("cpass0 periods");
-// const int nDatasets = 10;
-// const TString Datasets[nDatasets] = {"LHC23zzh_cpass0","LHC23zzi_cpass0", "LHC23zzf_cpass0", "LHC23zzg_cpass0", "LHC23zx_cpass0", "LHC23zy_cpass0", "LHC23zz_cpass0", "LHC23zza_cpass0", "LHC23zzb_cpass0", "LHC23zze_cpass0"};
-// const TString DatasetsNames[nDatasets] = {"LHC23zzh","LHC23zzi", "LHC23zzf", "LHC23zzg", "LHC23zx", "LHC23zy", "LHC23zz", "LHC23zza", "LHC23zzb", "LHC23zze"};
-// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
-//                                       new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root")
+// const TString* texDatasetsComparisonType = new TString("");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"LHC23zzh"};
+// const TString DatasetsNames[nDatasets] = {""};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
 //                                       };
-// TString analysisWorkflow = "jet-finder-"+jetType[iJetType]+"-qa";
+// // TFile* file_O2Analysis_ppSimDetectorEffect[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted/AnalysisResults.root");
+
+// const TString trainId = "_id12832";
+// // const TString trainId = "_id12832";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+// const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+
+// const TString analysisWorkflowMC = "jet-finder-charged-qa";
 
 
-//////// -------- TestingFile -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+
+
+
+//////// -------- pp -------- ////////
+TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV"); 
 const TString* texDatasetsComparisonType = new TString("");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC22o");
 const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23zzh"};
-const TString DatasetsNames[nDatasets] = {""};
+const TString Datasets[nDatasets] = {"LHC22o_pass6_train238827"};
+const TString DatasetsNames[nDatasets] = {"LHC22o_pass6"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                       };
-// TFile* file_O2Analysis_ppSimDetectorEffect[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
-TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted/AnalysisResults.root");
+TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24b1b_sel8MC_train239181/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24b1b_sel8Full_train239409/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted/AnalysisResults.root");
 
-const TString trainId = "_id12436";
+const TString trainId = "";
 // const TString trainId = "_id12832";
 // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
 const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;

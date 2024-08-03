@@ -123,7 +123,7 @@ void JetQC() {
   float etaRangeNeg[2] = {-0.5, 0};
   float etaRangePos[2] = {0, 0.5};
 
-  float jetRadiusForDataComp = 0.4;
+  float jetRadiusForDataComp = 0.2;
   float jetR02 = 0.2;
   float jetR06 = 0.6;
   
@@ -147,10 +147,10 @@ void JetQC() {
   //   float PtRangeZoom5060[2] = {50, 60};
   //   float PtRangeZoom8090[2] = {80, 90};
 
-    // Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
     // Draw_Eta_DatasetComparison(jetR02, ptRange, "normEvents");
     // Draw_Eta_DatasetComparison(jetR06, ptRange, "normEvents");
-    // Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
     // Draw_Area_PtIntegrated_DatasetComparison(jetRadiusForDataComp, ptRange);
     // Draw_Area_PtIntegrated_DatasetComparison(jetR02, ptRange);
     // Draw_Area_PtIntegrated_DatasetComparison(jetR06, ptRange);
@@ -176,11 +176,11 @@ void JetQC() {
   //   // Draw_Area_PtIntegrated_BinningComparison(iDataset, 0.6, ptRange);
   }
 
-  // Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
+  Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
   // Draw_Pt_ratio_etaNeg_etaPos_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
-  Draw_Ncoll_vs_centrality("");
+  // Draw_Ncoll_vs_centrality("");
 
-  // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
   //   // Draw_Pt_RadiusComparison(iDataset, etaRangeSym);
   //   // Draw_Pt_RadiusComparison_mcp(iDataset, etaRangeSym);
   //   // Draw_Pt_RadiusComparison(iDataset, etaRangeNeg);
@@ -194,17 +194,17 @@ void JetQC() {
   //   Draw_Phi_PtCutComparison(jetR06, iDataset, jetPtMinCutArray, nPtMinCuts, "normEntries");
   //   Draw_Phi_PtCutComparison(jetRadiusForDataComp, iDataset, jetPtMinCutArray, nPtMinCuts, "normEntries");
 
-  //   Draw_Pt_CentralityComparison(jetRadiusForDataComp, iDataset);
-  //   Draw_Eta_CentralityComparison(jetRadiusForDataComp, iDataset);
-  //   Draw_Phi_CentralityComparison(jetRadiusForDataComp, iDataset);
+    // Draw_Pt_CentralityComparison(jetRadiusForDataComp, iDataset);
+    // Draw_Eta_CentralityComparison(jetRadiusForDataComp, iDataset);
+    // Draw_Phi_CentralityComparison(jetRadiusForDataComp, iDataset);
 
   //   // Draw_Pt_Run2Run3Comparison_0010Cent_R040(iDataset, "jetCorrected");
   //   // Draw_Pt_Run2Run3Comparison_0010Cent_R040(iDataset, "jetUncorrected");
-  // }
+  }
 
 
   // ////// Background //////
-  Draw_Rho_vs_Centrality_DatasetComp();
+  // Draw_Rho_vs_Centrality_DatasetComp();
   // Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
   // Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio();
   // Draw_BkgFluctuations_vs_Centrality_DatasetComp();

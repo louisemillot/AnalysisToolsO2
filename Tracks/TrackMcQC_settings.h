@@ -287,14 +287,12 @@ const double deltaEtaMcVsTrackEfficiency = 0;
 
 //////// -------- Run 3 MC local -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("global/uniform");
-const TString* texDatasetsComparisonCommonDenominator = new TString("");
-const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"LHC23k6d_global", "LHC23k6d_uniform"};
-const TString DatasetsNames[nDatasets] = {"global", "uniform"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+const TString* texDatasetsComparisonType = new TString("global tracks");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24d2 - global tracks");
+const int nDatasets = 1;
+const TString Datasets[nDatasets] = {"LHC24d2_global"};
+const TString DatasetsNames[nDatasets] = {"global"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"track-efficiency",
-                                          "track-efficiency"
+const TString analysisWorkflow[nDatasets] = {"track-efficiency_globalTracks_DCAz20"
                                           };

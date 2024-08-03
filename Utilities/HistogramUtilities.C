@@ -110,12 +110,12 @@ TH2D* RebinVariableBins2D_aliPhysics(TH2D* hRMFine, int nBinsX, int nBinsY, doub
       hRM2->SetBinContent(ixNew,iyNew,oldcontent+content*weight);
     }
   }
-  cout << "((((((((((((((((()))))))))))))))))" << endl;
-  for(int iy=1; iy<=hRM2->GetYaxis()->GetNbins(); iy++) {
-    cout << "iy = " << iy << endl;
-    cout << "hRM2->Integral(1, N, iy, iy) = " << hRM2->Integral(1, hRM2->GetNbinsX(), iy, iy) << endl;
-  }
-  cout << "((((((((((((((((()))))))))))))))))" << endl;
+  // cout << "((((((((((((((((()))))))))))))))))" << endl;
+  // for(int iy=1; iy<=hRM2->GetYaxis()->GetNbins(); iy++) {
+  //   cout << "iy = " << iy << endl;
+  //   cout << "hRM2->Integral(1, N, iy, iy) = " << hRM2->Integral(1, hRM2->GetNbinsX(), iy, iy) << endl;
+  // }
+  // cout << "((((((((((((((((()))))))))))))))))" << endl;
   if(normVector) delete normVector;
   return hRM2;
 }
@@ -446,6 +446,14 @@ void NormaliseYSlicesToOneNoUnderOverFlows(TH2D* H2D_hist){
   double binContent, binError, binErrorA, binErrorB;
   for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){
     genSliceNorm = H2D_hist->IntegralAndError(1, H2D_hist->GetNbinsX(), iBinY, iBinY, genSliceNormError);
+    // cout << "((((((((((((((((((()))))))))))))))))))" << endl;
+    // cout << "((((((((((((((((((()))))))))))))))))))" << endl;
+    // cout << "((((((((((((((((((()))))))))))))))))))" << endl;
+    // cout << "genSliceNorm = " << genSliceNorm << endl;
+    // cout << "((((((((((((((((((()))))))))))))))))))" << endl;
+    // cout << "((((((((((((((((((()))))))))))))))))))" << endl;
+    // cout << "((((((((((((((((((()))))))))))))))))))" << endl;
+
     for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
       H2D_hist->GetBinContent(iBinX, iBinY) == 0 ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
       genSliceNorm == 0                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
@@ -501,7 +509,7 @@ void TransformRawResponseToYieldResponse(TH2D* H2D_hist){
   // normalise only what is inside the gen bins, not outside
 
 
-  cout << "Dividing Response by bin widths" << endl;
+  cout << "TransformRawResponseToYieldResponse: Dividing Response by bin widths" << endl;
 
   double widthX, widthY;
   // for(int iBinY = 0; iBinY <= H2D_hist->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account
@@ -661,7 +669,7 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
   int nBinsX_B = histB->GetNbinsX();
   int nBinsY_B = histB->GetNbinsY();
 
-    cout << "doing product matrix A times matrix B, with A(" << nBinsY_A << " x " << nBinsX_A << ") and B(" << nBinsY_B << " x " << nBinsX_B << ")" << endl; 
+    // cout << "doing product matrix A times matrix B, with A(" << nBinsY_A << " x " << nBinsX_A << ") and B(" << nBinsY_B << " x " << nBinsX_B << ")" << endl; 
   if (nBinsY_A != nBinsX_B) {
     cout << "#########################################################################################" << endl;
     cout << "###################### MATRIX PRODUCT IMPOSSIBLE DUE TO DIMENSIONS ######################" << endl;
@@ -719,12 +727,12 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
 }
 
 TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
-  // bit different from TH2 x TH2 as TH1 is a (1,N) TH2 and not a (N,1) one
+  // bit different from TH2 x TH2 as a TH1 vector is a (1,N) TH2 and not a (N,1) one
   int nBinsX_A = histA->GetNbinsX();
   int nBinsY_A = histA->GetNbinsY();
   int nBinsX_U = histU->GetNbinsX();
 
-  cout << "doing product matrix A times vector U, with A(" << nBinsX_A << " x " << nBinsY_A << ") and U(" << nBinsX_U << " x 1)" << endl; 
+  // cout << "doing product matrix A times vector U, with A(" << nBinsX_A << " x " << nBinsY_A << ") and U(" << nBinsX_U << " x 1)" << endl; 
   if (nBinsY_A != nBinsX_U) {
     cout << "#########################################################################################" << endl;
     cout << "###################### MATRIX PRODUCT IMPOSSIBLE DUE TO DIMENSIONS ######################" << endl;
@@ -755,6 +763,7 @@ TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
       for(int iBinK = 1; iBinK <= nBinsK; iBinK++){ // 0 and n+1 take underflow and overflow into account
         productContent_iBinX += histA->GetBinContent(iBinX, iBinK) * histU->GetBinContent(iBinK); 
         productError2_iBinX += pow(histU->GetBinContent(iBinK), 2)*pow(histA->GetBinError(iBinX, iBinK), 2) + pow(histA->GetBinContent(iBinX, iBinK), 2)*pow(histU->GetBinError(iBinK), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated          
+        cout << "A(" << iBinX << "," << iBinK << ") = " << histA->GetBinContent(iBinX, iBinK) << ", U(" << iBinK << ") = " << histU->GetBinContent(iBinK) << endl;
       }
     } else {
       for(int iBinK = 0; iBinK <= nBinsK+1; iBinK++){ // 0 and n+1 take underflow and overflow into account
@@ -774,7 +783,7 @@ TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
 
 TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, __attribute__ ((unused)) const char options[]){
   TString texContextFinal;
-  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{2023 QC}{"+tertiaryContext+"}}";
+  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
   // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{2023 QC}{test"+tertiaryContext+"}}";
   // texContextFinal = "testtesttestest";
   return texContextFinal;
@@ -1063,7 +1072,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     float lineEdgesX[4] = {0.150, 0.150};
     float lineEdgesY[4] = {0, yUpMarginScaling*maxY};
     TPolyLine* Line150Mev = new TPolyLine(2, lineEdgesX, lineEdgesY);
-    cout << "Line150Mev->GetN() = " << Line150Mev->GetN() << endl;
+    // cout << "Line150Mev->GetN() = " << Line150Mev->GetN() << endl;
     if (Line150Mev->GetN() > 0) {
       Line150Mev->Draw("");
       Line150Mev->SetLineColor(kBlack);
@@ -1186,17 +1195,17 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   }
 
   if (strstr(options, "drawLines") != NULL) {
-    cout << "optionalLine->GetN() = " << optionalLine->GetN() << endl;
+    // cout << "optionalLine->GetN() = " << optionalLine->GetN() << endl;
     if (optionalLine->GetN() > 0) {
       optionalLine->Draw("");
       optionalLine->SetLineColor(kRed);
     }
   }
 
-  cout << "---------------- TH2 drawing; getting min and max test:" << endl;
+  // cout << "---------------- TH2 drawing; getting min and max test:" << endl;
   for (int i = 0; i < collectionSize; i++) {
     histograms_collection[i]->GetZaxis()->SetRangeUser(histograms_collection[i]->GetMinimum(GLOBAL_epsilon), histograms_collection[i]->GetMaximum());
-    cout << "min = " << histograms_collection[i]->GetMinimum(GLOBAL_epsilon) << ", max = " << histograms_collection[i]->GetMaximum() << endl;
+    // cout << "min = " << histograms_collection[i]->GetMinimum(GLOBAL_epsilon) << ", max = " << histograms_collection[i]->GetMaximum() << endl;
   }
 
   gStyle->SetPalette(kBird); // a better palette than the kRainbow that was used by default; https://root.cern.ch/doc/master/classTColor.html lists it as one of the better palettes for Colour Vision Deficiencies 

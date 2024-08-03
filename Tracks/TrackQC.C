@@ -47,8 +47,8 @@ void Draw_Eta_DatasetComparison();
 void Draw_Phi_DatasetComparison();
 void Draw_Eta_DatasetComparison_EntriesNorm();
 
-void Draw_Eta_DatasetComparison_trackSelComp();
-void Draw_Phi_DatasetComparison_trackSelComp();
+// void Draw_Eta_DatasetComparison_trackSelComp();
+// void Draw_Phi_DatasetComparison_trackSelComp();
 
 
 void Draw_Pt_CentralityComparison(int iDataset);
@@ -90,8 +90,8 @@ void TrackQC() {
   // Draw_Eta_DatasetComparison();
   // Draw_Phi_DatasetComparison();
 
-  Draw_Eta_DatasetComparison_trackSelComp();
-  Draw_Phi_DatasetComparison_trackSelComp();
+  // Draw_Eta_DatasetComparison_trackSelComp();
+  // Draw_Phi_DatasetComparison_trackSelComp();
   // // Draw_Eta_DatasetComparison_EntriesNorm();
 
 
@@ -995,6 +995,7 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   TH2D* H2D_sigmapt_pt_concatenated[nDatasets];
   TH2D* H2D_sigmapt_pt[nDatasets];
   TH2D* H2D_sigmapt_pt_high[nDatasets];
+  TH2D* H2D_sigmapt_pt_high_rebinnedX[nDatasets];
 
   TH1D* H1D_sigmapt_pt_X_forMedian[nDatasets];
 
@@ -1013,6 +1014,10 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
     H2D_sigmapt_pt[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_track_pt_track_sigmapt"))->Clone("Draw_Sigmapt_vs_pt_DatasetComp_left"+Datasets[iDataset]);
     H2D_sigmapt_pt_high[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_track_pt_high_track_sigmapt"))->Clone("Draw_Sigmapt_vs_pt_high_DatasetComp_right"+Datasets[iDataset]);
+
+
+    H2D_sigmapt_pt_high_rebinnedX[iDataset] = (TH2D*)H2D_sigmapt_pt_high[iDataset]->RebinX(1.,"H2D_sigmapt_pt_high_rebinnedX"+Datasets[iDataset]);
+
     // H2D_sigmapt_pt[iDataset] = (TH2D*)HDsparse_cent_sigmapt_pt[iDataset]->Project3D(dummyName[0]+Form("%d", iDataset)+"_sigmapt_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
     // H2D_sigmapt_pt[iDataset]->Sumw2();
 
@@ -1026,7 +1031,7 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
  
     // x-axis
     std::vector<double> xbinsVectorLeft = GetTH1Bins((TH1D*)H2D_sigmapt_pt[iDataset]->ProjectionX("H1D_sigmapt_pt_left"+Datasets[iDataset], 0, -1, "e"));
-    std::vector<double> xbinsVectorRight = GetTH1Bins((TH1D*)H2D_sigmapt_pt_high[iDataset]->ProjectionX("H1D_sigmapt_pt_right"+Datasets[iDataset], 0, -1, "e"));
+    std::vector<double> xbinsVectorRight = GetTH1Bins((TH1D*)H2D_sigmapt_pt_high_rebinnedX[iDataset]->ProjectionX("H1D_sigmapt_pt_right"+Datasets[iDataset], 0, -1, "e"));
     xbinsVectorRight.erase(xbinsVectorRight.begin());
     cout << "xbinsVectorLeft.front() = " << xbinsVectorLeft.front() << ", xbinsVectorLeft.back() = " << xbinsVectorLeft.back() << ", xbinsVectorRight.front() = " << xbinsVectorRight.front() << ", xbinsVectorRight.back() = " << xbinsVectorRight.back() << endl;
     std::vector<double> xbinsVectorCombination = xbinsVectorLeft;
@@ -1037,7 +1042,7 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
 
 
     H1D_sigmapt_pt_mean_withProfile[iDataset] = (TH1D*)H2D_sigmapt_pt[iDataset]->ProfileX("H1D_sigmapt_pt_rebinned_mean_withProfile"+Datasets[iDataset], 0, -1, "e");
-    H1D_sigmapt_pt_high_mean_withProfile[iDataset] = (TH1D*)H2D_sigmapt_pt_high[iDataset]->ProfileX("H1D_sigmapt_pt_high_rebinned_mean_withProfile"+Datasets[iDataset], 0, -1, "e");
+    H1D_sigmapt_pt_high_mean_withProfile[iDataset] = (TH1D*)H2D_sigmapt_pt_high_rebinnedX[iDataset]->ProfileX("H1D_sigmapt_pt_high_rebinned_mean_withProfile"+Datasets[iDataset], 0, -1, "e");
 
     TH1D H1D_sigmapt_pt_mean_withProfile_concatenated_temp("H1D_sigmapt_pt_mean_withProfile_concatenated_temp"+Datasets[iDataset], "H1D_sigmapt_pt_mean_withProfile_concatenated_temp"+Datasets[iDataset], xbinsVectorCombination.size()-1, xbins_new);
     H1D_sigmapt_pt_mean_withProfile_concatenated[iDataset] = (TH1D*)H1D_sigmapt_pt_mean_withProfile_concatenated_temp.Clone("H1D_sigmapt_pt_mean_withProfile_concatenated"+Datasets[iDataset]);
@@ -1065,14 +1070,14 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
       }
     }
 
-    for(int iBinX = 1; iBinX <= H2D_sigmapt_pt_high[iDataset]->GetNbinsX(); iBinX++){
+    for(int iBinX = 1; iBinX <= H2D_sigmapt_pt_high_rebinnedX[iDataset]->GetNbinsX(); iBinX++){
       // H1D_sigmapt_pt_mean_withProfile_concatenated[iDataset]->SetBinContent(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, H1D_sigmapt_pt_high_mean_withProfile[iDataset]->GetBinContent(iBinX));
       // H1D_sigmapt_pt_mean_withProfile_concatenated[iDataset]->SetBinError(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, H1D_sigmapt_pt_high_mean_withProfile[iDataset]->GetBinError(iBinX));
       for(int iBinY = 1; iBinY <= H2D_sigmapt_pt[iDataset]->GetNbinsY(); iBinY++){
-        H2D_sigmapt_pt_concatenated[iDataset]->SetBinContent(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY, H2D_sigmapt_pt_high[iDataset]->GetBinContent(iBinX, iBinY));
-        H2D_sigmapt_pt_concatenated[iDataset]->SetBinError(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY, H2D_sigmapt_pt_high[iDataset]->GetBinError(iBinX, iBinY));
+        H2D_sigmapt_pt_concatenated[iDataset]->SetBinContent(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY, H2D_sigmapt_pt_high_rebinnedX[iDataset]->GetBinContent(iBinX, iBinY));
+        H2D_sigmapt_pt_concatenated[iDataset]->SetBinError(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY, H2D_sigmapt_pt_high_rebinnedX[iDataset]->GetBinError(iBinX, iBinY));
         if (iDataset ==3){
-          H2D_sigmapt_pt_concatenated[iDataset]->SetBinContent(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY, H2D_sigmapt_pt_high[iDataset]->GetBinContent(iBinX, iBinY) - H2D_sigmapt_pt_high[0]->GetBinContent(iBinX, iBinY));
+          H2D_sigmapt_pt_concatenated[iDataset]->SetBinContent(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY, H2D_sigmapt_pt_high_rebinnedX[iDataset]->GetBinContent(iBinX, iBinY) - H2D_sigmapt_pt_high_rebinnedX[0]->GetBinContent(iBinX, iBinY));
           H2D_sigmapt_pt_concatenated[iDataset]->SetBinError(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY, sqrt(H2D_sigmapt_pt_concatenated[iDataset]->GetBinContent(H2D_sigmapt_pt[iDataset]->GetNbinsX()+iBinX, iBinY)));
         } 
       }
@@ -1121,156 +1126,156 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
 
 
 
-void Draw_Eta_DatasetComparison_trackSelComp() {
-  TH2D* H2D_centrality_track[nDatasets];
-  TH1D* H1D_trackEta[nDatasets];
-  TH1D* H1D_trackEta_rebinned[nDatasets];
-  TH1D* H1D_trackEta_rebinned_ratios[nDatasets];
+// void Draw_Eta_DatasetComparison_trackSelComp() {
+//   TH2D* H2D_centrality_track[nDatasets];
+//   TH1D* H1D_trackEta[nDatasets];
+//   TH1D* H1D_trackEta_rebinned[nDatasets];
+//   TH1D* H1D_trackEta_rebinned_ratios[nDatasets];
 
-  TH1D* H1D_trackEta_cutVariationComp[nDatasets];
+//   TH1D* H1D_trackEta_cutVariationComp[nDatasets];
 
-  bool divideSuccess = false;
+//   bool divideSuccess = false;
 
-  int iGlobal = 0;
-  int iITSOnly = 2;
-  int iGlobalWithBadTPCCrossedRows = 3;
-  int iUniform = 1;
+//   int iGlobal = 0;
+//   int iITSOnly = 2;
+//   int iGlobalWithBadTPCCrossedRows = 3;
+//   int iUniform = 1;
 
-  H2D_centrality_track[iGlobal] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobal]->Get(analysisWorkflow[iGlobal]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iGlobal]);
-  H1D_trackEta[iGlobal] = (TH1D*)H2D_centrality_track[iGlobal]->ProjectionY("trackEta_"+Datasets[iGlobal], 1, H2D_centrality_track[iGlobal]->GetNbinsX(), "e");
-  H1D_trackEta_rebinned[iGlobal] = (TH1D*)H1D_trackEta[iGlobal]->Rebin(1.,"trackEta_rebinned"+Datasets[iGlobal]);
-  // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iGlobal], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
-  // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iGlobal]);
+//   H2D_centrality_track[iGlobal] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobal]->Get(analysisWorkflow[iGlobal]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iGlobal]);
+//   H1D_trackEta[iGlobal] = (TH1D*)H2D_centrality_track[iGlobal]->ProjectionY("trackEta_"+Datasets[iGlobal], 1, H2D_centrality_track[iGlobal]->GetNbinsX(), "e");
+//   H1D_trackEta_rebinned[iGlobal] = (TH1D*)H1D_trackEta[iGlobal]->Rebin(1.,"trackEta_rebinned"+Datasets[iGlobal]);
+//   // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iGlobal], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+//   // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iGlobal]);
 
-  H2D_centrality_track[iITSOnly] = (TH2D*)((TH2D*)file_O2Analysis_list[iITSOnly]->Get(analysisWorkflow[iITSOnly]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iITSOnly]);
-  H1D_trackEta[iITSOnly] = (TH1D*)H2D_centrality_track[iITSOnly]->ProjectionY("trackEta_"+Datasets[iITSOnly], 1, H2D_centrality_track[iITSOnly]->GetNbinsX(), "e");
-  H1D_trackEta_rebinned[iITSOnly] = (TH1D*)H1D_trackEta[iITSOnly]->Rebin(1.,"trackEta_rebinned"+Datasets[iITSOnly]);
-  // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iITSOnly], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iITSOnly]));
-  // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iITSOnly]);
+//   H2D_centrality_track[iITSOnly] = (TH2D*)((TH2D*)file_O2Analysis_list[iITSOnly]->Get(analysisWorkflow[iITSOnly]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iITSOnly]);
+//   H1D_trackEta[iITSOnly] = (TH1D*)H2D_centrality_track[iITSOnly]->ProjectionY("trackEta_"+Datasets[iITSOnly], 1, H2D_centrality_track[iITSOnly]->GetNbinsX(), "e");
+//   H1D_trackEta_rebinned[iITSOnly] = (TH1D*)H1D_trackEta[iITSOnly]->Rebin(1.,"trackEta_rebinned"+Datasets[iITSOnly]);
+//   // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iITSOnly], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iITSOnly]));
+//   // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iITSOnly]);
 
-  H2D_centrality_track[iGlobalWithBadTPCCrossedRows] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]->Get(analysisWorkflow[iGlobalWithBadTPCCrossedRows]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iGlobalWithBadTPCCrossedRows]);
-  H1D_trackEta[iGlobalWithBadTPCCrossedRows] = (TH1D*)H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->ProjectionY("trackEta_"+Datasets[iGlobalWithBadTPCCrossedRows], 1, H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->GetNbinsX(), "e");
-  H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows] = (TH1D*)H1D_trackEta[iGlobalWithBadTPCCrossedRows]->Rebin(1.,"trackEta_rebinned"+Datasets[iGlobalWithBadTPCCrossedRows]);
-  H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows]->Add(H1D_trackEta_rebinned[iGlobal], -1.);
-  // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]));
-  // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows]);
+//   H2D_centrality_track[iGlobalWithBadTPCCrossedRows] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]->Get(analysisWorkflow[iGlobalWithBadTPCCrossedRows]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iGlobalWithBadTPCCrossedRows]);
+//   H1D_trackEta[iGlobalWithBadTPCCrossedRows] = (TH1D*)H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->ProjectionY("trackEta_"+Datasets[iGlobalWithBadTPCCrossedRows], 1, H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->GetNbinsX(), "e");
+//   H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows] = (TH1D*)H1D_trackEta[iGlobalWithBadTPCCrossedRows]->Rebin(1.,"trackEta_rebinned"+Datasets[iGlobalWithBadTPCCrossedRows]);
+//   H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows]->Add(H1D_trackEta_rebinned[iGlobal], -1.);
+//   // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]));
+//   // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows]);
 
-  H2D_centrality_track[iUniform] = (TH2D*)((TH2D*)file_O2Analysis_list[iUniform]->Get(analysisWorkflow[iUniform]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iUniform]);
-  H1D_trackEta[iUniform] = (TH1D*)H2D_centrality_track[iUniform]->ProjectionY("trackEta_"+Datasets[iUniform], 1, H2D_centrality_track[iUniform]->GetNbinsX(), "e");
-  H1D_trackEta_rebinned[iUniform] = (TH1D*)H1D_trackEta[iUniform]->Rebin(1.,"trackEta_rebinned"+Datasets[iUniform]);
-  // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iUniform], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iUniform]));
-  // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iUniform]);
+//   H2D_centrality_track[iUniform] = (TH2D*)((TH2D*)file_O2Analysis_list[iUniform]->Get(analysisWorkflow[iUniform]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iUniform]);
+//   H1D_trackEta[iUniform] = (TH1D*)H2D_centrality_track[iUniform]->ProjectionY("trackEta_"+Datasets[iUniform], 1, H2D_centrality_track[iUniform]->GetNbinsX(), "e");
+//   H1D_trackEta_rebinned[iUniform] = (TH1D*)H1D_trackEta[iUniform]->Rebin(1.,"trackEta_rebinned"+Datasets[iUniform]);
+//   // NormaliseYieldToNEvents(H1D_trackEta_rebinned[iUniform], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iUniform]));
+//   // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iUniform]);
 
-  H1D_trackEta_cutVariationComp[0] = (TH1D*)H1D_trackEta_rebinned[iGlobal]->Clone("H1D_trackEta_interm1_global_inArray");
-  NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[0]);
+//   H1D_trackEta_cutVariationComp[0] = (TH1D*)H1D_trackEta_rebinned[iGlobal]->Clone("H1D_trackEta_interm1_global_inArray");
+//   NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[0]);
 
-  TH1D* H1D_trackEta_interm1_globalAndItsOnly = (TH1D*)H1D_trackEta_rebinned[iGlobal]->Clone("H1D_trackEta_interm1_globalAndItsOnly");
-  H1D_trackEta_interm1_globalAndItsOnly->Add(H1D_trackEta_rebinned[iITSOnly]);
-  H1D_trackEta_cutVariationComp[1] = (TH1D*)H1D_trackEta_interm1_globalAndItsOnly->Clone("H1D_trackEta_interm1_globalAndItsOnly_inArray");
-  NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[1]);
+//   TH1D* H1D_trackEta_interm1_globalAndItsOnly = (TH1D*)H1D_trackEta_rebinned[iGlobal]->Clone("H1D_trackEta_interm1_globalAndItsOnly");
+//   H1D_trackEta_interm1_globalAndItsOnly->Add(H1D_trackEta_rebinned[iITSOnly]);
+//   H1D_trackEta_cutVariationComp[1] = (TH1D*)H1D_trackEta_interm1_globalAndItsOnly->Clone("H1D_trackEta_interm1_globalAndItsOnly_inArray");
+//   NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[1]);
 
-  H1D_trackEta_cutVariationComp[2] = (TH1D*)H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows]->Clone("H1D_trackEta_interm1_globalAndTpcCrossedRowsRelaxed_inArray");
-  NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[2]);
+//   H1D_trackEta_cutVariationComp[2] = (TH1D*)H1D_trackEta_rebinned[iGlobalWithBadTPCCrossedRows]->Clone("H1D_trackEta_interm1_globalAndTpcCrossedRowsRelaxed_inArray");
+//   NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[2]);
 
-  H1D_trackEta_cutVariationComp[3] = (TH1D*)H1D_trackEta_rebinned[iUniform]->Clone("H1D_trackEta_interm1_uniform_inArray");
-  NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[3]);
-
-
+//   H1D_trackEta_cutVariationComp[3] = (TH1D*)H1D_trackEta_rebinned[iUniform]->Clone("H1D_trackEta_interm1_uniform_inArray");
+//   NormaliseYieldToIntegral(H1D_trackEta_cutVariationComp[3]);
 
 
 
 
 
-  TString* pdfNameEventNorm = new TString("track_Eta_cutVariationComp_EventNorm");
-  TString* pdfNameEventNorm_ratio = new TString("track_Eta_cutVariationComp_EventNorm_ratio");
-
-  TString textContext(contextTrackDatasetComp(""));
-
-  TString cutVariationComp_names[4] = {"global", "global + itsOnly", "globalWithBadTPCCrossedRows", "uniform"};
-  Draw_TH1_Histograms_in_one(H1D_trackEta_cutVariationComp, cutVariationComp_names, 4, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, drawnWindowAuto, "");
-}
-
-void Draw_Phi_DatasetComparison_trackSelComp() {
-  TH2D* H2D_centrality_track[nDatasets];
-  TH1D* H1D_trackPhi[nDatasets];
-  TH1D* H1D_trackPhi_rebinned[nDatasets];
-  TH1D* H1D_trackPhi_rebinned_ratios[nDatasets];
-
-  TH1D* H1D_trackPhi_cutVariationComp[10];
-
-  bool divideSuccess = false;
-
-  int iGlobal = 0;
-  int iITSOnly = 2;
-  int iGlobalWithBadTPCCrossedRows = 3;
-  int iUniform = 1;
-
-  H2D_centrality_track[iGlobal] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobal]->Get(analysisWorkflow[iGlobal]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iGlobal]);
-  H1D_trackPhi[iGlobal] = (TH1D*)H2D_centrality_track[iGlobal]->ProjectionY("trackPhi_"+Datasets[iGlobal], 1, H2D_centrality_track[iGlobal]->GetNbinsX(), "e");
-  H1D_trackPhi_rebinned[iGlobal] = (TH1D*)H1D_trackPhi[iGlobal]->Rebin(1.,"trackPhi_rebinned"+Datasets[iGlobal]);
-  // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iGlobal], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
-  // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iGlobal]);
-
-  H2D_centrality_track[iITSOnly] = (TH2D*)((TH2D*)file_O2Analysis_list[iITSOnly]->Get(analysisWorkflow[iITSOnly]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iITSOnly]);
-  H1D_trackPhi[iITSOnly] = (TH1D*)H2D_centrality_track[iITSOnly]->ProjectionY("trackPhi_"+Datasets[iITSOnly], 1, H2D_centrality_track[iITSOnly]->GetNbinsX(), "e");
-  H1D_trackPhi_rebinned[iITSOnly] = (TH1D*)H1D_trackPhi[iITSOnly]->Rebin(1.,"trackPhi_rebinned"+Datasets[iITSOnly]);
-  // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iITSOnly], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iITSOnly]));
-  // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iITSOnly]);
-
-  H2D_centrality_track[iGlobalWithBadTPCCrossedRows] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]->Get(analysisWorkflow[iGlobalWithBadTPCCrossedRows]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iGlobalWithBadTPCCrossedRows]);
-  H1D_trackPhi[iGlobalWithBadTPCCrossedRows] = (TH1D*)H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->ProjectionY("trackPhi_"+Datasets[iGlobalWithBadTPCCrossedRows], 1, H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->GetNbinsX(), "e");
-  H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows] = (TH1D*)H1D_trackPhi[iGlobalWithBadTPCCrossedRows]->Rebin(1.,"trackPhi_rebinned"+Datasets[iGlobalWithBadTPCCrossedRows]);
-  // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]));
-  // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows]);
-  H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows]->Add(H1D_trackPhi_rebinned[iGlobal], -1.);
-
-  H2D_centrality_track[iUniform] = (TH2D*)((TH2D*)file_O2Analysis_list[iUniform]->Get(analysisWorkflow[iUniform]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iUniform]);
-  H1D_trackPhi[iUniform] = (TH1D*)H2D_centrality_track[iUniform]->ProjectionY("trackPhi_"+Datasets[iUniform], 1, H2D_centrality_track[iUniform]->GetNbinsX(), "e");
-  H1D_trackPhi_rebinned[iUniform] = (TH1D*)H1D_trackPhi[iUniform]->Rebin(1.,"trackPhi_rebinned"+Datasets[iUniform]);
-  // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iUniform], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iUniform]));
-  // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iUniform]);
-
-  H1D_trackPhi_cutVariationComp[0] = (TH1D*)H1D_trackPhi_rebinned[iGlobal]->Clone("H1D_trackPhi_global_inArray");
-  NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[0], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
-  // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[0]);
-
-  TH1D* H1D_trackPhi_interm1_globalAndItsOnly = (TH1D*)H1D_trackPhi_rebinned[iGlobal]->Clone("H1D_trackPhi_interm1_globalAndItsOnly");
-  H1D_trackPhi_interm1_globalAndItsOnly->Add(H1D_trackPhi_rebinned[iITSOnly]);
-  H1D_trackPhi_cutVariationComp[1] = (TH1D*)H1D_trackPhi_interm1_globalAndItsOnly->Clone("H1D_trackPhi_interm1_globalAndItsOnly_inArray");
-  NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[1], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
-  // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[1]);
-
-  TH1D* H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed = (TH1D*)H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows]->Clone("H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed");
-  H1D_trackPhi_cutVariationComp[2] = (TH1D*)H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed->Clone("H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed_inArray");
-  NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[2], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
-  // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[2]);
-
-  H1D_trackPhi_cutVariationComp[3] = (TH1D*)H1D_trackPhi_rebinned[iUniform]->Clone("H1D_trackPhi_uniform_inArray");
-  NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[3], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
-  // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[3]);
 
 
-  // TH1D* H1D_trackPhi_interm1_ItsOnly = (TH1D*)H1D_trackPhi_rebinned[iITSOnly]->Clone("H1D_trackPhi_interm1_ItsOnly");
-  // H1D_trackPhi_interm1_globalAndItsOnly->Add(H1D_trackPhi_rebinned[iGlobal]);
-  // // H1D_trackPhi_interm1_globalAndItsOnly->Add(H1D_trackPhi_rebinned[iITSOnly]);
-  // H1D_trackPhi_cutVariationComp[4] = H1D_trackPhi_interm1_ItsOnly;
-  // NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[4], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+//   TString* pdfNameEventNorm = new TString("track_Eta_cutVariationComp_EventNorm");
+//   TString* pdfNameEventNorm_ratio = new TString("track_Eta_cutVariationComp_EventNorm_ratio");
 
-  // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]) << " globalTracks" << endl;
-  // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iITSOnly]) << " global + itsOnly" << endl;
-  // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]) << " global + noCrossedRowsCutTracks" << endl;
-  // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iUniform]) << " uniform" << endl;
+//   TString textContext(contextTrackDatasetComp(""));
+
+//   TString cutVariationComp_names[4] = {"global", "global + itsOnly", "globalWithBadTPCCrossedRows", "uniform"};
+//   Draw_TH1_Histograms_in_one(H1D_trackEta_cutVariationComp, cutVariationComp_names, 4, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, drawnWindowAuto, "");
+// }
+
+// void Draw_Phi_DatasetComparison_trackSelComp() {
+//   TH2D* H2D_centrality_track[nDatasets];
+//   TH1D* H1D_trackPhi[nDatasets];
+//   TH1D* H1D_trackPhi_rebinned[nDatasets];
+//   TH1D* H1D_trackPhi_rebinned_ratios[nDatasets];
+
+//   TH1D* H1D_trackPhi_cutVariationComp[10];
+
+//   bool divideSuccess = false;
+
+//   int iGlobal = 0;
+//   int iITSOnly = 2;
+//   int iGlobalWithBadTPCCrossedRows = 3;
+//   int iUniform = 1;
+
+//   H2D_centrality_track[iGlobal] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobal]->Get(analysisWorkflow[iGlobal]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iGlobal]);
+//   H1D_trackPhi[iGlobal] = (TH1D*)H2D_centrality_track[iGlobal]->ProjectionY("trackPhi_"+Datasets[iGlobal], 1, H2D_centrality_track[iGlobal]->GetNbinsX(), "e");
+//   H1D_trackPhi_rebinned[iGlobal] = (TH1D*)H1D_trackPhi[iGlobal]->Rebin(1.,"trackPhi_rebinned"+Datasets[iGlobal]);
+//   // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iGlobal], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+//   // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iGlobal]);
+
+//   H2D_centrality_track[iITSOnly] = (TH2D*)((TH2D*)file_O2Analysis_list[iITSOnly]->Get(analysisWorkflow[iITSOnly]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iITSOnly]);
+//   H1D_trackPhi[iITSOnly] = (TH1D*)H2D_centrality_track[iITSOnly]->ProjectionY("trackPhi_"+Datasets[iITSOnly], 1, H2D_centrality_track[iITSOnly]->GetNbinsX(), "e");
+//   H1D_trackPhi_rebinned[iITSOnly] = (TH1D*)H1D_trackPhi[iITSOnly]->Rebin(1.,"trackPhi_rebinned"+Datasets[iITSOnly]);
+//   // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iITSOnly], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iITSOnly]));
+//   // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iITSOnly]);
+
+//   H2D_centrality_track[iGlobalWithBadTPCCrossedRows] = (TH2D*)((TH2D*)file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]->Get(analysisWorkflow[iGlobalWithBadTPCCrossedRows]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iGlobalWithBadTPCCrossedRows]);
+//   H1D_trackPhi[iGlobalWithBadTPCCrossedRows] = (TH1D*)H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->ProjectionY("trackPhi_"+Datasets[iGlobalWithBadTPCCrossedRows], 1, H2D_centrality_track[iGlobalWithBadTPCCrossedRows]->GetNbinsX(), "e");
+//   H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows] = (TH1D*)H1D_trackPhi[iGlobalWithBadTPCCrossedRows]->Rebin(1.,"trackPhi_rebinned"+Datasets[iGlobalWithBadTPCCrossedRows]);
+//   // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]));
+//   // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows]);
+//   H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows]->Add(H1D_trackPhi_rebinned[iGlobal], -1.);
+
+//   H2D_centrality_track[iUniform] = (TH2D*)((TH2D*)file_O2Analysis_list[iUniform]->Get(analysisWorkflow[iUniform]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iUniform]);
+//   H1D_trackPhi[iUniform] = (TH1D*)H2D_centrality_track[iUniform]->ProjectionY("trackPhi_"+Datasets[iUniform], 1, H2D_centrality_track[iUniform]->GetNbinsX(), "e");
+//   H1D_trackPhi_rebinned[iUniform] = (TH1D*)H1D_trackPhi[iUniform]->Rebin(1.,"trackPhi_rebinned"+Datasets[iUniform]);
+//   // NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iUniform], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iUniform]));
+//   // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iUniform]);
+
+//   H1D_trackPhi_cutVariationComp[0] = (TH1D*)H1D_trackPhi_rebinned[iGlobal]->Clone("H1D_trackPhi_global_inArray");
+//   NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[0], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+//   // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[0]);
+
+//   TH1D* H1D_trackPhi_interm1_globalAndItsOnly = (TH1D*)H1D_trackPhi_rebinned[iGlobal]->Clone("H1D_trackPhi_interm1_globalAndItsOnly");
+//   H1D_trackPhi_interm1_globalAndItsOnly->Add(H1D_trackPhi_rebinned[iITSOnly]);
+//   H1D_trackPhi_cutVariationComp[1] = (TH1D*)H1D_trackPhi_interm1_globalAndItsOnly->Clone("H1D_trackPhi_interm1_globalAndItsOnly_inArray");
+//   NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[1], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+//   // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[1]);
+
+//   TH1D* H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed = (TH1D*)H1D_trackPhi_rebinned[iGlobalWithBadTPCCrossedRows]->Clone("H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed");
+//   H1D_trackPhi_cutVariationComp[2] = (TH1D*)H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed->Clone("H1D_trackPhi_interm1_globalTpcCrossedRowsRelaxed_inArray");
+//   NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[2], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+//   // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[2]);
+
+//   H1D_trackPhi_cutVariationComp[3] = (TH1D*)H1D_trackPhi_rebinned[iUniform]->Clone("H1D_trackPhi_uniform_inArray");
+//   NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[3], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+//   // NormaliseYieldToIntegral(H1D_trackPhi_cutVariationComp[3]);
+
+
+//   // TH1D* H1D_trackPhi_interm1_ItsOnly = (TH1D*)H1D_trackPhi_rebinned[iITSOnly]->Clone("H1D_trackPhi_interm1_ItsOnly");
+//   // H1D_trackPhi_interm1_globalAndItsOnly->Add(H1D_trackPhi_rebinned[iGlobal]);
+//   // // H1D_trackPhi_interm1_globalAndItsOnly->Add(H1D_trackPhi_rebinned[iITSOnly]);
+//   // H1D_trackPhi_cutVariationComp[4] = H1D_trackPhi_interm1_ItsOnly;
+//   // NormaliseYieldToNEvents(H1D_trackPhi_cutVariationComp[4], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]));
+
+//   // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobal]) << " globalTracks" << endl;
+//   // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iITSOnly]) << " global + itsOnly" << endl;
+//   // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iGlobalWithBadTPCCrossedRows]) << " global + noCrossedRowsCutTracks" << endl;
+//   // cout << "Nevents = " << GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iUniform]) << " uniform" << endl;
 
 
 
-  // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iDataset]);
+//   // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iDataset]);
 
 
-  TString* pdfNameEventNorm = new TString("track_Phi_cutVariationComp_EventNorm");
-  TString* pdfNameEventNorm_ratio = new TString("track_Phi_cutVariationComp_EventNorm_ratio");
+//   TString* pdfNameEventNorm = new TString("track_Phi_cutVariationComp_EventNorm");
+//   TString* pdfNameEventNorm_ratio = new TString("track_Phi_cutVariationComp_EventNorm_ratio");
 
-  TString textContext(contextTrackDatasetComp(""));
+//   TString textContext(contextTrackDatasetComp(""));
 
-  TString cutVariationComp_names[4] = {"global", "global + itsOnly", "globalWithBadTPCCrossedRows", "uniform"};
-  Draw_TH1_Histograms_in_one(H1D_trackPhi_cutVariationComp, cutVariationComp_names, 4, textContext, pdfNameEventNorm, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "");
-}
+//   TString cutVariationComp_names[4] = {"global", "global + itsOnly", "globalWithBadTPCCrossedRows", "uniform"};
+//   Draw_TH1_Histograms_in_one(H1D_trackPhi_cutVariationComp, cutVariationComp_names, 4, textContext, pdfNameEventNorm, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "");
+// }
