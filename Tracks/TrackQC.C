@@ -86,9 +86,9 @@ void TrackQC() {
   // TString* Extra = new TString("");
 
 
-  // Draw_Pt_DatasetComparison();
-  // Draw_Eta_DatasetComparison();
-  // Draw_Phi_DatasetComparison();
+  Draw_Pt_DatasetComparison();
+  Draw_Eta_DatasetComparison();
+  Draw_Phi_DatasetComparison();
 
   // Draw_Eta_DatasetComparison_trackSelComp();
   // Draw_Phi_DatasetComparison_trackSelComp();
@@ -119,11 +119,10 @@ void TrackQC() {
   // Draw_Phi_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
   // Draw_Eta_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
-  Draw_Sigmapt_vs_pt_DatasetComp();
+  // Draw_Sigmapt_vs_pt_DatasetComp();
   // Draw_Sigmapt_nonGlobal_uniformTracks();
   // Draw_Sigmapt_nonGlobal_uniformTracks_fromSubtraction();
   // Draw_Sigmapt_nonGlobal_uniformTracks_centralEta();
-  // Draw_Sigmapt_vs_pt_DatasetComp_centralEta();
 }
 
 /////////////////////////////////////////////////////
@@ -223,16 +222,24 @@ void Draw_Pt_DatasetComparison() {
 
   bool divideSuccess = false;
 
+  double Nevents; 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
     H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_pt"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
     H1D_trackPt[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackPt_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
 
 
-    H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(1.,"trackPt_rebinned_"+Datasets[iDataset]);
+    H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(2.,"trackPt_rebinned_"+Datasets[iDataset]);
 
     // NormaliseYieldToNEntries(H1D_trackPt_rebinned[iDataset]);
-    NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]));
+
+    if (isDatasetWeighted[iDataset]) {
+      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+    } else {
+      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
+    }
+    NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], Nevents);
+
 
     H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]);
     H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
@@ -264,16 +271,22 @@ void Draw_Eta_DatasetComparison() {
 
   bool divideSuccess = false;
 
+  double Nevents; 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
 
     H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
     H1D_trackEta[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
 
-    H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned"+Datasets[iDataset]);
+    H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(5.,"trackEta_rebinned"+Datasets[iDataset]);
 
-    // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iDataset]);
-    NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]));
+
+    if (isDatasetWeighted[iDataset]) {
+      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+    } else {
+      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
+    }
+    NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], Nevents);
 
     H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]);
     H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
@@ -344,15 +357,22 @@ void Draw_Phi_DatasetComparison() {
 
   bool divideSuccess = false;
 
+  double Nevents;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
     H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
     H1D_trackPhi[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackPhi_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
-
-    H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]);
+    H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(5.,"trackPhi_rebinned_"+Datasets[iDataset]);
+    cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() preNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << endl;
 
     // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iDataset]);
-    NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]));
+    if (isDatasetWeighted[iDataset]) {
+      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+    } else {
+      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
+    }
+    NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], Nevents);
+    cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() postNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << ", Nevents = " << Nevents << endl;
 
     H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]);
     H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");

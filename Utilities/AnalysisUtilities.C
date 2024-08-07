@@ -22,10 +22,10 @@ void NormaliseRawHistToIntegral(TH1D* histogram) {
 }
 
 
-void NormaliseYieldToNEvents(TH1D* histogram, int nEvents) { // also takes care of the transformation of raw count to dCount/dQuantity (like dN/dpT), thanks to option "width"
+void NormaliseYieldToNEvents(TH1D* histogram, double nEvents) { // also takes care of the transformation of raw count to dCount/dQuantity (like dN/dpT), thanks to option "width"
   histogram->Scale(1./nEvents,"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
 }
-void NormaliseRawHistToNEvents(TH1D* histogram, int nEvents) { 
+void NormaliseRawHistToNEvents(TH1D* histogram, double nEvents) { 
   histogram->Scale(1./nEvents,""); // If option contains "width" the bin contents and errors are divided by the bin width.
 }
 
@@ -44,7 +44,7 @@ int GetNEventsSelected_TrackEffWorkflow(TFile* file_O2Analysis) {
   return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_collisions"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 
-int GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis) {
+double GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis) {
   return ((TH1I*)file_O2Analysis->Get("jet-finder-charged-qa/h_collisions_weighted"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 

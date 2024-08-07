@@ -26,8 +26,8 @@ const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 60, 
 // const int nCentralityBins = 3;
 // const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 90};
 
-TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root");
-// TFile* file_AliAnalysis = new TFile("./AO2D_unanchored_ppJets.root"); //dummy
+// TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root");
+TFile* file_AliAnalysis; //dummy
 
 // //////// -------- Track Sel check rough -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
@@ -231,20 +231,46 @@ TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root")
 // const TString trainId = "";
             
 
-//////// -------- Run 3 data apass4 - run by run -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("run");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
+
+//////// -------- MC pp anchored PbPB vs pp -------- ////////
+TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
+const TString* texDatasetsComparisonType = new TString("anchor");
+const TString* texDatasetsComparisonCommonDenominator = new TString("jet-jet sim");
 const int nDatasets = 2;
 // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
-const TString Datasets[nDatasets] = {"LHC23zzh_apass4_run544116", "LHC23zzh_apass4_run544123"};
-const TString DatasetsNames[nDatasets] = {"run544116", "run544123"};
+// const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
+const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp"};
+const TString DatasetsNames[nDatasets] = {"PbPbAnchored", "ppAnchored"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"track-efficiency",
-                                            "track-efficiency"
+const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+                                            "jet-finder-charged-qa"
                                           };
+// const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+//                                             "track-efficiency"
+//                                           };
 
 const TString trainId = "";
+const bool isDatasetWeighted[nDatasets] = {true, true};
+
+// jaime testJetAnchoredGapGen-20240801-155530
+
+
+// //////// -------- Run 3 data apass4 - run by run -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("run");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
+// const int nDatasets = 2;
+// // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_run544116", "LHC23zzh_apass4_run544123"};
+// const TString DatasetsNames[nDatasets] = {"run544116", "run544123"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+//                                             "track-efficiency"
+//                                           };
+
+// const TString trainId = "";
             

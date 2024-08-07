@@ -30,7 +30,7 @@ const bool doEvtNorm = 1;                               //  as of now, only chan
 const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
 char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
 char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
 char normMethod[] = "evtNorm"; // evtNorm, noNorm
 char optionsAnalysis[100] = "";
@@ -40,16 +40,19 @@ const bool ppMcIsWeighted = false; // use if the MC has been weighted to have mo
 int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active
 bool applyFakes = true;
 const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
-const bool useYSliceNorm = false;
 const bool scaleRespByWidth = false;
 
-const bool normDetRespByNEvts = false;
-const bool normGenAndMeasByNEvts = normDetRespByNEvts;
-const bool normunfoldedByNEvts = normDetRespByNEvts;
+const bool useYSliceNorm = true; // doesn't change result for svd, doesn't work well for bayes though; SHOULD BE TRUE IF USING PRIOR for sure
+
+// all three below NEED to be true
+const bool normDetRespByNEvts = true;
+const bool normGenAndMeasByNEvts = true;
+const bool normunfoldedByNEvts = true;
 
 const bool useInitialResponseMethod = true; // discrepancy false true here seems to be that I do not model fakes in my initial method
 const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
 
+bool controlMC = true; // not yet implemented: weighted control MC, and control for PbPb
 
 // // save for PbPb that works, ish?
 // const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
@@ -410,13 +413,17 @@ double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 
 //////// -------- pp -------- ////////
 TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV"); 
 const TString* texDatasetsComparisonType = new TString("");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC22o");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC22o pass6");
 const int nDatasets = 1;
 const TString Datasets[nDatasets] = {"LHC22o_pass6_train238827"};
 const TString DatasetsNames[nDatasets] = {"LHC22o_pass6"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                       };
 TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24b1b_sel8MC_train239181/AnalysisResults.root");
+
+// TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24f3_sel8MC_train240962/AnalysisResults.root")};
+TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24b1b_sel8MC_train239181/OneRun/AnalysisResults.root")};
+
 // TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24b1b_sel8Full_train239409/AnalysisResults.root");
 // TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted/AnalysisResults.root");
 
@@ -426,6 +433,8 @@ const TString trainId = "";
 const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
 
 const TString analysisWorkflowMC = "jet-finder-charged-qa";
+// const TString analysisWorkflowMC = "jet-finder-charged-qa_global_CollMatch";
+
 
 
 

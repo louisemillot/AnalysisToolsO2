@@ -117,6 +117,9 @@ TString* texRatioRefoldedMeasured = new TString("refolded / measured");
 TString* texTrackEfficiencyRatioEtaComparison = new TString("#epsilon^{ #eta > 0} / #epsilon^{ #eta < 0}");
 TString* texTrackPurityRatioEtaComparison = new TString("purity^{ #eta > 0} / #purity^{ #eta < 0}");
 
+TString* texResMC = new TString("(#it{p}_{T, part} - #it{p}_{T, det}) / #it{p}_{T, part}");
+
+
 ////////////////////////////
 ////////// Tracks //////////
 TString* texTrackPtYield_EventNorm = new TString("1/#it{N}_{ev} d#it{N}_{track}/d#it{p}_{T} (GeV/#it{c})^{-1}");

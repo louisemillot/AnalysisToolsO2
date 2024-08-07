@@ -285,14 +285,39 @@ const double deltaEtaMcVsTrackEfficiency = 0;
 //                                           };
 
 
-//////// -------- Run 3 MC local -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("global tracks");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24d2 - global tracks");
-const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC24d2_global"};
-const TString DatasetsNames[nDatasets] = {"global"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+// //////// -------- Run 3 MC local -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("global tracks");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24d2 - global tracks");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"LHC24d2_global"};
+// const TString DatasetsNames[nDatasets] = {"global"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"track-efficiency_globalTracks_DCAz20"
+//                                           };
+
+
+
+//////// -------- MC pp anchored PbPB vs pp -------- ////////
+TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
+const TString* texDatasetsComparisonType = new TString("anchor");
+const TString* texDatasetsComparisonCommonDenominator = new TString("jet-jet sim");
+const int nDatasets = 3;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
+// const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
+const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962"};
+const TString DatasetsNames[nDatasets] = {"PbPbAnchored", "ppAnchored", "LHC24f3 pp"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"track-efficiency_globalTracks_DCAz20"
+const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+                                            "track-efficiency",
+                                            "track-efficiency"
                                           };
+
+const TString trainId = "";
+const bool isDatasetWeighted[nDatasets] = {true, true, true};
+
+// jaime testJetAnchoredGapGen-20240801-155530

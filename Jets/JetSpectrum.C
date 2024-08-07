@@ -49,22 +49,22 @@ TString contextCentRange(float* centRange);
 void Get_Pt_spectrum_bkgCorrected(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_genBinning(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_fineBinning(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
-void Get_Pt_spectrum_mcp(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
-void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
+void Get_Pt_spectrum_mcp(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
+void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
 void Get_Pt_spectrum_mcdMatched(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]);
 void Get_Pt_spectrum_mcpMatched(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
 void Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
-void Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
-void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
+void Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
+void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
 void Get_Pt_spectrum_mcdMatched_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]);
 void Get_Pt_spectrum_mcpMatched_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, const char options[]);
-void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
+void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
 void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
 void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
-void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
+void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
 void Get_Pt_spectrum_mcd_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
 void Get_Pt_spectrum_mcd_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
 RooUnfold* Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]);
@@ -120,9 +120,9 @@ void JetSpectrum() {
 
   // find a way to input mcpPrior/mcdPrior and bayes/svd as a variables rather than typed out like this
 
-  Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
-  Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
-  Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
+  // Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
+  // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
+  // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
 
   // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
 
@@ -130,9 +130,9 @@ void JetSpectrum() {
   // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
 
-  Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
 
-  Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
+  // Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
 
 
   Draw_Pt_spectrum_unfolded(iDataset, iRadius, 10, optionsAnalysis); // "evtNorm"
@@ -307,7 +307,11 @@ void Get_Pt_spectrum_bkgCorrected_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt, in
   if (isPbPb == true){
   H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality_rhoareasubtracted"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
   } else {
-    H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    if (!controlMC) {
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    } else {
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    }
   }
   H3D_jetRjetPtcolCent->Sumw2();
   int binCentEdges[2] = {H3D_jetRjetPtcolCent->GetZaxis()->FindBin(centRange[0]), H3D_jetRjetPtcolCent->GetZaxis()->FindBin(centRange[1])};
@@ -332,9 +336,13 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1
   TH1D* H1D_jetPt_defaultBin;
   // TH1D* H1D_jetPt_raw[nRadius];
   if (isPbPb == true){
-    H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality_rhoareasubtracted"))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality_rhoareasubtracted"))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
   } else {
-    H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    if (!controlMC) {
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    } else {
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    }
   }
   H3D_jetRjetPtcolCent->Sumw2();
   int binCentEdges[2] = {H3D_jetRjetPtcolCent->GetZaxis()->FindBin(centRange[0]), H3D_jetRjetPtcolCent->GetZaxis()->FindBin(centRange[1])};
@@ -360,9 +368,13 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H
   // TH1D* H1D_jetPt_raw[nRadius];
 
   if (isPbPb == true){
-  H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality_rhoareasubtracted"))->Clone("Get_Pt_spectrum_bkgCorrected_fineBinning"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality_rhoareasubtracted"))->Clone("Get_Pt_spectrum_bkgCorrected_fineBinning"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
   } else {
-    H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    if (!controlMC) {
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    } else {
+      H3D_jetRjetPtcolCent = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowData+"/h3_jet_r_jet_pt_centrality"))->Clone("Get_Pt_spectrum_bkgCorrected"+Datasets[iDataset]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]));
+    }
   }
   H3D_jetRjetPtcolCent->Sumw2();
   int binCentEdges[2] = {H3D_jetRjetPtcolCent->GetZaxis()->FindBin(centRange[0]), H3D_jetRjetPtcolCent->GetZaxis()->FindBin(centRange[1])};
@@ -382,7 +394,7 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H
 
 }
 
-void Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
+void Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
   TH3D* H3D_jetRjetPtjetEta;
   TH1D* H1D_jetPt_mcp_defaultBin;
   // TH1D* H1D_jetPt_raw[nRadius];
@@ -409,7 +421,11 @@ void Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDa
 
 
   //////// without centrality; sadly we don't have a mcp version that gives centrality info, so gotta use one with all centralities (though one can edit the cent window in the jetfinderqa options)
-  H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp"+Datasets[iDataset]);
+  if (!controlMC){
+    H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp"+Datasets[iDataset]);
+  } else {
+    H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp"+Datasets[iDataset]);
+  }
   H3D_jetRjetPtjetEta->Sumw2();
 
   int ibinJetRadius = H3D_jetRjetPtjetEta->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
@@ -421,7 +437,7 @@ void Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDa
 
 }
 
-void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
+void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
   TH3D* H3D_jetRjetPtjetEta;
   TH1D* H1D_jetPt_mcp_defaultBin;
   // TH1D* H1D_jetPt_raw[nRadius];
@@ -448,7 +464,11 @@ void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_
 
 
   //////// without centrality; sadly we don't have a mcp version that gives centrality info, so gotta use one with all centralities (though one can edit the cent window in the jetfinderqa options)
-  H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm"+Datasets[iDataset]);
+  if (!controlMC){
+    H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm"+Datasets[iDataset]);
+  } else {
+    H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm"+Datasets[iDataset]);
+  }
   H3D_jetRjetPtjetEta->Sumw2();
 
   int ibinJetRadius = H3D_jetRjetPtjetEta->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
@@ -513,7 +533,7 @@ void Get_Pt_spectrum_mcd_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDa
 }
 
 
-void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
+void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
   TH3D* H3D_jetRjetPtjetEta;
   TH1D* H1D_jetPt_mcp_defaultBin;
   // TH1D* H1D_jetPt_raw[nRadius];
@@ -540,7 +560,11 @@ void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
 
 
   //////// without centrality; sadly we don't have a mcp version that gives centrality info, so gotta use one with all centralities (though one can edit the cent window in the jetfinderqa options)
-  H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm"+Datasets[iDataset]);
+  if (!controlMC){
+    H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm"+Datasets[iDataset]);
+  } else {
+    H3D_jetRjetPtjetEta = (TH3D*)((TH3D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowMC+"/h3_jet_r_part_jet_pt_part_jet_eta_part"))->Clone("Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm"+Datasets[iDataset]);
+  }
   H3D_jetRjetPtjetEta->Sumw2();
 
   int ibinJetRadius = H3D_jetRjetPtjetEta->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
@@ -699,7 +723,11 @@ void Get_Pt_spectrum_bkgCorrected_preWidthScaling(TH1D* &H1D_jetPt, int iDataset
     if (isPbPb) {
       NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, -1, trainId));
+      if (!controlMC) {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], -999, 999, trainId));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, -999, 999, trainId));
+      }
     }
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -714,54 +742,52 @@ void Get_Pt_spectrum_bkgCorrected(TH1D* &H1D_jetPt, int iDataset, int iRadius, f
   }
 }
 
-void Get_Pt_spectrum_mcp_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
-  Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcp_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
+  Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
+      if (!controlMC) {
+        NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl));
+      }
     }
-    
-    // NormaliseYieldToNEntries(H1D_jetPt_mcp);
-    
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcp);
   }
 }
-void Get_Pt_spectrum_mcp(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
-  Get_Pt_spectrum_mcp_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcp(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
+  Get_Pt_spectrum_mcp_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
 
   if (doWidthScaling) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
 
-void Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
-  Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
+  Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
+      if (!controlMC) {
+        NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl));
+      }
     }
-    
-    // NormaliseYieldToNEntries(H1D_jetPt_mcp);
-    
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcp);
   }
 }
-void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
-  Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
+  Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
 
   if (doWidthScaling) {
     TransformRawHistToYield(H1D_jetPt_mcp);
@@ -770,21 +796,13 @@ void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRa
 
 void Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
-  // if (doWidthScaling) {
-  //   TransformRawHistToYield(H1D_jetPt_mcd);
-  // } WHY WAS THIS EVEN HERE
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    
-    // NormaliseYieldToNEntries(H1D_jetPt_mcd);
-    
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcd);
@@ -801,18 +819,12 @@ void Get_Pt_spectrum_mcd_fineBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRa
 void Get_Pt_spectrum_mcd_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
 
-
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    
-    // NormaliseYieldToNEntries(H1D_jetPt_mcd);
-    
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcd);
@@ -829,18 +841,12 @@ void Get_Pt_spectrum_mcd_recBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRad
 void Get_Pt_spectrum_mcd_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcd_preWidthScalingAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
 
-
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcd, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    
-    // NormaliseYieldToNEntries(H1D_jetPt_mcd);
-    
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcd);
@@ -858,14 +864,11 @@ void Get_Pt_spectrum_mcdMatched_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int
   Get_Pt_spectrum_mcdMatched_preWidthScalingAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    // NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
@@ -883,14 +886,11 @@ void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcdM
   Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    // NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
@@ -908,14 +908,11 @@ void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd
   Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcdMatched, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    // NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcdMatched);
@@ -933,14 +930,11 @@ void Get_Pt_spectrum_mcpMatched_preWidthScaling(TH1D* &H1D_jetPt_mcpMatched, int
   Get_Pt_spectrum_mcpMatched_preWidthScalingAndEvtNorm(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    // NormaliseYieldToNEntries(H1D_jetPt_mcpMatched);
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcpMatched);
@@ -960,14 +954,11 @@ void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp
 
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
       NormaliseRawHistToNEvents(H1D_jetPt_mcpMatched, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
     }
-    // NormaliseYieldToNEntries(H1D_jetPt_mcpMatched);
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcpMatched);
@@ -981,27 +972,26 @@ void Get_Pt_spectrum_mcpMatched_fineBinning(TH1D* &H1D_jetPt_mcpMatched, int iDa
   }
 }
 
-void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
-  Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
+  Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
 
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
-    // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsGen(file_O2Analysis_list[iDataset]));
-    // NormaliseYieldToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     if (isPbPb == true || ppMcIsWeighted) {
       NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
+      if (!controlMC) {
+        NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt_mcp, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl));
+      }
     }
-    
-    // NormaliseYieldToNEntries(H1D_jetPt_mcp);
-    
   }
   if (strstr(options, "entriesNorm") != NULL) {
     NormaliseYieldToNEntries(H1D_jetPt_mcp);
   }
 }
-void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]) {
-  Get_Pt_spectrum_mcp_recBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]) {
+  Get_Pt_spectrum_mcp_recBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
 
   if (doWidthScaling) {
     TransformRawHistToYield(H1D_jetPt_mcp);
@@ -1016,7 +1006,11 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(TH1D* &H1D_jetPt, i
     if (isPbPb) {
       NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, -1, trainId));
+      if (!controlMC) {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], -999, 999, trainId));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, -999, 999, trainId));
+      }
     }
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1038,7 +1032,11 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(TH1D* &H1D_jetPt, 
     if (isPbPb) {
       NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, -1, trainId));
+      if (!controlMC) {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], -999, 999, trainId));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, -999, 999, trainId));
+      }
     }
   }
   if (strstr(options, "entriesNorm") != NULL) {
@@ -1095,10 +1093,10 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   // Merge bins of the combined response matrix with fine binning to get the coarse one
   TH1D* priorSpectrumMerging;
   bool debugBool = false;
-  Get_Pt_spectrum_mcp_fineBinning(priorSpectrumMerging, iDataset, iRadius, options); //take mcp as prior by default
+  Get_Pt_spectrum_mcp_fineBinning(priorSpectrumMerging, iDataset, iRadius, false, options); //take mcp as prior by default
   if (strstr(options, "mcpPriorMerging") != NULL) {
     priorSpectrumMerging->Reset("M");
-    Get_Pt_spectrum_mcp_fineBinning(priorSpectrumMerging, iDataset, iRadius, options); 
+    Get_Pt_spectrum_mcp_fineBinning(priorSpectrumMerging, iDataset, iRadius, false, options); 
     H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D_PriorWeightedBinMerging(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrumMerging, debugBool).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
   }
   if (strstr(options, "mcdPriorMerging") != NULL) {
@@ -1157,11 +1155,12 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   // cout << "     Marta doesn't do it, but it looks like I need it due to merging (some bins are very large)" << endl;
   // cout << "     it's actually done in AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin" << endl;
 
+
   if (useYSliceNorm) {
     NormaliseYSlicesToOne(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // Marta doesn't do it, but it looks like I need it due to merging (some bins are very large) ; actually marta probably uses it: AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin does it by default inside the rebinning function, and it takes into account the whole Fine range (1fine, Nfine)
   } 
   if (scaleRespByWidth) {
-    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Scale(1. / H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Integral(), "width");
+    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Scale(1., "width");
   }
 
   TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting"+partialUniqueSpecifier);
@@ -1187,11 +1186,17 @@ void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDatase
   TH1D* priorSpectrumWeighting;
   if (strstr(options, "mcpPriorUnfolding") != NULL) {
     if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
+      Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
     } else {
-      Get_Pt_spectrum_mcp_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      Get_Pt_spectrum_mcp_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
+    for (int i = 1; i < priorSpectrumWeighting->GetNbinsX(); i++)
+    {
+      cout << "prior(" << i << ")" << priorSpectrumWeighting->GetBinContent(i)<< endl;
+      cout << "responseIntegralLine(" << i << ")" << H2D_jetPtResponseMatrix->Integral(1,H2D_jetPtResponseMatrix->GetNbinsX(), i, i)<< endl;
+    }
+    
   }
   if (strstr(options, "mcdPriorUnfolding") != NULL) {
     if (!normGenAndMeasByNEvts) {
@@ -1239,9 +1244,9 @@ void ReweightResponseMatrixWithPrior_fineBinning(TH2D* &H2D_jetPtResponseMatrix,
   TH1D* priorSpectrumWeighting;
   if (strstr(options, "mcpPriorUnfolding") != NULL) {
     if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
+      Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
     } else {
-      Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
   }
@@ -1428,7 +1433,7 @@ bool  Get_Pt_JetEfficiency(TH1D* &H1D_jetEfficiency, int iDataset, int iRadius, 
   TH1D* H1D_jetPt_mcpMatched;
   bool divideSuccess;
 
-  Get_Pt_spectrum_mcp(H1D_jetPt_mcp, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcp(H1D_jetPt_mcp, iDataset, iRadius, false, options);
   Get_Pt_spectrum_mcpMatched(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   H1D_jetEfficiency = (TH1D*)H1D_jetPt_mcpMatched->Clone("H1D_jetEfficiency"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]");
@@ -1443,7 +1448,7 @@ bool  Get_Pt_JetEfficiency_fineBinning(TH1D* &H1D_jetEfficiency, int iDataset, i
   TH1D* H1D_jetPt_mcpMatched;
   bool divideSuccess;
 
-  Get_Pt_spectrum_mcp_fineBinning(H1D_jetPt_mcp, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcp_fineBinning(H1D_jetPt_mcp, iDataset, iRadius, false, options);
   Get_Pt_spectrum_mcpMatched_fineBinning(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   H1D_jetEfficiency = (TH1D*)H1D_jetPt_mcpMatched->Clone("H1D_jetEfficiency_fineBinning"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]");
@@ -1501,22 +1506,22 @@ RooUnfold* Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_u
 
   if (!normGenAndMeasByNEvts) {
     Get_Pt_spectrum_bkgCorrected_preWidthScalingAndEvtNorm(measured, iDataset, iRadius, centRange, options);
-    Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(mcp, iDataset, iRadius, options);
+    Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(mcp, iDataset, iRadius, false, options);
     Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(mcd, iDataset, iRadius, options);
 
     if (useFineBinningTest) {
       Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(measured, iDataset, iRadius, centRange, options);
-      Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(mcp, iDataset, iRadius, options);
+      Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(mcp, iDataset, iRadius, false, options);
       Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(mcd, iDataset, iRadius, options);
     }
   } else{
     Get_Pt_spectrum_bkgCorrected_preWidthScaling(measured, iDataset, iRadius, centRange, options);
-    Get_Pt_spectrum_mcp_preWidthScaling(mcp, iDataset, iRadius, options);
+    Get_Pt_spectrum_mcp_preWidthScaling(mcp, iDataset, iRadius, false, options);
     Get_Pt_spectrum_mcd_recBinning_preWidthScaling(mcd, iDataset, iRadius, options);
 
     if (useFineBinningTest) {
       Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(measured, iDataset, iRadius, centRange, options);
-      Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(mcp, iDataset, iRadius, options);
+      Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(mcp, iDataset, iRadius, false, options);
       Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(mcd, iDataset, iRadius, options);
     }
   } 
@@ -1669,7 +1674,8 @@ RooUnfold* Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_u
     unfold = unfoldSvd;
   }
   // TH1D* hist_unfold = static_cast<TH1D*>(unfold->Hreco(RooUnfold::kCovariance));
-  TH1D* hist_unfold = (TH1D*)(unfold->Hreco(RooUnfold::kCovariance));
+  // TH1D* hist_unfold = (TH1D*)(unfold->Hreco(RooUnfold::kCovariance));
+  TH1D* hist_unfold = (TH1D*)(unfold->Hreco());
 
   H1D_jetPt_unfolded = (TH1D*)hist_unfold->Clone("H1D_jetPt_unfolded"+partialUniqueSpecifier);
 
@@ -1718,7 +1724,11 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
       if (isPbPb) {
         NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
       } else {
-        NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, -1, trainId));
+        if (!controlMC) {
+          NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], -999, 999, trainId));
+        } else {
+          NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, -999, 999, trainId));
+        }
       }
     }
     if (strstr(options, "entriesNorm") != NULL) {
@@ -1877,7 +1887,12 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfol
         if (isPbPb) {
         NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
       } else {
-        NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, -1, trainId));
+        // NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, -1, trainId));
+        if (!controlMC) {
+          NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], -999, 999, trainId));
+        } else {
+          NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, -999, 999, trainId));
+        }
       }
     }
     if (strstr(options, "entriesNorm") != NULL) {
@@ -1986,7 +2001,12 @@ void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling(TH1D* 
         if (isPbPb) {
         NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], centRange[0], centRange[1], trainId));
       } else {
-        NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], 0, -1, trainId));
+        // NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], -999, 999, trainId));
+        if (!controlMC) {
+          NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], -999, 999, trainId));
+        } else {
+          NormaliseRawHistToNEvents(H1D_jetPt_unfoldedThenRefolded, GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, -999, 999, trainId));
+        }
       }
     }
     if (strstr(options, "entriesNorm") != NULL) {
@@ -2045,8 +2065,8 @@ void Draw_Pt_spectrum_mcp(int iDataset, int iRadius, const char options[]) {
   TH1D* H1D_jetPt_mcp_genBinning;
   TH1D* H1D_jetPt_mcp_recBinning;
   TH1D* H1D_jetPt_mcp_collection[2];
-  Get_Pt_spectrum_mcp(H1D_jetPt_mcp_genBinning, iDataset, iRadius, options);
-  Get_Pt_spectrum_mcp_recBinning(H1D_jetPt_mcp_recBinning, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcp(H1D_jetPt_mcp_genBinning, iDataset, iRadius, controlMC, options);
+  Get_Pt_spectrum_mcp_recBinning(H1D_jetPt_mcp_recBinning, iDataset, iRadius, controlMC, options);
   H1D_jetPt_mcp_collection[0] = H1D_jetPt_mcp_genBinning;
   H1D_jetPt_mcp_collection[1] = H1D_jetPt_mcp_recBinning;
 
@@ -2255,9 +2275,9 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
   TString partialUniqueSpecifier;
 
   if (!useFineBinningTest) {
-    Get_Pt_spectrum_mcp(H1D_jetPt_mcp, iDataset, iRadius, options);
+    Get_Pt_spectrum_mcp(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
   } else {
-    Get_Pt_spectrum_mcp_fineBinning(H1D_jetPt_mcp, iDataset, iRadius, options);
+    Get_Pt_spectrum_mcp_fineBinning(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
   }
   // H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcp_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
 
@@ -2309,7 +2329,14 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
     // divideSuccessMeasuredRefolded_RooUnfoldMethod[iCent] = H1D_jetPt_ratio_measuredRefolded_RooUnfoldMethod[iCent]->Divide(H1D_jetPt_measured[iCent]);
   }
 
-  TString unfoldingInfo = (TString)unfoldingMethod+"_"+(TString)unfoldingPrior+"_k="+Form("%i", unfoldParameter);
+  TString unfoldingCode;
+  if (useInitialResponseMethod){
+    unfoldingCode = "myUnfold";
+  } else {
+    unfoldingCode = "joUnfold";
+  }
+
+  TString unfoldingInfo = (TString)unfoldingMethod+"-k="+Form("%i", unfoldParameter)+"-"+(TString)mergingPrior+"-"+(TString)unfoldingPrior+"-"+unfoldingCode;
 
   struct stat st1{};
   if (stat("pdfFolder/IterationsDump", &st1) == -1) {
@@ -2320,7 +2347,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
       mkdir("pngFolder/IterationsDump", 0700);
   }
 
-  TString* pdfName = new TString("IterationsDump/jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo);
+  TString* pdfName = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo);
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
@@ -2340,7 +2367,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
     // comparison with raw measured
   TString unfoldedMeasuredCompLegend[2] = {"unfolded data", "measured raw (gen binning)"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    TString* pdfName_measuredComp = new TString("IterationsDump/jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_measuredComp");
+    TString* pdfName_measuredComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_measuredComp");
     Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_measuredComp[iCent], unfoldedMeasuredCompLegend, 2, textContext, pdfName_measuredComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
   }
 
@@ -2351,7 +2378,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
     }
   }
   if (divideSuccessMeasured_boolsum){
-    TString* pdfName_ratio_measured = new TString("IterationsDump/jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo+"_ratioMeasured");
+    TString* pdfName_ratio_measured = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo+"_ratioMeasured");
     Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measured, centralityLegend, nCentralityBins, textContext, pdfName_ratio_measured, texPtX, texRatioMeasuredUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
   }
 
@@ -2359,7 +2386,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
     // comparison with mcp truth
   TString unfoldedTruthCompLegend[2] = {"unfolded data", "mcp truth"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    TString* pdfName_mcpComp = new TString("IterationsDump/jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_mcpComp");
+    TString* pdfName_mcpComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_mcpComp");
     Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_mcpComp[iCent], unfoldedTruthCompLegend, 2, textContext, pdfName_mcpComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
   }
 
@@ -2370,17 +2397,17 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
     }
   }
   if (divideSuccessMcp_boolsum){
-    TString* pdfName_ratio_mcp = new TString("IterationsDump/jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo+"_ratioMcp");
+    TString* pdfName_ratio_mcp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo+"_ratioMcp");
     Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_mcp, centralityLegend, nCentralityBins, textContext, pdfName_ratio_mcp, texPtX, texRatioMcpUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
   }
 
   // comparison with refolded
   TString unfoldedRefoldedCompLegend[3] = {"refolded manually", "refolded roounfold", "measured"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    TString* pdfName_refoldedComp = new TString("IterationsDump/jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_RefoldedComp");
+    TString* pdfName_refoldedComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_RefoldedComp");
     Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_refoldedComp[iCent], unfoldedRefoldedCompLegend, 3, textContext, pdfName_refoldedComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
     if (divideSuccessMeasuredRefolded[iCent]) {
-      TString* pdfName_ratio_refoldedComp = new TString("IterationsDump/jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_ratioRefoldedUnfolded");
+      TString* pdfName_ratio_refoldedComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_ratioRefoldedUnfolded");
       Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measuredRefolded[iCent], unfoldedRefoldedCompLegend, 2, textContext, pdfName_ratio_refoldedComp, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
     }
   }
@@ -2409,7 +2436,7 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
   float centRange[2];
   TString partialUniqueSpecifier;
 
-  Get_Pt_spectrum_mcp(H1D_jetPt_mcp, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcp(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
   // H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcp_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
 
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
