@@ -800,9 +800,15 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     if (i!=0 || strstr(options, "avoidFirst") == NULL) { // if i=0 requires that the option avoidFirst isn't there
       if (collectionSize >= 6) {
         histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        if (strstr(options, "histWithLine") != NULL) {
+          histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        }
       }
       else {
         histograms_collection[i]->Draw("same");
+        if (strstr(options, "histWithLine") != NULL) {
+          histograms_collection[i]->Draw("][ Hist same");
+        }
         histograms_collection[i]->SetMarkerColor(colors[i]);
         histograms_collection[i]->SetLineColor(colors[i]);
       }
