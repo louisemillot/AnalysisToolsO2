@@ -303,21 +303,25 @@ const double deltaEtaMcVsTrackEfficiency = 0;
 TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
 const TString* texDatasetsComparisonType = new TString("anchor");
 const TString* texDatasetsComparisonCommonDenominator = new TString("jet-jet sim");
-const int nDatasets = 3;
+const int nDatasets = 5;
 // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
 // const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
-const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962"};
-const TString DatasetsNames[nDatasets] = {"PbPbAnchored", "ppAnchored", "LHC24f3 pp"};
+const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train242467", "LHC24f3_train242467/run528531", "LHC24f3_train242467/run529691"};
+const TString DatasetsNames[nDatasets] = {"PbPbAnchored", "ppAnchored", "LHC24f3 pp", "LHC24f3 run528531", "LHC24f3 run529691"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root")
                                         };
 const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+                                            "track-efficiency",
+                                            "track-efficiency",
                                             "track-efficiency",
                                             "track-efficiency"
                                           };
 
 const TString trainId = "";
-const bool isDatasetWeighted[nDatasets] = {true, true, true};
+const bool isDatasetWeighted[nDatasets] = {true, true, true, true, true};
 
 // jaime testJetAnchoredGapGen-20240801-155530

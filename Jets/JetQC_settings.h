@@ -26,13 +26,16 @@ const int iJetType = 0;
 const int iJetLevel = 0;
 
 // Choice of jet QA type (uncorrected jets, background corrected jet (rho area version), background corrected jet (rho area version) with area cut)
-const int iJetFinderQaType = 0;
+const int iJetFinderQaType = 1;
 
 
 // const int nCentralityBins = 6;
 // const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 50, 90};
-const int nCentralityBins = 3;
-const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 80};
+// const int nCentralityBins = 3;
+// const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 80};
+const int nCentralityBins = 4;
+const double arrayCentralityBinning[nCentralityBins+1] = {0, 10, 30, 50, 80};
+
 
  
 const int nTracksBins = 11;
@@ -769,46 +772,46 @@ TFile* file_AliAnalysis;
 
 
 
-// //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts-------- ////////
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-// const TString* texDatasetsComparisonType = new TString("Data");
-// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
-// const int nDatasets = 1;
-// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_areaLeadingCuts"};
-// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-// const TString DatasetsNames[nDatasets] = {"apass4"};
-// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
-//                                         };
-// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
-// //                                           "jet-finder-charged-qa_central_5090"
-// //                                           };
-// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
-//                                           };
-
-// const TString trainId = "";
-// const bool isDatasetWeighted[nDatasets] = {false};
-
-
-
-//////// -------- MC pp anchored PbPB vs pp -------- ////////
-TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
-const TString* texDatasetsComparisonType = new TString("anchor");
-const TString* texDatasetsComparisonCommonDenominator = new TString("jet-jet sim");
-const int nDatasets = 3;
-// const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
-// const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
-const TString Datasets[nDatasets] = {"LHC24d2", "LHC24d2", "LHC24d2"};
-const TString DatasetsNames[nDatasets] = {"sel8", "selMC", "sel8Full"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
+//////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts-------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+const TString* texDatasetsComparisonType = new TString("Data");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
+const int nDatasets = 1;
+const TString Datasets[nDatasets] = {"LHC23zzh_apass4_areaLeadingCuts"};
+// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+const TString DatasetsNames[nDatasets] = {"apass4"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_sel8_id12438",
-                                            "jet-finder-charged-qa_id12438",
-                                            "jet-finder-charged-qa_id15089"
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_5090"
+//                                           };
+const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
                                           };
 
 const TString trainId = "";
-const bool isDatasetWeighted[nDatasets] = {false, false, false};
+const bool isDatasetWeighted[nDatasets] = {false};
 
-// jaime testJetAnchoredGapGen-20240801-155530
+
+
+// //////// -------- MC pp anchored PbPB vs pp -------- ////////
+// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
+// const TString* texDatasetsComparisonType = new TString("anchor");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("jet-jet sim");
+// const int nDatasets = 3;
+// // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
+// // const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
+// const TString Datasets[nDatasets] = {"LHC24d2", "LHC24d2", "LHC24d2"};
+// const TString DatasetsNames[nDatasets] = {"sel8", "selMC", "sel8Full"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_sel8_id12438",
+//                                             "jet-finder-charged-qa_id12438",
+//                                             "jet-finder-charged-qa_id15089"
+//                                           };
+
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false, false, false};
+
+// // jaime testJetAnchoredGapGen-20240801-155530

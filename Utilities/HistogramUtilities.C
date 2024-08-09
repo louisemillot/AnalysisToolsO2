@@ -526,7 +526,9 @@ TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
       for(int iBinK = 1; iBinK <= nBinsK; iBinK++){ // 0 and n+1 take underflow and overflow into account
         productContent_iBinX += histA->GetBinContent(iBinX, iBinK) * histU->GetBinContent(iBinK); 
         productError2_iBinX += pow(histU->GetBinContent(iBinK), 2)*pow(histA->GetBinError(iBinX, iBinK), 2) + pow(histA->GetBinContent(iBinX, iBinK), 2)*pow(histU->GetBinError(iBinK), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated          
-        cout << "A(" << iBinX << "," << iBinK << ") = " << histA->GetBinContent(iBinX, iBinK) << ", U(" << iBinK << ") = " << histU->GetBinContent(iBinK) << endl;
+        cout << "-----" << endl;
+        cout << " A(" << iBinX << "," << iBinK << ") = " << histA->GetBinContent(iBinX, iBinK) << ",  U(" << iBinK << ") = " << histU->GetBinContent(iBinK) << endl;
+        cout << "eA(" << iBinX << "," << iBinK << ") = " << histA->GetBinError(iBinX, iBinK) << ", eU(" << iBinK << ") = " << histU->GetBinError(iBinK) << endl;
       }
     } else {
       for(int iBinK = 0; iBinK <= nBinsK+1; iBinK++){ // 0 and n+1 take underflow and overflow into account
@@ -930,14 +932,14 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
       int maxYbin = 0;
       int symBinLimitMin = 9999999;
       for (int i = 0; i < collectionSize; i++) {
-        if (maxXbin < histograms_collection[i]->FindLastBinAbove(1, 1)) {
-          maxXbin = histograms_collection[i]->FindLastBinAbove(1, 1);// (asks for the first/last bin on the x axis (axis number 1) to have strictly more than 1 entry)
+        if (maxXbin < histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 1)) {
+          maxXbin = histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 1);// (asks for the first/last bin on the x axis (axis number 1) to have strictly more than 1 entry)
         }
-        if (maxYbin < histograms_collection[i]->FindLastBinAbove(1, 2)) {
-          maxYbin = histograms_collection[i]->FindLastBinAbove(1, 2);// (asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+        if (maxYbin < histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2)) {
+          maxYbin = histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2);// (asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
         }
         if (strstr(options, "autoRangeSameSym") != NULL) {
-          int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(1, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(1, 2)));
+          int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(GLOBAL_epsilon, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2)));
           if (symBinLimitMin > symBinLimit) {
             symBinLimitMin = symBinLimit;
           }
@@ -945,7 +947,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
       }
       for (int i = 0; i < collectionSize; i++) {
         if (strstr(options, "autoRangeSameSym") != NULL) {
-          int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(1, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(1, 2))); //(asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
+          int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(GLOBAL_epsilon, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2))); //(asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
           histograms_collection[i]->GetYaxis()->SetRange(symBinLimitMin, histograms_collection[i]->GetNbinsY() - symBinLimitMin); //getting symmetric window around 0 on Y axis
         }
         else {

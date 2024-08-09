@@ -119,7 +119,7 @@ void TrackQC() {
   // Draw_Phi_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
   // Draw_Eta_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
-  // Draw_Sigmapt_vs_pt_DatasetComp();
+  Draw_Sigmapt_vs_pt_DatasetComp();
   // Draw_Sigmapt_nonGlobal_uniformTracks();
   // Draw_Sigmapt_nonGlobal_uniformTracks_fromSubtraction();
   // Draw_Sigmapt_nonGlobal_uniformTracks_centralEta();
@@ -1118,6 +1118,8 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
     //   H1D_sigmapt_pt_median[iDataset]->SetBinContent(iBin, x);
     //   H1D_sigmapt_pt_median[iDataset]->SetBinError(iBin, 0.0001); // no idea how to get the error on the median calculation
     // }
+
+    H2D_sigmapt_pt_concatenated[iDataset]->Scale(1./H2D_sigmapt_pt_concatenated[iDataset]->Integral(1, H2D_sigmapt_pt_concatenated[iDataset]->GetNbinsX(), 1, H2D_sigmapt_pt_concatenated[iDataset]->GetNbinsY(), "width"));
   }
 
   TString* pdfName = new TString("track_sigmapt_vs_pt_DataComp");
@@ -1130,14 +1132,15 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   // TString* pdfName_median_logy = new TString("track_sigmapt_median_vs_pt_DataComp_logy");
 
   // TString textContext(contextDatasetComp(""));
-  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+  TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, *texDatasetsComparisonType, ""));
 
   std::array<std::array<float, 2>, 2> drawnWindowSigma = {{{0.1, 100}, {0.001, 100}}}; // {{xmin, xmax}, {ymin, ymax}}
   // Draw_TH2_Histograms(H2D_sigmapt_pt_concatenated, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowSigma, "logx,logz,autoRangeSame"); // ?
   Draw_TH2_Histograms(H2D_sigmapt_pt_concatenated, DatasetsNames, nDatasets, textContext, pdfName_logy, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowSigma, "logx,logy,logz,autoRangeSame"); // ?
 
   // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
-  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+  std::array<std::array<float, 2>, 2> drawnWindowSigmaAverage = {{{0.1, 100}, {0.001, 10}}}; // {{xmin, xmax}, {ymin, ymax}}
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowSigmaAverage, "logx,logy");
 
   // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx");
   // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx,logy");

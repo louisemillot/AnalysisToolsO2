@@ -30,29 +30,32 @@ const bool doEvtNorm = 1;                               //  as of now, only chan
 const bool doWidthScaling = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
 char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
-char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd, BinByBin
+char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
 char normMethod[] = "evtNorm"; // evtNorm, noNorm
 char optionsAnalysis[100] = "";
 
 const bool isPbPb = false; // if false -> pp
 const bool ppMcIsWeighted = false; // use if the MC has been weighted to have more high pt jets?
-int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active
-bool applyFakes = true;
+int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active; only applied if useInitialResponseMethod is true
+bool applyFakes = true; // only applied if useInitialResponseMethod is true
 const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
 const bool scaleRespByWidth = false;
 
-const bool useYSliceNorm = true; // doesn't change result for svd, doesn't work well for bayes though; SHOULD BE TRUE IF USING PRIOR for sure
+const bool useYSliceNorm = false; // doesn't change result for svd, doesn't work well for bayes though; SHOULD BE TRUE IF USING PRIOR for sure
 
-// all three below NEED to be true
-const bool normDetRespByNEvts = true;
-const bool normGenAndMeasByNEvts = true;
-const bool normunfoldedByNEvts = true;
+// all three below should probably be true;
+// but then it breaks svd convergence! find out why;
+const bool normDetRespByNEvts = false; //that's what breaks svd; https://arxiv.org/pdf/hep-ph/9509307 seems to say one should use the number of events matrix (see last paragraph of conclusion) instead of a probability matrix
+const bool normGenAndMeasByNEvts = false;
+const bool normunfoldedByNEvts = false;
 
-const bool useInitialResponseMethod = true; // discrepancy false true here seems to be that I do not model fakes in my initial method
+const bool useInitialResponseMethod = false; // discrepancy false true here seems to be that I do not model fakes in my initial method
 const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
 
 bool controlMC = true; // not yet implemented: weighted control MC, and control for PbPb
+
+const bool drawIntermediateResponseMatrices = false;
 
 // // save for PbPb that works, ish?
 // const bool doEvtNorm = 1;                               //  as of now, only changes the scale in the result, nothing more, so I should be fine using it
