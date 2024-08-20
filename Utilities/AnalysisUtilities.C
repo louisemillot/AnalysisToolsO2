@@ -1,3 +1,6 @@
+#ifndef ANALYSIS_UTILITIES_C
+#define ANALYSIS_UTILITIES_C
+
 #include "AnalysisUtilities.h"
 #include "../Settings/GlobalSettings.h"
 
@@ -40,8 +43,18 @@ int GetNEventsSel8(TFile* file_O2Analysis) {
 int GetNEventsSelected_JetFramework(TFile* file_O2Analysis) {
   return ((TH1I*)file_O2Analysis->Get("jet-finder-charged-qa/h_collisions"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
+
 int GetNEventsSelected_TrackEffWorkflow(TFile* file_O2Analysis) {
   return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_collisions"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+}
+int GetNEventsSelected_TrackEffWorkflow_weighted(TFile* file_O2Analysis) {
+  return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_collisions_weighted"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+}
+int GetNEventsSelected_TrackEffWorkflow_gen(TFile* file_O2Analysis) {
+  return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_mccollisions"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+}
+int GetNEventsSelected_TrackEffWorkflow_gen_weighted(TFile* file_O2Analysis) {
+  return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_mccollisions_weighted"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 
 double GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis) {
@@ -69,3 +82,15 @@ int GetNEventsSelectedCentrality_JetFramework(TFile* file_O2Analysis, float cent
   int iBinCent_high = H1D_Centrality_FT0C->GetXaxis()->FindBin(centralityHigh - GLOBAL_epsilon);
   return H1D_Centrality_FT0C->Integral(iBinCent_low, iBinCent_high);
 }
+
+
+
+
+
+
+
+
+
+
+
+#endif

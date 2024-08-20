@@ -54,7 +54,7 @@ void Get_Pt_spectrum_mcp(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool c
 void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
 void Get_Pt_spectrum_mcdMatched(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]);
 void Get_Pt_spectrum_mcpMatched(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
-void Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]);
+std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
 void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_raw, int iDataset, int iRadius, float* centRange, const char options[]);
@@ -68,9 +68,9 @@ void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
 void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool controlMC, const char options[]);
 void Get_Pt_spectrum_mcd_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
 void Get_Pt_spectrum_mcd_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, const char options[]);
-RooUnfold* Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]);
-void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]);
-void Get_Pt_spectrum_unfoldedThenRefolded(TH1D* &H1D_jetPt_mcp_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]);
+std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]);
+void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]);
+void Get_Pt_spectrum_unfoldedThenRefolded(TH1D* &H1D_jetPt_mcp_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]);
 
 void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuations, int iDataset, int iRadius, float* centRange);
 void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detectorResponse, int iDataset, int iRadius);
@@ -90,9 +90,9 @@ void Draw_Pt_spectrum_raw(int iDataset, int iRadius, const char options[]);
 void Draw_Pt_spectrum_mcp(int iDataset, int iRadius, const char options[]);
 void Draw_Pt_spectrum_mcdMatched(int iDataset, int iRadius, const char options[]);
 void Draw_Pt_spectrum_unfolded_FluctResponseOnly(int iDataset, int iRadius, const char options[]);
-void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, const char options[]);
+void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterBayes, const char options[]);
 void Draw_Pt_TestSpectrum_unfolded(int iDataset, int iRadius, const char options[]);
-void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int nUnfoldIteration, const char options[]);
+void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int unfoldIterationMin, int unfoldIterationMax, int step, const char options[]);
 
 void Draw_Pt_efficiency_jets(int iDataset, int iRadius, const char options[]);
 void Draw_kinematicEfficiency(int iDataset, int iRadius, const char options[]);
@@ -135,14 +135,13 @@ void JetSpectrum() {
 
   // Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
 
+  int unfoldParameterBayes = 20;
+  Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterBayes, optionsAnalysis); // "evtNorm"
 
-  Draw_Pt_spectrum_unfolded(iDataset, iRadius, 10, optionsAnalysis); // "evtNorm"
-
-  int nUnfoldIterationMax = 12;
-  for(int unfoldParameter = 0; unfoldParameter <= nUnfoldIterationMax; unfoldParameter++){ // 0 and n+1 take underflow and overflow into account
-    // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameter, optionsAnalysis); // "evtNorm"
-  }
-  // Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, nUnfoldIterationMax, optionsAnalysis); // "evtNorm"
+  // int unfoldParameterBayesMin = 0;
+  // int unfoldParameterBayesMax = 30;
+  // int unfoldParameterBayesStep = 5;
+  // Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, unfoldParameterBayesMin, unfoldParameterBayesMax, unfoldParameterBayesStep, optionsAnalysis); // "evtNorm"
 }
 
 /////////////////////////////////////////////////////
@@ -329,6 +328,11 @@ void Get_Pt_spectrum_bkgCorrected_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt, in
 
   H1D_jetPt_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_bkgCorrected_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ibinJetRadius, ibinJetRadius, binCentEdges[0], binCentEdges[1], "e");
   H1D_jetPt = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_bkgCorrected_rebinned_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ptBinsJetsRec[iRadius]);
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt);
+  }
+
 }
 
 
@@ -361,6 +365,10 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1
   H1D_jetPt_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_bkgCorrected_genBinning_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ibinJetRadius, ibinJetRadius, binCentEdges[0], binCentEdges[1], "e");
   H1D_jetPt = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_bkgCorrected_rebinned_genBinning_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ptBinsJetsGen[iRadius]);
 
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt);
+  }
+
 }
 
 void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, __attribute__ ((unused)) const char options[]) {
@@ -392,6 +400,10 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H
 
   H1D_jetPt_defaultBin = (TH1D*)H3D_jetRjetPtcolCent->ProjectionY("jetPt_bkgCorrected_fineBinning_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ibinJetRadius, ibinJetRadius, binCentEdges[0], binCentEdges[1], "e");
   H1D_jetPt = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsFine[iRadius],"jetPt_bkgCorrected_rebinned_fineBinning_"+RadiusLegend[iRadius]+Form("%.1f", centRange[0])+"<cent<"+Form("%.1f", centRange[1]), ptBinsJetsFine[iRadius]);
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt);
+  }
 
 }
 
@@ -436,6 +448,10 @@ void Get_Pt_spectrum_mcp_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDa
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcp_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
 
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcp);
+  }
+
 }
 
 void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, __attribute__ ((unused)) const char options[]) {
@@ -478,6 +494,10 @@ void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_
   H1D_jetPt_mcp_defaultBin = (TH1D*)H3D_jetRjetPtjetEta->ProjectionY("jetPt_mcp_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, binEtaEdges[0], binEtaEdges[1], "e");
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsFine[iRadius],"jetPt_mcp_rebinned_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsFine[iRadius]);
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcp);
+  }
 }
 
 void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) const char options[]) {
@@ -495,6 +515,10 @@ void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_
   H1D_jetPt_mcd_defaultBin = (TH1D*)H3D_jetRjetPtjetEta->ProjectionY("jetPt_mcd_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, binEtaEdges[0], binEtaEdges[1], "e");
 
   H1D_jetPt_mcd = (TH1D*)H1D_jetPt_mcd_defaultBin->Rebin(nBinPtJetsFine[iRadius],"jetPt_mcd_rebinned_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsFine[iRadius]);
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcd);
+  }
 
 }
 
@@ -514,6 +538,10 @@ void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
 
   H1D_jetPt_mcd = (TH1D*)H1D_jetPt_mcd_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_mcd_rebinned_recBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsRec[iRadius]);
 
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcd);
+  }
+
 }
 
 void Get_Pt_spectrum_mcd_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) const char options[]) {
@@ -531,6 +559,10 @@ void Get_Pt_spectrum_mcd_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDa
   H1D_jetPt_mcd_defaultBin = (TH1D*)H3D_jetRjetPtjetEta->ProjectionY("jetPt_mcd_genBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, binEtaEdges[0], binEtaEdges[1], "e");
 
   H1D_jetPt_mcd = (TH1D*)H1D_jetPt_mcd_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcd_rebinned_genBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcd);
+  }
 }
 
 
@@ -575,6 +607,10 @@ void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_mcp_rebinnedRec_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsRec[iRadius]);
 
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcp);
+  }
 
 }
 
@@ -624,6 +660,10 @@ void Get_Pt_spectrum_mcpMatched_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcpMa
 
 
 
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcpMatched);
+  }
+
 
 
 }
@@ -670,6 +710,10 @@ void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D
   // should be rebinned using rec bins, because in the unfolding it'll be given to RooUnfoldResponse(mcpMatched, mcp, response) to get the efficiency 
   H1D_jetPt_mcpMatched = (TH1D*)H1D_jetPt_mcpMatched_defaultBin->Rebin(nBinPtJetsFine[iRadius],"jetPt_mcpMatched_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsFine[iRadius]);
 
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcpMatched);
+  }
+
 }
 
 
@@ -686,6 +730,10 @@ void Get_Pt_spectrum_mcdMatched_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcdMa
   H1D_jetPt_mcdMatched_defaultBin = (TH1D*)H3D_jetRjetPtTagjetPtBase->ProjectionZ("jetPt_mcdMatched_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 1, H3D_jetRjetPtTagjetPtBase->GetNbinsZ(), "e");
 
   H1D_jetPt_mcdMatched = (TH1D*)H1D_jetPt_mcdMatched_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcdMatched_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcdMatched);
+  }
 }
 
 void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) const char options[]) {
@@ -700,6 +748,10 @@ void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_
   H1D_jetPt_mcdMatched_defaultBin = (TH1D*)H3D_jetRjetPtTagjetPtBase->ProjectionZ("jetPt_mcdMatched_recBinning"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 1, H3D_jetRjetPtTagjetPtBase->GetNbinsZ(), "e");
 
   H1D_jetPt_mcdMatched = (TH1D*)H1D_jetPt_mcdMatched_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_mcdMatched_recBinning_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsRec[iRadius]);
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcdMatched);
+  }
 }
 
 void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) const char options[]) {
@@ -714,6 +766,11 @@ void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D
   H1D_jetPt_mcdMatched_defaultBin = (TH1D*)H3D_jetRjetPtTagjetPtBase->ProjectionZ("jetPt_mcdMatched_fineBinning_"+RadiusLegend[iRadius]+Datasets[iDataset], ibinJetRadius, ibinJetRadius, 1, H3D_jetRjetPtTagjetPtBase->GetNbinsZ(), "e");
 
   H1D_jetPt_mcdMatched = (TH1D*)H1D_jetPt_mcdMatched_defaultBin->Rebin(nBinPtJetsFine[iRadius],"jetPt_mcdMatched_fineBinning_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsFine[iRadius]);
+
+
+  if (doWidthScalingEarly) {
+    TransformRawHistToYield(H1D_jetPt_mcdMatched);
+  }
 }
 
 void Get_Pt_spectrum_bkgCorrected_preWidthScaling(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, const char options[]) {
@@ -738,7 +795,7 @@ void Get_Pt_spectrum_bkgCorrected_preWidthScaling(TH1D* &H1D_jetPt, int iDataset
 void Get_Pt_spectrum_bkgCorrected(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_bkgCorrected_preWidthScaling(H1D_jetPt, iDataset, iRadius, centRange, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
 }
@@ -764,7 +821,7 @@ void Get_Pt_spectrum_mcp_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int
 void Get_Pt_spectrum_mcp(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, const char options[]) {
   Get_Pt_spectrum_mcp_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
@@ -790,7 +847,7 @@ void Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int i
 void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, const char options[]) {
   Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
@@ -812,7 +869,7 @@ void Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int i
 void Get_Pt_spectrum_mcd_fineBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(H1D_jetPt_mcd, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
 }
@@ -834,7 +891,7 @@ void Get_Pt_spectrum_mcd_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iD
 void Get_Pt_spectrum_mcd_recBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcd_recBinning_preWidthScaling(H1D_jetPt_mcd, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
 }
@@ -856,7 +913,7 @@ void Get_Pt_spectrum_mcd_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int
 void Get_Pt_spectrum_mcd(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcd_preWidthScaling(H1D_jetPt_mcd, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
 }
@@ -878,7 +935,7 @@ void Get_Pt_spectrum_mcdMatched_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int
 void Get_Pt_spectrum_mcdMatched(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcdMatched_preWidthScaling(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
 }
@@ -900,7 +957,7 @@ void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcdM
 void Get_Pt_spectrum_mcdMatched_recBinning(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcdMatched_recBinning_preWidthScaling(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
 }
@@ -922,7 +979,7 @@ void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd
 void Get_Pt_spectrum_mcdMatched_fineBinning(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScaling(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
 }
@@ -944,7 +1001,7 @@ void Get_Pt_spectrum_mcpMatched_preWidthScaling(TH1D* &H1D_jetPt_mcpMatched, int
 void Get_Pt_spectrum_mcpMatched(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcpMatched_preWidthScaling(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcpMatched);
   }
 }
@@ -968,7 +1025,7 @@ void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp
 void Get_Pt_spectrum_mcpMatched_fineBinning(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, const char options[]) {
   Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScaling(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcpMatched);
   }
 }
@@ -994,7 +1051,7 @@ void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iD
 void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, const char options[]) {
   Get_Pt_spectrum_mcp_recBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
@@ -1021,7 +1078,7 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(TH1D* &H1D_jetPt, i
 void Get_Pt_spectrum_bkgCorrected_genBinning(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(H1D_jetPt, iDataset, iRadius, centRange, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
 }
@@ -1047,7 +1104,7 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(TH1D* &H1D_jetPt, 
 void Get_Pt_spectrum_bkgCorrected_fineBinning(TH1D* &H1D_jetPt, int iDataset, int iRadius, float* centRange, const char options[]) {
   Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(H1D_jetPt, iDataset, iRadius, centRange, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
 }
@@ -1186,11 +1243,11 @@ void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDatase
       Get_Pt_spectrum_mcp_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
-    for (int i = 1; i < priorSpectrumWeighting->GetNbinsX(); i++)
-    {
-      cout << "prior(" << i << ")" << priorSpectrumWeighting->GetBinContent(i)<< endl;
-      cout << "responseIntegralLine(" << i << ")" << H2D_jetPtResponseMatrix->Integral(1,H2D_jetPtResponseMatrix->GetNbinsX(), i, i)<< endl;
-    }
+    // for (int i = 1; i < priorSpectrumWeighting->GetNbinsX(); i++)
+    // {
+    //   cout << "prior(" << i << ")" << priorSpectrumWeighting->GetBinContent(i)<< endl;
+    //   cout << "responseIntegralLine(" << i << ")" << H2D_jetPtResponseMatrix->Integral(1,H2D_jetPtResponseMatrix->GetNbinsX(), i, i)<< endl;
+    // }
     
   }
   if (strstr(options, "mcdPriorUnfolding") != NULL) {
@@ -1504,8 +1561,8 @@ bool Get_Pt_JetFakes_fineBinning(TH1D* &H1D_jetFakes, int iDataset, int iRadius,
 
 
 
-int GetSvdBestRegularisationParameter(TSVDUnfold* unfoldSvd){
-  TH1D* H1D_D = unfoldSvd->GetD();
+int GetSvdBestRegularisationParameter(TSVDUnfold* unfoldTSvd){
+  TH1D* H1D_D = unfoldTSvd->GetD();
   double minimum = 999999;
   double tempContent;
   int k = -99;
@@ -1513,7 +1570,7 @@ int GetSvdBestRegularisationParameter(TSVDUnfold* unfoldSvd){
     tempContent = abs(abs(H1D_D->GetBinContent(iBinX)) - 1); // one wants |k| closest to 1 as possible
     if (minimum > tempContent) {
       minimum = tempContent;
-      k = iBinX;
+      k = iBinX - 1; // or is it iBinX?
     }
   }
   cout << "k = " << k << ", |H1D-1| minimum = " << minimum << endl;
@@ -1525,7 +1582,7 @@ int GetSvdBestRegularisationParameter(TSVDUnfold* unfoldSvd){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-RooUnfold* Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
+std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
   //for now makes the assumption gen and rec have the same pT binning
 
   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]";
@@ -1694,30 +1751,33 @@ RooUnfold* Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_u
 
 
   // note about unfolding: if SUM(Mkj over k)=1 then it's also true for the inverse of M (can easily demosntrate it, just write it);
-  RooUnfoldBayes* unfoldBayes = new RooUnfoldBayes(response, measured, unfoldParameter);
-  RooUnfoldSvd* unfoldSvd = new RooUnfoldSvd(response, measured, unfoldParameter); // that's how it is done in hiroki yokoyama's thesis
+  RooUnfoldBayes* unfoldBayes = new RooUnfoldBayes(response, measured, unfoldParameterBayes);
+  int unfoldParameterSvdInitial = 1;
+  RooUnfoldSvd* unfoldSvdInitialiser = new RooUnfoldSvd(response, measured, unfoldParameterSvdInitial); // instance of RooUnfoldSvd only used to find the best regularisation parameter; the unfolded spectrum returned by it is not retrived
   RooUnfold* unfold = unfoldBayes; // default Bayes
   TH1D* hist_unfold;
 
-  if (strstr(options, "Bayes") != NULL) {
-    hist_unfold = (TH1D*)(unfoldBayes->Hreco());
-    unfold = unfoldBayes;
+  int unfoldParameter;
+  if (strstr(options, "Svd") != NULL) {
+    unfoldSvdInitialiser->Hreco(); // necessary to have GetD() give a meaningful output
+    TSVDUnfold *tsvdUnfold = (TSVDUnfold*)unfoldSvdInitialiser->Impl();
+    unfoldParameter = GetSvdBestRegularisationParameter(tsvdUnfold);
+    RooUnfoldSvd* unfoldSvd = new RooUnfoldSvd(response, measured, unfoldParameter); // the RooUnfoldSvd instance that is actually used to unfold, with the best regularisation parameter
 
-  } else if (strstr(options, "Svd") != NULL) {
-    unfoldSvd->Hreco();
-
-    TSVDUnfold *svdUnfold = (TSVDUnfold*)unfoldSvd->Impl();
-    int regularisationParam = GetSvdBestRegularisationParameter(svdUnfold);
-    unfoldSvd->SetRegParm(regularisationParam);
+    // unfoldSvd->SetRegParm(-200);  // doesnt seem to change anything, even if I put 0 here ... annoying; but accoring to mailing list of roounfold it doesn't work well
     hist_unfold = (TH1D*)(unfoldSvd->Hreco());
     unfold = unfoldSvd;
 
     // plot svd d distribution
-    TH1D* H1D_D = svdUnfold->GetD();
+    TH1D* H1D_D = tsvdUnfold->GetD();
     TString* pdfName_regparam = new TString("Svd_regularisationd_distribution_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]);
     TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
-    Draw_TH1_Histogram(H1D_D, textContext, pdfName_regparam, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logy");
-  }
+    Draw_TH1_Histogram(H1D_D, textContext, pdfName_regparam, texSvdDvector, texSvdK, texCollisionDataInfo, drawnWindowAuto, "logy");
+  } else if (strstr(options, "Bayes") != NULL) {
+    unfoldParameter = unfoldParameterBayes;
+    hist_unfold = (TH1D*)(unfoldBayes->Hreco());
+    unfold = unfoldBayes;
+  }  
 
 
   H1D_jetPt_unfolded = (TH1D*)hist_unfold->Clone("H1D_jetPt_unfolded"+partialUniqueSpecifier);
@@ -1757,12 +1817,18 @@ RooUnfold* Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_u
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
   }
 
-  return unfold;
+
+  // if (doWidthScalingEarly) {
+  //   TransformRawHistToYield(H1D_jetPt_unfolded);
+  // }
+
+  std::pair<int, RooUnfold*> unfoldInfo(unfoldParameter, unfold);
+  return unfoldInfo;
 }
 
 
-void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
-  Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameter, options);
+std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+  std::pair<int, RooUnfold*> unfoldInfo = Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameterBayes, options);
 
   if (!normunfoldedByNEvts){
     if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
@@ -1780,31 +1846,34 @@ void Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDa
       NormaliseYieldToNEntries(H1D_jetPt_unfolded);
     }
   }
+  
+  return unfoldInfo;
 }
-void Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
-  Get_Pt_spectrum_unfolded_preWidthScaling(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameter, options);
+std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+  std::pair<int, RooUnfold*> unfoldInfo = Get_Pt_spectrum_unfolded_preWidthScaling(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameterBayes, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_unfolded);
   }
+  return unfoldInfo;
 }
 
 
 
-void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
+void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
   TH1D* H1D_jetPt_unfolded;
   // TH1D* H1D_jetPt_raw[nRadius];
   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]";
 
 
-  RooUnfold* unfold = Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameter, options);
-  // Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameter, options);
+  RooUnfold* unfold = Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameterBayes, options).second;
+  // Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameterBayes, options);
 
-  cout << "((((((((((((((((()))))))))))))))))" << endl;
-  cout << "REFOLDING TEST: " << endl;
-  for(int iBinX = 0; iBinX <= H1D_jetPt_unfolded->GetNbinsX()+1; iBinX++){
-    cout << "H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinContent(iBinX) << ", error = "<< H1D_jetPt_unfolded->GetBinError(iBinX) << endl;
-  }
+  // cout << "((((((((((((((((()))))))))))))))))" << endl;
+  // cout << "REFOLDING TEST: " << endl;
+  // for(int iBinX = 0; iBinX <= H1D_jetPt_unfolded->GetNbinsX()+1; iBinX++){
+  //   cout << "H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinContent(iBinX) << ", error = "<< H1D_jetPt_unfolded->GetBinError(iBinX) << endl;
+  // }
 
   TH2D* H2D_jetPtResponseMatrix_fluctuations;
   TH2D* H2D_jetPtResponseMatrix_detectorResponse;
@@ -1923,11 +1992,15 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H1D_j
   // }
   
 
+  // if (doWidthScalingEarly) {
+  //   TransformRawHistToYield(H1D_jetPt_unfoldedThenRefolded);
+  // }
+
   // cout << "still not giving back the measured used as input to the unfolding; got an issue somewhere" << endl;
 }
 
-void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
-  Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameter, options);
+void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+  Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameterBayes, options);
 
   if (!normunfoldedByNEvts){
     if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
@@ -1947,16 +2020,16 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfol
     }
   }
 }
-void Get_Pt_spectrum_unfoldedThenRefolded(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
-  Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameter, options);
+void Get_Pt_spectrum_unfoldedThenRefolded(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+  Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameterBayes, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_unfoldedThenRefolded);
   }
 }
 
 
-void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
+void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
   // Matches exactly with the manual method IF NO PRIOR
   // if I have a non flat prior, then the roounfold method gives me a good closure test, but not the manual method!
 
@@ -1965,7 +2038,7 @@ void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtN
   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]";
 
 
-  RooUnfold* unfold = Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameter, options);
+  RooUnfold* unfold = Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameterBayes, options).second;
 
   TH2D* H2D_jetPtResponseMatrix_fluctuations;
   TH2D* H2D_jetPtResponseMatrix_detectorResponse;
@@ -2040,8 +2113,8 @@ void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtN
   // cout << "still not giving back the measured used as input to the unfolding; got an issue somewhere" << endl;
 }
 
-void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
-  Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameter, options);
+void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+  Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameterBayes, options);
 
   if (!normunfoldedByNEvts){
     if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
@@ -2061,10 +2134,10 @@ void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling(TH1D* 
     }
   }
 }
-void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameter, const char options[]) {
-  Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameter, options);
+void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+  Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, centRange, unfoldParameterBayes, options);
 
-  if (doWidthScaling) {
+  if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_unfoldedThenRefolded);
   }
 }
@@ -2298,7 +2371,7 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
   Draw_TH2_Histograms(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, centralityLegend, nCentralityBins, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, "logz");
 }
 
-void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, const char options[]) {
+void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterBayes, const char options[]) {
 
   TH1D* H1D_jetPt_measured[nCentralityBins];
   TH1D* H1D_jetPt_measured_genBinning[nCentralityBins];
@@ -2306,16 +2379,21 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
   TH1D* H1D_jetPt_unfoldedThenRefolded[nCentralityBins];
   TH1D* H1D_jetPt_unfoldedThenRefolded_RooUnfoldMethod[nCentralityBins];
   TH1D* H1D_jetPt_unfolded_mcpComp[nCentralityBins][2];
+  TH1D* H1D_jetPt_unfolded_run2Comp[nCentralityBins][2];
   TH1D* H1D_jetPt_unfolded_measuredComp[nCentralityBins][2];
   TH1D* H1D_jetPt_unfolded_refoldedComp[nCentralityBins][3];
   TH1D* H1D_jetPt_mcp;
+  TH1D* H1D_jetPt_run2;
   TH1D* H1D_jetPt_ratio_mcp[nCentralityBins];
+  TH1D* H1D_jetPt_ratio_run2[nCentralityBins];
   TH1D* H1D_jetPt_ratio_measured[nCentralityBins];
   TH1D* H1D_jetPt_ratio_measuredRefolded[nCentralityBins][2];
 
-
-
+  H1D_jetPt_run2 = (TH1D*)((TH1D*)file_O2Analysis_run2ComparisonFile->Get("Bayesian_Unfoldediter15"))->Clone("H1D_jetPt_run2");
+  int NcollRun2 = 4619963; // central (see Laura discussion mattermost) 
+  H1D_jetPt_run2->Scale(1./NcollRun2);
   bool divideSuccessMcp[nCentralityBins];
+  bool divideSuccessRun2[nCentralityBins];
   bool divideSuccessMeasured[nCentralityBins];
   bool divideSuccessMeasuredRefolded[nCentralityBins][2];
   float centRange[2];
@@ -2328,13 +2406,14 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
   }
   // H1D_jetPt_mcp = (TH1D*)H1D_jetPt_mcp_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcp_rebinned_"+RadiusLegend[iRadius]+Datasets[iDataset], ptBinsJetsGen[iRadius]);
 
+  int unfoldParameter[nCentralityBins];
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
     centRange[0] = arrayCentralityIntervals[iCent][0];
     centRange[1] = arrayCentralityIntervals[iCent][1];
     partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]";
     
-    Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iCent], iDataset, iRadius, centRange, unfoldParameter, options);
-
+    unfoldParameter[iCent] = Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iCent], iDataset, iRadius, centRange, unfoldParameterBayes, options).first;
+    
     // comparison with raw measured
     if (!useFineBinningTest) {
       Get_Pt_spectrum_bkgCorrected_genBinning(H1D_jetPt_measured_genBinning[iCent], iDataset, iRadius, centRange, options);
@@ -2353,14 +2432,20 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
     H1D_jetPt_ratio_mcp[iCent] = (TH1D*)H1D_jetPt_mcp->Clone("H1D_jetPt_ratio_mcp"+partialUniqueSpecifier);
     divideSuccessMcp[iCent] = H1D_jetPt_ratio_mcp[iCent]->Divide(H1D_jetPt_unfolded[iCent]);
 
+    // comparison with run2 
+    H1D_jetPt_unfolded_run2Comp[iCent][0] = (TH1D*)H1D_jetPt_unfolded[iCent]->Clone("H1D_jetPt_unfolded_run2Comp"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_run2Comp[iCent][1] = (TH1D*)H1D_jetPt_run2->Clone("H1D_jetPt_unfolded_run2Comp"+partialUniqueSpecifier);
+    H1D_jetPt_ratio_run2[iCent] = (TH1D*)H1D_jetPt_run2->Clone("H1D_jetPt_ratio_run2"+partialUniqueSpecifier);
+    divideSuccessRun2[iCent] = H1D_jetPt_ratio_run2[iCent]->Divide(H1D_jetPt_unfolded[iCent]);
+
     // comparison with refolded
     if (!useFineBinningTest) {
       Get_Pt_spectrum_bkgCorrected(H1D_jetPt_measured[iCent], iDataset, iRadius, centRange, options);
     } else {
       Get_Pt_spectrum_bkgCorrected_fineBinning(H1D_jetPt_measured[iCent], iDataset, iRadius, centRange, options);
     }
-    Get_Pt_spectrum_unfoldedThenRefolded(H1D_jetPt_unfoldedThenRefolded[iCent], iDataset, iRadius, centRange, unfoldParameter, options);
-    Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod(H1D_jetPt_unfoldedThenRefolded_RooUnfoldMethod[iCent], iDataset, iRadius, centRange, unfoldParameter, options);
+    Get_Pt_spectrum_unfoldedThenRefolded(H1D_jetPt_unfoldedThenRefolded[iCent], iDataset, iRadius, centRange, unfoldParameterBayes, options);
+    Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod(H1D_jetPt_unfoldedThenRefolded_RooUnfoldMethod[iCent], iDataset, iRadius, centRange, unfoldParameterBayes, options);
     H1D_jetPt_unfolded_refoldedComp[iCent][0] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iCent]->Clone("H1D_jetPt_refolded_refoldedComp"+partialUniqueSpecifier);
     H1D_jetPt_unfolded_refoldedComp[iCent][1] = (TH1D*)H1D_jetPt_unfoldedThenRefolded_RooUnfoldMethod[iCent]->Clone("H1D_jetPt_unfoldedThenRefolded_RooUnfoldMethod"+partialUniqueSpecifier);
     H1D_jetPt_unfolded_refoldedComp[iCent][2] = (TH1D*)H1D_jetPt_measured[iCent]->Clone("H1D_jetPt_measured_refoldedComp"+partialUniqueSpecifier);
@@ -2385,7 +2470,10 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
   if (controlMC){
     unfoldingCode += "_controlMC";
   }
-  TString unfoldingInfo = (TString)unfoldingMethod+"-k="+Form("%i", unfoldParameter)+"-"+(TString)mergingPrior+"-"+(TString)unfoldingPrior+"-"+unfoldingCode;
+  TString unfoldingInfo[nCentralityBins];
+  for(int iCent = 0; iCent < nCentralityBins; iCent++){
+    unfoldingInfo[iCent] = (TString)unfoldingMethod+"-k="+Form("%i", unfoldParameter[iCent])+"-"+(TString)mergingPrior+"-"+(TString)unfoldingPrior+"-"+unfoldingCode;
+  }
 
   struct stat st1{};
   if (stat("pdfFolder/IterationsDump", &st1) == -1) {
@@ -2396,11 +2484,14 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
       mkdir("pngFolder/IterationsDump", 0700);
   }
 
-  TString* pdfName = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo);
+  TString textContext[nCentralityBins];
+  for(int iCent = 0; iCent < nCentralityBins; iCent++){    
+    centRange[0] = arrayCentralityIntervals[iCent][0];
+    centRange[1] = arrayCentralityIntervals[iCent][1];
+    textContext[iCent] = contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), contextCentRange(centRange), "");
+  }
 
-  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
-
-  TString centralityLegend[nCentralityBins]; CentralityLegend(centralityLegend, arrayCentralityIntervals, nCentralityBins);
+  TString dummyLegend[1] = {""};
 
   TString* yAxisLabel = texCount;
   if (strstr(options, "evtNorm") != NULL && doEvtNorm) {
@@ -2409,63 +2500,58 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameter, c
   if (strstr(options, "entriesNorm") != NULL) {
     yAxisLabel = texJetPtYield_EntriesNorm;
   }
-  // Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded, centralityLegend, nCentralityBins, textContext, pdfName, texPtX, yAxisLabel, texCollisionDataInfo, "logy");
-  Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded, centralityLegend, nCentralityBins, textContext, pdfName, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
-
 
     // comparison with raw measured
   TString unfoldedMeasuredCompLegend[2] = {"unfolded data", "measured raw (gen binning)"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    TString* pdfName_measuredComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_measuredComp");
-    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_measuredComp[iCent], unfoldedMeasuredCompLegend, 2, textContext, pdfName_measuredComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
-  }
-
-  bool divideSuccessMeasured_boolsum = true;
-  for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    if (!(divideSuccessMeasured[iCent])) {
-      divideSuccessMeasured_boolsum = false;
+    TString* pdfName_measuredComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_measuredComp");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_measuredComp[iCent], unfoldedMeasuredCompLegend, 2, textContext[iCent], pdfName_measuredComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
+    if (divideSuccessMeasured[iCent]){
+      TString* pdfName_ratio_measured = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_ratioMeasured");
+      Draw_TH1_Histogram(H1D_jetPt_ratio_measured[iCent], textContext[iCent], pdfName_ratio_measured, texPtX, texRatioMeasuredUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
     }
   }
-  if (divideSuccessMeasured_boolsum){
-    TString* pdfName_ratio_measured = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo+"_ratioMeasured");
-    Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measured, centralityLegend, nCentralityBins, textContext, pdfName_ratio_measured, texPtX, texRatioMeasuredUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
-  }
-
 
     // comparison with mcp truth
   TString unfoldedTruthCompLegend[2] = {"unfolded data", "mcp truth"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    TString* pdfName_mcpComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_mcpComp");
-    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_mcpComp[iCent], unfoldedTruthCompLegend, 2, textContext, pdfName_mcpComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
-  }
-
-  bool divideSuccessMcp_boolsum = true;
-  for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    if (!(divideSuccessMcp[iCent])) {
-      divideSuccessMcp_boolsum = false;
+    TString* pdfName_mcpComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_mcpComp");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_mcpComp[iCent], unfoldedTruthCompLegend, 2, textContext[iCent], pdfName_mcpComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
+    if (divideSuccessMcp[iCent]){
+      TString* pdfName_ratio_mcp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_ratioMcp");
+      Draw_TH1_Histogram(H1D_jetPt_ratio_mcp[iCent], textContext[iCent], pdfName_ratio_mcp, texPtX, texRatioMcpUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
     }
   }
-  if (divideSuccessMcp_boolsum){
-    TString* pdfName_ratio_mcp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_unfolded_"+unfoldingInfo+"_ratioMcp");
-    Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_mcp, centralityLegend, nCentralityBins, textContext, pdfName_ratio_mcp, texPtX, texRatioMcpUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
-  }
+
 
   // comparison with refolded
   TString unfoldedRefoldedCompLegend[3] = {"refolded manually", "refolded roounfold", "measured"};
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
-    TString* pdfName_refoldedComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_RefoldedComp");
-    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_refoldedComp[iCent], unfoldedRefoldedCompLegend, 3, textContext, pdfName_refoldedComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
+    TString* pdfName_refoldedComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_RefoldedComp");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_refoldedComp[iCent], unfoldedRefoldedCompLegend, 3, textContext[iCent], pdfName_refoldedComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
     if (divideSuccessMeasuredRefolded[iCent]) {
-      TString* pdfName_ratio_refoldedComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo+"_ratioRefoldedUnfolded");
-      Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measuredRefolded[iCent], unfoldedRefoldedCompLegend, 2, textContext, pdfName_ratio_refoldedComp, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
+      TString* pdfName_ratio_refoldedComp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_ratioRefoldedUnfolded");
+      Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measuredRefolded[iCent], unfoldedRefoldedCompLegend, 2, textContext[iCent], pdfName_ratio_refoldedComp, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
     }
   }
+
+
+  // comparison with Run 2
+  TString unfoldedRun2CompLegend[2] = {"unfolded Run3", "unfolded Run2 0-10%"};
+  for(int iCent = 0; iCent < nCentralityBins; iCent++){
+    TString* pdfName_run2Comp = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_run2Comp");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded_run2Comp[iCent], unfoldedRun2CompLegend, 2, textContext[iCent], pdfName_run2Comp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
+    if (divideSuccessRun2[iCent]){
+      TString* pdfName_ratio_run2 = new TString("IterationsDump/jet_"+Datasets[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_Pt_unfolded_"+unfoldingInfo[iCent]+"_ratioRun2");
+      Draw_TH1_Histogram(H1D_jetPt_ratio_run2[iCent], textContext[iCent], pdfName_ratio_run2, texPtX, texRatioRun2Unfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
+    }
+  }
+
 }
 
+void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int unfoldIterationMin, int unfoldIterationMax, int step, const char options[]) {
 
-
-void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int nUnfoldIteration, const char options[]) {
-
+  const int nUnfoldIteration = std::floor((unfoldIterationMax - unfoldIterationMin + 1)/step);
 
   TH1D* H1D_jetPt_measured[nCentralityBins];
   TH1D* H1D_jetPt_measured_genBinning[nCentralityBins];
@@ -2495,9 +2581,17 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
     Get_Pt_spectrum_bkgCorrected(H1D_jetPt_measured[iCent], iDataset, iRadius, centRange, options);
     Get_Pt_spectrum_bkgCorrected_genBinning(H1D_jetPt_measured_genBinning[iCent], iDataset, iRadius, centRange, options);
 
+    int unfoldIterations = 0;
+
     for(int iUnfoldIteration = 0; iUnfoldIteration < nUnfoldIteration; iUnfoldIteration++){
 
-      Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iCent][iUnfoldIteration], iDataset, iRadius, centRange, iUnfoldIteration, options);
+      unfoldIterations = iUnfoldIteration * step + unfoldIterationMin; 
+      // unfoldingIterationLegend[iUnfoldIteration] = unfoldIterations;
+
+      cout << "((((((((((((()))))))))))))" << endl;
+      cout << "Iteration "<< iUnfoldIteration << endl;
+      cout << "((((((((((((()))))))))))))" << endl;
+      Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iCent][iUnfoldIteration], iDataset, iRadius, centRange, unfoldIterations, options);
 
       // comparison with raw measured
       H1D_jetPt_unfolded_measuredComp[iCent][iUnfoldIteration] = (TH1D*)H1D_jetPt_unfolded[iCent][iUnfoldIteration]->Clone("H1D_jetPt_unfolded_measuredComp"+partialUniqueSpecifier);
@@ -2511,7 +2605,7 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
 
 
       // comparison with refolded
-      Get_Pt_spectrum_unfoldedThenRefolded(H1D_jetPt_unfoldedThenRefolded[iCent][iUnfoldIteration], iDataset, iRadius, centRange, iUnfoldIteration, options);
+      Get_Pt_spectrum_unfoldedThenRefolded(H1D_jetPt_unfoldedThenRefolded[iCent][iUnfoldIteration], iDataset, iRadius, centRange, unfoldIterations, options);
       H1D_jetPt_unfolded_refoldedComp[iCent][iUnfoldIteration] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iCent][iUnfoldIteration]->Clone("H1D_jetPt_refolded_refoldedComp"+partialUniqueSpecifier);
       H1D_jetPt_ratio_measuredRefolded[iCent][iUnfoldIteration] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iCent][iUnfoldIteration]->Clone("H1D_jetPt_ratio_refoldedComp"+partialUniqueSpecifier);
       divideSuccessMeasuredRefolded[iCent][iUnfoldIteration] = H1D_jetPt_ratio_measuredRefolded[iCent][iUnfoldIteration]->Divide(H1D_jetPt_measured[iCent]);
@@ -2521,10 +2615,12 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
     H1D_jetPt_unfolded_refoldedComp[iCent][nUnfoldIteration] = (TH1D*)H1D_jetPt_measured[iCent]->Clone("H1D_jetPt_measured_refoldedComp"+partialUniqueSpecifier);
   }
 
-  TString unfoldingInfo = (TString)unfoldingMethod+"_"+(TString)unfoldingPrior+"_kmax="+Form("%i", nUnfoldIteration);
+  TString unfoldingInfo = (TString)unfoldingMethod+"_"+(TString)unfoldingPrior+"_kmax="+Form("%i", unfoldIterationMax);
 
+  TString unfoldingIterationLegend[nUnfoldIteration+1]; IterationLegend(unfoldingIterationLegend, unfoldIterationMin, unfoldIterationMax, step);
 
-  TString unfoldingIterationLegend[nUnfoldIteration+1]; IterationLegend(unfoldingIterationLegend, nUnfoldIteration);
+  
+  cout << "test3" << endl;
 
   for(int iCent = 0; iCent < nCentralityBins; iCent++){
     partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]";
@@ -2542,6 +2638,7 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
     }
     Draw_TH1_Histograms_in_one(H1D_jetPt_unfolded[iCent], unfoldingIterationLegend, nUnfoldIteration, textContext, pdfName, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
 
+  cout << "test3.3" << endl;
 
       // comparison with raw measured
     // TString unfoldedMeasuredCompLegend[2] = {"unfolded data", "measured raw (gen binning)"};
@@ -2560,6 +2657,7 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
       Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measured[iCent], unfoldingIterationLegend, nUnfoldIteration, textContext, pdfName_ratio_measured, texPtX, texRatioMeasuredUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
     }
 
+  cout << "test3.5" << endl;
 
       // comparison with mcp truth
     // TString unfoldedTruthCompLegend[2] = {"unfolded data", "mcp truth"};
@@ -2577,6 +2675,7 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
       TString* pdfName_ratio_mcp = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+partialUniqueSpecifier+"_Pt_unfolded_"+unfoldingInfo+"_ratioMcp");
       Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_mcp[iCent], unfoldingIterationLegend, nUnfoldIteration, textContext, pdfName_ratio_mcp, texPtX, texRatioMcpUnfolded, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
     }
+  cout << "test3.8" << endl;
 
     // comparison with refolded
     // TString unfoldedRefoldedCompLegend[2] = {"refolded", "measured"};
@@ -2598,105 +2697,10 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
       Draw_TH1_Histograms_in_one(H1D_jetPt_ratio_measuredRefolded[iCent], unfoldingIterationLegend, nUnfoldIteration, textContext, pdfName_ratio_refoldedComp, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowAuto, "standardratio,ratioLine");
     }
   }
+  cout << "test4" << endl;
 }
 
 
-// // // PhD fuction for V0s
-// void Get_V0_RawYield_vsPt_FeeddownCorrected_withUnfolding(TH1D* &hRawYield_vsPt, TH3D* H3D_detectedV0s_DataLike, TH1I* H1I_SelectedEventCount, TFile *file_O2Analysis, double* SignalMean, double* SignalStandardDev, int ipart, double* pTbins, int nbinpT, int ibinXaxisCut_low,  int ibinXaxisCut_high, int warning_cutArry_ID, double SideBandSizeMultiplierModifier, int SignalExtractionType, int InvMassRebinFactor) {
-//   float SelectedEventCount = H1I_SelectedEventCount->GetEntries();
-
-//   TH1D* mcp = (TH1D*)file_O2Analysis->Get("lambdakzero-particle-count-mc/h"+NamePart[ipart]+"Count_PtDiff");
-//   TH1D* mcp_rebinned = (TH1D*)mcp->Rebin(nbinpT,"mcp_rebinned",pTbins);
-  
-//   Get_RawYield_vsPt_FeeddownCorrected_RawCount(hRawYield_vsPt, H3D_detectedV0s_DataLike, H1I_SelectedEventCount, file_O2Analysis, SignalMean, SignalStandardDev, ipart, pTbins, nbinpT, ibinXaxisCut_low, ibinXaxisCut_high, warning_cutArry_ID, SideBandSizeMultiplierModifier, SignalExtractionType, InvMassRebinFactor);
-//   TH2D *H2D_PtResponseMatrix = new TH2D("H2D_PtResponseMatrix", "H2D_PtResponseMatrix", nbinpT, pTbins, nbinpT, pTbins);
-//   Get_PtResponseMatrix(H2D_PtResponseMatrix, file_O2Analysis, pTbins, nbinpT);
-
-//   TH1D* measured = (TH1D*)hRawYield_vsPt->Clone("measured");
-
-//   // TH1D* projX = (TH1D*)H2D_PtResponseMatrix->ProjectionX("projX",0,-1);
-//   // TH1D* projY = (TH1D*)H2D_PtResponseMatrix->ProjectionY("projY",0,-1);
-//   cout << "--------------------------------------------------------------------- PRE UNFOLDING TEST" << endl;
-//   for(int ibinPt = 1; ibinPt <= nbinpT; ibinPt++){
-//     cout << "measured(" << ibinPt << ") = " << measured->GetBinContent(ibinPt) << endl;
-//     cout << "mcp_rebinned(" << ibinPt << ") = " << mcp_rebinned->GetBinContent(ibinPt) << endl;
-//     for(int jbinPt = 1; jbinPt <= nbinpT; jbinPt++){
-//     cout << "H2D_PtResponseMatrix(" << ibinPt << "," << jbinPt << ") = " << H2D_PtResponseMatrix->GetBinContent(ibinPt,jbinPt) << endl;
-//     }
-//   }
-
-//   RooUnfoldResponse* response = new RooUnfoldResponse(measured, mcp_rebinned, H2D_PtResponseMatrix);
-//   // RooUnfoldResponse* response = new RooUnfoldResponse(projX, projY, H2D_PtResponseMatrix, "", "");
-//   // RooUnfold* unfold = new RooUnfoldBayes(response, measured, 4);
-//   RooUnfold* unfold = new RooUnfoldBinByBin(response, measured);
-
-//   // TH1D* hist_unfold = (TH1D*)unfold.Hunfold();
-//   // TH1D* hist_unfold = (TH1D*)unfold->Hreco()->Clone("hist_unfold");
-//   TH1D* hist_unfold = static_cast<TH1D*>(unfold->Hreco());
-
-
-//   hRawYield_vsPt = (TH1D*)hist_unfold->Clone("hRawYield_vsPt");
-
-//   for(int ibinPt = 1; ibinPt <= nbinpT; ibinPt++){
-//     double dpT = hRawYield_vsPt->GetXaxis()->GetBinWidth(ibinPt);
-//     double drapidity = 1.5; //1.5
-//     double d2N_dpTdy = hRawYield_vsPt->GetBinContent(ibinPt) *1./dpT*1./drapidity;
-//     hRawYield_vsPt->SetBinContent(ibinPt,d2N_dpTdy);
-//     hRawYield_vsPt->SetBinError(ibinPt,hRawYield_vsPt->GetBinError(ibinPt) *1./dpT*1./drapidity);  // error on d2N_dpTdy 
-//   }    
-
-//   hRawYield_vsPt->Scale(1./SelectedEventCount);
-
-//   // Lambda and AntiLambda Feeddown
-//   TH1D *H1D_Feeddown_Correction = new TH1D("H1D_Feeddown_Correction", "H1D_Feeddown_Correction", nbinpT, pTbins);
-//   if (ipart == 1 || ipart == 2) {
-//     Get_FeedDown(H1D_Feeddown_Correction, ipart, file_O2Analysis, pTbins, nbinpT);
-//     H1D_Feeddown_Correction->Scale(-1.);
-//     hRawYield_vsPt->Add(H1D_Feeddown_Correction);
-//     // cout << "test00000" << endl;
-//     for(int ibinPt = 1; ibinPt <= nbinpT; ibinPt++){
-//     cout << "H1D_Feeddown_Correction(" << ibinPt << ") = " << H1D_Feeddown_Correction->GetBinContent(ibinPt) << endl;
-//     }
-//   }
-//   delete H1D_Feeddown_Correction;
-
-
-//   cout << "--------------------------------------------------------------------- POST UNFOLDING TEST" << hist_unfold->GetEntries() << endl;
-//   for(int ibinPt = 1; ibinPt <= nbinpT; ibinPt++){
-//     cout << "truth_rebinned(" << ibinPt << ") = " << truth_rebinned->GetBinContent(ibinPt) << endl;
-//     cout << "H2D_PtResponseMatrix(" << ibinPt << ") = " << H2D_PtResponseMatrix->GetBinContent(ibinPt,ibinPt) << endl;
-//     cout << "hist_unfold(" << ibinPt << ") = " << hist_unfold->GetBinContent(ibinPt) << endl;
-//     cout << "measured(" << ibinPt << ") = " << measured->GetBinContent(ibinPt) << endl;
-//     cout << "measuredPostUnfoldPostCorrections(" << ibinPt << ") = " << hRawYield_vsPt->GetBinContent(ibinPt) << endl;
-//   }
-// }
-
-
-// unfolding: do the refolding to check
-
-// think about addding to o2physics the efficiecny based removal of tracks before jet finding
-
-
-//   Marta thesis really detailed;
-//   give details about choice of bins:
-
-//   each slice of gen pt in det and fluct matrices are both normalised to 1 (proba distrib)
-
-//   detector, both axes have same binning
-
-//   combined matrix is rebinned to available data binning
-
-//   generated axis should be bigger binning! ie fewer bins
-//   marta does bin=5GeV for rec and 10GeV for gen; because this 10GeV will be the binning of the unfolded spectrum
-
-//   The coarse response matrix is obtained by merging slices of the fine response matrix. Each slice in generated pT of the fine response matrix is weighted as function of a steeply falling spectrum.
-
-
-
-
-
-// To do list: 
-// - make the iteration finding based on convergence
 
 
 // rename refoldedUnfolded as closure test?
@@ -2704,11 +2708,5 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
 
 
 
-
-
-// comments:
-//  const bool useFineBinningTest = true; //looks like this gives the same flat distrib a when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
-
-// - how come measured is higher than mcp?
-
-// - pdfFolder_FineBinning_JoonsukMethod: fine binning seems to give decent results with AND without prior; however when using a prior, my refolding method still fails while the roounfold one succeeds 
+// WARNING FOR EFFICIENCIES I SHOULD REREAD THIS BELOW!!
+// hMcEfficiency_vsPt->Divide(hMcSignalCount_vsPt,TrueV0PtSpectrum_AnalysisBins, 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency

@@ -29,20 +29,21 @@ TH2D GetTransposeHistogram(TH2D* inputHist);
 TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB);
 TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU);
 
-TString contextCustom(TString* mainContext, TString* secondaryContext, TString* tertiaryContext, const char options[]);
-TString contextCustom(TString* mainContext, TString* secondaryContext, const char options[]);
-TString contextCustom(TString* mainContext, const char options[]);
+TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, const char options[]);
+TString contextCustomTwoFields(TString mainContext, TString secondaryContext, const char options[]);
+TString contextCustomOneField(TString mainContext, const char options[]);
 TString contextEtaRange(float* EtaRange);
 TString contextPtRange(float* PtRange);
 TString contextJetRadius(float jetRadius);
 
-TString contextDatasetRadiusCompAndVarRange(TString* mainContext, int iDataset, float* variableRange, const char options[]);
-TString contextDatasetCompAndRadiusAndVarRange(TString* mainContext, float jetRadius, float* variableRange, const char options[]);
-TString contextDatasetCompAndRadius(TString* mainContext, float jetRadius, const char options[]);
-TString contextDatasetComp(TString* mainContext, const char options[]);
+TString contextDatasetRadiusCompAndVarRange(TString mainContext, int iDataset, float* variableRange, const char options[]);
+TString contextDatasetCompAndRadiusAndVarRange(TString mainContext, float jetRadius, float* variableRange, const char options[]);
+TString contextDatasetCompAndRadius(TString mainContext, float jetRadius, const char options[]);
+TString contextDatasetComp(TString mainContext, const char options[]);
 
 void CentralityLegend(TString* centralityLegend, const float** arrayCentralityIntervals, int nCentralityBins);
-void IterationLegend(TString* iterationLegend, int nIterationmax);
+// void IterationLegend(TString* iterationLegend, int nIterationmax);
+void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfoldIterationMax, int step);
 
 
 void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[], TF1** optionalFitCollection);

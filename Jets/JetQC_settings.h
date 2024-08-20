@@ -33,9 +33,10 @@ const int iJetFinderQaType = 1;
 // const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 50, 90};
 // const int nCentralityBins = 3;
 // const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 50, 80};
-const int nCentralityBins = 4;
-const double arrayCentralityBinning[nCentralityBins+1] = {0, 10, 30, 50, 80};
-
+// const int nCentralityBins = 4;
+// const double arrayCentralityBinning[nCentralityBins+1] = {0, 10, 30, 50, 80};
+const int nCentralityBins = 7;
+const float arrayCentralityBinning[nCentralityBins+1] = {0, 10, 20, 30, 40, 60, 80, 100};
 
  
 const int nTracksBins = 11;
@@ -729,10 +730,10 @@ TFile* file_AliAnalysis;
 
 // //////// -------- LHC23zzh - apass 4 -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-// const TString* texDatasetsComparisonType = new TString("MC");
+// const TString* texDatasetsComparisonType = new TString("run");
 // const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
 // const int nDatasets = 2;
-// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_run544116", "LHC23zzh_apass4_run544123"};
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_areaLeadingCuts_centralityWindowsAvailable/run544116", "LHC23zzh_apass4_areaLeadingCuts_centralityWindowsAvailable/run544123"};
 // // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
 // const TString DatasetsNames[nDatasets] = {"run544116", "run544123"};
 // TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
@@ -746,6 +747,7 @@ TFile* file_AliAnalysis;
 //                                           };
 
 // const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false, false};
 
 
 
@@ -777,9 +779,9 @@ TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
 const TString* texDatasetsComparisonType = new TString("Data");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
 const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass4_areaLeadingCuts"};
+const TString Datasets[nDatasets] = {"LHC23zzh_apass4_areaLeadingCuts_centralityWindowsAvailable"};
 // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"apass4"};
+const TString DatasetsNames[nDatasets] = {"R = 0.2"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                         };
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
@@ -792,6 +794,26 @@ const TString trainId = "";
 const bool isDatasetWeighted[nDatasets] = {false};
 
 
+// //////// -------- LHC23zzh - apass 4 withOUT area and leadingtrackpt cuts-------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("Data");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh apass4");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_areaLeadingCuts_AND_NoAreaNorLeadingCuts"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"LHC23zzh_apass4_NoAreaNorLeadingCuts"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                         };
+// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+// //                                           "jet-finder-charged-qa_central_5090"
+// //                                           };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_noAreaLeadingJetCut"
+//                                           };
+
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false};
+
+
 
 // //////// -------- MC pp anchored PbPB vs pp -------- ////////
 // TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
@@ -800,18 +822,63 @@ const bool isDatasetWeighted[nDatasets] = {false};
 // const int nDatasets = 3;
 // // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
 // // const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
-// const TString Datasets[nDatasets] = {"LHC24d2", "LHC24d2", "LHC24d2"};
-// const TString DatasetsNames[nDatasets] = {"sel8", "selMC", "sel8Full"};
+// const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_local"};
+// const TString DatasetsNames[nDatasets] = {"PbPbAnchored", "ppAnchored", "LHC24f3 pp"};
 // TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
 //                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
 //                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root")
 //                                         };
-// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_sel8_id12438",
-//                                             "jet-finder-charged-qa_id12438",
-//                                             "jet-finder-charged-qa_id15089"
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                             "jet-finder-charged-qa",
+//                                             "jet-finder-charged-qa"
 //                                           };
 
 // const TString trainId = "";
-// const bool isDatasetWeighted[nDatasets] = {false, false, false};
+// const bool isDatasetWeighted[nDatasets] = {true, true, false};
 
 // // jaime testJetAnchoredGapGen-20240801-155530
+
+
+// //////// -------- MC pp anchored PbPB vs pp -------- ////////
+// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV");
+// const TString* texDatasetsComparisonType = new TString("includePartonEvent");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("jet-jet sim");
+// const int nDatasets = 2;
+// // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
+// // const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
+// const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetPbPb_includePartonEvent"};
+// const TString DatasetsNames[nDatasets] = {"includePartonEvent off", "includePartonEvent on"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                             "jet-finder-charged-qa"
+//                                           };
+
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {true, true};
+
+// // jaime testJetAnchoredGapGen-20240801-155530
+
+
+
+// //////// -------- LHC23zzh - apass 4 withOUT area and leadingtrackpt cuts VS LHC22o pp-------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("Data");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_areaLeadingCuts_AND_NoAreaNorLeadingCuts", "LHC22o_pass6_train238827"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"LHC23zzh apass4", "LHC22o pass6"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+// //                                           "jet-finder-charged-qa_central_5090"
+// //                                           };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_noAreaLeadingJetCut",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false, false};

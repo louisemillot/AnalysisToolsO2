@@ -50,7 +50,7 @@ void LoadLibs();
 void Draw_Pt_RadiusComparison(int iDataset, float* etaRange);
 void Draw_Eta_RadiusComparison(int iDataset, float* PtRange);
 void Draw_Phi_RadiusComparison(int iDataset, float* PtRange);
-void Draw_NTracks_RadiusComparison_withPtRange(int iDataset, float* PtRange);
+void Draw_jetNTracks_RadiusComparison_withPtRange(int iDataset, float* PtRange);
 void Draw_JetArea_vs_JetPt_RadiusComparison(int iDataset, float* PtRange);
 void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iDataset, float* PtRange);
 void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iDataset, float* etaRange);
@@ -73,7 +73,7 @@ void Draw_Area_PtIntegrated_DatasetComparison(float jetRadius, float* PtRange);
 void Draw_Rho_vs_Centrality_DatasetComp();
 void Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
 void Draw_Rho_vs_LeadingJetPt_DatasetComp();
-void Draw_BkgFluctuations_vs_Centrality_DatasetComp();
+void Draw_BkgFluctuations_vs_Centrality_DatasetComp(std::array<std::array<float, 2>, 2> drawnWindow);
 void Draw_SelectedMultiplicity_vs_Centrality_DatasetComp();
 void Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio();
 void Draw_Rho_vs_SelectedMultiplicity_DatasetComp_withCutDemarcation();
@@ -89,7 +89,6 @@ void Draw_Eta_CentralityComparison(float jetRadius, int iDataset);
 void Draw_Phi_CentralityComparison(float jetRadius, int iDataset);
 void Draw_BkgFluctuations_withFit_CentralityProjection(int iDataset, std::array<std::array<float, 2>, 2> drawnWindowZoom);
 void Draw_Rho_CentralityProjection(int iDataset, const char options[]);
-void Draw_SelectedMultiplicity_CentralityProjection(int iDataset, const char options[]);
 void Draw_RhoMean_asFunctionOf_Centrality(int iDataset, const char options[]);
 
 // NTracks comp
@@ -104,6 +103,12 @@ void Draw_Pt_Run2Run3Comparison_0010Cent_R040(int iDataset, const char options[]
 
 // MC jet pt resolution
 void Draw_jet_resolution_MC_PtRangeComparison(int iDataset, double jetRadius, const char options[]);
+
+void Count_Nevents_perCentClass(int iDataset, const char options[]);
+
+
+
+void Draw_Pt_PbPbToPPComparison_HARDCODED(float jetRadius, float* etaRange, const char options[]);
 
 /////////////////////////////////////////////////////
 ///////////////////// Main Macro ////////////////////
@@ -134,9 +139,9 @@ void JetQC() {
   // const int nPtMinCuts = 7;
   // float jetPtMinCut;
   // float jetPtMinCutArray[nPtMinCuts] = {-999, 0, 5, 10, 15, 20, 40.};
-  const int nPtMinCuts = 1;
+  const int nPtMinCuts = 3;
   float jetPtMinCut;
-  float jetPtMinCutArray[nPtMinCuts] = {0};
+  float jetPtMinCutArray[nPtMinCuts] = {0, 30, 50};
 
   for(int iPtMinCut = 0; iPtMinCut < nPtMinCuts; iPtMinCut++){
     jetPtMinCut = jetPtMinCutArray[iPtMinCut];
@@ -150,27 +155,27 @@ void JetQC() {
   //   float PtRangeZoom5060[2] = {50, 60};
   //   float PtRangeZoom8090[2] = {80, 90};
 
-    // Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
     // Draw_Eta_DatasetComparison(jetR02, ptRange, "normEvents");
     // Draw_Eta_DatasetComparison(jetR06, ptRange, "normEvents");
-    // Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
     // Draw_Area_PtIntegrated_DatasetComparison(jetRadiusForDataComp, ptRange);
     // Draw_Area_PtIntegrated_DatasetComparison(jetR02, ptRange);
     // Draw_Area_PtIntegrated_DatasetComparison(jetR06, ptRange);
-
+ 
     for(int iDataset = 0; iDataset < nDatasets; iDataset++){
       // Draw_Eta_RadiusComparison(iDataset, ptRange);
       // Draw_Phi_RadiusComparison(iDataset, ptRange);
-      // Draw_NTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom0);
-      // Draw_NTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom2030);
-      // Draw_NTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom3040);
-      // Draw_NTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom4050);
-      // Draw_NTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom5060);
-      // Draw_NTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom8090);
+      // Draw_jetNTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom0);
+      // Draw_jetNTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom2030);
+      // Draw_jetNTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom3040);
+      // Draw_jetNTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom4050);
+      // Draw_jetNTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom5060);
+      // Draw_jetNTracks_RadiusComparison_withPtRange(iDataset, PtRangeZoom8090);
 
       // // 2D plots
       // Draw_JetArea_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
-      Draw_JetArea_vs_JetPt_RadiusComparison(iDataset, ptRange);
+      // Draw_JetArea_vs_JetPt_RadiusComparison(iDataset, ptRange);
       // Draw_JetNTracks_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
       // Draw_JetPhi_vs_JetEta_RadiusComparison(iDataset);
       // Draw_JetEta_vs_JetPt_RadiusComparison(iDataset, PtRangeZoom0);
@@ -181,6 +186,7 @@ void JetQC() {
   }
 
   // Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
+  // Draw_Pt_PbPbToPPComparison_HARDCODED(jetRadiusForDataComp, etaRangeSym, "normEvents");
   // Draw_Pt_ratio_etaNeg_etaPos_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
   // Draw_Ncoll_vs_centrality("");
 
@@ -189,7 +195,7 @@ void JetQC() {
   //   // Draw_Pt_RadiusComparison_mcp(iDataset, etaRangeSym);
   //   // Draw_Pt_RadiusComparison(iDataset, etaRangeNeg);
   //   // Draw_Pt_RadiusComparison(iDataset, etaRangePos);
-  //   // Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iDataset, etaRangeSym);
+    // Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(iDataset, etaRangeSym);
   //   Draw_Eta_PtCutComparison(jetR02, iDataset, jetPtMinCutArray, nPtMinCuts, "normEntries");
   //   Draw_Eta_PtCutComparison(jetR06, iDataset, jetPtMinCutArray, nPtMinCuts, "normEntries");
     // Draw_Eta_PtCutComparison(jetRadiusForDataComp, iDataset, jetPtMinCutArray, nPtMinCuts, "normEntries");
@@ -206,25 +212,28 @@ void JetQC() {
   //   // Draw_Pt_Run2Run3Comparison_0010Cent_R040(iDataset, "jetUncorrected");
 
   // Draw_jet_resolution_MC_PtRangeComparison(iDataset, jetRadiusForDataComp, "");
+  // Count_Nevents_perCentClass(iDataset, "");
   }
 
 
   // ////// Background //////
   // Draw_Rho_vs_Centrality_DatasetComp();
-  Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
+  // Draw_Rho_vs_SelectedMultiplicity_DatasetComp();
   // Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio();
-  // Draw_BkgFluctuations_vs_Centrality_DatasetComp();
+
+  const std::array<std::array<float, 2>, 2> drawnWindowBkgFluctVsArea = {{{-999, -999}, {-50, 150}}}; // {{xmin, xmax}, {ymin, ymax}}
+
+  // Draw_BkgFluctuations_vs_Centrality_DatasetComp(drawnWindowBkgFluctVsArea);
   // Draw_SelectedMultiplicity_vs_Centrality_DatasetComp();
   // // Draw_Rho_vs_LeadingJetPt_DatasetComp();
-  std::array<std::array<float, 2>, 2> drawnWindowBkgFluctZoom = {{{-20, 20}, 
+  std::array<std::array<float, 2>, 2> drawnWindowBkgFluctZoom = {{{-10, 20}, 
                                                                   {0.001, 12}}}; // {{xmin, xmax}, {ymin, ymax}}
-  // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-  //   // Draw_Rho_withFit_NTracksProjection(iDataset); // don't use, not really finished, nor really important I think
-  //   Draw_Rho_CentralityProjection(iDataset, "normEntries");
-  //   Draw_RhoMean_asFunctionOf_Centrality(iDataset,"");
-  //   Draw_BkgFluctuations_withFit_CentralityProjection(iDataset, drawnWindowBkgFluctZoom);
-  //   Draw_SelectedMultiplicity_CentralityProjection(iDataset, "normEntries");
-  // }
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    // Draw_Rho_withFit_NTracksProjection(iDataset); // don't use, not really finished, nor really important I think
+    // Draw_Rho_CentralityProjection(iDataset, "normEntries");
+    // Draw_RhoMean_asFunctionOf_Centrality(iDataset,"");
+    // Draw_BkgFluctuations_withFit_CentralityProjection(iDataset, drawnWindowBkgFluctZoom);
+  }
 
 
 }
@@ -391,7 +400,7 @@ void Draw_Pt_RadiusComparison(int iDataset, float* etaRange) {
     NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRadius], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, etaRange, "eta"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextEtaRange(etaRange), ""));
@@ -427,7 +436,7 @@ void Draw_Eta_RadiusComparison(int iDataset, float* PtRange) {
     NormaliseYieldToNEvents(H1D_jetEta_rebinned[iRadius], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_Eta_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_Eta_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
@@ -465,7 +474,7 @@ void Draw_Phi_RadiusComparison(int iDataset, float* PtRange) {
     NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iRadius], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
   }
  
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_Phi_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_Phi_@pt["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
@@ -473,13 +482,13 @@ void Draw_Phi_RadiusComparison(int iDataset, float* PtRange) {
   Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned, RadiusLegend, nRadius, textContext, pdfName, texPhiX, texJetPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "");
 }
 
-void Draw_NTracks_RadiusComparison_withPtRange(int iDataset, float* PtRange) {
+void Draw_jetNTracks_RadiusComparison_withPtRange(int iDataset, float* PtRange) {
 
   TH3D* H3D_jetRjetPtjetNTracks;
   TH1D* H1D_jetNTracks[nRadius];
   TH1D* H1D_jetNTracks_rebinned[nRadius];
   
-  H3D_jetRjetPtjetNTracks = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_r_jet_pt_jet_ntracks"+jetFinderQaHistType[iJetFinderQaType]))->Clone("Draw_NTracks_RadiusComparison_withPtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
+  H3D_jetRjetPtjetNTracks = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_r_jet_pt_jet_ntracks"+jetFinderQaHistType[iJetFinderQaType]))->Clone("Draw_jetNTracks_RadiusComparison_withPtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
   H3D_jetRjetPtjetNTracks->Sumw2();
 
   float PtCutLow = PtRange[0];
@@ -501,7 +510,7 @@ void Draw_NTracks_RadiusComparison_withPtRange(int iDataset, float* PtRange) {
     NormaliseYieldToNEvents(H1D_jetNTracks_rebinned[iRadius], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_NTracks_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_NTracks_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
@@ -538,7 +547,7 @@ void Draw_JetArea_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
     H2D_jetArea[iRadius]->Scale(1./H2D_jetArea[iRadius]->Integral(1, H2D_jetArea[iRadius]->GetNbinsX(), 1, H2D_jetArea[iRadius]->GetNbinsY(), "width"));
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetArea-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_JetArea-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   // TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
@@ -576,7 +585,7 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
     // H2D_jetNTracks_rebinned[iRadius] = (TH2D*)H2D_jetNTracks[iRadius]->Rebin(1.,"jetNTracks_rebinned_"+RadiusLegend[iRadius]);
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetNTracks-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_JetNTracks-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
@@ -646,7 +655,7 @@ void Draw_JetPhi_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
     // H2D_jetPhi_rebinned[iRadius] = (TH2D*)H2D_jetPhi[iRadius]->RebinY(1.,"H1D_jetPhi_rebinned_"+RadiusLegend[iRadius]);
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetPhi-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_JetPhi-vs-Pt_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
@@ -678,7 +687,7 @@ void Draw_JetPhi_vs_JetEta_RadiusComparison(int iDataset) {
     // H2D_jetPhijetEta_rebinned[iRadius] = (TH2D*)H2D_jetArea[iRadius]->RebinY(2.,"H1D_jetPhi_jetEta_rebinned_"+RadiusLegend[iRadius]);
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetPhi-vs-Eta"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_JetPhi-vs-Eta"+jetFinderQaHistType[iJetFinderQaType]);
 
   TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
@@ -731,8 +740,14 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, const char opti
       NormaliseYieldToNEntries(H1D_jetPt_rebinned[iDataset]);
       yAxisLabel = texJetPtYield_EntriesNorm;
     }
+    int Nevents;
     if (strstr(options, "normEvents") != NULL) {
-      NormaliseYieldToNEvents(H1D_jetPt_rebinned[iDataset], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
+      if (isDatasetWeighted[iDataset]) {
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+      } else {
+        Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]);
+      }
+      NormaliseYieldToNEvents(H1D_jetPt_rebinned[iDataset], Nevents);
       yAxisLabel = texJetPtYield_EventNorm;
     }
     cout << "test0.4" << endl;
@@ -787,14 +802,20 @@ void Draw_Eta_DatasetComparison(float jetRadius, float* PtRange, const char opti
     ibinJetRadius = H3D_jetRjetPtjetEta[iDataset]->GetXaxis()->FindBin(jetRadius+GLOBAL_epsilon);
 
     H1D_jetEta[iDataset] = (TH1D*)H3D_jetRjetPtjetEta[iDataset]->ProjectionZ("jetEta_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius, ibinJetRadius, ibinPt_low, ibinPt_high, "e");
-    H1D_jetEta_rebinned[iDataset] = (TH1D*)H1D_jetEta[iDataset]->Rebin(5.,"jetEta_rebinned_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
+    H1D_jetEta_rebinned[iDataset] = (TH1D*)H1D_jetEta[iDataset]->Rebin(1.,"jetEta_rebinned_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
 
     if (strstr(options, "normEntries") != NULL) {
       NormaliseYieldToNEntries(H1D_jetEta_rebinned[iDataset]);
       yAxisLabel = texJetEtaYield_EntriesNorm;
     }
+    int Nevents;
     if (strstr(options, "normEvents") != NULL) {
-      NormaliseYieldToNEvents(H1D_jetEta_rebinned[iDataset], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
+      if (isDatasetWeighted[iDataset]) {
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+      } else {
+        Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]);
+      }
+      NormaliseYieldToNEvents(H1D_jetEta_rebinned[iDataset], Nevents);
       yAxisLabel = texJetEtaYield_EventNorm;
     }
   
@@ -850,14 +871,20 @@ void Draw_Phi_DatasetComparison(float jetRadius, float* PtRange, const char opti
     ibinJetRadius = H3D_jetRjetPtjetPhi[iDataset]->GetXaxis()->FindBin(jetRadius+GLOBAL_epsilon);
 
     H1D_jetPhi[iDataset] = (TH1D*)H3D_jetRjetPtjetPhi[iDataset]->ProjectionZ("jetPhi_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinJetRadius,ibinJetRadius, ibinPt_low, ibinPt_high, "e");
-    H1D_jetPhi_rebinned[iDataset] = (TH1D*)H1D_jetPhi[iDataset]->Rebin(1.,"jetPhi_rebinned_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
+    H1D_jetPhi_rebinned[iDataset] = (TH1D*)H1D_jetPhi[iDataset]->Rebin(5.,"jetPhi_rebinned_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
 
     if (strstr(options, "normEntries") != NULL) {
       NormaliseYieldToNEntries(H1D_jetPhi_rebinned[iDataset]);
       yAxisLabel = texJetPhiYield_EntriesNorm;
     }
+    int Nevents;
     if (strstr(options, "normEvents") != NULL) {
-      NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iDataset], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
+      if (isDatasetWeighted[iDataset]) {
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+      } else {
+        Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]);
+      }
+      NormaliseYieldToNEvents(H1D_jetPhi_rebinned[iDataset], Nevents);
       yAxisLabel = texJetPhiYield_EventNorm;
     }
 
@@ -929,7 +956,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_RadiusComparison(int iDataset, float* etaRange)
     divideSuccess = H1D_jetPt_rebinned_ratios[iRadius]->Divide(H1D_jetPt_right_rebinned[iRadius], H1D_jetPt_left_rebinned[iRadius]);
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_pT_etaRightLeftRatio_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_pT_etaRightLeftRatio_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetRadiusCompAndVarRangecontextDatasetRadiusCompAndVarRange(iDataset, etaRange, "eta"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextEtaRange(etaRange), ""));
@@ -1074,7 +1101,7 @@ void Draw_JetTRDratio_vs_JetEta(int iDataset) {
   H2D_jetEtajetTRDratio[0] = (TH2D*)H3D_jetPtjetEtajetTRDratio->Project3D((TString)Form("%d", iDataset)+"_jetEta_jetTRratio_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
   // H2D_jetEtajetTRDratio_rebinned = (TH2D*)H2D_jetEtajetTRDratio->RebinY(2.,"H1D_jetEta_jetTRD_rebinned_"+RadiusLegend[iRadius]);
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetTRDratio-vs-Eta"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_JetTRDratio-vs-Eta"+jetFinderQaHistType[iJetFinderQaType]);
 
   TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
@@ -1095,7 +1122,7 @@ void Draw_JetTRDcount_vs_JetEta(int iDataset) {
   H2D_jetEtajetTRD[0] = (TH2D*)H3D_jetPtjetEtajetTRD->Project3D((TString)Form("%d", iDataset)+"_jetEta_jetTR_e_zy"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
   // // H2D_jetEtajetTRD_rebinned = (TH2D*)H2D_jetEtajetTRD->RebinY(2.,"H1D_jetEta_jetTRD_rebinned_"+RadiusLegend[iRadius]);
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_JetTRD-vs-Eta"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_JetTRD-vs-Eta"+jetFinderQaHistType[iJetFinderQaType]);
 
   TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
@@ -1158,7 +1185,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_TRDonly_vs_noTRD(int iDataset, float* etaRange)
   H1D_jetPt_TRDonly_rebinned_ratios[0]->Reset("M");
   divideSuccess = H1D_jetPt_TRDonly_rebinned_ratios[0]->Divide(H1D_jetPt_right_TRDonly_rebinned[0], H1D_jetPt_left_TRDonly_rebinned[0]);
 
-  TString* pdfNameA = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_pT_etaRightLeftRatio_JetTRDonly"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfNameA = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_pT_etaRightLeftRatio_JetTRDonly"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContextA(contextDatasetRadiusCompAndVarRange(iDataset, etaRange, "eta"));
   TString textContextA(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextEtaRange(etaRange), ""));
@@ -1186,7 +1213,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_TRDonly_vs_noTRD(int iDataset, float* etaRange)
   H1D_jetPt_noTRD_rebinned_ratios[0]->Reset("M");
   divideSuccess = H1D_jetPt_noTRD_rebinned_ratios[0]->Divide(H1D_jetPt_right_noTRD_rebinned[0], H1D_jetPt_left_noTRD_rebinned[0]);
 
-  TString* pdfNameB = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_pT_etaRightLeftRatio_JetNoTRD"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfNameB = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_pT_etaRightLeftRatio_JetNoTRD"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContextB(contextDatasetRadiusCompAndVarRange(iDataset, etaRange, "eta"));
   TString textContextB(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextEtaRange(etaRange), ""));
@@ -1204,7 +1231,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_TRDonly_vs_noTRD(int iDataset, float* etaRange)
   H1D_jetPt_noTRD_vs_onlyTRD_ratios[0]->Reset("M");
   divideSuccess = H1D_jetPt_noTRD_vs_onlyTRD_ratios[0]->Divide(H1D_jetPt_TRDonly_rebinned_ratios[0], H1D_jetPt_noTRD_rebinned_ratios[0]);
 
-  TString* pdfNameC = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_pT_etaRightLeftRatio_Jet_NoTRD_vs_OnlyTRD_ratio"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfNameC = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_pT_etaRightLeftRatio_Jet_NoTRD_vs_OnlyTRD_ratio"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContextC(contextDatasetRadiusCompAndVarRange(iDataset, etaRange, "eta"));
   TString textContextC(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextEtaRange(etaRange), ""));
@@ -1472,7 +1499,7 @@ void Draw_Rho_vs_LeadingJetPt_DatasetComp() {
   Draw_TH2_Histograms(H2D_rhoLeadJet_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texLeadJetPt, texRho, texCollisionDataInfo, drawnWindowAuto, "logz,autoRangeSame");
 }
 
-void Draw_BkgFluctuations_vs_Centrality_DatasetComp() {
+void Draw_BkgFluctuations_vs_Centrality_DatasetComp(std::array<std::array<float, 2>, 2> drawnWindow) {
 
   TH2D* H2D_temp[nDatasets];
   TH2D* H2D_fluctuations[nDatasets];
@@ -1508,7 +1535,6 @@ void Draw_BkgFluctuations_vs_Centrality_DatasetComp() {
   TString placeHolderLegend[1] = {""};
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
-  const std::array<std::array<float, 2>, 2> drawnWindow = {{{-999, -999}, {-150, 150}}}; // {{xmin, xmax}, {ymin, ymax}}
   Draw_TH2_Histograms(H2D_fluctuations_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texCentrality, texBkgFluctuationRandomCone, texCollisionDataInfo, drawnWindow, "logz,autoRangeSameSym");
 }
 
@@ -1546,16 +1572,20 @@ void Draw_Pt_CentralityComparison(float jetRadius, int iDataset) {
     ss.clear();
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+Datasets[iDataset]+"_Pt"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+DatasetsNames[iDataset]+"_Pt"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetCompAndRadius(jetRadius, ""));
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(jetRadius), ""));
 
-  const std::array<std::array<float, 2>, 2> drawnWindow = {{{-20, 200}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindow = {{{0, 200}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  if(iJetFinderQaType == 1) {
+    drawnWindow = {{{-20, 200}, {-999, -999}}};
+  }
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texJetPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindow, "logy");
   // Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texJetPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "logy");
-  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+Datasets[iDataset]+"_Pt"+jetFinderQaHistType[iJetFinderQaType]+"_logx");
+  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+DatasetsNames[iDataset]+"_Pt"+jetFinderQaHistType[iJetFinderQaType]+"_logx");
   const std::array<std::array<float, 2>, 2> drawnWindowLog = {{{0.4, 200}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texPtX, texJetPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowLog, "logx,logy");
 
 }
@@ -1592,7 +1622,7 @@ void Draw_Eta_CentralityComparison(float jetRadius, int iDataset) { //for now on
     ss.clear();
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+Datasets[iDataset]+"_Eta"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+DatasetsNames[iDataset]+"_Eta"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetCompAndRadius(jetRadius, ""));
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(jetRadius), ""));
@@ -1635,7 +1665,7 @@ void Draw_Phi_CentralityComparison(float jetRadius, int iDataset) { //for now on
     ss.clear();
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+Datasets[iDataset]+"_Phi"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_R="+Form("%.1f", jetRadius)+"_"+DatasetsNames[iDataset]+"_Phi"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetCompAndRadius(jetRadius, ""));
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(jetRadius), ""));
@@ -1694,19 +1724,19 @@ void Draw_BkgFluctuations_CentralityProjection(int iDataset, std::array<std::arr
     ss.clear();
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuations_logy");
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuations_logy");
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
   Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy");
-  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuations");
+  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuations");
   Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "");
 
   // zoom around 0
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
   //   H1D_fluctuations_rebinned[iCentralityBin]->GetXaxis()->SetRangeUser(zoomX[0], zoomX[1]);
   // }
-  TString* pdfName_zoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuations_logy_zoom");
+  TString* pdfName_zoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuations_logy_zoom");
   Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName_zoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, "logy");
 }
 
@@ -1759,12 +1789,12 @@ void Draw_Rho_CentralityProjection(int iDataset, const char options[]) {
     ss.clear();
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgRho_logy");
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgRho_logy");
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
   Draw_TH1_Histograms_in_one(H1D_rho_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texRho, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "autoXrange,logy");
-  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgRho");
+  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgRho");
   Draw_TH1_Histograms_in_one(H1D_rho_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texRho, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "autoXrange");
 }
 
@@ -1821,68 +1851,9 @@ void Draw_RhoMean_asFunctionOf_Centrality(int iDataset, const char options[]) {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_RhoMean_asFunctionOf_Centrality");
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_RhoMean_asFunctionOf_Centrality");
   Draw_TH1_Histogram(H1D_MeanRho_asFunctionOf_Centrality, textContext, pdfName, texCentrality, texRhoMean, texCollisionDataInfo, drawnWindowAuto, "");
 }
-
-void Draw_SelectedMultiplicity_CentralityProjection(int iDataset, const char options[]) {
-
-  TH2D* H2D_multCentrality;
-
-  TH1D* H1D_mult[nCentralityBins];
-  TH1D* H1D_mult_rebinned[nCentralityBins];
-
-  H2D_multCentrality = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_ntracks"))->Clone("Draw_SelectedMultiplicity_CentralityProjection"+Datasets[iDataset]);
-  H2D_multCentrality->Sumw2();
-
-  // float FluctuLow = -60;
-  // float FluctuHigh = 60;
-  // int ibinFluctu_low  = H2D_multCentrality->GetYaxis()->FindBin(FluctuLow);
-  // int ibinFluctu_high = H2D_multCentrality->GetYaxis()->FindBin(FluctuHigh);
-  // H2D_multCentrality->GetYaxis()->SetRange(ibinFluctu_low, ibinFluctu_high);
-
-  int ibinCent_low, ibinCent_high;
-  TString CentralityLegend[nCentralityBins];
-  std::stringstream ss;
-
-  TString* yAxisLabel;
-
-  for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
-    ibinCent_low = H2D_multCentrality->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin]);
-    ibinCent_high = H2D_multCentrality->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin+1])-1;
-    // cout << "ibinCent_low = " << ibinCent_low << ", ibinCent_high = " << ibinCent_high << endl;
-    H1D_mult[iCentralityBin] = (TH1D*)H2D_multCentrality->ProjectionY("multCentrality_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
-
-    H1D_mult_rebinned[iCentralityBin] = (TH1D*)H1D_mult[iCentralityBin]->Rebin(1.,"multCentrality_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
-
-    if (strstr(options, "normEntries") != NULL) {
-      NormaliseYieldToNEntries(H1D_mult_rebinned[iCentralityBin]);
-      yAxisLabel = texCollNorm_selMultYield;
-    }
-    if (strstr(options, "normEvents") != NULL) {
-      NormaliseYieldToNEvents(H1D_mult_rebinned[iCentralityBin], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
-      yAxisLabel = texCollNorm_selMultYield;
-    }
-    if (strstr(options, "normEventsCentrality") != NULL) {
-      NormaliseYieldToNEvents(H1D_mult_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1], trainId));
-      yAxisLabel = texCollNorm_selMultYield_CentWindow;
-    }
-    
-    ss << "Cent " << arrayCentralityBinning[iCentralityBin] << " - " << arrayCentralityBinning[iCentralityBin+1] << " ";
-    CentralityLegend[iCentralityBin] = (TString)ss.str();
-    ss.str("");
-    ss.clear();
-  }
-
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_selMult_logy");
-
-  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
-
-  Draw_TH1_Histograms_in_one(H1D_mult_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texSelectedMultiplicity, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "autoXrange,logy");
-  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_selMult");
-  Draw_TH1_Histograms_in_one(H1D_mult_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texSelectedMultiplicity, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "autoXrange");
-}
-
 
 void Draw_Eta_PtCutComparison(float jetRadius, int iDataset, float* PtCuts, int nPtCut, const char options[]) {
 
@@ -1926,7 +1897,7 @@ void Draw_Eta_PtCutComparison(float jetRadius, int iDataset, float* PtCuts, int 
     ss.clear();
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", jetRadius)+"_PtCutComp_Eta"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_R="+Form("%.1f", jetRadius)+"_PtCutComp_Eta"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetCompAndRadius(jetRadius, ""));
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(jetRadius), ""));
@@ -1979,7 +1950,7 @@ void Draw_Phi_PtCutComparison(float jetRadius, int iDataset, float* PtCuts, int 
     ss.clear();
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_R="+Form("%.1f", jetRadius)+"_PtCutComp_Phi"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_R="+Form("%.1f", jetRadius)+"_PtCutComp_Phi"+jetFinderQaHistType[iJetFinderQaType]);
 
   // TString textContext(contextDatasetCompAndRadius(jetRadius, ""));
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(jetRadius), ""));
@@ -2111,9 +2082,9 @@ void Draw_BkgFluctuations_withFit_CentralityProjection(int iDataset, std::array<
 
   // ------ plot the bkg fluctuation distributions with the fits ------ //
 
-  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuations");
+  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuations");
   Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "fit", gaussDrawn); 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuations_logy");
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuations_logy");
   Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy,fit", gaussDrawn);
   cout << "test6" << endl;
 
@@ -2121,7 +2092,7 @@ void Draw_BkgFluctuations_withFit_CentralityProjection(int iDataset, std::array<
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
   //   H1D_fluctuations_rebinned[iCentralityBin]->GetXaxis()->SetRangeUser(zoomX[0], zoomX[1]);
   // }
-  TString* pdfName2_zoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuations_logy_zoom");
+  TString* pdfName2_zoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuations_logy_zoom");
   Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2_zoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, "logy,fit", gaussDrawn); // replace ", texCollisionDataInfo, drawnWindowAuto, " with ", drawnWindowAuto, " with drawnWindowAuto defined as something like {-999, -999}, and in hist drawing functino I chek for it, and if it's set I draw as set,else I do as usual
 
   cout << "test7" << endl;
@@ -2142,9 +2113,9 @@ void Draw_BkgFluctuations_withFit_CentralityProjection(int iDataset, std::array<
   }
   cout << "test9" << endl;
 
-  TString* pdfName3 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuationsSigma_asFunctionOf_Centrality");
+  TString* pdfName3 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuationsSigma_asFunctionOf_Centrality");
   Draw_TH1_Histogram(H1D_SigmaBkgFluct_asFunctionOf_Centrality, textContext, pdfName3, texCentrality, texSigmaBkgFluctFit, texCollisionDataInfo, drawnWindowAuto, "");
-  TString* pdfName4 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+Datasets[iDataset]+"_BkgFluctuationsMean_asFunctionOf_Centrality");
+  TString* pdfName4 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuationsMean_asFunctionOf_Centrality");
   Draw_TH1_Histogram(H1D_MeanBkgFluct_asFunctionOf_Centrality, textContext, pdfName4, texCentrality, texMeanBkgFluctFit, texCollisionDataInfo, drawnWindowAuto, "");
 
   cout << "Draw_BkgFluctuations_withFit_CentralityProjection -------- replace P and L in fits with WL once the installed root version has the released bugfix for it" << endl;
@@ -2268,7 +2239,7 @@ void Draw_Rho_withFit_NTracksProjection(int iDataset) { /// should be bkgfluct v
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
   // ------ plot the bkg fluctuation distributions with the fits ------ //
-  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_nTracksComp_"+Datasets[iDataset]+"_Rho");
+  TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_nTracksComp_"+DatasetsNames[iDataset]+"_Rho");
   Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nTracksBins, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "fit", gaussDrawn);
   // TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_nTracksComp_"+Datasets[iDataset]+"_Rho_logy");
   // Draw_TH1_Histograms_in_one(H1D_fluctuations_rebinned, CentralityLegend, nTracksBins, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "logy,fit", gaussDrawn);
@@ -2372,12 +2343,12 @@ void Draw_Pt_Run2Run3Comparison_0010Cent_R040(int iDataset, const char options[]
 
 
 
-  TString* pdfName = new TString("jet_Run2_vs_Run3_"+Datasets[iDataset]+"_Pt"+correctedStatus);
+  TString* pdfName = new TString("jet_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_Pt"+correctedStatus);
 
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
   Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texPtX, texJetPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logy");
-  TString* pdfName2 = new TString("jet_Run2_vs_Run3_"+Datasets[iDataset]+"_Pt_logx");
+  TString* pdfName2 = new TString("jet_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_Pt_logx");
   Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName2, texPtX, texJetPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
 }
 
@@ -2520,7 +2491,7 @@ void Draw_Pt_RadiusComparison_mcp(int iDataset, float* etaRange) {
     NormaliseYieldToNEvents(H1D_jetPt_rebinned[iRadius], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
   }
 
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]+"_mcp");
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+DatasetsNames[iDataset]+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]+"_mcp");
 
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, etaRange, "eta"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextEtaRange(etaRange), ""));
@@ -2603,6 +2574,118 @@ void Draw_jet_resolution_MC_PtRangeComparison(int iDataset, double jetRadius, co
   std::array<std::array<float, 2>, 2> drawnWindow = {{{-2, 1.5}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   Draw_TH1_Histograms_in_one(H1D_jetRes_rebinned, PtRangeNames, nPtRange, textContext, pdfName, texResMC, texJetPtYield_EntriesNorm, texCollisionDataInfo, drawnWindow, "logy");
+}
+
+
+void Count_Nevents_perCentClass(int iDataset, const char options[]) {
+
+  TH2D* H2D_centrality_collisions = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_collisions"))->Clone("Count_Nevents_perCentClass");
+  
+  TString* yAxisLabel;
+
+  const int nCent = 7;
+  float centRange[nCent+1] = {-100, 00, 10, 20, 40, 60, 80, 140};
+
+  cout << "dataset " << DatasetsNames[iDataset]<< endl;
+  for(int iCent = 0; iCent < nCent; iCent++){
+    float centLow = centRange[iCent];
+    float centHigh = centRange[iCent+1];
+
+    int ibinCent_low = H2D_centrality_collisions->GetXaxis()->FindBin(centLow);
+    int ibinCent_high = H2D_centrality_collisions->GetXaxis()->FindBin(centHigh);
+
+    TH1D* H1D_collisions = H2D_centrality_collisions->ProjectionY("H1D_collisions"+(TString)Datasets[iDataset]+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]", ibinCent_low, ibinCent_high);
+
+    cout << "Centrality " << centLow << "-" << centHigh << "% : nColl total = " << (long int)H1D_collisions->GetBinContent(1) << ", nColl selected = " << (long int)H1D_collisions->GetBinContent(2) << endl;
+  }
+}
+
+
+
+
+
+void Draw_Pt_PbPbToPPComparison_HARDCODED(float jetRadius, float* etaRange, const char options[]) {
+
+  TH3D* H3D_jetRjetPtjetEta[nDatasets];
+  TH1D* H1D_jetPt[nDatasets];
+  TH1D* H1D_jetPt_rebinned[nDatasets];
+  
+  TH1D* H1D_jetPt_rebinned_ratios[nDatasets];
+
+  float EtaCutLow = etaRange[0];
+  float EtaCutHigh = etaRange[1];
+  int ibinJetRadius = 0;
+
+  bool divideSuccess = false;
+
+  TString* yAxisLabel;
+  // cout << "test0" << endl;
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    // cout << "test0.1" << endl;
+
+    if (DatasetsNames[iDataset].EqualTo((TString)"LHC22o pass6")) { // hardcoded here "LHC22o pass7"
+      H3D_jetRjetPtjetEta[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_r_jet_pt_jet_eta"+jetFinderQaHistType[0]))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+jetRadius+Form("%.1f", etaRange[0])+"<eta<"+Form("%.1f", etaRange[1]));
+    } else {
+      H3D_jetRjetPtjetEta[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_r_jet_pt_jet_eta"+jetFinderQaHistType[iJetFinderQaType]))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+jetRadius+Form("%.1f", etaRange[0])+"<eta<"+Form("%.1f", etaRange[1]));
+    }
+    // cout << "test0.2" << endl;
+
+    int ibinEta_low = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutLow);
+    int ibinEta_high = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutHigh);
+    if (ibinEta_low == 0) 
+      cout << "WARNING: Pt_DatasetComparison is counting the underflow with the chosen etaRange" << endl;
+    if (ibinEta_high == H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->GetNbins()+1) 
+      cout << "WARNING: Pt_DatasetComparison is counting the overflow with the chosen etaRange" << endl;
+    ibinJetRadius = H3D_jetRjetPtjetEta[iDataset]->GetXaxis()->FindBin(jetRadius+GLOBAL_epsilon);
+    // cout << "test0.3" << endl;
+ 
+    H1D_jetPt[iDataset] = (TH1D*)H3D_jetRjetPtjetEta[iDataset]->ProjectionY("jetPt_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high, "e");
+
+    if (DatasetsNames[iDataset].EqualTo((TString)"LHC22o pass6")) {
+      std::vector<double> O2H1DPtbinsVector = GetTH1Bins(H1D_jetPt_rebinned[0]); // hardcoded here H1D_jetPt_rebinned[0]
+      double* O2ptBins = &O2H1DPtbinsVector[0];
+      H1D_jetPt_rebinned[iDataset] = (TH1D*)H1D_jetPt[iDataset]->Rebin(H1D_jetPt_rebinned[0]->GetNbinsX(), "jetPt_rebinned_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f"), O2ptBins);  // hardcoded here H1D_jetPt_rebinned[0]
+    } else {
+      H1D_jetPt_rebinned[iDataset] = (TH1D*)H1D_jetPt[iDataset]->Rebin(5.,"jetPt_rebinned_"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
+    }
+    
+    // cout << "test0.35" << endl;
+
+    if (strstr(options, "normEntries") != NULL) {
+      NormaliseYieldToNEntries(H1D_jetPt_rebinned[iDataset]);
+      yAxisLabel = texJetPtYield_EntriesNorm;
+    }
+    int Nevents;
+    if (strstr(options, "normEvents") != NULL) {
+      if (isDatasetWeighted[iDataset]) {
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+      } else {
+        Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]);
+      }
+      NormaliseYieldToNEvents(H1D_jetPt_rebinned[iDataset], Nevents);
+      yAxisLabel = texJetPtYield_EventNorm;
+    }
+    // cout << "test0.4" << endl;
+
+    H1D_jetPt_rebinned_ratios[iDataset] = (TH1D*)H1D_jetPt_rebinned[iDataset]->Clone("jetPt_rebinned_ratios"+Datasets[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
+    H1D_jetPt_rebinned_ratios[iDataset]->Reset("M");
+    divideSuccess = H1D_jetPt_rebinned_ratios[iDataset]->Divide(H1D_jetPt_rebinned[iDataset], H1D_jetPt_rebinned[0]);
+  }
+  // cout << "test1" << endl;
+
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
+  TString* pdfName_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_@eta["+Form("%.1f", EtaCutLow)+","+Form("%.1f", EtaCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]+"_ratio");
+
+  // TString textContext(contextDatasetCompAndRadiusAndVarRange(jetRadius, etaRange, "eta"));
+  TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, "", "#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(etaRange)+"}", ""));
+
+  Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texJetPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "logy");
+  if (divideSuccess == true) {
+    Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "autoratio,avoidFirst");
+  }
+  else {
+    cout << "Divide failed in Draw_Pt_DatasetComparison" << endl;
+  }
 }
 
 

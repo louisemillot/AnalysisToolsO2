@@ -1,3 +1,7 @@
+#ifndef HISTOGRAM_UTILITIES_C
+#define HISTOGRAM_UTILITIES_C
+
+
 #include "HistogramUtilities.h"
 #include "../Settings/GlobalSettings.h"
 #include <sys/types.h>
@@ -390,7 +394,7 @@ void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum){
   double errorA, errorB;
   for(int iBinY = 1; iBinY <= H2D_hist->GetNbinsY(); iBinY++){ // 0 and n+1 take underflow and overflow into account
     for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
-      binContent = H2D_hist->GetBinContent(iBinX, iBinY) * priorSpectrum->GetBinContent(iBinY); // do I really give the value 0 if denominator is 0 ? 
+      binContent = H2D_hist->GetBinContent(iBinX, iBinY) * priorSpectrum->GetBinContent(iBinY);
       errorA = priorSpectrum->GetBinContent(iBinY)*priorSpectrum->GetBinContent(iBinY) * H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY);
       errorB = H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY) * priorSpectrum->GetBinError(iBinY)*priorSpectrum->GetBinError(iBinY);
       H2D_hist->SetBinContent(iBinX, iBinY, binContent);
@@ -526,9 +530,9 @@ TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
       for(int iBinK = 1; iBinK <= nBinsK; iBinK++){ // 0 and n+1 take underflow and overflow into account
         productContent_iBinX += histA->GetBinContent(iBinX, iBinK) * histU->GetBinContent(iBinK); 
         productError2_iBinX += pow(histU->GetBinContent(iBinK), 2)*pow(histA->GetBinError(iBinX, iBinK), 2) + pow(histA->GetBinContent(iBinX, iBinK), 2)*pow(histU->GetBinError(iBinK), 2); // simple sigma_ab = a2sigma_a2 + b2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated          
-        cout << "-----" << endl;
-        cout << " A(" << iBinX << "," << iBinK << ") = " << histA->GetBinContent(iBinX, iBinK) << ",  U(" << iBinK << ") = " << histU->GetBinContent(iBinK) << endl;
-        cout << "eA(" << iBinX << "," << iBinK << ") = " << histA->GetBinError(iBinX, iBinK) << ", eU(" << iBinK << ") = " << histU->GetBinError(iBinK) << endl;
+        // cout << "-----" << endl;
+        // cout << " A(" << iBinX << "," << iBinK << ") = " << histA->GetBinContent(iBinX, iBinK) << ",  U(" << iBinK << ") = " << histU->GetBinContent(iBinK) << endl;
+        // cout << "eA(" << iBinX << "," << iBinK << ") = " << histA->GetBinError(iBinX, iBinK) << ", eU(" << iBinK << ") = " << histU->GetBinError(iBinK) << endl;
       }
     } else {
       for(int iBinK = 0; iBinK <= nBinsK+1; iBinK++){ // 0 and n+1 take underflow and overflow into account
@@ -581,6 +585,13 @@ TString contextEtaRange(float* EtaRange){
   return textContext;
 }
 
+TString contextCentRange(float* CentRange){
+  std::stringstream ss;
+    ss << "" << CentRange[0] << "-" << CentRange[1] << "%";
+  TString textContext((TString)ss.str());
+  return textContext;
+}
+
 TString contextJetRadius(float jetRadius){
   std::stringstream ss;
   ss << " R = " << jetRadius;
@@ -594,40 +605,43 @@ TString contextJetRadius(float jetRadius){
 
 
 
-TString contextDatasetRadiusCompAndVarRange(TString* mainContext, int iDataset, float* variableRange, const char options[]){
+TString contextDatasetRadiusCompAndVarRange(TString mainContext, int iDataset, float* variableRange, const char options[]){
   TString texcontextDatasetRadiusCompAndVarRange;
   if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
-    texcontextDatasetRadiusCompAndVarRange = "#splitline{"+*mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextPtRange(variableRange)+"}}";
+    texcontextDatasetRadiusCompAndVarRange = "#splitline{"+mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextPtRange(variableRange)+"}}";
   }
   if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
-    texcontextDatasetRadiusCompAndVarRange = "#splitline{"+*mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextEtaRange(variableRange)+"}}";
+    texcontextDatasetRadiusCompAndVarRange = "#splitline{"+mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextEtaRange(variableRange)+"}}";
   }
 
   return texcontextDatasetRadiusCompAndVarRange;
 }
 
-TString contextDatasetCompAndRadiusAndVarRange(TString* mainContext, float jetRadius, float* variableRange, const char options[]){
+TString contextDatasetCompAndRadiusAndVarRange(TString mainContext, float jetRadius, float* variableRange, const char options[]){
   TString texcontextDatasetCompAndRadiusAndVarRange;
   if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
-    texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+*mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(variableRange)+"}}";
+    texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(variableRange)+"}}";
   }
   if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
-    texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+*mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(variableRange)+"}}";
+    texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(variableRange)+"}}";
+  }
+  if (strstr(options, "centrality") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextCentRange(variableRange)+"}}";
   }
 
   return texcontextDatasetCompAndRadiusAndVarRange;
 }
 
-TString contextDatasetCompAndRadius(TString* mainContext, float jetRadius, __attribute__ ((unused)) const char options[]){
+TString contextDatasetCompAndRadius(TString mainContext, float jetRadius, __attribute__ ((unused)) const char options[]){
   TString texcontextDatasetCompAndRadius;
-  texcontextDatasetCompAndRadius = "#splitline{"+*mainContext+"}{"+contextJetRadius(jetRadius)+"}";
+  texcontextDatasetCompAndRadius = "#splitline{"+mainContext+"}{"+contextJetRadius(jetRadius)+"}";
 
   return texcontextDatasetCompAndRadius;
 }
 
-TString contextDatasetComp(TString* mainContext, __attribute__ ((unused)) const char options[]){
+TString contextDatasetComp(TString mainContext, __attribute__ ((unused)) const char options[]){
   TString texcontextDatasetComp;
-  texcontextDatasetComp = *mainContext;
+  texcontextDatasetComp = mainContext;
 
   return texcontextDatasetComp;
 }
@@ -643,12 +657,13 @@ void CentralityLegend(TString* centralityLegend, const float arrayCentralityInte
   }
 }
 
-void IterationLegend(TString* iterationLegend, int nIterationmax){
+void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfoldIterationMax, int step){
+  const int nUnfoldIteration = std::floor((unfoldIterationMax - unfoldIterationMin + 1)/step);
   std::stringstream ss;
   ss.precision(2);
-  for(int iIteration = 0; iIteration < nIterationmax; iIteration++){
-    ss << "k_{unfold} = " << iIteration;
-    iterationLegend[iIteration] = (TString)ss.str();
+  for(int iUnfoldIteration = 0; iUnfoldIteration < nUnfoldIteration; iUnfoldIteration++){
+    ss << "k_{unfold} = " << iUnfoldIteration * step + unfoldIterationMin;
+    iterationLegend[iUnfoldIteration] = (TString)ss.str();
     ss.str("");
     ss.clear();
   }
@@ -1032,3 +1047,10 @@ void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TStr
 
 
 
+
+
+
+
+
+
+#endif

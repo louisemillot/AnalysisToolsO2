@@ -72,9 +72,15 @@ void Draw_y_iu_DatasetComparison();
 
 
 
-void Draw_Pt_gen_DatasetComparison(const char options[]);
-void Draw_Eta_gen_DatasetComparison(const char options[]);
-void Draw_Phi_gen_DatasetComparison(const char options[]);
+void Draw_Pt_gen_DatasetComparison(float* etaRange, const char options[]);
+void Draw_Eta_gen_DatasetComparison(float* ptRange, const char options[]);
+void Draw_Phi_gen_DatasetComparison(float* ptRange, float* etaRange, const char options[]);
+
+
+
+void Draw_Pt_gen_DatasetComparison_H2CentVersion(const char options[]);
+void Draw_Eta_gen_DatasetComparison_H2CentVersion(const char options[]);
+void Draw_Phi_gen_DatasetComparison_H2CentVersion(const char options[]);
 
 /////////////////////////////////////////////////////
 ///////////////////// Main Macro ////////////////////
@@ -124,15 +130,22 @@ void TrackMcQC() {
   // Draw_Vz_DatasetComparison(particleStatusOption);
   // Draw_y_iu_DatasetComparison();
 
-  Draw_Pt_gen_DatasetComparison("primaries, ratio");
-  Draw_Eta_gen_DatasetComparison("primaries, ratio");
-  Draw_Phi_gen_DatasetComparison("primaries, ratio");
-  Draw_Pt_gen_DatasetComparison("secondaries, ratio");
-  Draw_Eta_gen_DatasetComparison("secondaries, ratio");
-  Draw_Phi_gen_DatasetComparison("secondaries, ratio");
-  Draw_Pt_gen_DatasetComparison("primaries,secondaries, ratio");
-  Draw_Eta_gen_DatasetComparison("primaries,secondaries, ratio");
-  Draw_Phi_gen_DatasetComparison("primaries,secondaries, ratio");
+  // float ptRange[2] = {0.150, 100};
+  // float etaRange[2] = {-0.9, 0.9};
+  // Draw_Pt_gen_DatasetComparison(etaRange, "primaries, ratio");
+  // Draw_Eta_gen_DatasetComparison(ptRange, "primaries, ratio");
+  // Draw_Phi_gen_DatasetComparison(ptRange, etaRange, "primaries, ratio");
+  // Draw_Pt_gen_DatasetComparison(etaRange, "secondaries, ratio");
+  // Draw_Eta_gen_DatasetComparison(ptRange, "secondaries, ratio");
+  // Draw_Phi_gen_DatasetComparison(ptRange, etaRange, "secondaries, ratio");
+  // Draw_Pt_gen_DatasetComparison(etaRange, "primaries,secondaries, ratio");
+  // Draw_Eta_gen_DatasetComparison(ptRange, "primaries,secondaries, ratio");
+  // Draw_Phi_gen_DatasetComparison(ptRange, etaRange, "primaries,secondaries, ratio");
+
+
+  Draw_Pt_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
+  Draw_Eta_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
+  Draw_Phi_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
 }
 
 /////////////////////////////////////////////////////
@@ -1399,8 +1412,8 @@ void Draw_Purity_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange) {
 
 
 
-void Draw_Pt_gen_DatasetComparison(const char options[]) {
-  TH3D* H2D_centrality_track[nDatasets];
+void Draw_Pt_gen_DatasetComparison(float* etaRange, const char options[]) {
+  TH3D* H3D_ptetaphi_track[nDatasets];
 
   TH1D* H1D_trackPt[nDatasets];
   TH1D* H1D_trackPt_rebinned[nDatasets];
@@ -1412,17 +1425,20 @@ void Draw_Pt_gen_DatasetComparison(const char options[]) {
   double Nevents; 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    H2D_centrality_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
-    H2D_centrality_track[iDataset]->Reset("M");
+    H3D_ptetaphi_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
+    H3D_ptetaphi_track[iDataset]->Reset("M");
     if (strstr(options, "primaries") != NULL) {
-      H2D_centrality_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"));
+      H3D_ptetaphi_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"));
     }
     if (strstr(options, "secondaries") != NULL) {
-      H2D_centrality_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpart_nonprimary"));
+      H3D_ptetaphi_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpart_nonprimary"));
     }
-    
-    H1D_trackPt[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionX("trackPt_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsY(), 1, H2D_centrality_track[iDataset]->GetNbinsZ(), "e");
 
+
+    int ibinEta_low_track = H3D_ptetaphi_track[iDataset]->GetYaxis()->FindBin(etaRange[0]);
+    int ibinEta_high_track = H3D_ptetaphi_track[iDataset]->GetYaxis()->FindBin(etaRange[1]);
+    
+    H1D_trackPt[iDataset] = (TH1D*)H3D_ptetaphi_track[iDataset]->ProjectionX("trackPt_"+Datasets[iDataset], ibinEta_low_track, ibinEta_high_track, 1, H3D_ptetaphi_track[iDataset]->GetNbinsZ(), "e");
 
     H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(2.,"trackPt_rebinned_"+Datasets[iDataset]);
 
@@ -1434,7 +1450,7 @@ void Draw_Pt_gen_DatasetComparison(const char options[]) {
       Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], Nevents);
-
+    cout << "Dataset " << iDataset << ": Nevents = " << Nevents << endl;
 
     H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]);
     H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
@@ -1467,8 +1483,8 @@ void Draw_Pt_gen_DatasetComparison(const char options[]) {
 }
 
 
-void Draw_Eta_gen_DatasetComparison(const char options[]) {
-  TH3D* H2D_centrality_track[nDatasets];
+void Draw_Eta_gen_DatasetComparison(float* ptRange, const char options[]) {
+  TH3D* H3D_ptetaphi_track[nDatasets];
 
   TH1D* H1D_trackEta[nDatasets];
   TH1D* H1D_trackEta_rebinned[nDatasets];
@@ -1481,15 +1497,19 @@ void Draw_Eta_gen_DatasetComparison(const char options[]) {
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
 
-    H2D_centrality_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
-    H2D_centrality_track[iDataset]->Reset("M");
+    H3D_ptetaphi_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
+    H3D_ptetaphi_track[iDataset]->Reset("M");
     if (strstr(options, "primaries") != NULL) {
-      H2D_centrality_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"));
+      H3D_ptetaphi_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"));
     }
     if (strstr(options, "secondaries") != NULL) {
-      H2D_centrality_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpart_nonprimary"));
+      H3D_ptetaphi_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpart_nonprimary"));
     }
-    H1D_trackEta[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), 1, H2D_centrality_track[iDataset]->GetNbinsZ(), "e");
+
+    int ibinPt_low_track = H3D_ptetaphi_track[iDataset]->GetXaxis()->FindBin(ptRange[0]);
+    int ibinPt_high_track = H3D_ptetaphi_track[iDataset]->GetXaxis()->FindBin(ptRange[1]);
+
+    H1D_trackEta[iDataset] = (TH1D*)H3D_ptetaphi_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], ibinPt_low_track, ibinPt_high_track, 1, H3D_ptetaphi_track[iDataset]->GetNbinsZ(), "e");
 
     H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(5.,"trackEta_rebinned"+Datasets[iDataset]);
 
@@ -1533,8 +1553,8 @@ void Draw_Eta_gen_DatasetComparison(const char options[]) {
 }
 
 
-void Draw_Phi_gen_DatasetComparison(const char options[]) { 
-  TH3D* H2D_centrality_track[nDatasets];
+void Draw_Phi_gen_DatasetComparison(float* ptRange, float* etaRange, const char options[]) { 
+  TH3D* H3D_ptetaphi_track[nDatasets];
 
   TH1D* H1D_trackPhi[nDatasets];
   TH1D* H1D_trackPhi_rebinned[nDatasets];
@@ -1546,16 +1566,21 @@ void Draw_Phi_gen_DatasetComparison(const char options[]) {
   double Nevents;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    H2D_centrality_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
-    H2D_centrality_track[iDataset]->Reset("M");
+    H3D_ptetaphi_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
+    H3D_ptetaphi_track[iDataset]->Reset("M");
     if (strstr(options, "primaries") != NULL) {
-      H2D_centrality_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"));
+      H3D_ptetaphi_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpartofinterest"));
     }
     if (strstr(options, "secondaries") != NULL) {
-      H2D_centrality_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpart_nonprimary"));
+      H3D_ptetaphi_track[iDataset]->Add((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_particle_pt_particle_eta_particle_phi_mcpart_nonprimary"));
     }
 
-    H1D_trackPhi[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionZ("trackPhi_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), 1, H2D_centrality_track[iDataset]->GetNbinsY(), "e");
+    int ibinPt_low_track = H3D_ptetaphi_track[iDataset]->GetXaxis()->FindBin(ptRange[0]);
+    int ibinPt_high_track = H3D_ptetaphi_track[iDataset]->GetXaxis()->FindBin(ptRange[1]);
+    int ibinEta_low_track = H3D_ptetaphi_track[iDataset]->GetYaxis()->FindBin(etaRange[0]);
+    int ibinEta_high_track = H3D_ptetaphi_track[iDataset]->GetYaxis()->FindBin(etaRange[1]);
+    
+    H1D_trackPhi[iDataset] = (TH1D*)H3D_ptetaphi_track[iDataset]->ProjectionZ("trackPhi_"+Datasets[iDataset], ibinPt_low_track, ibinPt_high_track, ibinEta_low_track, ibinEta_high_track, "e");
     H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(5.,"trackPhi_rebinned_"+Datasets[iDataset]);
     cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() preNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << endl;
 
@@ -1629,9 +1654,9 @@ void Draw_Pt_gen_DatasetComparison_H2CentVersion(const char options[]) {
     // NormaliseYieldToNEntries(H1D_trackPt_rebinned[iDataset]);
 
     if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset]);
     } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], Nevents);
 
@@ -1648,7 +1673,7 @@ void Draw_Pt_gen_DatasetComparison_H2CentVersion(const char options[]) {
 
   Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtMC, texTrackPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
   if (divideSuccess == true && strstr(options, "ratio") != NULL) {
-    Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "autoratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "autoratio,avoidFirst,logx");
   }
   else {
     cout << "Divide failed in Draw_Pt_DatasetComparison" << endl;
@@ -1678,9 +1703,9 @@ void Draw_Eta_gen_DatasetComparison_H2CentVersion(const char options[]) {
 
 
     if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset]);
     } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], Nevents);
 
@@ -1726,9 +1751,9 @@ void Draw_Phi_gen_DatasetComparison_H2CentVersion(const char options[]) {
 
     // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iDataset]);
     if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset]);
     } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], Nevents);
     cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() postNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << ", Nevents = " << Nevents << endl;

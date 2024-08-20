@@ -1,3 +1,6 @@
+#ifndef AXISTITLES_H
+#define AXISTITLES_H
+
 // Commonly used titles
 
 ////////////////////////////////////////////
@@ -26,6 +29,10 @@ TString* texVy = new TString("part Vy");
 TString* texVz = new TString("part Vz");
 
 TString* texIUy = new TString("track IU y (cm)");
+
+
+TString* texSvdK = new TString("k");
+TString* texSvdDvector = new TString("d_{k}");
 
 
 ////////////////////////////////////////////
@@ -57,6 +64,8 @@ TString* texCollNorm_BkgFluctuationYield_CentWindow = new TString("1/#it{N}_{col
 TString* texEntriesNormRho = new TString("1/#it{N}_{coll}^{in cent} d#it{N}_{coll}/d#it{#rho}");
 TString* texCollNorm_RhoYield = new TString("1/#it{N}_{coll} d#it{N}_{coll}/d#it{#rho}");
 TString* texCollNorm_RhoYield_CentWindow = new TString("1/#it{N}_{coll}^{in cent} d#it{N}_{coll}/d#it{#rho}");
+TString* texNoNorm_SelMultYield = new TString("d#it{N}_{coll}/d#it{N}_{tracks}^{selected}");
+TString* texEntriesNorm_selMultYield = new TString("1/#it{N}_{tracks} d#it{N}_{coll}/d#it{N}_{tracks}^{selected}");
 TString* texCollNorm_selMultYield = new TString("1/#it{N}_{coll} d#it{N}_{coll}/d#it{N}_{tracks}^{selected}");
 TString* texCollNorm_selMultYield_CentWindow = new TString("1/#it{N}_{coll}^{in cent} d#it{N}_{coll}/d#it{N}_{tracks}^{selected}");
 
@@ -110,6 +119,7 @@ TString* texJetRatioAreaJetVsNGhost = new TString("#it{A}_{jet}^{O2}/ #it{A}_{je
 
 TString* texRatioUnfolded = new TString("ratio to unfolded");
 TString* texRatioMcpUnfolded = new TString("mcp / unfolded");
+TString* texRatioRun2Unfolded = new TString("run2 / run3");
 TString* texRatioMeasuredUnfolded = new TString("measured / unfolded");
 TString* texRatioRefoldedMeasured = new TString("refolded / measured");
 
@@ -131,3 +141,15 @@ TString* texTrackPhiYield_EntriesNorm = new TString("1/#it{N}_{track} d#it{N}_{t
 TString* texTrackPtYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{p}_{T} (GeV/#it{c})^{-1}");
 TString* texTrackEtaYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{#eta}");
 TString* texTrackPhiYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{#phi}");
+
+
+
+
+
+
+
+
+
+
+
+#endif
