@@ -62,7 +62,7 @@ void JetSpectrum_systematics() {
   // gathers the analysis options in a single char[]
 
   int iDataset = 0;
-  int iRadius = 1;
+  int iRadius = 0;
 
   int unfoldParameterBayes = 20;
 
@@ -171,7 +171,7 @@ void Get_systematics_UnfoldMethod(TH1D* &hSystematicUncertainty, TH1D* &hSystema
   /////////////////
   // Barlow test //
   /////////////////
-  
+
   TH1D* H1D_jetPt_unfolded_REF = H1D_jetPt_unfolded[0];
   double SystUncertainty;
   int id_SignalExtractionType_maxDeviation;

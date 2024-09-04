@@ -41,24 +41,24 @@ int GetNEventsSel8(TFile* file_O2Analysis) {
 }
 
 int GetNEventsSelected_JetFramework(TFile* file_O2Analysis) {
-  return ((TH1I*)file_O2Analysis->Get("jet-finder-charged-qa/h_collisions"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+  return ((TH1I*)file_O2Analysis->Get("jet-finder-charged-qa/h_collisions"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 
 int GetNEventsSelected_TrackEffWorkflow(TFile* file_O2Analysis) {
-  return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_collisions"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+  return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_collisions"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 int GetNEventsSelected_TrackEffWorkflow_weighted(TFile* file_O2Analysis) {
-  return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_collisions_weighted"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+  return ((TH1F*)file_O2Analysis->Get("track-efficiency/h_collisions_weighted"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 int GetNEventsSelected_TrackEffWorkflow_gen(TFile* file_O2Analysis) {
   return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_mccollisions"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 int GetNEventsSelected_TrackEffWorkflow_gen_weighted(TFile* file_O2Analysis) {
-  return ((TH1I*)file_O2Analysis->Get("track-efficiency/h_mccollisions_weighted"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+  return ((TH1F*)file_O2Analysis->Get("track-efficiency/h_mccollisions_weighted"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 
 double GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis) {
-  return ((TH1I*)file_O2Analysis->Get("jet-finder-charged-qa/h_collisions_weighted"))->GetBinContent(2); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
+  return ((TH1F*)file_O2Analysis->Get("jet-finder-charged-qa/h_collisions_weighted"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account; sadly only works for jets
 }
 
 

@@ -727,12 +727,12 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   float yUpMarginScaling, yDownMarginScaling;
   float maxX, minX, maxY, minY;
 
-  yUpMarginScaling = 1.4;
   yDownMarginScaling = 1;
   maxX = findMaxFloat(maxX_collection, collectionSize);
   minX = findMinFloat(minX_collection, collectionSize);
   maxY = findMaxFloat(maxY_collection, collectionSize);
   minY = findMinFloat(minY_collection, collectionSize);
+  maxY > 0 ? yUpMarginScaling = 1.4 : yUpMarginScaling = 0.6;
 
   if (strstr(options, "logy") != NULL) {
     yUpMarginScaling = 100;
@@ -812,16 +812,20 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   }
   // cout << "test5" << endl;
 
-  // draws histograms from collection
+  // draws histograms from collection, and setting the colors
   for (int i = 0; i < collectionSize; i++) {
     if (i!=0 || strstr(options, "avoidFirst") == NULL) { // if i=0 requires that the option avoidFirst isn't there
-      if (collectionSize >= 6) {
+      if (strstr(options, "colorPairs") != NULL) {
+        int nColors = gStyle->GetNumberOfColors();
+        int histoColor = (float)nColors / collectionSize * (int)i/2;
+        histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoColor));
+        histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoColor));
+      } else if (collectionSize >= 6) {
         histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
         if (strstr(options, "histWithLine") != NULL) {
           histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
         }
-      }
-      else {
+      } else {
         histograms_collection[i]->Draw("same");
         if (strstr(options, "histWithLine") != NULL) {
           histograms_collection[i]->Draw("][ Hist same");
@@ -868,6 +872,21 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     }
   }
 
+  if (strstr(options, "datasetXaxisBinLabels") != NULL) {
+    // ChangeLabel(labNum, labAngle, labSize, labAlign, labColor, labFont, labText)
+    // [in]	labNum	Number of the label to be changed, negative numbers start from the end
+    // [in]	labAngle	New angle value
+    // [in]	labSize	New size (0 erase the label)
+    // [in]	labAlign	New alignment value
+    // [in]	labColor	New label color
+    // [in]	labFont	New label font
+    // [in]	labText	New label text
+    int nBins = histograms_collection[0]->GetNbinsX();
+    for (int i = 0; i < nBins; i++) {
+      hFrame->GetXaxis()->SetBinLabel(hFrame->GetNbinsX()/(2*nBins) * (2*i + 1), DatasetsNames[i]); // DrawFrame creates a histo with 1000 bins; takes bin number as input
+      hFrame->GetXaxis()->ChangeLabel(1, 30, -1, -1, -1, -1, -1); // didn't manage to get it to work, but also didnt spend much time; maybe because it takes label number as input?
+    }
+  }
 
   // adds some text on the plot
   TLatex* textInfo = new TLatex();

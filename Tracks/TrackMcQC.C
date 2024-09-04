@@ -143,9 +143,9 @@ void TrackMcQC() {
   // Draw_Phi_gen_DatasetComparison(ptRange, etaRange, "primaries,secondaries, ratio");
 
 
-  Draw_Pt_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
-  Draw_Eta_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
-  Draw_Phi_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
+  // Draw_Pt_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
+  // Draw_Eta_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
+  // Draw_Phi_gen_DatasetComparison_H2CentVersion("primaries,secondaries, ratio");
 }
 
 /////////////////////////////////////////////////////
@@ -251,13 +251,16 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
   TH1D* H1D_trackPt_mcparticles[nDatasets];
   TH1D* H1D_trackPt_mcparticles_rebinned[nDatasets];
   TH1D* H1D_trackPt_mcparticles_ptHigh[nDatasets];
+  TH1D* H1D_trackPt_mcparticles_ptHigh_rebinned[nDatasets];
 
   TH1D* H1D_trackPt_assoctracks[nDatasets];
   TH1D* H1D_trackPt_assoctracks_rebinned[nDatasets];
   TH1D* H1D_trackPt_assoctracks_split[nDatasets];
   TH1D* H1D_trackPt_assoctracks_split_rebinned[nDatasets];
   TH1D* H1D_trackPt_assoctracks_ptHigh[nDatasets];
+  TH1D* H1D_trackPt_assoctracks_ptHigh_rebinned[nDatasets];
   TH1D* H1D_trackPt_assoctracks_split_ptHigh[nDatasets];
+  TH1D* H1D_trackPt_assoctracks_split_ptHigh_rebinned[nDatasets];
   // TH1D* H1D_trackPt_assoctracks_nonSplitSecondary[nDatasets];
   
   TH1D* H1D_trackPt_efficiency[nDatasets];
@@ -327,14 +330,42 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
     H1D_trackPt_assoctracks_split_rebinned[iDataset] = (TH1D*)H1D_trackPt_assoctracks_split[iDataset]->Rebin(nBinsLowNew, "H1D_trackPt_assoctracks_split_rebinned"+Datasets[iDataset], ptBinsLowNew);
 
 
+    //tweaking the high-pt bins to have them less prone to statistical fluctuations
+    std::vector<double> xbinsVectorInitialHigh = GetTH1Bins(H1D_trackPt_mcparticles_ptHigh[iDataset]);
+    double* xbinsInitialHigh = &xbinsVectorInitialHigh[0];
+
+    double ptBinsHighNew[500]; //500 to have a good margin
+    iBinPtNew = 0;
+    iBinPtInitialHisto = 0;
+    while(iBinPtInitialHisto < H1D_trackPt_mcparticles_ptHigh[iDataset]->GetNbinsX()){
+      lastPt = xbinsInitialHigh[iBinPtInitialHisto];
+      if (lastPt < 25) {
+        increment = 1;
+      } else {
+        increment = 1+ lastPt/H1D_trackPt_mcparticles_ptHigh[iDataset]->GetXaxis()->GetBinWidth(1) ;
+      }
+      ptBinsHighNew[iBinPtNew] = lastPt;
+      iBinPtInitialHisto += increment;
+      iBinPtNew += 1;
+    }
+    ptBinsHighNew[iBinPtNew-1] = 100; // replace last set bin edge by 10
+    int nBinsHighNew = iBinPtNew - 1;
+    if (nBinsHighNew >= 500){
+      cout << "NEEDS TO RESERVE MORE MEMORY FOR ptBinsHighNew !!!!!!!!!!!!!!!!!!" << endl;
+    }
+    H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset] = (TH1D*)H1D_trackPt_mcparticles_ptHigh[iDataset]->Rebin(nBinsHighNew, "H1D_trackPt_mcparticles_ptHigh_rebinned"+Datasets[iDataset], ptBinsHighNew);
+    H1D_trackPt_assoctracks_ptHigh_rebinned[iDataset] = (TH1D*)H1D_trackPt_assoctracks_ptHigh[iDataset]->Rebin(nBinsHighNew, "H1D_trackPt_assoctracks_ptHigh_rebinned"+Datasets[iDataset], ptBinsHighNew);
+    H1D_trackPt_assoctracks_split_ptHigh_rebinned[iDataset] = (TH1D*)H1D_trackPt_assoctracks_split_ptHigh[iDataset]->Rebin(nBinsHighNew, "H1D_trackPt_assoctracks_split_ptHigh_rebinned"+Datasets[iDataset], ptBinsHighNew);
+
+
     // getting the efficiency
     H1D_trackPt_efficiency[iDataset] = (TH1D*)H1D_trackPt_mcparticles_rebinned[iDataset]->Clone("trackPt_efficiency"+Datasets[iDataset]);
     H1D_trackPt_efficiency[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPt_efficiency[iDataset]->Divide(H1D_trackPt_assoctracks_rebinned[iDataset], H1D_trackPt_mcparticles_rebinned[iDataset]);
+    divideSuccess = H1D_trackPt_efficiency[iDataset]->Divide(H1D_trackPt_assoctracks_rebinned[iDataset], H1D_trackPt_mcparticles_rebinned[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
-    H1D_trackPt_efficiency_ptHigh[iDataset] = (TH1D*)H1D_trackPt_mcparticles_ptHigh[iDataset]->Clone("trackPt_efficiency_ptHigh"+Datasets[iDataset]);
+    H1D_trackPt_efficiency_ptHigh[iDataset] = (TH1D*)H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset]->Clone("trackPt_efficiency_ptHigh"+Datasets[iDataset]);
     H1D_trackPt_efficiency_ptHigh[iDataset]->Reset("M");
-    divideSuccess_ptHigh = H1D_trackPt_efficiency_ptHigh[iDataset]->Divide(H1D_trackPt_assoctracks_ptHigh[iDataset], H1D_trackPt_mcparticles_ptHigh[iDataset]);
+    divideSuccess_ptHigh = H1D_trackPt_efficiency_ptHigh[iDataset]->Divide(H1D_trackPt_assoctracks_ptHigh_rebinned[iDataset], H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // correcting for split tracks
     H1D_trackPt_efficiency_splitCorrected[iDataset] = (TH1D*)H1D_trackPt_mcparticles_rebinned[iDataset]->Clone("trackPt_efficiency_split"+Datasets[iDataset]);
@@ -343,9 +374,9 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
     H1D_trackPt_efficiency_splitCorrected[iDataset]->Scale(-1.);
     H1D_trackPt_efficiency_splitCorrected[iDataset]->Add(H1D_trackPt_efficiency[iDataset],1.);
 
-    H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset] = (TH1D*)H1D_trackPt_mcparticles_ptHigh[iDataset]->Clone("trackPt_efficiency_split_ptHigh"+Datasets[iDataset]);
+    H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset] = (TH1D*)H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset]->Clone("trackPt_efficiency_split_ptHigh"+Datasets[iDataset]);
     H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset]->Reset("M");
-    divideSuccess_split_ptHigh = H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset]->Divide(H1D_trackPt_assoctracks_split_ptHigh[iDataset], H1D_trackPt_mcparticles_ptHigh[iDataset]);
+    divideSuccess_split_ptHigh = H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset]->Divide(H1D_trackPt_assoctracks_split_ptHigh_rebinned[iDataset], H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset]->Scale(-1.);
     H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset]->Add(H1D_trackPt_efficiency_ptHigh[iDataset],1.);
 
@@ -457,7 +488,7 @@ void Draw_Efficiency_Eta_DatasetComparison(float* ptRange) {
 
     H1D_trackEta_efficiency[iDataset] = (TH1D*)H1D_trackEta_mcparticles[iDataset]->Clone("trackEta_efficiency"+Datasets[iDataset]);
     H1D_trackEta_efficiency[iDataset]->Reset("M");
-    divideSuccess = H1D_trackEta_efficiency[iDataset]->Divide(H1D_trackEta_assoctracks[iDataset], H1D_trackEta_mcparticles[iDataset]);
+    divideSuccess = H1D_trackEta_efficiency[iDataset]->Divide(H1D_trackEta_assoctracks[iDataset], H1D_trackEta_mcparticles[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // H1D_trackEta_efficiency_split[iDataset] = (TH1D*)H1D_trackEta_mcparticles[iDataset]->Clone("trackEta_efficiency_split"+Datasets[iDataset]);
     // H1D_trackEta_efficiency_split[iDataset]->Reset("M");
@@ -469,7 +500,7 @@ void Draw_Efficiency_Eta_DatasetComparison(float* ptRange) {
 
     H1D_trackEta_efficiency_splitCorrected[iDataset] = (TH1D*)H1D_trackEta_mcparticles[iDataset]->Clone("trackEta_efficiency_split"+Datasets[iDataset]);
     H1D_trackEta_efficiency_splitCorrected[iDataset]->Reset("M");
-    divideSuccess_split = H1D_trackEta_efficiency_splitCorrected[iDataset]->Divide(H1D_trackEta_assoctracks_split[iDataset], H1D_trackEta_mcparticles[iDataset]);
+    divideSuccess_split = H1D_trackEta_efficiency_splitCorrected[iDataset]->Divide(H1D_trackEta_assoctracks_split[iDataset], H1D_trackEta_mcparticles[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     H1D_trackEta_efficiency_splitCorrected[iDataset]->Scale(-1.);
     H1D_trackEta_efficiency_splitCorrected[iDataset]->Add(H1D_trackEta_efficiency[iDataset],1.);
 
@@ -564,7 +595,7 @@ void Draw_Efficiency_Phi_DatasetComparison(float* ptRange, float* etaRange) {
     H1D_trackPhi_efficiency[iDataset]->Reset("M");
     cout << "  - " << DatasetsNames[iDataset] << ":" << endl;
     cout << "     phi eff #### tracks count = " << H1D_trackPhi_assoctracks[iDataset]->GetEntries() << ", part count = " << H1D_trackPhi_mcparticles[iDataset]->GetEntries() << endl;
-    divideSuccess = H1D_trackPhi_efficiency[iDataset]->Divide(H1D_trackPhi_assoctracks[iDataset], H1D_trackPhi_mcparticles[iDataset]);
+    divideSuccess = H1D_trackPhi_efficiency[iDataset]->Divide(H1D_trackPhi_assoctracks[iDataset], H1D_trackPhi_mcparticles[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // H1D_trackPhi_efficiency_split[iDataset] = (TH1D*)H1D_trackPhi_mcparticles[iDataset]->Clone("trackPhi_efficiency_split"+Datasets[iDataset]);
     // H1D_trackPhi_efficiency_split[iDataset]->Reset("M");
@@ -575,7 +606,7 @@ void Draw_Efficiency_Phi_DatasetComparison(float* ptRange, float* etaRange) {
 
     H1D_trackPhi_efficiency_splitCorrected[iDataset] = (TH1D*)H1D_trackPhi_mcparticles[iDataset]->Clone("trackPhi_efficiency_split"+Datasets[iDataset]);
     H1D_trackPhi_efficiency_splitCorrected[iDataset]->Reset("M");
-    divideSuccess_split = H1D_trackPhi_efficiency_splitCorrected[iDataset]->Divide(H1D_trackPhi_assoctracks_split[iDataset], H1D_trackPhi_mcparticles[iDataset]);
+    divideSuccess_split = H1D_trackPhi_efficiency_splitCorrected[iDataset]->Divide(H1D_trackPhi_assoctracks_split[iDataset], H1D_trackPhi_mcparticles[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     H1D_trackPhi_efficiency_splitCorrected[iDataset]->Scale(-1.);
     H1D_trackPhi_efficiency_splitCorrected[iDataset]->Add(H1D_trackPhi_efficiency[iDataset],1.);
 
@@ -653,7 +684,7 @@ void Draw_Efficiency_Eta_PtRangeComparison(float* ptRange, int nPtRanges, int iD
 
     H1D_trackEta_efficiency[iBinPt] = (TH1D*)H1D_trackEta_mcparticles[iBinPt]->Clone("trackEta_efficiency"+Datasets[iBinPt]);
     H1D_trackEta_efficiency[iBinPt]->Reset("M");
-    divideSuccess = H1D_trackEta_efficiency[iBinPt]->Divide(H1D_trackEta_assoctracks[iBinPt], H1D_trackEta_mcparticles[iBinPt]);
+    divideSuccess = H1D_trackEta_efficiency[iBinPt]->Divide(H1D_trackEta_assoctracks[iBinPt], H1D_trackEta_mcparticles[iBinPt], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     
     if (strstr(options, "scaled") != NULL) {
         NormaliseYieldToIntegral(H1D_trackEta_efficiency[iBinPt]);
@@ -738,7 +769,7 @@ void Draw_Efficiency_Phi_PtRangeComparison(float* ptRange, int nPtRanges, float*
 
     H1D_trackPhi_efficiency[iBinPt] = (TH1D*)H1D_trackPhi_mcparticles[iBinPt]->Clone("trackPhi_efficiency"+Datasets[iBinPt]);
     H1D_trackPhi_efficiency[iBinPt]->Reset("M");
-    divideSuccess = H1D_trackPhi_efficiency[iBinPt]->Divide(H1D_trackPhi_assoctracks[iBinPt], H1D_trackPhi_mcparticles[iBinPt]);
+    divideSuccess = H1D_trackPhi_efficiency[iBinPt]->Divide(H1D_trackPhi_assoctracks[iBinPt], H1D_trackPhi_mcparticles[iBinPt], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     
     if (strstr(options, "scaled") != NULL) {
         NormaliseYieldToIntegral(H1D_trackPhi_efficiency[iBinPt]);
@@ -1236,12 +1267,12 @@ void Draw_Efficiency_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange) {
     // naming the histogram and resetting it to have a chosen name
     H1D_trackPt_efficiency_pos[iDataset] = (TH1D*)H1D_trackPt_mcparticles_pos[iDataset]->Clone("trackPt_efficiency_pos"+Datasets[iDataset]);
     H1D_trackPt_efficiency_pos[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPt_efficiency_pos[iDataset]->Divide(H1D_trackPt_assoctracks_pos[iDataset], H1D_trackPt_mcparticles_pos[iDataset]);
+    divideSuccess = H1D_trackPt_efficiency_pos[iDataset]->Divide(H1D_trackPt_assoctracks_pos[iDataset], H1D_trackPt_mcparticles_pos[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // first naming the histogram and resetting it to have a chosen unique name
     H1D_trackPt_efficiency_splitCorrected_pos[iDataset] = (TH1D*)H1D_trackPt_mcparticles_pos[iDataset]->Clone("trackPt_efficiency_split_pos"+Datasets[iDataset]);
     H1D_trackPt_efficiency_splitCorrected_pos[iDataset]->Reset("M");
-    divideSuccess_split = H1D_trackPt_efficiency_splitCorrected_pos[iDataset]->Divide(H1D_trackPt_assoctracks_split_pos[iDataset], H1D_trackPt_mcparticles_pos[iDataset]);
+    divideSuccess_split = H1D_trackPt_efficiency_splitCorrected_pos[iDataset]->Divide(H1D_trackPt_assoctracks_split_pos[iDataset], H1D_trackPt_mcparticles_pos[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     H1D_trackPt_efficiency_splitCorrected_pos[iDataset]->Scale(-1.);
     H1D_trackPt_efficiency_splitCorrected_pos[iDataset]->Add(H1D_trackPt_efficiency_pos[iDataset],1.);
 
@@ -1255,12 +1286,12 @@ void Draw_Efficiency_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange) {
     // naming the histogram and resetting it to have a chosen name
     H1D_trackPt_efficiency_neg[iDataset] = (TH1D*)H1D_trackPt_mcparticles_neg[iDataset]->Clone("trackPt_efficiency_neg"+Datasets[iDataset]);
     H1D_trackPt_efficiency_neg[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPt_efficiency_neg[iDataset]->Divide(H1D_trackPt_assoctracks_neg[iDataset], H1D_trackPt_mcparticles_neg[iDataset]);
+    divideSuccess = H1D_trackPt_efficiency_neg[iDataset]->Divide(H1D_trackPt_assoctracks_neg[iDataset], H1D_trackPt_mcparticles_neg[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // first naming the histogram and resetting it to have a chosen unique name
     H1D_trackPt_efficiency_splitCorrected_neg[iDataset] = (TH1D*)H1D_trackPt_mcparticles_neg[iDataset]->Clone("trackPt_efficiency_split_neg"+Datasets[iDataset]);
     H1D_trackPt_efficiency_splitCorrected_neg[iDataset]->Reset("M");
-    divideSuccess_split = H1D_trackPt_efficiency_splitCorrected_neg[iDataset]->Divide(H1D_trackPt_assoctracks_split_neg[iDataset], H1D_trackPt_mcparticles_neg[iDataset]);
+    divideSuccess_split = H1D_trackPt_efficiency_splitCorrected_neg[iDataset]->Divide(H1D_trackPt_assoctracks_split_neg[iDataset], H1D_trackPt_mcparticles_neg[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     H1D_trackPt_efficiency_splitCorrected_neg[iDataset]->Scale(-1.);
     H1D_trackPt_efficiency_splitCorrected_neg[iDataset]->Add(H1D_trackPt_efficiency_neg[iDataset],1.);
 
@@ -1268,11 +1299,11 @@ void Draw_Efficiency_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange) {
     //// ratio eta right / eta left
     H1D_efficiency_etaRightLeftRatio[iDataset] = (TH1D*)H1D_trackPt_efficiency_neg[iDataset]->Clone("H1D_efficiency_etaRightLeftRatio"+Datasets[iDataset]);
     H1D_efficiency_etaRightLeftRatio[iDataset]->Reset("M");
-    divideSuccess_etaNegPos = H1D_efficiency_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_efficiency_pos[iDataset], H1D_trackPt_efficiency_neg[iDataset]);
+    divideSuccess_etaNegPos = H1D_efficiency_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_efficiency_pos[iDataset], H1D_trackPt_efficiency_neg[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     H1D_efficiencySplitCorrected_etaRightLeftRatio[iDataset] = (TH1D*)H1D_trackPt_efficiency_splitCorrected_neg[iDataset]->Clone("H1D_efficiencySplitCorrected_etaRightLeftRatio"+Datasets[iDataset]);
     H1D_efficiencySplitCorrected_etaRightLeftRatio[iDataset]->Reset("M");
-    divideSuccess_etaNegPos_splitCorrected = H1D_efficiencySplitCorrected_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_efficiency_splitCorrected_pos[iDataset], H1D_trackPt_efficiency_splitCorrected_neg[iDataset]);
+    divideSuccess_etaNegPos_splitCorrected = H1D_efficiencySplitCorrected_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_efficiency_splitCorrected_pos[iDataset], H1D_trackPt_efficiency_splitCorrected_neg[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
   }
   TString* pdfName = new TString("track_Pt_efficiency_etaRightLeftRatio"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]");
   TString* pdfName_split = new TString("track_Pt_efficiency_etaRightLeftRatio"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_splitCorrected");

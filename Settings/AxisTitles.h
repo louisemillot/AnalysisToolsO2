@@ -75,13 +75,14 @@ TString* texMeanBkgFluctFit = new TString("<#it{#delta pt}>^{fit}");
 
 TString* texRhoMean = new TString("<#it{#rho}>");
 
-TString* texTrackEfficiency = new TString("#epsilon = nTrack_{assoc}^{sel8 coll} / nParticle_{gen}^{sel8 coll}");
+TString* texTrackEfficiency = new TString("#epsilon = nTrack_{assoc} / nParticle_{gen}");
 TString* texTrackPurity = new TString("#epsilon = nTrack_{signal} / (nTrack_{signal}+nTrack_{background})");
 
 
 TString* texJetKinematicEfficiency = new TString("Jet kinematic efficiency");
 TString* texJetEfficiency = new TString("#epsilon = nJet_{mcd,matched}^{sel8 coll} / nJet_{mcp}^{sel8 coll}");
 TString* texJetPurity = new TString("#epsilon = nJet_{signal} / (nJet_{signal}+nJet_{background})");
+TString* texFakeRatio = new TString("N^{mcd, matched}_{jets} / N^{mcd}_{jets}");
 
 TString* texPartVxYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dV_{x}");
 TString* texPartVyYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dV_{y}");
@@ -141,10 +142,9 @@ TString* texTrackPhiYield_EntriesNorm = new TString("1/#it{N}_{track} d#it{N}_{t
 TString* texTrackPtYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{p}_{T} (GeV/#it{c})^{-1}");
 TString* texTrackEtaYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{#eta}");
 TString* texTrackPhiYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{track}/d#it{#phi}");
-
-
-
-
+TString* texMeanPt = new TString("<#it{p}_{T}>");
+TString* texMeanEta = new TString("<#eta>");
+TString* texMeanNtracks = new TString("<N_{tracks}>");
 
 
 
