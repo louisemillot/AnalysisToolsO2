@@ -41,8 +41,8 @@ void LoadLibs_Systematics();
 
 
 
-void Get_systematics_UnfoldMethod(TH1D* &hSystematicUncertainty, TH1D* &hSystematicUncertainty_PreBarlow, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]);
-void Draw_Systematics_UnfoldMethod(int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]);
+void Get_systematics_UnfoldMethod(TH1D* &hSystematicUncertainty, TH1D* &hSystematicUncertainty_PreBarlow, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, std::string options);
+void Draw_Systematics_UnfoldMethod(int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, std::string options);
 
 /////////////////////////////////////////////////////
 ///////////////////// Main Macro ////////////////////
@@ -138,7 +138,7 @@ void SetStyle_Systematics(Bool_t graypalette) {
 
 
 
-void Get_systematics_UnfoldMethod(TH1D* &hSystematicUncertainty, TH1D* &hSystematicUncertainty_PreBarlow, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+void Get_systematics_UnfoldMethod(TH1D* &hSystematicUncertainty, TH1D* &hSystematicUncertainty_PreBarlow, int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, std::string options) {
 
   TH1D* hTempSystematicUncertainty = new TH1D("hTempSystematicUncertainty", "hTempSystematicUncertainty", nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius]);
   TH1D* hTempSystematicUncertainty_PreBarlow = new TH1D("hTempSystematicUncertainty_PreBarlow", "hTempSystematicUncertainty_PreBarlow", nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius]);
@@ -211,7 +211,7 @@ void Get_systematics_UnfoldMethod(TH1D* &hSystematicUncertainty, TH1D* &hSystema
 
 
 
-void Draw_Systematics_UnfoldMethod(int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, const char options[]) {
+void Draw_Systematics_UnfoldMethod(int iDataset, int iRadius, float* centRange, int unfoldParameterBayes, std::string options) {
 
   TH1D* hSystematicUncertainty;
   TH1D* hSystematicUncertainty_PreBarlow;
@@ -232,6 +232,6 @@ void Draw_Systematics_UnfoldMethod(int iDataset, int iRadius, float* centRange, 
 
   TString textContext("");
 
-  Draw_TH1_Histogram(hSystematicUncertainty, textContext, pdfName, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, "");
-  Draw_TH1_Histogram(hSystematicUncertainty_PreBarlow, textContext, pdfName_PreBarlow, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH1_Histogram(hSystematicUncertainty, textContext, pdfName, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
+  Draw_TH1_Histogram(hSystematicUncertainty_PreBarlow, textContext, pdfName_PreBarlow, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
 }

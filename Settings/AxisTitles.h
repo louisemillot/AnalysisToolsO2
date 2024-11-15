@@ -53,6 +53,8 @@ TString* texSigmaPt = new TString("#sigma(#it{p}_{T})/#it{p}_{T}");
 TString* texSigmaPtMean = new TString("<#sigma(#it{p}_{T})/#it{p}_{T}>");
 TString* texSigmaPtMedian = new TString("median(#sigma(#it{p}_{T})/#it{p}_{T})");
 
+TString* texRatio = new TString("ratio");
+
 TString* texRatioDatasets = new TString(*texDatasetsComparisonType+"/"+*texDatasetsComparisonType+" "+DatasetsNames[0]); 
 TString* texRatioRun3Run2 = new TString("Run3 / Run2"); 
 
@@ -106,6 +108,7 @@ TString* texJetEtaYield_EntriesNorm = new TString("1/#it{N}_{jet} d#it{N}_{jet}/
 TString* texJetPhiYield_EntriesNorm = new TString("1/#it{N}_{jet} d#it{N}_{jet}/d#it{#phi}");
 TString* texJetPtYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{jet}/d#it{p}_{T} (GeV/#it{c})^{-1}");
 TString* texJetEtaYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{jet}/d#it{#eta}");
+TString* texJetEtaYield_EntriesNorm_CentWindow = new TString("1/#it{N}_{jet}^{in cent} d#it{N}_{jet}/d#it{#eta}");
 TString* texJetPhiYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{jet}/d#it{#phi}");
 TString* texJetNormNTracksYield = new TString("1/#it{N}_{ev} d#it{N}_{jet}/d#it{N}_{tracks}");
 TString* texJetNormAreaYield = new TString("1/#it{N}_{ev} d#it{N}_{jet}/d#it{A}_{jet}");

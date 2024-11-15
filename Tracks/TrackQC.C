@@ -38,7 +38,7 @@ void SetStyle(Bool_t graypalette=kFALSE);
 void LoadLibs();
 
 // Plot Utilities
-TString contextTrackDatasetComp(const char options[]);
+TString contextTrackDatasetComp(std::string options);
 
 //////////// QC plot functions
 // Dataset comparison
@@ -94,20 +94,20 @@ void TrackQC() {
   // TString* Extra = new TString("");
 
 
-  Draw_Pt_DatasetComparison();
-  Draw_Eta_DatasetComparison();
-  Draw_Phi_DatasetComparison();
+  // Draw_Pt_DatasetComparison();
+  // Draw_Eta_DatasetComparison();
+  // Draw_Phi_DatasetComparison();
 
   // Draw_Eta_DatasetComparison_trackSelComp();
   // Draw_Phi_DatasetComparison_trackSelComp();
-  Draw_Eta_DatasetComparison_EntriesNorm();
+  // Draw_Eta_DatasetComparison_EntriesNorm();
 
 
-  // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-  //   Draw_Pt_CentralityComparison(iDataset);
-  //   Draw_Eta_CentralityComparison(iDataset);
-  //   Draw_Phi_CentralityComparison(iDataset);
-  // }
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    Draw_Pt_CentralityComparison(iDataset);
+    Draw_Eta_CentralityComparison(iDataset);
+    Draw_Phi_CentralityComparison(iDataset);
+  }
   // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
   //   Draw_Pt_Run2Run3Comparison_0010Cent(iDataset);
   //   Draw_Eta_Run2Run3Comparison_0010Cent(iDataset);
@@ -137,9 +137,9 @@ void TrackQC() {
   //   Draw_SelectedMultiplicity_CentralityComp(iDataset);
   // }
 
-  Draw_Mean_Pt_vs_Dataset();
-  Draw_Mean_Eta_vs_Dataset();
-  Draw_Mean_Ntrack_vs_Dataset();
+  // Draw_Mean_Pt_vs_Dataset();
+  // Draw_Mean_Eta_vs_Dataset();
+  // Draw_Mean_Ntrack_vs_Dataset();
 }
 
 /////////////////////////////////////////////////////
@@ -210,9 +210,9 @@ void SetStyle(Bool_t graypalette) {
 ////////////////////////////////////////////////////////////////////////////// Context Utilities /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-TString contextTrackDatasetComp(const char options[]){
+TString contextTrackDatasetComp(std::string options){
   TString texcontextDatasetCompAndRadiusAndVarRange;
-  //  if (strstr(options, "track") == NULL) {
+  //  if (options.find("track") == std::string::npos) {
   texcontextDatasetCompAndRadiusAndVarRange = *texDatasetsComparisonCommonDenominator;
   return texcontextDatasetCompAndRadiusAndVarRange;
 }
@@ -241,6 +241,8 @@ void Draw_Pt_DatasetComparison() {
   bool divideSuccess = false;
 
   double Nevents; 
+
+
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
     if (!trackHistsAreTH3[iDataset]) {
@@ -251,7 +253,15 @@ void Draw_Pt_DatasetComparison() {
       H1D_trackPt[iDataset] = (TH1D*)H3D_centrality_track[iDataset]->ProjectionY("trackPt_"+Datasets[iDataset], 1, H3D_centrality_track[iDataset]->GetNbinsX(), 1, H3D_centrality_track[iDataset]->GetNbinsZ(), "e");
     }
 
-    H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(2.,"trackPt_rebinned_"+Datasets[iDataset]);
+    // H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(2.,"trackPt_rebinned_"+Datasets[iDataset]);
+    
+
+    int nBinsLog = 10;
+    std::vector<double> O2H1DPtLogBinsVector = MakeVariableBinning_logarithmic(H1D_trackPt[iDataset]->GetBinCenter(1), H1D_trackPt[iDataset]->GetXaxis()->GetXmax(), nBinsLog);
+    // std::vector<double> O2H1DPtLogBinsVector = MakeVariableBinning_logarithmic(0.5, 100, nBinsLog);
+    double* O2ptLogBins = &O2H1DPtLogBinsVector[0];
+    H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(nBinsLog, "trackPt_rebinned_"+Datasets[iDataset], O2ptLogBins);
+
 
     // NormaliseYieldToNEntries(H1D_trackPt_rebinned[iDataset]);
 
@@ -262,11 +272,23 @@ void Draw_Pt_DatasetComparison() {
     }
     NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], Nevents);
     cout << "Dataset " << iDataset << ": Nevents = " << Nevents << endl;
+  }
 
-
-    H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]);
-    H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPt_rebinned_ratios[iDataset]->Divide(H1D_trackPt_rebinned[iDataset], H1D_trackPt_rebinned[0]);
+  TString DatasetsNamesPairRatio[nDatasets];
+  int nHistPairRatio = (int)nDatasets / 2;;
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+      if (iDataset < nHistPairRatio) {
+        DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
+        H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[2*iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[2*iDataset]);
+        H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
+        divideSuccess = H1D_trackPt_rebinned_ratios[iDataset]->Divide(H1D_trackPt_rebinned[2*iDataset], H1D_trackPt_rebinned[2*iDataset+1]);
+      }
+    } else {
+      H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]);
+      H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
+      divideSuccess = H1D_trackPt_rebinned_ratios[iDataset]->Divide(H1D_trackPt_rebinned[iDataset], H1D_trackPt_rebinned[0]);
+    }
   }
 
   TString* pdfName = new TString("track_Pt_DataComp");
@@ -274,9 +296,13 @@ void Draw_Pt_DatasetComparison() {
 
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texTrackPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texTrackPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx,logy"+histDrawColorsOption);
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "standardratio,avoidFirst,logx");
+    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+      Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx,standardratio");
+    } else {
+      Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio,avoidFirst,logx"+histDrawColorsOption);
+    }
   }
   else {
     cout << "Divide failed in Draw_Pt_DatasetComparison" << endl;
@@ -316,11 +342,25 @@ void Draw_Eta_DatasetComparison() {
       Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], Nevents);
-
-    H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]);
-    H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
   }
+
+  TString DatasetsNamesPairRatio[nDatasets];
+  int nHistPairRatio = (int)nDatasets / 2;;
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+      if (iDataset < nHistPairRatio) {
+        DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
+        H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[2*iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[2*iDataset]);
+        H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
+        divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[2*iDataset], H1D_trackEta_rebinned[2*iDataset+1]);
+      }
+    } else {
+      H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]);
+      H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
+      divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
+    }
+  }
+
 
   TString* pdfNameEventNorm = new TString("track_Eta_DataComp_EventNorm");
   TString* pdfNameEventNorm_ratio = new TString("track_Eta_DataComp_EventNorm_ratio");
@@ -328,9 +368,13 @@ void Draw_Eta_DatasetComparison() {
   TString textContext(contextTrackDatasetComp(""));
 
   std::array<std::array<float, 2>, 2> drawnWindowEta = {{{-1, 1}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowEta, "");
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowEta, ""+histDrawColorsOption);
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowEta, "standardratio,avoidFirst");
+    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfNameEventNorm_ratio, texEtaX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "zoomedextraratio");
+    } else {
+      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowEta, "standardratio,avoidFirst"+histDrawColorsOption);
+    }
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -374,9 +418,9 @@ void Draw_Eta_DatasetComparison_EntriesNorm() {
 
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texEtaX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, drawnWindowAuto, "minYnotZero");
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texEtaX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "minYnotZero"+histDrawColorsOption);
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "standardratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio,avoidFirst"+histDrawColorsOption);
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -395,6 +439,7 @@ void Draw_Phi_DatasetComparison() {
   bool divideSuccess = false;
 
   double Nevents;
+
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
     if (!trackHistsAreTH3[iDataset]) {
@@ -405,7 +450,7 @@ void Draw_Phi_DatasetComparison() {
       H1D_trackPhi[iDataset] = (TH1D*)H3D_centrality_track[iDataset]->ProjectionZ("trackPhi_"+Datasets[iDataset], 1, H3D_centrality_track[iDataset]->GetNbinsX(), 1, H3D_centrality_track[iDataset]->GetNbinsY(), "e");
     }
 
-    H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(5.,"trackPhi_rebinned_"+Datasets[iDataset]);
+    H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]);
     cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() preNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << endl;
 
     // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iDataset]);
@@ -416,10 +461,24 @@ void Draw_Phi_DatasetComparison() {
     }
     NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], Nevents);
     cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() postNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << ", Nevents = " << Nevents << endl;
+  }
 
-    H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]);
-    H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[iDataset], H1D_trackPhi_rebinned[0]);
+
+  TString DatasetsNamesPairRatio[nDatasets];
+  int nHistPairRatio = (int)nDatasets / 2;;
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+      if (iDataset < nHistPairRatio) {
+        DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
+        H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[2*iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[2*iDataset]);
+        H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");
+        divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[2*iDataset], H1D_trackPhi_rebinned[2*iDataset+1]);
+      }
+    } else {
+      H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]);
+      H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");
+      divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[iDataset], H1D_trackPhi_rebinned[0]);
+    }
   }
 
   TString* pdfName = new TString("track_Phi_DataComp");
@@ -427,9 +486,13 @@ void Draw_Phi_DatasetComparison() {
 
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "histWithLine"+histDrawColorsOption);
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "standardratio,avoidFirst");
+    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+      Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPhiX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "zoomedextraratio");
+    } else {
+      Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio,avoidFirst"+histDrawColorsOption);
+    }
   }
   else {
     cout << "Divide failed in Draw_Phi_DatasetComparison" << endl;
@@ -479,9 +542,9 @@ void Draw_Eta_DatasetComparison_PtRange(float* PtRange) { //works only on modifi
 
   TString textContext(contextPtRange(PtRange));
 
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "");
-  if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "standardratio,avoidFirst");
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
+  if (divideSuccess == true) { // only checks the last iDataset, not great coding
+    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio,avoidFirst");
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -527,9 +590,9 @@ void Draw_Phi_DatasetComparison_PtRange(float* PtRange) { //works only on modifi
 
   TString textContext(contextPtRange(PtRange));
 
-  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "standardratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio,avoidFirst");
   }
   else {
     cout << "Divide failed in Draw_Phi_DatasetComparison" << endl;
@@ -582,9 +645,9 @@ void Draw_Pt_CentralityComparison(int iDataset) {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logy");
+  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logy");
   TString* pdfName2 = new TString("track_CentralityComp_"+Datasets[iDataset]+"_Pt_logx");
-  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+  Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx,logy");
 }
 
 
@@ -620,6 +683,7 @@ void Draw_Eta_CentralityComparison(int iDataset) {
     }
     H1D_trackEta_rebinned[iCentralityBin] = (TH1D*)H1D_trackEta[iCentralityBin]->Rebin(1.,"trackEta_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
+    // NormaliseYieldToIntegral(H1D_trackEta_rebinned[iCentralityBin]);
     NormaliseYieldToNEvents(H1D_trackEta_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1], trainId));
 
     ss << "Cent " << arrayCentralityBinning[iCentralityBin] << " - " << arrayCentralityBinning[iCentralityBin+1] << " ";
@@ -632,7 +696,9 @@ void Draw_Eta_CentralityComparison(int iDataset) {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texTrackEtaYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texTrackEtaYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
+  // Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
+
 }
 
 void Draw_Phi_CentralityComparison(int iDataset) {
@@ -678,7 +744,7 @@ void Draw_Phi_CentralityComparison(int iDataset) {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texTrackPhiYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texPtX, texTrackPhiYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
 }
 
 
@@ -752,11 +818,11 @@ void Draw_Pt_Run2Run3Comparison_0010Cent(int iDataset) {
 
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
-  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logy");
+  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logy");
   TString* pdfName2 = new TString("track_Run2_vs_Run3_"+DatasetsNames[iDataset]+"_@cent[00,10]_Pt_logx");
-  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName2, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName2, texPtX, texTrackPtYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx,logy");
   if (divideSuccess == true) {
-    Draw_TH1_Histogram(H1D_trackVar_rebinned_ratio, textContext, pdfName_ratio, texPtX, texRatioRun3Run2, texCollisionDataInfo, drawnWindowAuto, "standardratio, logx, ratioLine");
+    Draw_TH1_Histogram(H1D_trackVar_rebinned_ratio, textContext, pdfName_ratio, texPtX, texRatioRun3Run2, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio, logx, ratioLine");
   }
   else {
     cout << "Divide failed in Draw_Pt_Run2Run3Comparison_0010Cent" << endl;
@@ -821,7 +887,7 @@ void Draw_Eta_Run2Run3Comparison_0010Cent(int iDataset) {
 
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
-  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texEtaX, texTrackEtaYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texEtaX, texTrackEtaYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
 }
 
 void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
@@ -882,7 +948,7 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
 
   TString textContext(contextCustomOneField(RunCompLegend[0]+" vs "+RunCompLegend[1], ""));
 
-  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, "");
+  Draw_TH1_Histograms_in_one(hist_list, RunCompLegend, 2, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm_CentWindow, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
 }
 
 
@@ -1016,12 +1082,12 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   // Draw_TH2_Histograms(H2D_sigmapt_pt_concatenated, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowSigma, "logx,logz,autoRangeSame"); // ?
   Draw_TH2_Histograms(H2D_sigmapt_pt_concatenated, DatasetsNames, nDatasets, textContext, pdfName_logy, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindowSigma, "logx,logy,logz,autoRangeSame"); // ?
 
-  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, "logx");
+  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx");
   std::array<std::array<float, 2>, 2> drawnWindowSigmaAverage = {{{0.1, 100}, {0.001, 10}}}; // {{xmin, xmax}, {ymin, ymax}}
   Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowSigmaAverage, "logx,logy");
 
-  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx");
-  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx");
+  // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx,logy");
 }
 
 
@@ -1046,11 +1112,11 @@ void Draw_SelectedMultiplicity_DatasetComp() {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histograms_in_one(H1D_mult, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texCount, texCollisionDataInfo, drawnWindowAuto, "logx,logy");
+  Draw_TH1_Histograms_in_one(H1D_mult, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texCount, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx,logy");
 }
 
 
-void Draw_SelectedMultiplicity_CentralityComp(int iDataset, const char options[]) {
+void Draw_SelectedMultiplicity_CentralityComp(int iDataset, std::string options) {
 
   TH2D* H2D_multCentrality;
 
@@ -1081,15 +1147,15 @@ void Draw_SelectedMultiplicity_CentralityComp(int iDataset, const char options[]
     H1D_mult_rebinned[iCentralityBin] = (TH1D*)H1D_mult[iCentralityBin]->Rebin(1.,"multCentrality_rebinned_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]");
 
     yAxisLabel = texNoNorm_SelMultYield;
-    if (strstr(options, "normEntries") != NULL) {
+    if (options.find("normEntries") != std::string::npos) {
       NormaliseYieldToNEntries(H1D_mult_rebinned[iCentralityBin]);
       yAxisLabel = texEntriesNorm_selMultYield;
     }
-    if (strstr(options, "normEvents") != NULL) {
+    if (options.find("normEvents") != std::string::npos) {
       NormaliseYieldToNEvents(H1D_mult_rebinned[iCentralityBin], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
       yAxisLabel = texCollNorm_selMultYield;
     }
-    if (strstr(options, "normEventsCentrality") != NULL) {
+    if (options.find("normEventsCentrality") != std::string::npos) {
       NormaliseYieldToNEvents(H1D_mult_rebinned[iCentralityBin], GetNEventsSelectedCentrality_JetFramework(file_O2Analysis_list[iDataset], arrayCentralityBinning[iCentralityBin], arrayCentralityBinning[iCentralityBin+1], trainId));
       yAxisLabel = texCollNorm_selMultYield_CentWindow;
     }
@@ -1104,9 +1170,9 @@ void Draw_SelectedMultiplicity_CentralityComp(int iDataset, const char options[]
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histograms_in_one(H1D_mult_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texSelectedMultiplicity, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "autoXrange,logy");
+  Draw_TH1_Histograms_in_one(H1D_mult_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texSelectedMultiplicity, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "autoXrange,logy");
   TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_selMult");
-  Draw_TH1_Histograms_in_one(H1D_mult_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texSelectedMultiplicity, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, "autoXrange");
+  Draw_TH1_Histograms_in_one(H1D_mult_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texSelectedMultiplicity, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "autoXrange");
 }
 
 
@@ -1140,7 +1206,8 @@ void Draw_Mean_Pt_vs_Dataset() {
   TString textContext(contextTrackDatasetComp(""));
   TString* emptyAxisName = new TString("");
 
-  Draw_TH1_Histogram(H1D_mean_vs_dataset, textContext, pdfName, emptyAxisName, texMeanPt, texCollisionDataInfo, drawnWindowAuto, "datasetXaxisBinLabels");
+  Draw_TH1_Histogram(H1D_mean_vs_dataset, textContext, pdfName, emptyAxisName, texMeanPt, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "datasetXaxisBinLabels");
+  cout << " has memory leaks somewhere" << endl;
 }
 
 void Draw_Mean_Eta_vs_Dataset() {
@@ -1173,7 +1240,7 @@ void Draw_Mean_Eta_vs_Dataset() {
   TString textContext(contextTrackDatasetComp(""));
   TString* emptyAxisName = new TString("");
 
-  Draw_TH1_Histogram(H1D_mean_vs_dataset, textContext, pdfName, emptyAxisName, texMeanEta, texCollisionDataInfo, drawnWindowAuto, "datasetXaxisBinLabels");
+  Draw_TH1_Histogram(H1D_mean_vs_dataset, textContext, pdfName, emptyAxisName, texMeanEta, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "datasetXaxisBinLabels");
 }
 
 void Draw_Mean_Ntrack_vs_Dataset() {
@@ -1200,7 +1267,7 @@ void Draw_Mean_Ntrack_vs_Dataset() {
   TString textContext(contextTrackDatasetComp(""));
   TString* emptyAxisName = new TString("");
 
-  Draw_TH1_Histogram(H1D_mean_vs_dataset, textContext, pdfName, emptyAxisName, texMeanNtracks, texCollisionDataInfo, drawnWindowAuto, "datasetXaxisBinLabels");
+  Draw_TH1_Histogram(H1D_mean_vs_dataset, textContext, pdfName, emptyAxisName, texMeanNtracks, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "datasetXaxisBinLabels");
 }
 
 void Draw_DcaXY_DatasetComp();

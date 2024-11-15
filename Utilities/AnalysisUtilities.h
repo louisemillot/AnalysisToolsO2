@@ -11,10 +11,11 @@ void NormaliseRawHistToIntegral(TH1D* histogram);
 int GetNEvents(TFile* file_O2Analysis, TString analysisWorkflow);
 int GetNEventsGen(TFile* file_O2Analysis);
 int GetNEventsSelected_JetFramework(TFile* file_O2Analysis);
+double GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis);
 int GetNEventsSelected_TrackEffWorkflow(TFile* file_O2Analysis);
 int GetNEventsSelected_TrackEffWorkflow_gen(TFile* file_O2Analysis);
-int GetNEventsSelected_TrackEffWorkflow_gen_weighted(TFile* file_O2Analysis);
-double GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis);
+double GetNEventsSelected_TrackEffWorkflow_weighted(TFile* file_O2Analysis);
+double GetNEventsSelected_TrackEffWorkflow_gen_weighted(TFile* file_O2Analysis);
 int GetNEventsSel8Centrality(TFile* file_O2Analysis, float centralityLow, float centralityHigh);
 int GetNEventsSelectedCentrality_JetFramework(TFile* file_O2Analysis, float centralityLow, float centralityHigh, const char trainId[]);
 

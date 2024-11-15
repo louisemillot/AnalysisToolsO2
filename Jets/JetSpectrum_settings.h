@@ -34,17 +34,17 @@ const bool doEvtNorm = 1;                               //  as of now, only chan
 const bool doWidthScalingAtEnd = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
 char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-char unfoldingPrior[] = "measuredPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
-const bool useYSliceNorm = true; //SHOULD BE TRUE IF USING PRIOR
+char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+const bool useYSliceNorm = false; //SHOULD BE TRUE IF USING PRIOR
 char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
 char normMethod[] = "evtNorm"; // evtNorm, noNorm
 char optionsAnalysis[100] = "";
 
-const bool isPbPb = true; // if false -> pp
-const bool ppMcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
+const bool isPbPb = false; // if false -> pp
+const bool ppMcIsWeighted = false; // use if the MC has been weighted to have more high pt jets?
 int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active; only applied if useInitialResponseMethod is true
 bool applyFakes = true; // only applied if useInitialResponseMethod is true
-const bool useFineBinningTest = true; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
+const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
 
 const bool scaleRespByWidth = false;
 const bool doWidthScalingEarly = false;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
@@ -56,10 +56,10 @@ const bool normDetRespByNEvts = false; //that's what breaks svd; https://arxiv.o
 const bool normGenAndMeasByNEvts = false;
 const bool normunfoldedByNEvts = false;
 
-const bool useInitialResponseMethod = true; // discrepancy false vs true here seems to be that I do not model fakes in my initial method
+const bool useInitialResponseMethod = false; // discrepancy false vs true here seems to be that I do not model fakes in my initial method
 const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
 
-bool controlMC = false; // not yet implemented: weighted control MC, and control for PbPb
+bool controlMC = true; // not yet implemented: weighted control MC, and control for PbPb
 
 const bool drawIntermediateResponseMatrices = false;
 
@@ -97,23 +97,23 @@ const bool drawIntermediateResponseMatrices = false;
 // int nBinPtJetsGen[nRadius] = {20,20,20};
 
 
-// PbPb
-// Hannah bossi identical fo rrun 2 comparison
-double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
-int nBinPtJetsRec[nRadius] = {19,19,19};
-double ptBinsJetsGen[nRadius][30] = {{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
-int nBinPtJetsGen[nRadius] = {9,9,9};
+// // PbPb
+// // Hannah bossi identical fo rrun 2 comparison
+// double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
+// int nBinPtJetsRec[nRadius] = {19,19,19};
+// double ptBinsJetsGen[nRadius][30] = {{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
+// int nBinPtJetsGen[nRadius] = {9,9,9};
 
-// // Joonsuk binning for pp
-// double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9, 10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
-// // double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
-// // int nBinPtJetsRec[nRadius] = {25,25,25};
-// int nBinPtJetsRec[nRadius] = {20,20,20};
-// // double ptBinsJetsGen[nRadius][30] = {{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
-// // double ptBinsJetsGen[nRadius][30] = {{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
-// double ptBinsJetsGen[nRadius][30] = {{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
-// int nBinPtJetsGen[nRadius] = {20,20,20};
-// // int nBinPtJetsGen[nRadius] = {25,25,25};
+// Joonsuk binning for pp
+double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9, 10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+// double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+// int nBinPtJetsRec[nRadius] = {25,25,25};
+int nBinPtJetsRec[nRadius] = {20,20,20};
+// double ptBinsJetsGen[nRadius][30] = {{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{0, 1, 2, 3, 4, 5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+// double ptBinsJetsGen[nRadius][30] = {{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+double ptBinsJetsGen[nRadius][30] = {{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+int nBinPtJetsGen[nRadius] = {20,20,20};
+// int nBinPtJetsGen[nRadius] = {25,25,25};
 
 
 // Double_t ptbin[21] = {5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200};
@@ -286,77 +286,148 @@ int nBinPtJetsGen[nRadius] = {9,9,9};
 //                                        200}};
                             
 
-int nBinPtJetsFine[nRadius] = {40,40,40};
-// int nBinPtJetsFine[nRadius] = {195,195,195};
-// double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
-double ptBinsJetsFine[nRadius][201] = {{   0., 05.,
-                                        10., 15.,
-                                        20., 25.,
-                                        30., 35.,
-                                        40., 45.,
-                                        50., 55.,
-                                        60., 65.,
-                                        70., 75.,
-                                        80., 85.,
-                                        90., 95.,
-                                       100., 105.,
-                                       110., 115.,
-                                       120., 125.,
-                                       130., 135.,
-                                       140., 145.,
-                                       150., 155.,
-                                       160., 165.,
-                                       170., 175.,
-                                       180., 185.,
-                                       190., 195.,
-                                       200.},
-                                     {   0., 05.,
-                                        10., 15.,
-                                        20., 25.,
-                                        30., 35.,
-                                        40., 45.,
-                                        50., 55.,
-                                        60., 65.,
-                                        70., 75.,
-                                        80., 85.,
-                                        90., 95.,
-                                       100., 105.,
-                                       110., 115.,
-                                       120., 125.,
-                                       130., 135.,
-                                       140., 145.,
-                                       150., 155.,
-                                       160., 165.,
-                                       170., 175.,
-                                       180., 185.,
-                                       190., 195.,
-                                       200.},
-                                     {   0., 05.,
-                                        10., 15.,
-                                        20., 25.,
-                                        30., 35.,
-                                        40., 45.,
-                                        50., 55.,
-                                        60., 65.,
-                                        70., 75.,
-                                        80., 85.,
-                                        90., 95.,
-                                       100., 105.,
-                                       110., 115.,
-                                       120., 125.,
-                                       130., 135.,
-                                       140., 145.,
-                                       150., 155.,
-                                       160., 165.,
-                                       170., 175.,
-                                       180., 185.,
-                                       190., 195.,
-                                       200.}}; // shift+option+left click hold lets one edit columns in vs code
-
-// int nBinPtJetsFine[nRadius] = {200,200,200};
+// int nBinPtJetsFine[nRadius] = {40,40,40};
 // // int nBinPtJetsFine[nRadius] = {195,195,195};
 // // double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
+// double ptBinsJetsFine[nRadius][201] = {{   0., 05.,
+//                                         10., 15.,
+//                                         20., 25.,
+//                                         30., 35.,
+//                                         40., 45.,
+//                                         50., 55.,
+//                                         60., 65.,
+//                                         70., 75.,
+//                                         80., 85.,
+//                                         90., 95.,
+//                                        100., 105.,
+//                                        110., 115.,
+//                                        120., 125.,
+//                                        130., 135.,
+//                                        140., 145.,
+//                                        150., 155.,
+//                                        160., 165.,
+//                                        170., 175.,
+//                                        180., 185.,
+//                                        190., 195.,
+//                                        200.},
+//                                      {   0., 05.,
+//                                         10., 15.,
+//                                         20., 25.,
+//                                         30., 35.,
+//                                         40., 45.,
+//                                         50., 55.,
+//                                         60., 65.,
+//                                         70., 75.,
+//                                         80., 85.,
+//                                         90., 95.,
+//                                        100., 105.,
+//                                        110., 115.,
+//                                        120., 125.,
+//                                        130., 135.,
+//                                        140., 145.,
+//                                        150., 155.,
+//                                        160., 165.,
+//                                        170., 175.,
+//                                        180., 185.,
+//                                        190., 195.,
+//                                        200.},
+//                                      {   0., 05.,
+//                                         10., 15.,
+//                                         20., 25.,
+//                                         30., 35.,
+//                                         40., 45.,
+//                                         50., 55.,
+//                                         60., 65.,
+//                                         70., 75.,
+//                                         80., 85.,
+//                                         90., 95.,
+//                                        100., 105.,
+//                                        110., 115.,
+//                                        120., 125.,
+//                                        130., 135.,
+//                                        140., 145.,
+//                                        150., 155.,
+//                                        160., 165.,
+//                                        170., 175.,
+//                                        180., 185.,
+//                                        190., 195.,
+//                                        200.}}; // shift+option+left click hold lets one edit columns in vs code
+
+// int nBinPtJetsFine[nRadius] = {120,120,120};
+int nBinPtJetsFine[nRadius] = {115,115,115};
+double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
 // double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100., 105.,
+                                       110., 115.,
+                                       120., 125.,
+                                       130., 135.,
+                                       140., 145.,
+                                       150., 155.,
+                                       160., 165.,
+                                       170., 175.,
+                                       180., 185.,
+                                       190., 195.,
+                                       200.},
+                                     {05., 06., 07., 08., 09.,
+                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100., 105.,
+                                       110., 115.,
+                                       120., 125.,
+                                       130., 135.,
+                                       140., 145.,
+                                       150., 155.,
+                                       160., 165.,
+                                       170., 175.,
+                                       180., 185.,
+                                       190., 195.,
+                                       200.},
+                                     {05., 06., 07., 08., 09.,
+                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100., 105.,
+                                       110., 115.,
+                                       120., 125.,
+                                       130., 135.,
+                                       140., 145.,
+                                       150., 155.,
+                                       160., 165.,
+                                       170., 175.,
+                                       180., 185.,
+                                       190., 195.,
+                                       200.},}; // shift+option+left click hold lets one edit columns in vs code
+
+
+
+// // int nBinPtJetsFine[nRadius] = {200,200,200};
+// int nBinPtJetsFine[nRadius] = {195,195,195};
+// double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
+// // double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
 //                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
 //                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
 //                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -377,8 +448,8 @@ double ptBinsJetsFine[nRadius][201] = {{   0., 05.,
 //                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
 //                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
 //                                        200},
-//                                     //  {05., 06., 07., 08., 09.,
-//                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+//                                      {05., 06., 07., 08., 09.,
+//                                     //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
 //                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
 //                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
 //                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -399,8 +470,8 @@ double ptBinsJetsFine[nRadius][201] = {{   0., 05.,
 //                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
 //                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
 //                                        200},
-//                                     //  {05., 06., 07., 08., 09.,
-//                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+//                                      {05., 06., 07., 08., 09.,
+//                                     //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
 //                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
 //                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
 //                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -434,57 +505,57 @@ double ptBinsJetsFine[nRadius][201] = {{   0., 05.,
 //////////////////////////////       file access choice       ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////// -------- Pb-Pb -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
-const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23zzh"};
-const TString DatasetsNames[nDatasets] = {""};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
-                                      };
-// TFile* file_O2Analysis_ppSimDetectorEffect[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
-// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
-TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted_train_256548/AnalysisResults.root");
-TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24b1b_sel8MC_train239181/OneRun/AnalysisResults.root")};
-
-// const TString trainId = "_id12832";
-// const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
-const TString trainId = "_id12436";
-const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
-// const TString trainId = "";
-// const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
-
-const TString analysisWorkflowMC = "jet-finder-charged-qa";
-
-
-
-
-
-// //////// -------- pp -------- ////////
-// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV"); 
+// //////// -------- Pb-Pb -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
 // const TString* texDatasetsComparisonType = new TString("");
-// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC22o pass6");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
 // const int nDatasets = 1;
-// const TString Datasets[nDatasets] = {"LHC22o_pass6_train238827"};
-// const TString DatasetsNames[nDatasets] = {"LHC22o_pass6"};
+// const TString Datasets[nDatasets] = {"LHC23zzh"};
+// const TString DatasetsNames[nDatasets] = {""};
 // TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
 //                                       };
-// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24f3_sel8MC_train240962/AnalysisResults.root");
-
-// // TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24f3_sel8MC_train240962/AnalysisResults.root")};
+// // TFile* file_O2Analysis_ppSimDetectorEffect[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
+// // TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted_train_256548/AnalysisResults.root");
 // TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24b1b_sel8MC_train239181/OneRun/AnalysisResults.root")};
 
-// // TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24b1b_sel8Full_train239409/AnalysisResults.root");
-// // TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted/AnalysisResults.root");
-
-// const TString trainId = "";
 // // const TString trainId = "_id12832";
 // // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
-// const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
+// const TString trainId = "_id12436";
+// const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
+// // const TString trainId = "";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
 
 // const TString analysisWorkflowMC = "jet-finder-charged-qa";
-// // const TString analysisWorkflowMC = "jet-finder-charged-qa_global_CollMatch";
+
+
+
+
+
+//////// -------- pp -------- ////////
+TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV"); 
+const TString* texDatasetsComparisonType = new TString("");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC22o pass7");
+const int nDatasets = 1;
+const TString Datasets[nDatasets] = {"LHC22o_pass7_train261733"};
+const TString DatasetsNames[nDatasets] = {"LHC22o_pass7"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+                                      };
+TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24f3b_train261768/half1/AnalysisResults.root");
+
+// TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24f3_sel8MC_train240962/AnalysisResults.root")};
+TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24f3b_train261768/half2/AnalysisResults.root")};
+
+// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/LHC24b1b_sel8Full_train239409/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect = new TFile("Datasets/ppSim_LHC23d4_weighted/AnalysisResults.root");
+
+const TString trainId = "";
+// const TString trainId = "_id12832";
+// const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
+
+const TString analysisWorkflowMC = "jet-finder-charged-qa";
+// const TString analysisWorkflowMC = "jet-finder-charged-qa_global_CollMatch";
 
 
 

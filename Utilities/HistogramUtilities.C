@@ -40,14 +40,26 @@ std::vector<double> MakeVariableBinning_twoWidths(double xMin, int nLeft, double
   }
   std::vector<double> bins;
   double binWidth;
+  binWidth = (xMiddle - xMin) / nLeft;
   for(int i = 0; i < nLeft; i++){
-    binWidth = (xMiddle - xMin) / nLeft;
     bins.push_back(xMin + i * binWidth);
   }
+  binWidth = (xMax - xMiddle) / nRight;
   for(int i = 0; i < nRight+1; i++){ // using nRight +1 here so that the rightmost edge is added. But due to double prec, might not be exactly xMax; alternative could be to forego the +1 and manually pushback xMax
-    binWidth = (xMax - xMiddle) / nRight;
     bins.push_back(xMiddle + i * binWidth);
   }
+  return bins;
+}
+
+std::vector<double> MakeVariableBinning_logarithmic(double xMin, double xMax, int nBins) {
+  std::vector<double> bins;
+  double xTemp = xMin;
+  double binLogWidth = (log10(xMax) - log10(xMin)) / nBins;
+  for(int i = 0; i < nBins; i++){
+    bins.push_back(xTemp);
+    xTemp = xTemp * pow(10, binLogWidth);
+  }
+  bins.push_back(xMax);
   return bins;
 }
 
@@ -550,7 +562,7 @@ TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
 ////////////////////////////////////////////////////////////////////////////// Histogram Context /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, __attribute__ ((unused)) const char options[]){
+TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, __attribute__ ((unused)) std::string options){
   TString texContextFinal;
   texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
   // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{2023 QC}{test"+tertiaryContext+"}}";
@@ -558,11 +570,11 @@ TString contextCustomThreeFields(TString mainContext, TString secondaryContext, 
   return texContextFinal;
 }
 
-TString contextCustomTwoFields(TString mainContext, TString secondaryContext, const char options[]){
+TString contextCustomTwoFields(TString mainContext, TString secondaryContext, std::string options){
   return contextCustomThreeFields(mainContext, (TString)"" , secondaryContext, options);
 }
 
-TString contextCustomOneField(TString mainContext, const char options[]){
+TString contextCustomOneField(TString mainContext, std::string options){
   return contextCustomTwoFields(mainContext, (TString)"", options);
 }
 
@@ -605,41 +617,41 @@ TString contextJetRadius(float jetRadius){
 
 
 
-TString contextDatasetRadiusCompAndVarRange(TString mainContext, int iDataset, float* variableRange, const char options[]){
+TString contextDatasetRadiusCompAndVarRange(TString mainContext, int iDataset, float* variableRange, std::string options){
   TString texcontextDatasetRadiusCompAndVarRange;
-  if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+  if (options.find("pt") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
     texcontextDatasetRadiusCompAndVarRange = "#splitline{"+mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextPtRange(variableRange)+"}}";
   }
-  if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+  if (options.find("eta") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
     texcontextDatasetRadiusCompAndVarRange = "#splitline{"+mainContext+" "+DatasetsNames[iDataset]+"}{#splitline{2023 QC}{"+contextEtaRange(variableRange)+"}}";
   }
 
   return texcontextDatasetRadiusCompAndVarRange;
 }
 
-TString contextDatasetCompAndRadiusAndVarRange(TString mainContext, float jetRadius, float* variableRange, const char options[]){
+TString contextDatasetCompAndRadiusAndVarRange(TString mainContext, float jetRadius, float* variableRange, std::string options){
   TString texcontextDatasetCompAndRadiusAndVarRange;
-  if (strstr(options, "pt") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+  if (options.find("pt") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
     texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(variableRange)+"}}";
   }
-  if (strstr(options, "eta") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+  if (options.find("eta") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
     texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(variableRange)+"}}";
   }
-  if (strstr(options, "centrality") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+  if (options.find("centrality") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
     texcontextDatasetCompAndRadiusAndVarRange = "#splitline{"+mainContext+"}{#splitline{"+contextJetRadius(jetRadius)+"}{"+contextCentRange(variableRange)+"}}";
   }
 
   return texcontextDatasetCompAndRadiusAndVarRange;
 }
 
-TString contextDatasetCompAndRadius(TString mainContext, float jetRadius, __attribute__ ((unused)) const char options[]){
+TString contextDatasetCompAndRadius(TString mainContext, float jetRadius, __attribute__ ((unused)) std::string options){
   TString texcontextDatasetCompAndRadius;
   texcontextDatasetCompAndRadius = "#splitline{"+mainContext+"}{"+contextJetRadius(jetRadius)+"}";
 
   return texcontextDatasetCompAndRadius;
 }
 
-TString contextDatasetComp(TString mainContext, __attribute__ ((unused)) const char options[]){
+TString contextDatasetComp(TString mainContext, __attribute__ ((unused)) std::string options){
   TString texcontextDatasetComp;
   texcontextDatasetComp = mainContext;
 
@@ -675,7 +687,7 @@ void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfol
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[], TF1** optionalFitCollection) {
+void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::string options, TF1** optionalFitCollection) {
   // has options:
   // - "autoratio" : if in the options string, the Y range is chosen automatically based on the difference to 1
   // - "standardratio" : if in the options string, the Y range is [0,2.2]
@@ -696,7 +708,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // char* OptionPtr = &options;
 
   for (int i = 0; i < collectionSize; i++) {
-    if (strstr(options, "autoXrange") != NULL) {
+    if (options.find("autoXrange") != std::string::npos) {
       maxX_collection[i] = histograms_collection[i]->FindLastBinAbove(0, 1);
       minX_collection[i] = histograms_collection[i]->FindFirstBinAbove(0,1);
       // cout << "test1.1a" << endl;
@@ -709,11 +721,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     maxY_collection[i] = histograms_collection[i]->GetMaximum();
     // cout << "test1.2" << endl;
     
-    if (strstr(options, "logy") != NULL) { //  || strstr(options, "ratio") != NULL not sure why I had this here
+    if (options.find("logy") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
       minY_collection[i] = histograms_collection[i]->GetMinimum(1E-10);
       // cout << "test1.3a" << endl;
     }
-    else if (strstr(options, "minYnotZero") != NULL) {
+    else if (options.find("minYnotZero") != std::string::npos) {
       minY_collection[i] = histograms_collection[i]->GetMinimum(GLOBAL_epsilon); // asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
       // cout << "test1.3b" << endl;
     }
@@ -734,7 +746,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   minY = findMinFloat(minY_collection, collectionSize);
   maxY > 0 ? yUpMarginScaling = 1.4 : yUpMarginScaling = 0.6;
 
-  if (strstr(options, "logy") != NULL) {
+  if (options.find("logy") != std::string::npos) {
     yUpMarginScaling = 100;
     if (minY < 0) {
     } 
@@ -745,7 +757,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       minY = minY-1E-10 ; // to be sure to see the point?
     }
   } else {
-    if (minY < 0 || strstr(options, "minYnotZero") != NULL) {
+    if (minY < 0 || options.find("minYnotZero") != std::string::npos) {
       minY > 0 ? yDownMarginScaling = 0.95 : yDownMarginScaling = 1.05;
       yUpMarginScaling = 1.1;
     } else {
@@ -753,18 +765,28 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     }
   // cout << "test3" << endl;
 
-    if (strstr(options, "autoratio") != NULL) {
+    if (options.find("autoratio") != std::string::npos) {
       float deltaMax = max(1-minY, maxY-1);
       minY = max((float)0., 1-deltaMax);
       maxY = 1+deltaMax;
       yUpMarginScaling = 1.3;
     }
-    if (strstr(options, "standardratio") != NULL) {
+    if (options.find("standardratio") != std::string::npos) {
       minY = 0;
       maxY = 2;
       yUpMarginScaling = 1.1;
     }
-    if (strstr(options, "efficiency") != NULL) {
+    if (options.find("zoomedratio") != std::string::npos) {
+      minY = 0.8;
+      maxY = 1.2;
+      yUpMarginScaling = 1.1;
+    }
+    if (options.find("zoomedextraratio") != std::string::npos) {
+      minY = 0.9;
+      maxY = 1.1;
+      yUpMarginScaling = 1.1;
+    }
+    if (options.find("efficiency") != std::string::npos) {
       minY = 0;
       maxY = 1.5;
       yUpMarginScaling = 1.1;
@@ -786,10 +808,10 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
 
   TH1 *hFrame = canvas->DrawFrame(minX, yDownMarginScaling*minY, maxX, yUpMarginScaling*maxY);
-  if (strstr(options, "logy") != NULL) {
+  if (options.find("logy") != std::string::npos) {
     canvas->SetLogy();
   }  
-  if (strstr(options, "logx") != NULL) {
+  if (options.find("logx") != std::string::npos) {
     canvas->SetLogx();
   }
     // cout << "test4" << endl;
@@ -799,12 +821,28 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // hFrame->GetYaxis()->SetTitleOffset(2);
 
   // legend settings
-  TLegend * leg = new TLegend(0.7, 0.75, 0.8, 0.87);
+  double xLeft = 0.7;
+  double xRight = 0.75;
+  double yLow = 0.8;
+  double yUp = 0.87;
+  if (!std::equal(std::begin(legendPlacement[0]), std::end(legendPlacement[0]), std::begin(legendPlacementAuto[0]), std::end(legendPlacementAuto[0]))) {
+    xLeft = legendPlacement[0][0];
+    xRight = legendPlacement[0][1];
+  }
+  if (!std::equal(std::begin(legendPlacement[1]), std::end(legendPlacement[1]), std::begin(legendPlacementAuto[1]), std::end(legendPlacementAuto[1]))) {
+    // leg = TLegend(0.7, 0.75, legendPlacement[1][0], legendPlacement[1][1]);
+    // leg->SetY1NDC(legendPlacement[1][0]);
+    // leg->SetY2NDC(legendPlacement[1][1]);
+    yLow = legendPlacement[1][0];
+    yUp = legendPlacement[1][1];
+  }
+  TLegend * leg = new TLegend(xLeft, xRight, yLow, yUp);
+
   leg->SetTextSize(gStyle->GetTextSize()*0.7);
   if (collectionSize >= 6) { // maybe fine tune that
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
   }
-  if (strstr(options, "fit") != NULL) {
+  if (options.find("fit") != std::string::npos) {
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
   }
   if (collectionSize >= 6) {
@@ -814,31 +852,48 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
   // draws histograms from collection, and setting the colors
   for (int i = 0; i < collectionSize; i++) {
-    if (i!=0 || strstr(options, "avoidFirst") == NULL) { // if i=0 requires that the option avoidFirst isn't there
-      if (strstr(options, "colorPairs") != NULL) {
-        int nColors = gStyle->GetNumberOfColors();
-        int histoColor = (float)nColors / collectionSize * (int)i/2;
-        histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoColor));
-        histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoColor));
-      } else if (collectionSize >= 6) {
-        histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-        if (strstr(options, "histWithLine") != NULL) {
-          histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-        }
-      } else {
-        histograms_collection[i]->Draw("same");
-        if (strstr(options, "histWithLine") != NULL) {
-          histograms_collection[i]->Draw("][ Hist same");
-        }
-        histograms_collection[i]->SetMarkerColor(colors[i]);
-        histograms_collection[i]->SetLineColor(colors[i]);
-      }
-      histograms_collection[i]->SetMarkerStyle(markers[i]);
+    if (i!=0 || options.find("avoidFirst") == std::string::npos) { // if i=0 requires that the option avoidFirst isn't there
 
+      if (options.find("colorPairs") == std::string::npos) {
+        if (collectionSize >= 6) {
+          histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+          if (options.find("histWithLine") != std::string::npos) {
+            histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+          }
+        } else {
+          histograms_collection[i]->Draw("same");
+          if (options.find("histWithLine") != std::string::npos) {
+            histograms_collection[i]->Draw("][ Hist same");
+          }
+          histograms_collection[i]->SetMarkerColor(colors[i]);
+          histograms_collection[i]->SetLineColor(colors[i]);
+        }
+        histograms_collection[i]->SetMarkerStyle(markers[i]);
+
+        } else {
+          if (collectionSize >= 2*6) {
+            int nColors = gStyle->GetNumberOfColors();
+            int histoColor = (float)nColors / collectionSize * (int)i/2;
+            histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoColor));
+            histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoColor));
+            histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+            if (options.find("histWithLine") != std::string::npos) {
+              histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+            }
+          } else {
+            histograms_collection[i]->Draw("same");
+            if (options.find("histWithLine") != std::string::npos) {
+              histograms_collection[i]->Draw("][ Hist same");
+            }
+            histograms_collection[i]->SetMarkerColor(colors[(int)i/2]);
+            histograms_collection[i]->SetLineColor(colors[(int)i/2]);
+          }
+        histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+        }
       leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
     }
   }
-  if (strstr(options, "fit") != NULL) {
+  if (options.find("fit") != std::string::npos) {
     for (int i = 0; i < collectionSize; i++) {
       optionalFitCollection[i]->SetNpx(2000);
       optionalFitCollection[i]->Draw("same");
@@ -851,7 +906,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   }
   // cout << "test6" << endl;
 
-  if (strstr(options, "ratioLine") != NULL) {
+  if (options.find("ratioLine") != std::string::npos) {
     TLine myline(minX,1,maxX,1);
     myline.SetLineColor(kBlack);
     myline.SetLineWidth(1);
@@ -859,9 +914,10 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     myline.DrawLine(minX,1,maxX,1);
 		canvas->Modified();
 		canvas->Update();
+    cout << "minX = " << minX << endl;
   }
 
-  if (strstr(options, "150MevLine") != NULL) {
+  if (options.find("150MevLine") != std::string::npos) {
     float lineEdgesX[4] = {0.150, 0.150};
     float lineEdgesY[4] = {0, yUpMarginScaling*maxY};
     TPolyLine* Line150Mev = new TPolyLine(2, lineEdgesX, lineEdgesY);
@@ -872,7 +928,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     }
   }
 
-  if (strstr(options, "datasetXaxisBinLabels") != NULL) {
+  if (options.find("datasetXaxisBinLabels") != std::string::npos) {
     // ChangeLabel(labNum, labAngle, labSize, labAlign, labColor, labFont, labText)
     // [in]	labNum	Number of the label to be changed, negative numbers start from the end
     // [in]	labAngle	New angle value
@@ -914,17 +970,17 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // }
 }
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
+void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::string options) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
   TF1* optionalFitCollectionDummy[collectionSize];
-  Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options, optionalFitCollectionDummy);
+  Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, options, optionalFitCollectionDummy);
 }
 
-void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
+void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::string options) {
   TH1D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
-  Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options);
+  Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, options);
 
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
@@ -932,7 +988,7 @@ void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TStr
   // }
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[], TPolyLine* optionalLine) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::string options, TPolyLine* optionalLine) {
 
   double width = collectionSize*900;
   double height = 800;
@@ -948,20 +1004,20 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     histograms_collection[i]->SetXTitle(texXtitle->Data());
     histograms_collection[i]->SetYTitle(texYtitle->Data());
     canvas->cd(i+1)->SetRightMargin(0.18); // if the z-axis ever gets hidden, one can play with this
-    if (strstr(options, "logz") != NULL) {
+    if (options.find("logz") != std::string::npos) {
       gPad->SetLogz(); // sets log scale for the current pad
     }
-    if (strstr(options, "logy") != NULL) {
+    if (options.find("logy") != std::string::npos) {
       gPad->SetLogy();
     }
-    if (strstr(options, "logx") != NULL) {
+    if (options.find("logx") != std::string::npos) {
       gPad->SetLogx();
     }
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
 
   if (std::equal(std::begin(drawnWindow), std::end(drawnWindow), std::begin(drawnWindowAuto), std::end(drawnWindowAuto))) {
-    if (strstr(options, "autoRangeSame") != NULL) {
+    if (options.find("autoRangeSame") != std::string::npos) {
       int maxXbin = 0;
       int maxYbin = 0;
       int symBinLimitMin = 9999999;
@@ -972,7 +1028,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
         if (maxYbin < histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2)) {
           maxYbin = histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2);// (asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
         }
-        if (strstr(options, "autoRangeSameSym") != NULL) {
+        if (options.find("autoRangeSameSym") != std::string::npos) {
           int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(GLOBAL_epsilon, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2)));
           if (symBinLimitMin > symBinLimit) {
             symBinLimitMin = symBinLimit;
@@ -980,7 +1036,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
         }
       }
       for (int i = 0; i < collectionSize; i++) {
-        if (strstr(options, "autoRangeSameSym") != NULL) {
+        if (options.find("autoRangeSameSym") != std::string::npos) {
           int symBinLimit = min(histograms_collection[i]->FindFirstBinAbove(GLOBAL_epsilon, 2), abs(histograms_collection[i]->GetNbinsY() - histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2))); //(asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
           histograms_collection[i]->GetYaxis()->SetRange(symBinLimitMin, histograms_collection[i]->GetNbinsY() - symBinLimitMin); //getting symmetric window around 0 on Y axis
         }
@@ -1002,7 +1058,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     }
   }
 
-  if (strstr(options, "drawLines") != NULL) {
+  if (options.find("drawLines") != std::string::npos) {
     // cout << "optionalLine->GetN() = " << optionalLine->GetN() << endl;
     if (optionalLine->GetN() > 0) {
       optionalLine->Draw("");
@@ -1043,14 +1099,14 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::string options) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
   TPolyLine* optionalLine;
   Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options, optionalLine);
 }
 
 
-void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, const char options[]) {
+void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::string options) {
   TH2D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
