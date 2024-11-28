@@ -145,11 +145,11 @@ void JetQC() {
   // const int nPtMinCuts = 7;
   // float jetPtMinCut;
   // float jetPtMinCutArray[nPtMinCuts] = {-999, 0, 5, 10, 15, 20, 40.};
-  const int nPtBins = 6;
+  const int nPtBins = 5;
   float jetPtMinCut, jetPtMaxCut;
-  float jetPtMinCutArray[nPtBins] = {0, 10, 20, 40, 60, 200};
+  float jetPtMinCutArray[nPtBins+1] = {0, 10, 20, 40, 60, 200};
 
-  for(int iPtBin = 0; iPtBin < nPtBins - 1; iPtBin++){
+  for(int iPtBin = 0; iPtBin < nPtBins; iPtBin++){
     jetPtMinCut = jetPtMinCutArray[iPtBin];
     jetPtMaxCut = jetPtMinCutArray[iPtBin+1];
 
@@ -162,9 +162,9 @@ void JetQC() {
   //   float PtRangeZoom5060[2] = {50, 60};
   //   float PtRangeZoom8090[2] = {80, 90};
 
-    // Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
-    // Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
-    // Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
+    Draw_Eta_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    Draw_Phi_DatasetComparison(jetRadiusForDataComp, ptRange, "normEvents");
+    Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
     Count_Jets_DatasetComparison(jetRadiusForDataComp, ptRange, etaRangeSym, "");
 
     // Draw_Eta_DatasetComparison(jetR02, ptRange, "normEvents");

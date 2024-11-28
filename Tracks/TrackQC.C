@@ -43,9 +43,9 @@ TString contextTrackDatasetComp(std::string options);
 //////////// QC plot functions
 // Dataset comparison
 void Draw_Pt_DatasetComparison();
-void Draw_Eta_DatasetComparison();
-void Draw_Phi_DatasetComparison();
-void Draw_Eta_DatasetComparison_EntriesNorm();
+void Draw_Eta_DatasetComparison(float* ptRange);
+void Draw_Phi_DatasetComparison(float* ptRange);
+void Draw_Eta_DatasetComparison_EntriesNorm(float* ptRange);
 
 // void Draw_Eta_DatasetComparison_trackSelComp();
 // void Draw_Phi_DatasetComparison_trackSelComp();
@@ -58,9 +58,6 @@ void Draw_Phi_CentralityComparison(int iDataset);
 void Draw_Pt_Run2Run3Comparison_0010Cent(int iDataset);
 void Draw_Eta_Run2Run3Comparison_0010Cent(int iDataset);
 void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset);
-
-void Draw_Phi_DatasetComparison_PtRange(float* PtRange); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-void Draw_Eta_DatasetComparison_PtRange(float* PtRange); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
 
 void Draw_Sigmapt_vs_pt_DatasetComp();
 
@@ -94,19 +91,11 @@ void TrackQC() {
   // TString* Extra = new TString("");
 
 
-  // Draw_Pt_DatasetComparison();
-  // Draw_Eta_DatasetComparison();
-  // Draw_Phi_DatasetComparison();
-
-  // Draw_Eta_DatasetComparison_trackSelComp();
-  // Draw_Phi_DatasetComparison_trackSelComp();
-  // Draw_Eta_DatasetComparison_EntriesNorm();
-
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    Draw_Pt_CentralityComparison(iDataset);
-    Draw_Eta_CentralityComparison(iDataset);
-    Draw_Phi_CentralityComparison(iDataset);
+    // Draw_Pt_CentralityComparison(iDataset);
+    // Draw_Eta_CentralityComparison(iDataset);
+    // Draw_Phi_CentralityComparison(iDataset);
   }
   // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
   //   Draw_Pt_Run2Run3Comparison_0010Cent(iDataset);
@@ -114,18 +103,23 @@ void TrackQC() {
   //   Draw_Phi_Run2Run3Comparison_0010Cent(iDataset);
   // }
 
-  // float ptRange1[2] = {0.15, 100};
-  // Draw_Phi_DatasetComparison_PtRange(ptRange1); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-  // Draw_Eta_DatasetComparison_PtRange(ptRange1); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-  // float ptRange2[2] = {2, 100};
-  // Draw_Phi_DatasetComparison_PtRange(ptRange2); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-  // Draw_Eta_DatasetComparison_PtRange(ptRange2); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-  // float ptRange3[2] = {3, 100};
-  // Draw_Phi_DatasetComparison_PtRange(ptRange3); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-  // Draw_Eta_DatasetComparison_PtRange(ptRange3); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-  // float ptRange4[2] = {4, 100};
-  // Draw_Phi_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-  // Draw_Eta_DatasetComparison_PtRange(ptRange4); //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
+  const int nPtBins = 10;
+  float jetPtMinCut, jetPtMaxCut;
+  float jetPtMinCutArray[nPtBins+1] = {0, 1, 2, 4, 6, 8, 10, 15, 20, 30, 200};
+
+  Draw_Pt_DatasetComparison();
+  for(int iPtBin = 0; iPtBin < nPtBins; iPtBin++){
+    jetPtMinCut = jetPtMinCutArray[iPtBin];
+    jetPtMaxCut = jetPtMinCutArray[iPtBin+1];
+
+    float ptRange[2] = {jetPtMinCut, jetPtMaxCut};
+    Draw_Eta_DatasetComparison(ptRange);
+    Draw_Phi_DatasetComparison(ptRange);
+
+  // Draw_Eta_DatasetComparison_trackSelComp();
+  // Draw_Phi_DatasetComparison_trackSelComp();
+  Draw_Eta_DatasetComparison_EntriesNorm(ptRange);
+  }
 
   // Draw_Sigmapt_vs_pt_DatasetComp();
   // Draw_Sigmapt_nonGlobal_uniformTracks();
@@ -231,7 +225,7 @@ TString contextTrackDatasetComp(std::string options){
 
 void Draw_Pt_DatasetComparison() {
   TH2D* H2D_centrality_track[nDatasets];
-  TH3D* H3D_centrality_track[nDatasets];
+  TH3D* H3D_track[nDatasets];
 
   TH1D* H1D_trackPt[nDatasets];
   TH1D* H1D_trackPt_rebinned[nDatasets];
@@ -242,21 +236,20 @@ void Draw_Pt_DatasetComparison() {
 
   double Nevents; 
 
-
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
       H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_pt"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
       H1D_trackPt[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackPt_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
     } else {
-      H3D_centrality_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_eta"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
-      H1D_trackPt[iDataset] = (TH1D*)H3D_centrality_track[iDataset]->ProjectionY("trackPt_"+Datasets[iDataset], 1, H3D_centrality_track[iDataset]->GetNbinsX(), 1, H3D_centrality_track[iDataset]->GetNbinsZ(), "e");
+      H3D_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_pt_track_eta_track_phi"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
+      H1D_trackPt[iDataset] = (TH1D*)H3D_track[iDataset]->ProjectionX("trackPt_"+Datasets[iDataset], 1, H3D_track[iDataset]->GetNbinsY(), 1, H3D_track[iDataset]->GetNbinsZ(), "e");
     }
 
     // H1D_trackPt_rebinned[iDataset] = (TH1D*)H1D_trackPt[iDataset]->Rebin(2.,"trackPt_rebinned_"+Datasets[iDataset]);
     
 
-    int nBinsLog = 10;
+    int nBinsLog = 20;
     std::vector<double> O2H1DPtLogBinsVector = MakeVariableBinning_logarithmic(H1D_trackPt[iDataset]->GetBinCenter(1), H1D_trackPt[iDataset]->GetXaxis()->GetXmax(), nBinsLog);
     // std::vector<double> O2H1DPtLogBinsVector = MakeVariableBinning_logarithmic(0.5, 100, nBinsLog);
     double* O2ptLogBins = &O2H1DPtLogBinsVector[0];
@@ -310,9 +303,9 @@ void Draw_Pt_DatasetComparison() {
 }
 
 
-void Draw_Eta_DatasetComparison() {
+void Draw_Eta_DatasetComparison(float* ptRange) {
   TH2D* H2D_centrality_track[nDatasets];
-  TH3D* H3D_centrality_track[nDatasets];
+  TH3D* H3D_track[nDatasets];
 
   TH1D* H1D_trackEta[nDatasets];
   TH1D* H1D_trackEta_rebinned[nDatasets];
@@ -322,15 +315,28 @@ void Draw_Eta_DatasetComparison() {
   bool divideSuccess = false;
 
   double Nevents; 
+
+  float ptCutLow = ptRange[0];
+  float ptCutHigh = ptRange[1];
+
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
+      cout << "WARNING: OBSOLETE track histogram version selected, cannot cut on pT" << endl;
       H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
       H1D_trackEta[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
     } else {
-      H3D_centrality_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_pt_track_eta_track_phi"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
-      H1D_trackEta[iDataset] = (TH1D*)H3D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H3D_centrality_track[iDataset]->GetNbinsX(),1, H3D_centrality_track[iDataset]->GetNbinsY(), "e");
+      H3D_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_pt_track_eta_track_phi"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
+
+      int ibinPt_low = H3D_track[iDataset]->GetXaxis()->FindBin(ptCutLow);
+      int ibinPt_high = H3D_track[iDataset]->GetXaxis()->FindBin(ptCutHigh);
+      if (ibinPt_low == 0) 
+        cout << "WARNING: Eta_DatasetComparison is counting the underflow with the chosen PtRange" << endl;
+      if (ibinPt_high == H3D_track[iDataset]->GetXaxis()->GetNbins()+1) 
+        cout << "WARNING: Eta_DatasetComparison is counting the overflow with the chosen PtRange" << endl;
+
+      H1D_trackEta[iDataset] = (TH1D*)H3D_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], ibinPt_low, ibinPt_high, 1, H3D_track[iDataset]->GetNbinsZ(), "e");
     }
 
     H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned"+Datasets[iDataset]);
@@ -362,18 +368,18 @@ void Draw_Eta_DatasetComparison() {
   }
 
 
-  TString* pdfNameEventNorm = new TString("track_Eta_DataComp_EventNorm");
-  TString* pdfNameEventNorm_ratio = new TString("track_Eta_DataComp_EventNorm_ratio");
+  TString* pdfNameEventNorm = new TString((TString)"track_Eta_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]_EventNorm");
+  TString* pdfNameEventNorm_ratio = new TString((TString)"track_Eta_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]_EventNorm_ratio");
 
-  TString textContext(contextTrackDatasetComp(""));
+  TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextPtRange(ptRange), ""));
 
   std::array<std::array<float, 2>, 2> drawnWindowEta = {{{-1, 1}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowEta, ""+histDrawColorsOption);
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowEta, legendPlacementAuto, ""+histDrawColorsOption);
   if (divideSuccess == true) {
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
       Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfNameEventNorm_ratio, texEtaX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "zoomedextraratio");
     } else {
-      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowEta, "standardratio,avoidFirst"+histDrawColorsOption);
+      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowEta, legendPlacementAuto, "standardratio,avoidFirst"+histDrawColorsOption);
     }
   }
   else {
@@ -381,8 +387,8 @@ void Draw_Eta_DatasetComparison() {
   }
 }
 
-void Draw_Eta_DatasetComparison_EntriesNorm() {
-  TH3D* H3D_centrality_track[nDatasets];
+void Draw_Eta_DatasetComparison_EntriesNorm(float* ptRange) {
+  TH3D* H3D_track[nDatasets];
   TH2D* H2D_centrality_track[nDatasets];
 
   TH1D* H1D_trackEta[nDatasets];
@@ -392,14 +398,26 @@ void Draw_Eta_DatasetComparison_EntriesNorm() {
 
   bool divideSuccess = false;
 
+  float ptCutLow = ptRange[0];
+  float ptCutHigh = ptRange[1];
+
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
+      cout << "WARNING: OBSOLETE track histogram version selected, cannot cut on pT" << endl;
       H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
       H1D_trackEta[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
     } else {
-      H3D_centrality_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_pt_track_eta_track_phi"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
-      H1D_trackEta[iDataset] = (TH1D*)H3D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H3D_centrality_track[iDataset]->GetNbinsX(),1, H3D_centrality_track[iDataset]->GetNbinsY(), "e");
+      H3D_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_pt_track_eta_track_phi"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
+
+      int ibinPt_low = H3D_track[iDataset]->GetXaxis()->FindBin(ptCutLow);
+      int ibinPt_high = H3D_track[iDataset]->GetXaxis()->FindBin(ptCutHigh);
+      if (ibinPt_low == 0) 
+        cout << "WARNING: Eta_DatasetComparison is counting the underflow with the chosen PtRange" << endl;
+      if (ibinPt_high == H3D_track[iDataset]->GetXaxis()->GetNbins()+1) 
+        cout << "WARNING: Eta_DatasetComparison is counting the overflow with the chosen PtRange" << endl;
+
+      H1D_trackEta[iDataset] = (TH1D*)H3D_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], ibinPt_low, ibinPt_high, 1, H3D_track[iDataset]->GetNbinsZ(), "e");
     }
 
     H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned_EntriesNorm"+Datasets[iDataset]);
@@ -412,11 +430,11 @@ void Draw_Eta_DatasetComparison_EntriesNorm() {
     H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
     divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
   }
+  
+  TString* pdfNameEntriesNorm = new TString((TString)"track_Eta_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]_EntriesNorm");
+  TString* pdfNameEntriesNorm_ratio = new TString((TString)"track_Eta_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]_EntriesNorm_ratio");
 
-  TString* pdfNameEntriesNorm = new TString("track_Eta_DataComp_EntriesNorm");
-  TString* pdfNameEntriesNorm_ratio = new TString("track_Eta_DataComp_EntriesNorm_ratio");
-
-  TString textContext(contextTrackDatasetComp(""));
+  TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextPtRange(ptRange), ""));
 
   Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texEtaX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "minYnotZero"+histDrawColorsOption);
   if (divideSuccess == true) {
@@ -427,8 +445,8 @@ void Draw_Eta_DatasetComparison_EntriesNorm() {
   }
 }
 
-void Draw_Phi_DatasetComparison() { 
-  TH3D* H3D_centrality_track[nDatasets];
+void Draw_Phi_DatasetComparison(float* ptRange) { 
+  TH3D* H3D_track[nDatasets];
   TH2D* H2D_centrality_track[nDatasets];
 
   TH1D* H1D_trackPhi[nDatasets];
@@ -440,14 +458,26 @@ void Draw_Phi_DatasetComparison() {
 
   double Nevents;
 
+  float ptCutLow = ptRange[0];
+  float ptCutHigh = ptRange[1];
+
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
+      cout << "WARNING: OBSOLETE track histogram version selected, cannot cut on pT" << endl;
       H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
       H1D_trackPhi[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackPhi_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
     } else {
-      H3D_centrality_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_centrality_track_pt_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
-      H1D_trackPhi[iDataset] = (TH1D*)H3D_centrality_track[iDataset]->ProjectionZ("trackPhi_"+Datasets[iDataset], 1, H3D_centrality_track[iDataset]->GetNbinsX(), 1, H3D_centrality_track[iDataset]->GetNbinsY(), "e");
+      H3D_track[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_track_pt_track_eta_track_phi"))->Clone("Draw_Phi_DatasetComparison"+Datasets[iDataset]);
+
+      int ibinPt_low = H3D_track[iDataset]->GetXaxis()->FindBin(ptCutLow);
+      int ibinPt_high = H3D_track[iDataset]->GetXaxis()->FindBin(ptCutHigh);
+      if (ibinPt_low == 0) 
+        cout << "WARNING: Eta_DatasetComparison is counting the underflow with the chosen PtRange" << endl;
+      if (ibinPt_high == H3D_track[iDataset]->GetXaxis()->GetNbins()+1) 
+        cout << "WARNING: Eta_DatasetComparison is counting the overflow with the chosen PtRange" << endl;
+
+      H1D_trackPhi[iDataset] = (TH1D*)H3D_track[iDataset]->ProjectionZ("trackPhi_"+Datasets[iDataset], ibinPt_low, ibinPt_high, 1, H3D_track[iDataset]->GetNbinsY(), "e");
     }
 
     H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]);
@@ -481,10 +511,10 @@ void Draw_Phi_DatasetComparison() {
     }
   }
 
-  TString* pdfName = new TString("track_Phi_DataComp");
-  TString* pdfName_ratio = new TString("track_Phi_DataComp_ratio");
+  TString* pdfName = new TString((TString)"track_Phi_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]");
+  TString* pdfName_ratio = new TString((TString)"track_Phi_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]_ratio");
 
-  TString textContext(contextTrackDatasetComp(""));
+  TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextPtRange(ptRange), ""));
 
   Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "histWithLine"+histDrawColorsOption);
   if (divideSuccess == true) {
@@ -499,108 +529,6 @@ void Draw_Phi_DatasetComparison() {
   }
 }
 
-
-void Draw_Eta_DatasetComparison_PtRange(float* PtRange) { //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-
-  TH3D* H3D_trackPtEtaPhi[nDatasets];
-  TH1D* H1D_trackEta[nDatasets];
-  TH1D* H1D_trackEta_rebinned[nDatasets];
-  
-  TH1D* H1D_trackEta_rebinned_ratios[nDatasets];
-
-  bool divideSuccess = false;
-
-  float PtCutLow =0;
-  float PtCutHigh = 0;
-  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    H3D_trackPtEtaPhi[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h_track_pt_track_eta_track_phi"))->Clone("Draw_Eta_DatasetComparison_PtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
-
-    PtCutLow = PtRange[0];
-    PtCutHigh = PtRange[1];
-    int ibinPt_low = H3D_trackPtEtaPhi[iDataset]->GetXaxis()->FindBin(PtCutLow);
-    int ibinPt_high = H3D_trackPtEtaPhi[iDataset]->GetXaxis()->FindBin(PtCutHigh);
-    H3D_trackPtEtaPhi[iDataset]->GetXaxis()->SetRange(ibinPt_low,ibinPt_high);
-
-
-    H1D_trackEta[iDataset] = (TH1D*)H3D_trackPtEtaPhi[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset]+Form("%.2f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinPt_low, ibinPt_high, 0, -1, "e");
-    if (PtCutLow > 3){
-      H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(2.,"trackEta_rebinned_"+Datasets[iDataset]+Form("%.2f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
-    }
-    else {
-      H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(1.,"trackEta_rebinned_"+Datasets[iDataset]+Form("%.2f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
-    }
-    // NormaliseYieldToNEntries(H1D_trackEta_rebinned[iDataset]);
-    NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
-
-    H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]);
-    H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
-  }
-
-  TString* pdfName = new TString("track_Eta_DataComp"+dummyName[0]+"_@pt["+Form("%.2f", PtCutLow)+","+Form("%.1f", PtCutHigh)+"]");
-  TString* pdfName_ratio = new TString("track_Eta_DataComp_ratio"+dummyName[0]+"_@pt["+Form("%.2f", PtCutLow)+","+Form("%.1f", PtCutHigh)+"]");
-
-  TString textContext(contextPtRange(PtRange));
-
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
-  if (divideSuccess == true) { // only checks the last iDataset, not great coding
-    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio,avoidFirst");
-  }
-  else {
-    cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
-  }
-}
-
-void Draw_Phi_DatasetComparison_PtRange(float* PtRange) { //works only on modified jetfinderQA for h_track_pt_track_eta_track_phi
-
-  TH3D* H3D_trackPtEtaPhi[nDatasets];
-  TH1D* H1D_trackPhi[nDatasets];
-  TH1D* H1D_trackPhi_rebinned[nDatasets];
-  
-  TH1D* H1D_trackPhi_rebinned_ratios[nDatasets];
-
-  bool divideSuccess = false;
-
-  float PtCutLow =0;
-  float PtCutHigh = 0;
-  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    H3D_trackPtEtaPhi[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h_track_pt_track_eta_track_phi"))->Clone("Draw_Phi_DatasetComparison_PtRange"+Datasets[iDataset]+Form("%.1f", PtRange[0])+"<pt<"+Form("%.1f", PtRange[1]));
-
-    PtCutLow = PtRange[0];
-    PtCutHigh = PtRange[1];
-    int ibinPt_low = H3D_trackPtEtaPhi[iDataset]->GetXaxis()->FindBin(PtCutLow);
-    int ibinPt_high = H3D_trackPtEtaPhi[iDataset]->GetXaxis()->FindBin(PtCutHigh);
-    H3D_trackPtEtaPhi[iDataset]->GetXaxis()->SetRange(ibinPt_low,ibinPt_high);
-
-
-    H1D_trackPhi[iDataset] = (TH1D*)H3D_trackPtEtaPhi[iDataset]->ProjectionZ("trackPhi_"+Datasets[iDataset]+Form("%.2f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh), ibinPt_low, ibinPt_high, 0, -1, "e");
-    H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(1.,"trackPhi_rebinned_"+Datasets[iDataset]+Form("%.2f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
-    
-
-    // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iDataset]);
-    NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset]));
-
-    H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]);
-    H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[iDataset], H1D_trackPhi_rebinned[0]);
-  }
-
-  TString* pdfName = new TString("track_Phi_DataComp"+dummyName[0]+"_@pt["+Form("%.2f", PtCutLow)+","+Form("%.1f", PtCutHigh)+"]");
-  TString* pdfName_ratio = new TString("track_Phi_DataComp_ratio"+dummyName[0]+"_@pt["+Form("%.2f", PtCutLow)+","+Form("%.1f", PtCutHigh)+"]");
-
-  TString textContext(contextPtRange(PtRange));
-
-  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
-  if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "standardratio,avoidFirst");
-  }
-  else {
-    cout << "Divide failed in Draw_Phi_DatasetComparison" << endl;
-  }
-}
-
-
-
 void Draw_Pt_CentralityComparison(int iDataset) {
 
   TH3D* H3D_trackPttrackCent;
@@ -608,7 +536,7 @@ void Draw_Pt_CentralityComparison(int iDataset) {
   TH1D* H1D_trackPt[nCentralityBins];
   TH1D* H1D_trackPt_rebinned[nCentralityBins];
   
-  if (!trackHistsAreTH3[iDataset]) {
+  if (trackHistsObsoleteVersion[iDataset]) {
     H2D_trackPttrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_pt"))->Clone("Draw_Pt_CentralityComparison"+Datasets[iDataset]);
     H2D_trackPttrackCent->Sumw2();
   } else {
@@ -621,7 +549,7 @@ void Draw_Pt_CentralityComparison(int iDataset) {
   std::stringstream ss;
   for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
       ibinCent_low = H2D_trackPttrackCent->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin]);
       ibinCent_high = H2D_trackPttrackCent->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin+1])-1;
       H1D_trackPt[iCentralityBin] = (TH1D*)H2D_trackPttrackCent->ProjectionY("trackPt_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
@@ -659,7 +587,7 @@ void Draw_Eta_CentralityComparison(int iDataset) {
   TH1D* H1D_trackEta[nCentralityBins];
   TH1D* H1D_trackEta_rebinned[nCentralityBins];
   
-  if (!trackHistsAreTH3[iDataset]) {
+  if (trackHistsObsoleteVersion[iDataset]) {
     H2D_trackEtatrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_CentralityComparison"+Datasets[iDataset]);
     H2D_trackEtatrackCent->Sumw2();
   } else {
@@ -672,7 +600,8 @@ void Draw_Eta_CentralityComparison(int iDataset) {
   std::stringstream ss;
   for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
+      cout << "WARNING: OBSOLETE track histogram version selected, cannot cut on pT" << endl;
       ibinCent_low = H2D_trackEtatrackCent->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin]);
       ibinCent_high = H2D_trackEtatrackCent->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin+1])-1;
       H1D_trackEta[iCentralityBin] = (TH1D*)H2D_trackEtatrackCent->ProjectionY("trackEta_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
@@ -708,7 +637,7 @@ void Draw_Phi_CentralityComparison(int iDataset) {
   TH1D* H1D_trackPhi[nCentralityBins];
   TH1D* H1D_trackPhi_rebinned[nCentralityBins];
   
-  if (!trackHistsAreTH3[iDataset]) {
+  if (trackHistsObsoleteVersion[iDataset]) {
     H2D_trackPhitrackCent = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_phi"))->Clone("Draw_Phi_CentralityComparison"+Datasets[iDataset]);
     H2D_trackPhitrackCent->Sumw2();
   } else {
@@ -721,7 +650,8 @@ void Draw_Phi_CentralityComparison(int iDataset) {
   std::stringstream ss;
   for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
+      cout << "WARNING: OBSOLETE track histogram version selected, cannot cut on pT" << endl;
       ibinCent_low = H2D_trackPhitrackCent->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin]);
       ibinCent_high = H2D_trackPhitrackCent->GetXaxis()->FindBin(arrayCentralityBinning[iCentralityBin+1])-1;
       H1D_trackPhi[iCentralityBin] = (TH1D*)H2D_trackPhitrackCent->ProjectionY("trackPhi_"+Datasets[iDataset]+"_@cent["+Form("%.1d", ibinCent_low)+","+Form("%.1d", ibinCent_high)+"]", ibinCent_low, ibinCent_high, "e");
@@ -1084,7 +1014,7 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
 
   // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx");
   std::array<std::array<float, 2>, 2> drawnWindowSigmaAverage = {{{0.1, 100}, {0.001, 10}}}; // {{xmin, xmax}, {ymin, ymax}}
-  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowSigmaAverage, "logx,logy");
+  Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowSigmaAverage, legendPlacementAuto, "logx,logy");
 
   // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx");
   // Draw_TH1_Histograms_in_one(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "logx,logy");
@@ -1187,7 +1117,7 @@ void Draw_Mean_Pt_vs_Dataset() {
   double Nevents; 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
       H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_pt"))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]);
       H1D_trackPt[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackPt_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
     } else {
@@ -1221,7 +1151,7 @@ void Draw_Mean_Eta_vs_Dataset() {
   double Nevents; 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    if (!trackHistsAreTH3[iDataset]) {
+    if (trackHistsObsoleteVersion[iDataset]) {
       H2D_centrality_track[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_centrality_track_eta"))->Clone("Draw_Eta_DatasetComparison"+Datasets[iDataset]);
       H1D_trackEta[iDataset] = (TH1D*)H2D_centrality_track[iDataset]->ProjectionY("trackEta_"+Datasets[iDataset], 1, H2D_centrality_track[iDataset]->GetNbinsX(), "e");
     } else {

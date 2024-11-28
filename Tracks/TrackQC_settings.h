@@ -340,36 +340,37 @@ TFile* file_AliAnalysis; //dummy
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false};
-// const bool trackHistsAreTH3[nDatasets] = {false, false, false};
+// const bool trackHistsObsoleteVersion[nDatasets] = {true, true, true};
 
 
 
-// //////// -------- LHC23zzh - apass 4 occupancy analysis - sel8FullPbPb-------- ////////
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-// const TString* texDatasetsComparisonType = new TString("occupancy");
-// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4 - sel8FullPbPb");
-// const int nDatasets = 4;
-// const TString Datasets[nDatasets] = {"sel8FullPbPb/LHC23zzh_apass4_occupancy01000", "sel8FullPbPb/LHC23zzh_apass4_occupancy05000", "sel8FullPbPb/LHC23zzh_apass4_occupancy10000", "sel8FullPbPb/LHC23zzh_apass4_occupancy20000"};
-// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-// const TString DatasetsNames[nDatasets] = {"0k-1k occupancy", "1k-5k occupancy", "5k-10k occupancy", "10-20k occupancy"};
-// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
-//                                         };
-// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
-// //                                           "jet-finder-charged-qa_central_5090"
-// //                                           };
-// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa"
+//////// -------- LHC23zzh - apass 4 occupancy analysis - sel8FullPbPb-------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+const TString* texDatasetsComparisonType = new TString("occupancy");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4 - sel8FullPbPb");
+const int nDatasets = 4;
+const TString Datasets[nDatasets] = {"sel8FullPbPb/LHC23zzh_apass4_occupancy01000", "sel8FullPbPb/LHC23zzh_apass4_occupancy05000", "sel8FullPbPb/LHC23zzh_apass4_occupancy10000", "sel8FullPbPb/LHC23zzh_apass4_occupancy20000"};
+// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+const TString DatasetsNames[nDatasets] = {"0k-1k occupancy", "1k-5k occupancy", "5k-10k occupancy", "10-20k occupancy"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+                                        };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+//                                           "jet-finder-charged-qa_central_5090"
 //                                           };
+const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa"
+                                          };
 
-// const TString trainId = "";
-// const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
-// const bool trackHistsAreTH3[nDatasets] = {true, true, true, true};
+const TString trainId = "";
+const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
+const bool trackHistsObsoleteVersion[nDatasets] = {false, false, false, false};
 
+const std::string histDrawColorsOption = "";
 
 
 // //////// -------- LHC23zzh - apass 4 occupancy analysis - sel8Full -------- ////////
@@ -396,7 +397,7 @@ TFile* file_AliAnalysis; //dummy
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
-// const bool trackHistsAreTH3[nDatasets] = {true, true, true, true};
+// const bool trackHistsObsoleteVersion[nDatasets] = {false, false, false, false};
 
 // const std::string histDrawColorsOption = "";
 
@@ -435,29 +436,29 @@ TFile* file_AliAnalysis; //dummy
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false, false, false, false};
-// const bool trackHistsAreTH3[nDatasets] = {true, true, true, true, true, true, true, true};
+// const bool trackHistsObsoleteVersion[nDatasets] = {false, false, false, false, false, false, false, false};
 
 // const std::string histDrawColorsOption = "colorPairs";
 
 
-//////// -------- LHC23zzh - apass 4 occupancy analysis - sel8Full vs sel8FullPbPb -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("sel");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4");
-const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass4_train254040/merged"};
-// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"LHC23zzh apass4"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
-                                        };
-// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
-//                                           "jet-finder-charged-qa_central_5090"
+// //////// -------- LHC23zzh - apass 4 occupancy analysis - sel8Full vs sel8FullPbPb -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("sel");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_train254040/merged"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"LHC23zzh apass4"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                         };
+// // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_central_0010",
+// //                                           "jet-finder-charged-qa_central_5090"
+// //                                           };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
-const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
-                                          };
 
-const TString trainId = "";
-const bool isDatasetWeighted[nDatasets] = {false};
-const bool trackHistsAreTH3[nDatasets] = {false};
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false};
+// const bool trackHistsObsoleteVersion[nDatasets] = {false};
 
-const std::string histDrawColorsOption = "colorPairs";
+// const std::string histDrawColorsOption = "colorPairs";
