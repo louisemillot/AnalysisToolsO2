@@ -412,7 +412,7 @@ const TString* texDatasetsComparisonCommonDenominator = new TString("noSplit");
 const int nDatasets = 8;
 // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
 // const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
-const TString Datasets[nDatasets] = {"LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3"};
+const TString Datasets[nDatasets] = {"LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3", "LHC24g3"}; //DatasetFiles
 const TString DatasetsNames[nDatasets] = {"noSplit 0-10%", "okSplit 0-10%", "noSplit 10-30%", "okSplit 10-30%", "noSplit 30-50%", "okSplit 30-50%", "noSplit 50-70%", "okSplit 50-70%"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
