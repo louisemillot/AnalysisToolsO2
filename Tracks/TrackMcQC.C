@@ -1854,7 +1854,7 @@ void Draw_Phi_gen_DatasetComparison_H2CentVersion(std::string options) {
 
   Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiMC, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
   if (divideSuccess == true && options.find("ratio") != std::string::npos) {
-    Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, "autoratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "autoratio,avoidFirst");
   }
   else {
     cout << "Divide failed in Draw_Phi_DatasetComparison" << endl;
