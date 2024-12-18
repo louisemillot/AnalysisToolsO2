@@ -1181,14 +1181,14 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
     // % of primary
     H1D_trackPt_primaryPurity[iDataset] = (TH1D*)H1D_trackPt_primary_rebinned[iDataset]->Clone("trackPt_primaryPurity_rebinned"+Datasets[iDataset]);
     H1D_trackPt_primaryPurity[iDataset]->Reset("M");
-    cout<<"test1"<<endl;
+    
     H1D_primaryPurity_denominator[iDataset] = (TH1D*)H1D_trackPt_primary_rebinned[iDataset]->Clone("trackPt_primaryPurity_denominator_rebinned1"+Datasets[iDataset]);
     H1D_primaryPurity_denominator[iDataset]->Add(H1D_trackPt_secondary_rebinned[iDataset],1.);
     divideSuccess1 = H1D_trackPt_primaryPurity[iDataset]->Divide(H1D_trackPt_primary_rebinned[iDataset], H1D_primaryPurity_denominator[iDataset]);
 
     H1D_trackPtHigh_primaryPurity[iDataset] = (TH1D*)H1D_trackPtHigh_primary_rebinned[iDataset]->Clone("trackPtHigh_primaryPurity_rebinned"+Datasets[iDataset]);
     H1D_trackPtHigh_primaryPurity[iDataset]->Reset("M");
-    cout<<"test2"<<endl;
+    
     H1D_primaryPurity_High_denominator[iDataset] = (TH1D*)H1D_trackPtHigh_primary_rebinned[iDataset]->Clone("trackPtHigh_primaryPurity_denominator_rebinned1"+Datasets[iDataset]);
     H1D_primaryPurity_High_denominator[iDataset]->Add(H1D_trackPtHigh_secondary_rebinned[iDataset],1.);
     divideSuccess1_high = H1D_trackPtHigh_primaryPurity[iDataset]->Divide(H1D_trackPtHigh_primary_rebinned[iDataset], H1D_primaryPurity_High_denominator[iDataset]);
@@ -1196,31 +1196,31 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
     //% of split primaire 
     H1D_trackPt_splitprimaryPurity[iDataset] = (TH1D*)H1D_trackPt_splitPrimaryTracks[iDataset]->Clone("trackPt_splitprimaryPurity"+Datasets[iDataset]);
     H1D_trackPt_splitprimaryPurity[iDataset]->Reset("M");
-    cout<<"test3"<<endl;
+    
     H1D_splitprimaryPurity_denominator[iDataset] = (TH1D*)H1D_trackPt_primary[iDataset]->Clone("trackPt_primaryPurity_denominator2"+Datasets[iDataset]);
     divideSuccess2 = H1D_trackPt_splitprimaryPurity[iDataset]->Divide(H1D_trackPt_splitPrimaryTracks[iDataset], H1D_splitprimaryPurity_denominator[iDataset]);
-    cout<<"test4"<<endl;
+    
     //% of split 
     H1D_trackPt_split[iDataset] = (TH1D*)H1D_trackPt_splitPrimaryTracks[iDataset]->Clone("trackPt_split_Purity"+Datasets[iDataset]);
     H1D_trackPt_split[iDataset]->Add(H1D_trackPt_splitSecondaryTracks[iDataset],1.);
-    cout<<"test5"<<endl;
+    
     H1D_split_denominator[iDataset] = (TH1D*)H1D_trackPt_primary[iDataset]->Clone("trackPt_primaryPurity_denominator3"+Datasets[iDataset]);
     H1D_split_denominator[iDataset]->Add(H1D_trackPt_secondary[iDataset],1.);
     divideSuccess3 = H1D_trackPt_split[iDataset]->Divide(H1D_trackPt_split[iDataset], H1D_split_denominator[iDataset]);
     //% of non-split 
     H1D_trackPt_nonsplit[iDataset] = (TH1D*)H1D_trackPt_primaryNonSplit[iDataset]->Clone("trackPt_nonsplit_Purity"+Datasets[iDataset]);
     H1D_trackPt_nonsplit[iDataset]->Add(H1D_trackPt_nonprimaryNonSplit[iDataset],1.);
-    cout<<"test6"<<endl;
+    
     H1D_nonsplit_denominator[iDataset] = (TH1D*)H1D_trackPt_primary[iDataset]->Clone("trackPt_primaryPurity_denominator4"+Datasets[iDataset]);
     H1D_nonsplit_denominator[iDataset]->Add(H1D_trackPt_secondary[iDataset],1.);
     divideSuccess4 = H1D_trackPt_nonsplit[iDataset]->Divide(H1D_trackPt_nonsplit[iDataset], H1D_nonsplit_denominator[iDataset]);
     //% of non split primary 
     H1D_trackPt_nonsplitprimaryPurity[iDataset] = (TH1D*)H1D_trackPt_primaryNonSplit[iDataset]->Clone("trackPt_nonsplitprimaryPurity"+Datasets[iDataset]);
     H1D_trackPt_nonsplitprimaryPurity[iDataset]->Reset("M");
-    cout<<"test7"<<endl;
+    
     H1D_nonsplitprimaryPurity_denominator[iDataset] = (TH1D*)H1D_trackPt_primary[iDataset]->Clone("trackPt_primaryPurity_denominator5"+Datasets[iDataset]);
     divideSuccess5 = H1D_trackPt_nonsplitprimaryPurity[iDataset]->Divide(H1D_trackPt_primaryNonSplit[iDataset], H1D_nonsplitprimaryPurity_denominator[iDataset]);
-    cout<<"test8"<<endl;
+    
     // Merging high and low pt histograms:
     // x-axis
     std::vector<double> xbinsVectorLeft = GetTH1Bins(H1D_trackPt_primaryPurity[iDataset]);
@@ -1276,15 +1276,12 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
 
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextEtaRange(etaRange), ""));
 
-  // std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999}
-  //                                                         , {0.6, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}}
-
-  // std::array<std::array<float, 2>, 2> contextPlacementPurity = {{{-999, -999}
-  //                                                         , {0.6, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999} , {0.6, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<float, 2> contextPlacementPurity = {{0.6, 1.2}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> legendPlacementPurity = {{{0.4, 0.2}, {0.8, 0.5}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   if (divideSuccess1 == true) {
-    // Draw_TH1_Histograms_in_one(H1D_trackPt_purity_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm1, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowPurity, legendPlacementAuto, contextPlacementPurity, "logx,efficiency,150MevLine"+histDrawColorsOption);
-    Draw_TH1_Histograms_in_one(H1D_trackPt_purity_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm1, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,efficiency,150MevLine"+histDrawColorsOption);
+    Draw_TH1_Histograms_in_one(H1D_trackPt_purity_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm1, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowPurity, legendPlacementPurity, contextPlacementPurity, "logx,efficiency,150MevLine"+histDrawColorsOption);
 
   }
   else {
