@@ -948,10 +948,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   TLatex* textInfo = new TLatex();
   textInfo->SetTextSize(0.04);
   textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram  
-  textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
-  textInfo->DrawLatex(0.18,0.75,Context);
 
-  // legend settings
   double xTopLeftCornerContext = 0.18;
   double yTopLeftCornerContext = 0.82;
   double deltaYContextsPosition = 0.07;
