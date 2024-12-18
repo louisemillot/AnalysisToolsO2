@@ -955,10 +955,10 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   double xTopLeftCornerContext = 0.18;
   double yTopLeftCornerContext = 0.82;
   double deltaYContextsPosition = 0.07;
-  if (contextPlacement[0] == contextPlacementAuto[0]) {
+  if (contextPlacement[0] != contextPlacementAuto[0]) {
     xTopLeftCornerContext = contextPlacement[0];
   }
-  if (contextPlacement[1] == contextPlacementAuto[1]) {
+  if (contextPlacement[1] != contextPlacementAuto[1]) {
     yTopLeftCornerContext = contextPlacement[1];
   }
   textInfo->DrawLatex(xTopLeftCornerContext,yTopLeftCornerContext,texCollisionDataInfo->Data());
