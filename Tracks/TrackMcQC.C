@@ -1276,8 +1276,8 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
 
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextEtaRange(etaRange), ""));
 
-  std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999} , {0.6, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<float, 2> contextPlacementPurity = {{0.6, 1.2}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999} , {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<float, 2> contextPlacementPurity = {{0.22, 0.82}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementPurity = {{{0.4, 0.2}, {0.8, 0.5}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   if (divideSuccess1 == true) {
