@@ -919,7 +919,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
   if (options.find("150MevLine") != std::string::npos) {
     float lineEdgesX[4] = {0.150, 0.150};
-    float lineEdgesY[4] = {0, yUpMarginScaling*maxY};
+    float lineEdgesY[4] = {minY, yUpMarginScaling*maxY};
     TPolyLine* Line150Mev = new TPolyLine(2, lineEdgesX, lineEdgesY);
     // cout << "Line150Mev->GetN() = " << Line150Mev->GetN() << endl;
     if (Line150Mev->GetN() > 0) {
