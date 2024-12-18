@@ -687,7 +687,7 @@ void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfol
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::string options, TF1** optionalFitCollection) {
+void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options, TF1** optionalFitCollection) {
   // has options:
   // - "autoratio" : if in the options string, the Y range is chosen automatically based on the difference to 1
   // - "standardratio" : if in the options string, the Y range is [0,2.2]
@@ -821,22 +821,22 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // hFrame->GetYaxis()->SetTitleOffset(2);
 
   // legend settings
-  double xLeft = 0.7;
-  double xRight = 0.75;
-  double yLow = 0.8;
-  double yUp = 0.87;
+  double xLeftLegend = 0.7;
+  double xRightLegend = 0.75;
+  double yLowLegend = 0.8;
+  double yUpLegend = 0.87;
   if (!std::equal(std::begin(legendPlacement[0]), std::end(legendPlacement[0]), std::begin(legendPlacementAuto[0]), std::end(legendPlacementAuto[0]))) {
-    xLeft = legendPlacement[0][0];
-    xRight = legendPlacement[0][1];
+    xLeftLegend = legendPlacement[0][0];
+    xRightLegend = legendPlacement[0][1];
   }
   if (!std::equal(std::begin(legendPlacement[1]), std::end(legendPlacement[1]), std::begin(legendPlacementAuto[1]), std::end(legendPlacementAuto[1]))) {
     // leg = TLegend(0.7, 0.75, legendPlacement[1][0], legendPlacement[1][1]);
     // leg->SetY1NDC(legendPlacement[1][0]);
     // leg->SetY2NDC(legendPlacement[1][1]);
-    yLow = legendPlacement[1][0];
-    yUp = legendPlacement[1][1];
+    yLowLegend = legendPlacement[1][0];
+    yUpLegend = legendPlacement[1][1];
   }
-  TLegend * leg = new TLegend(xLeft, xRight, yLow, yUp);
+  TLegend * leg = new TLegend(xLeftLegend, xRightLegend, yLowLegend, yUpLegend);
 
   leg->SetTextSize(gStyle->GetTextSize()*0.7);
   if (collectionSize >= 6) { // maybe fine tune that
@@ -852,7 +852,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
   // draws histograms from collection, and setting the colors
   for (int i = 0; i < collectionSize; i++) {
-    if (i!=0 || options.find("avoidFirst") == std::string::npos) { // if i=0 requires that the option avoidFirst isn't there
+    if (i!=0 || options.find("avoidFirst") == std::string::npos) { // if i=0 requires that the option avoidFirst isn't there (== std::string::npos means it didn't find it in the elements 0 to npos-1, where npos is the size of the string options)
 
       if (options.find("colorPairs") == std::string::npos) {
         if (collectionSize >= 6) {
@@ -870,26 +870,26 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
         }
         histograms_collection[i]->SetMarkerStyle(markers[i]);
 
-        } else {
-          if (collectionSize >= 2*6) {
-            int nColors = gStyle->GetNumberOfColors();
-            int histoColor = (float)nColors / collectionSize * (int)i/2;
-            histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoColor));
-            histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoColor));
-            histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-            if (options.find("histWithLine") != std::string::npos) {
-              histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-            }
-          } else {
-            histograms_collection[i]->Draw("same");
-            if (options.find("histWithLine") != std::string::npos) {
-              histograms_collection[i]->Draw("][ Hist same");
-            }
-            histograms_collection[i]->SetMarkerColor(colors[(int)i/2]);
-            histograms_collection[i]->SetLineColor(colors[(int)i/2]);
+      } else {
+        if (collectionSize >= 2*6) {
+          int nColors = gStyle->GetNumberOfColors();
+          int histoColor = (float)nColors / collectionSize * (int)i/2;
+          histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoColor));
+          histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoColor));
+          histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+          if (options.find("histWithLine") != std::string::npos) {
+            histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
           }
-        histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+        } else {
+          histograms_collection[i]->Draw("same");
+          if (options.find("histWithLine") != std::string::npos) {
+            histograms_collection[i]->Draw("][ Hist same");
+          }
+          histograms_collection[i]->SetMarkerColor(colors[(int)i/2]);
+          histograms_collection[i]->SetLineColor(colors[(int)i/2]);
         }
+        histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+      }
       leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
     }
   }
@@ -944,13 +944,27 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     }
   }
 
-  // adds some text on the plot
+  // Context drawing 
   TLatex* textInfo = new TLatex();
   textInfo->SetTextSize(0.04);
-  textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram
+  textInfo->SetNDC(kTRUE); //remove if I want x,y in TLatex to be in the coordinate system of the histogram  
   textInfo->DrawLatex(0.18,0.82,texCollisionDataInfo->Data());
   textInfo->DrawLatex(0.18,0.75,Context);
-  // cout << "test7" << endl;
+
+  // legend settings
+  double xTopLeftCornerContext = 0.18;
+  double yTopLeftCornerContext = 0.82;
+  double deltaYContextsPosition = 0.07;
+  if (contextPlacement[0] == contextPlacementAuto[0]) {
+    xTopLeftCornerContext = contextPlacement[0];
+  }
+  if (contextPlacement[1] == contextPlacementAuto[1]) {
+    yTopLeftCornerContext = contextPlacement[1];
+  }
+  textInfo->DrawLatex(xTopLeftCornerContext,yTopLeftCornerContext,texCollisionDataInfo->Data());
+  textInfo->DrawLatex(xTopLeftCornerContext,yTopLeftCornerContext - deltaYContextsPosition,Context);
+
+
 
 
   struct stat st1{};
@@ -970,22 +984,17 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // }
 }
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::string options) {
+void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
   TF1* optionalFitCollectionDummy[collectionSize];
-  Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, options, optionalFitCollectionDummy);
+  Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options, optionalFitCollectionDummy);
 }
 
-void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::string options) {
+void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options) {
   TH1D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
-  Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, options);
-
-
-  // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
-  //   cout << "histogram->GetBinContent(iCentralityBin) = " << histogram->GetBinContent(iCentralityBin) << endl;
-  // }
+  Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options);
 }
 
 void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::string options, TPolyLine* optionalLine) {
