@@ -78,7 +78,7 @@ TString* texMeanBkgFluctFit = new TString("<#it{#delta pt}>^{fit}");
 TString* texRhoMean = new TString("<#it{#rho}>");
 
 TString* texTrackEfficiency = new TString("#epsilon = nTrack_{assoc} / nParticle_{gen}");
-TString* texTrackPurity = new TString("#epsilon = nTrack_{signal} / (nTrack_{signal}+nTrack_{background})");
+TString* texTrackPurity = new TString("p = nTrack_{sign} / (nTrack_{sign}+nTrack_{bkg})");
 
 
 TString* texJetKinematicEfficiency = new TString("Jet kinematic efficiency");
