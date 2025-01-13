@@ -98,7 +98,7 @@ void TrackMcQC() {
   // TString* Extra = new TString("");
   
   float etaRange[2] = {-0.9, 0.9};
-  //  Draw_Efficiency_Pt_DatasetComparison(etaRange);
+   Draw_Efficiency_Pt_DatasetComparison(etaRange);
   float ptRange1[2] = {0.15, 100};
   // Draw_Efficiency_Eta_DatasetComparison(ptRange1);
   // Draw_Efficiency_Phi_DatasetComparison(ptRange1, etaRange);
@@ -430,13 +430,13 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(2))/2, 
                                                           (float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX())
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinWidth(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX()))}
-                                                          , {0.6, 2}}}; // {{xmin, xmax}, {ymin, ymax}}
+                                                          , {0.8, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> drawnWindowLogZoom = {{{(float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(1)
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(2))/2, 
                                                           (float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX())
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinWidth(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX()))}
                                                           , {0.98, 1.02}}}; // {{xmin, xmax}, {ymin, ymax}}
-                                                    
+  std::array<std::array<float, 2>, 2> legendPlacementratio = {{{0.55, 0.55}, {0.9, 0.9}}}; // {{xmin, xmax}, {ymin, ymax}}                                                   
                                                     
   cout << "drawnWindowLog x: {" << drawnWindowLog[0][0] << ", " << drawnWindowLog[0][1] << "}"<< endl;
   cout << "lowEdge(0) = " << H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(0) << endl;
@@ -444,9 +444,24 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
   // std::array<std::array<float, 2>, 2> drawnWindowLog = {{{-999, -999}
   //                                                         , {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
+  std::array<float, 2> contextPlacementEfficiency = {{0.22, 0.82}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> legendPlacementEfficiency = {{{0.55, 0.2}, {0.85, 0.6}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowLogEff = {{{(float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(1)
+                                                          +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(2))/2, 
+                                                          (float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX())
+                                                          +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinWidth(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX()))}
+                                                          , {0, 1}}};
+  std::array<std::array<float, 2>, 2> drawnWindowLogEffRatio = {{{(float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(1)
+                                                          +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(2))/2, 
+                                                          (float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX())
+                                                          +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinWidth(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX()))}
+                                                          , {0.7, 2.2}}};
+  std::array<std::array<float, 2>, 2> legendPlacementEfficiencyRatio = {{{0.4, 0.5}, {0.7, 0.7}}}; 
+  std::array<float, 2> contextPlacementEfficiencyRatio = {{0.4, 0.82}};     
+
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,efficiency,150MevLine"+histDrawColorsOption);
-    Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_splitCorrected_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_splitCorrected, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,efficiency,150MevLine"+histDrawColorsOption);
+    Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEff, legendPlacementEfficiency, contextPlacementEfficiency, "logx,efficiency,150MevLine"+histDrawColorsOption);
+    //Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_splitCorrected_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_splitCorrected, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,efficiency,150MevLine"+histDrawColorsOption);
   }
   else {
     cout << "Divide failed in Draw_Efficiency_Pt_DatasetComparison" << endl;
@@ -455,11 +470,11 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
   TString* pdfName_ratio = new TString("track_Pt_efficiency"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio");
   if (divideSuccessRatio == true) {
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
-      Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,standardratio,ratioLine");
+      Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogEffRatio, legendPlacementEfficiencyRatio, contextPlacementEfficiencyRatio, "logx,150MevLine,standardratio,ratioLine");
       TString* pdfName_ratio_zoom = new TString("track_Pt_efficiency"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio_zoom");
-      Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,ratioLine");
+      //Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementratio, contextPlacementAuto, "logx,150MevLine,ratioLine");
     } else {
-    Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,standardratio,avoidFirst,ratioLine"+histDrawColorsOption);
+    Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementratio, contextPlacementAuto, "logx,150MevLine,standardratio,avoidFirst,ratioLine"+histDrawColorsOption);
     }
   }
   else {
@@ -1244,26 +1259,26 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
       H1D_trackPt_purity_concatenated[iDataset]->SetBinContent(H1D_trackPt_primaryPurity[iDataset]->GetNbinsX()+iBinX, H1D_trackPtHigh_primaryPurity[iDataset]->GetBinContent(iBinX));
       H1D_trackPt_purity_concatenated[iDataset]->SetBinError(H1D_trackPt_primaryPurity[iDataset]->GetNbinsX()+iBinX, H1D_trackPtHigh_primaryPurity[iDataset]->GetBinError(iBinX));
     }
-  }
+    }
 
-  // TH1D* H1D_trackPt_purity_ratios[nDatasets];
-  // TString DatasetsNamesPairRatio[nDatasets];
-  // int nHistPairRatio = (int)nDatasets / 2;
-  // bool divideSuccessRatio;
-  // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-  //   if (histDrawColorsOption.find("colorPairs") != std::string::npos) { //colorPairs assumes a Datasets array like so: {pair1_element1, pair1_element2, pair2_element1, pair2_element2..., pairN_element1, pairN_element2}
-  //     if (iDataset < nHistPairRatio) {
-  //       DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
-  //       H1D_trackPt_purity_ratios[iDataset] = (TH1D*)H1D_trackPt_purity_concatenated[2*iDataset]->Clone("H1D_trackPt_purity_concatenated_ratio"+Datasets[iDataset]);
-  //       H1D_trackPt_purity_ratios[iDataset]->Reset("M");
-  //       divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[2*iDataset], H1D_trackPt_purity_concatenated[2*iDataset+1]);
-  //     }
-  //   } else {
-  //     H1D_trackPt_purity_ratios[iDataset] = (TH1D*)H1D_trackPt_purity_concatenated[iDataset]->Clone("H1D_trackPt_purity_concatenated_ratio"+Datasets[iDataset]);
-  //     H1D_trackPt_purity_ratios[iDataset]->Reset("M");
-  //     divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[iDataset], H1D_trackPt_purity_concatenated[0]);
-  //   }
-  // }
+    TH1D* H1D_trackPt_purity_ratios[nDatasets];
+    TString DatasetsNamesPairRatio[nDatasets];
+    int nHistPairRatio = (int)nDatasets / 2;
+    bool divideSuccessRatio;
+    for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+      if (histDrawColorsOption.find("colorPairs") != std::string::npos) { //colorPairs assumes a Datasets array like so: {pair1_element1, pair1_element2, pair2_element1, pair2_element2..., pairN_element1, pairN_element2}
+        if (iDataset < nHistPairRatio) {
+          DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
+          H1D_trackPt_purity_ratios[iDataset] = (TH1D*)H1D_trackPt_purity_concatenated[2*iDataset]->Clone("H1D_trackPt_purity_concatenated_ratio"+Datasets[iDataset]);
+          H1D_trackPt_purity_ratios[iDataset]->Reset("M");
+          divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[2*iDataset], H1D_trackPt_purity_concatenated[2*iDataset+1]);
+        }
+      } else {
+        H1D_trackPt_purity_ratios[iDataset] = (TH1D*)H1D_trackPt_purity_concatenated[iDataset]->Clone("H1D_trackPt_purity_concatenated_ratio"+Datasets[iDataset]);
+        H1D_trackPt_purity_ratios[iDataset]->Reset("M");
+        divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[iDataset], H1D_trackPt_purity_concatenated[0]);
+      }
+    }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////// drawing histograms //////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1276,9 +1291,9 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
 
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextEtaRange(etaRange), ""));
 
-  std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999} , {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<float, 2> contextPlacementPurity = {{0.22, 0.82}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<std::array<float, 2>, 2> legendPlacementPurity = {{{0.4, 0.2}, {0.8, 0.5}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999} , {0.6, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}} //0,6 et 1.2
+  std::array<float, 2> contextPlacementPurity = {{0.3, 0.82}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> legendPlacementPurity = {{{0.45, 0.2}, {0.8, 0.55}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   if (divideSuccess1 == true) {
     Draw_TH1_Histograms_in_one(H1D_trackPt_purity_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm1, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowPurity, legendPlacementPurity, contextPlacementPurity, "logx,efficiency,150MevLine"+histDrawColorsOption);
@@ -1286,6 +1301,24 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
   }
   else {
     cout << "Divide failed in Draw_Purity_Pt_DatasetComparison_legacy" << endl;
+  }
+
+
+  std::array<std::array<float, 2>, 2> drawnWindowLog = {{{-999, -999} , {0.8, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowLogZoom = {{{-999, -999} , {0.98, 1.18}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> legendPlacementPurityratio = {{{0.2, 0.2}, {0.8, 0.4}}}; // {{xmin, xmax}, {ymin, ymax}}
+  TString* pdfName_ratio = new TString("track_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio");
+  if (divideSuccessRatio == true) {
+    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+      Draw_TH1_Histograms_in_one(H1D_trackPt_purity_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowLog, legendPlacementPurityratio, contextPlacementPurity, "logx,150MevLine,standardratio,ratioLine");
+      TString* pdfName_ratio_zoom = new TString("track_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio_zoom");
+      //Draw_TH1_Histograms_in_one(H1D_trackPt_purity_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,ratioLine");
+    } else {
+    Draw_TH1_Histograms_in_one(H1D_trackPt_purity_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,standardratio,avoidFirst,ratioLine"+histDrawColorsOption);
+    }
+  }
+  else {
+    cout << "Divide failed in Draw_Pt_DatasetComparison" << endl;
   }
   // if (divideSuccess2 == true) {
   //   Draw_TH1_Histograms_in_one(H1D_trackPt_splitprimaryPurity, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm2, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,efficiency,150MevLine"+histDrawColorsOption);
