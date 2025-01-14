@@ -24,8 +24,10 @@
 #include "../Settings/GlobalSettings.h"
 #include "../Utilities/AnalysisUtilities.h"
 #include "../Utilities/HistogramUtilities.h"
+#include "../Utilities/HistogramPlotting.h"
 #include "../Utilities/AnalysisUtilities.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
 #include "../Utilities/HistogramUtilities.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
+#include "../Utilities/HistogramPlotting.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
 
 #include<array>
 #include <iomanip>
