@@ -421,7 +421,19 @@ const double deltaEtaMcVsTrackEfficiency = 0;
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "colorPairs";
 
-// jaime testJetAnchoredGapGen-20240801-155530
+// //////// -------- local pp test sim anchored to PbPb comparison to pp anchor -------- ////////
+// TString* texCollisionDataInfo = new TString("PbPb MC #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("ppAnchorPbPb");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("sim");
+// const int nDatasets = 1;
+// // const TString Datasets[nDatasets] = {"LHC23zzh_apass3_global", "LHC23zzh_apass3_uniform", "LHC23zzh_apass3_itsOnly", "LHC23zzh_apass3_globalWithoutTpcCrossedRows"};
+// // const TString Datasets[nDatasets] = {"anchoredJetJetPbPb", "anchoredJetJetpp", "LHC24f3_train240962", "LHC24f3_local", "unanchoredJetJet_train230486"};
+// const TString Datasets[nDatasets] = {"pp_sim_anchored_to_PbPb_5360GeV"}; //DatasetFiles
+// const TString DatasetsNames[nDatasets] = {"PbPb anchor (5.36TeV)"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                           };
+// const TString analysisWorkflow[nDatasets] = {"track-efficiency"
+//                                             };
 
 //////// -------- accept split vs not accepting split collisions - PbPb MC anchored to LHC23zzh apass4 -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
