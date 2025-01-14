@@ -232,6 +232,6 @@ void Draw_Systematics_UnfoldMethod(int iDataset, int iRadius, float* centRange, 
 
   TString textContext("");
 
-  Draw_TH1_Histogram(hSystematicUncertainty, textContext, pdfName, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
-  Draw_TH1_Histogram(hSystematicUncertainty_PreBarlow, textContext, pdfName_PreBarlow, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, "");
+  Draw_TH1_Histogram(hSystematicUncertainty, textContext, pdfName, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
+  Draw_TH1_Histogram(hSystematicUncertainty_PreBarlow, textContext, pdfName_PreBarlow, texPtJetRecX, texCount, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
 }
