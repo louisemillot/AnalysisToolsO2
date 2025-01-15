@@ -3,6 +3,8 @@
 
 
 #include "HistogramUtilities.h"
+#include "HistogramPlotting.h"
+#include "HistogramPlotting.C"
 #include "../Settings/GlobalSettings.h"
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -1,5 +1,5 @@
-#ifndef HISTOGRAM_UTILITIES_H
-#define HISTOGRAM_UTILITIES_H
+#ifndef HISTOGRAM_PLOTTING_H
+#define HISTOGRAM_PLOTTING_H
 
 float findMinFloat(float* array, int length);
 float findMaxFloat(float* array, int length);
