@@ -1413,29 +1413,21 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
 
     // NormaliseYieldToNEntries(H1D_fluctuations); // normalising fluctuations to 1
     NormaliseRawHistToIntegral(H1D_fluctuations); // normalising fluctuations to 1
-      
+
     TH2D H2D_response = TH2D("H2D_response_"+partialUniqueSpecifier, "H2D_response_"+partialUniqueSpecifier, nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius]); // actually doesn't work if original histogram has fixed bin size
 
     //==================== Build response matrix: shift deltaPt by pT gen along the pT rec axis ====================//
     int ibinZeroFluct= H1D_fluctuations->FindBin(0+GLOBAL_epsilon);
     double integralError;
-    // for(int iBinRec = 1; iBinRec <= H2D_response.GetNbinsX(); iBinRec++){
     for(int iBinRec = 0; iBinRec <= H2D_response.GetNbinsX()+1; iBinRec++){
-      // for(int iBinGen = 1; iBinGen <= H2D_response.GetNbinsY(); iBinGen++){
       for(int iBinGen = 0; iBinGen <= H2D_response.GetNbinsY()+1; iBinGen++){
         double ptGen = H2D_response.GetYaxis()->GetBinLowEdge(iBinGen); // was bincenter before but then it'd give .5 values of GeV, and 
         double ptRec_low = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec);
         double ptRec_up = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec+1);
-        // double xPtRecWidth = H2D_response->GetXaxis()->GetBinWidth(iBinRec);
-        // if (ibinZero + (iBinRec - iBinGen) <= H1D_fluctuations_highRes->GetNbinsX()) { // make sure it's within bin range
         int iBin_fluct_low = H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon);
         int iBin_fluct_high = H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen - GLOBAL_epsilon);
         H2D_response.SetBinContent(iBinRec, iBinGen, H1D_fluctuations->IntegralAndError(iBin_fluct_low, iBin_fluct_high, integralError)); 
-        // cout << "FluctResp(" << iBinRec << ", " << iBinGen << ") = " << H2D_response.GetBinContent(iBinRec, iBinGen) << endl;
         H2D_response.SetBinError(iBinRec, iBinGen, integralError); 
-        // if (iBinRec == 0 && iBinGen == 0){
-        //   cout << "iBinRec " << iBinRec << ", iBinGen "<< iBinGen << ": iBin_fluct_low = " << iBin_fluct_low << ", iBin_fluct_high = " << iBin_fluct_high << "             - ptRec_low-ptGen = " << ptRec_low - ptGen + GLOBAL_epsilon<< ", ptRec_up-ptGen = " << ptRec_up - ptGen + GLOBAL_epsilon<< endl;
-        // }
       }
     }
 
