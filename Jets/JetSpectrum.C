@@ -125,8 +125,8 @@ void JetSpectrum() {
   // find a way to input mcpPrior/mcdPrior and bayes/svd as a variables rather than typed out like this
 
   Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
-  Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
-  Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
+  // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
+  // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
 
   // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
 
@@ -134,18 +134,18 @@ void JetSpectrum() {
   // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
 
-  Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
 
-  Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
-  Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
+  // Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
+  // Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
 
   // int unfoldParameterBayes = 70;
   // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterBayes, optionsAnalysis); // "evtNorm"
 
-  int unfoldParameterBayesMin = 0;
-  int unfoldParameterBayesMax = 100;
-  int unfoldParameterBayesStep = 10;
-  Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, unfoldParameterBayesMin, unfoldParameterBayesMax, unfoldParameterBayesStep, optionsAnalysis); // "evtNorm"
+  // int unfoldParameterBayesMin = 0;
+  // int unfoldParameterBayesMax = 100;
+  // int unfoldParameterBayesStep = 10;
+  // Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, unfoldParameterBayesMin, unfoldParameterBayesMax, unfoldParameterBayesStep, optionsAnalysis); // "evtNorm"
 }
 
 /////////////////////////////////////////////////////
