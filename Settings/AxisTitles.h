@@ -150,7 +150,9 @@ TString* texMeanEta = new TString("<#eta>");
 TString* texMeanNtracks = new TString("<N_{tracks}>");
 
 
-
+////////////////////////////
+////////// Events //////////
+TString* texWeightOccupancy = new TString("Weighted Occupancy");
 
 
 
