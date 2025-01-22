@@ -1142,7 +1142,7 @@ void Draw_JetTRDratio_vs_JetEta(int iDataset) {
 
   TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
-  Draw_TH2_Histograms(H2D_jetEtajetTRDratio, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracksRatio, texCollisionDataInfo, th2ContoursNone, contourNumberNone, drawnWindowAuto, "");
+  Draw_TH2_Histograms(H2D_jetEtajetTRDratio, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracksRatio, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
 }
 
 void Draw_JetTRDcount_vs_JetEta(int iDataset) {
@@ -1163,7 +1163,7 @@ void Draw_JetTRDcount_vs_JetEta(int iDataset) {
 
   TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
-  Draw_TH2_Histograms(H2D_jetEtajetTRD, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracks, texCollisionDataInfo, th2ContoursNone, contourNumberNone, drawnWindowAuto, "");
+  Draw_TH2_Histograms(H2D_jetEtajetTRD, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracks, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
 }
 
 void Draw_Pt_ratio_etaNeg_etaPos_TRDonly_vs_noTRD(int iDataset, float* etaRange) {
