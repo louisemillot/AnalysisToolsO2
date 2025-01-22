@@ -24,6 +24,9 @@ TString* texLeadJetPt = new TString("#it{p}_{T,lead jet} (GeV/#it{c})");
 TString* texPtJetRecX = new TString("#it{p}_{T,jet rec} (GeV/#it{c})");
 TString* texPtJetGenX = new TString("#it{p}_{T,jet gen} (GeV/#it{c})");
 
+TString* texPtJetBkgCorrX = new TString("#it{p}_{T,jet rec} - #it{A}_{random cone} * #it{#rho} (GeV/#it{c})");
+TString* texPtJetBkgFreeX = new TString("#it{p}_{T,jet rec}^{free of bkg} (GeV/#it{c})");
+
 TString* texVx = new TString("part Vx");
 TString* texVy = new TString("part Vy");
 TString* texVz = new TString("part Vz");
