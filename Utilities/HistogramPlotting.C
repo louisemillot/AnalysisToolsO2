@@ -470,7 +470,7 @@ void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TStr
   Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options);
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::string options, TPolyLine* optionalLine) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options, TPolyLine* optionalLine) {
 
   double width = collectionSize*900;
   double height = 800;
@@ -479,10 +479,17 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
 
   canvas->Divide(collectionSize,1);
 
+  TH2D* contourHist[collectionSize];
+
   // draws histograms from collection
   for (int i = 0; i < collectionSize; i++) {
     canvas->cd(i+1);
     histograms_collection[i]->Draw("colz");
+    if (th2ContourNumber > 0){
+      contourHist[i] = (TH2D*)histograms_collection[i]->Clone(legendList_string[i]);
+      contourHist[i]->SetContour(th2ContourNumber, th2Contours);
+      contourHist[i]->Draw("cont3 same");
+    }
     histograms_collection[i]->SetXTitle(texXtitle->Data());
     histograms_collection[i]->SetYTitle(texYtitle->Data());
     canvas->cd(i+1)->SetRightMargin(0.18); // if the z-axis ever gets hidden, one can play with this
@@ -581,18 +588,18 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::string options) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
   TPolyLine* optionalLine;
-  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options, optionalLine);
+  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, th2Contours, th2ContourNumber, options, optionalLine);
 }
 
 
-void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::string options) {
+void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
   TH2D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
-  Draw_TH2_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, options);
+  Draw_TH2_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, th2Contours, th2ContourNumber, options);
 
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){

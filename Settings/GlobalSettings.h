@@ -8,4 +8,7 @@ const std::array<std::array<float, 2>, 2> legendPlacementAuto = {{{-999, -999}, 
 const std::array<float, 2> contextPlacementAuto = {{-999, -999}}; // {{x_topleft, y_topleft}}
 const TString dummyName[1] = {""};
 const int N_SigmaBarlow = 2;
+
+double th2ContoursNone[1] = {-999.}; int contourNumberNone = -99;
+
 #endif
