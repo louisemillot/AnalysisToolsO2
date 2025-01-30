@@ -1301,7 +1301,7 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
 
   std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999} , {0.6, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}} //0,6 et 1.2
   std::array<float, 2> contextPlacementPurity = {{0.20, 0.85}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<float, 2> contextPlacementPurityratio = {{0.2, 0.85}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<float, 2> contextPlacementPurityRatio = {{0.2, 0.85}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementPurity = {{{0.45, 0.2}, {0.8, 0.55}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   if (divideSuccess1 == true) {
