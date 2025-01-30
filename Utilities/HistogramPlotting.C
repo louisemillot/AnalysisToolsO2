@@ -167,8 +167,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // has options:
   // - "autoratio" : if in the options string, the Y range is chosen automatically based on the difference to 1
   // - "standardratio" : if in the options string, the Y range is [0,2.2]
+  // - "zoomratio1" : if in the options string, the Y range is [0.6,1.54]
   // - "logy" : if in the options string, then the y axis of the plot is set to a log scale (except for the ratio plot)
   // - "avoidFirst" : if in the options string, then the first histogram of the collection isn't plotted
+
+  int largeCollectionThreshold = 14;
 
   // canvas settings
   TCanvas *canvas = new TCanvas ("canvas"+*pdfName, "canvas"+*pdfName, 800, 800);
@@ -252,12 +255,22 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       maxY = 2;
       yUpMarginScaling = 1.1;
     }
-    if (options.find("zoomedratio") != std::string::npos) {
+    if (options.find("zoomratio1") != std::string::npos) {
+      minY = 0.6;
+      maxY = 1.4;
+      yUpMarginScaling = 1.1;
+    }
+    if (options.find("zoomratio2") != std::string::npos) {
       minY = 0.8;
       maxY = 1.2;
       yUpMarginScaling = 1.1;
     }
-    if (options.find("zoomedextraratio") != std::string::npos) {
+    if (options.find("zoomextraratio") != std::string::npos) {
+      minY = 0.9;
+      maxY = 1.1;
+      yUpMarginScaling = 1.1;
+    }
+    if (options.find("zoomextraextraratio") != std::string::npos) {
       minY = 0.9;
       maxY = 1.1;
       yUpMarginScaling = 1.1;
@@ -298,21 +311,27 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
   // legend settings
   double xLeftLegend = 0.7;
-  double xRightLegend = 0.75;
-  double yLowLegend = 0.8;
+  double yLowLegend = 0.75;
+  double xRightLegend = 0.8;
   double yUpLegend = 0.87;
+  if (collectionSize > largeCollectionThreshold) {
+    xLeftLegend = 0.65;
+    yLowLegend = 0.6;
+    xRightLegend = 0.85;
+    yUpLegend = 0.85;
+  }
   if (!std::equal(std::begin(legendPlacement[0]), std::end(legendPlacement[0]), std::begin(legendPlacementAuto[0]), std::end(legendPlacementAuto[0]))) {
     xLeftLegend = legendPlacement[0][0];
-    xRightLegend = legendPlacement[0][1];
+    yLowLegend = legendPlacement[0][1];
   }
   if (!std::equal(std::begin(legendPlacement[1]), std::end(legendPlacement[1]), std::begin(legendPlacementAuto[1]), std::end(legendPlacementAuto[1]))) {
     // leg = TLegend(0.7, 0.75, legendPlacement[1][0], legendPlacement[1][1]);
     // leg->SetY1NDC(legendPlacement[1][0]);
     // leg->SetY2NDC(legendPlacement[1][1]);
-    yLowLegend = legendPlacement[1][0];
+    xRightLegend = legendPlacement[1][0];
     yUpLegend = legendPlacement[1][1];
   }
-  TLegend * leg = new TLegend(xLeftLegend, xRightLegend, yLowLegend, yUpLegend);
+  TLegend * leg = new TLegend(xLeftLegend, yLowLegend, xRightLegend, yUpLegend);
 
   leg->SetTextSize(gStyle->GetTextSize()*0.7);
   if (collectionSize >= 6) { // maybe fine tune that
@@ -345,6 +364,9 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
           histograms_collection[i]->SetLineColor(colors[i]);
         }
         histograms_collection[i]->SetMarkerStyle(markers[i]);
+        if (collectionSize > largeCollectionThreshold) {
+          histograms_collection[i]->SetMarkerStyle(markers[2]);
+        }
 
       } else {
         if (collectionSize >= 2*6) {
