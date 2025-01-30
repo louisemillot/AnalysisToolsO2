@@ -435,27 +435,52 @@ const double deltaEtaMcVsTrackEfficiency = 0;
 // const TString analysisWorkflow[nDatasets] = {"track-efficiency"
 //                                             };
 
-//////// -------- accept split vs not accepting split collisions - PbPb MC anchored to LHC23zzh apass4 -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("Occupancy analysis");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24g3 - sel8FullPbPb");
-const int nDatasets = 8;
-// const TString Datasets[nDatasets] = {"LHC24g3","LHC24d2"};
-// const TString Datasets[nDatasets] = {"LHC24g3"};
- const TString Datasets[nDatasets] = {"LHC24g3","LHC24d2","LHC24g3","LHC24d2","LHC24g3","LHC24d2","LHC24g3","LHC24d2"};
-const TString DatasetsNames[nDatasets] = {"0-10% pass4","0-10% pass3","10-30% pass4","10-30% pass3","30-50% pass4","30-50% pass3","50-70% pass4","50-70% pass3"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile(Datasets[0]+"/AnalysisResults_LHC24g3_centrality.root"),
-                                        new TFile(Datasets[1]+"/AnalysisResults_LHC24d2_centrality.root"),
-                                        new TFile(Datasets[2]+"/AnalysisResults_LHC24g3_centrality.root"),
-                                        new TFile(Datasets[3]+"/AnalysisResults_LHC24d2_centrality.root"),
-                                        new TFile(Datasets[4]+"/AnalysisResults_LHC24g3_centrality.root"),
-                                        new TFile(Datasets[5]+"/AnalysisResults_LHC24d2_centrality.root"),
-                                        new TFile(Datasets[4]+"/AnalysisResults_LHC24g3_centrality.root"),
-                                        new TFile(Datasets[5]+"/AnalysisResults_LHC24d2_centrality.root")
+// //////// -------- accept split vs not accepting split collisions - PbPb MC anchored to LHC23zzh apass4 -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("Occupancy analysis");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC24g3 - sel8FullPbPb");
+// const int nDatasets = 8;
+// // const TString Datasets[nDatasets] = {"LHC24g3","LHC24d2"};
+// // const TString Datasets[nDatasets] = {"LHC24g3"};
+//  const TString Datasets[nDatasets] = {"LHC24g3","LHC24d2","LHC24g3","LHC24d2","LHC24g3","LHC24d2","LHC24g3","LHC24d2"};
+// const TString DatasetsNames[nDatasets] = {"0-10% pass4","0-10% pass3","10-30% pass4","10-30% pass3","30-50% pass4","30-50% pass3","50-70% pass4","50-70% pass3"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile(Datasets[0]+"/AnalysisResults_LHC24g3_centrality.root"),
+//                                         new TFile(Datasets[1]+"/AnalysisResults_LHC24d2_centrality.root"),
+//                                         new TFile(Datasets[2]+"/AnalysisResults_LHC24g3_centrality.root"),
+//                                         new TFile(Datasets[3]+"/AnalysisResults_LHC24d2_centrality.root"),
+//                                         new TFile(Datasets[4]+"/AnalysisResults_LHC24g3_centrality.root"),
+//                                         new TFile(Datasets[5]+"/AnalysisResults_LHC24d2_centrality.root"),
+//                                         new TFile(Datasets[4]+"/AnalysisResults_LHC24g3_centrality.root"),
+//                                         new TFile(Datasets[5]+"/AnalysisResults_LHC24d2_centrality.root")
+//                                         };
+// // const TString analysisWorkflow[nDatasets] = {"track-efficiency","track-efficiency"};
+// const TString analysisWorkflow[nDatasets] = {"track-efficiency_central0010","track-efficiency_central0010","track-efficiency_central1030","track-efficiency_central1030","track-efficiency_central3050","track-efficiency_central3050","track-efficiency_central5070","track-efficiency_central5070"};
+
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false};
+// const std::string histDrawColorsOption = "colorPairs";
+
+
+
+//////// -------- pp sim test Anchor Pb-Pb gap comparison-------- ////////
+TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV");
+const TString* texDatasetsComparisonType = new TString("gap value");
+const TString* texDatasetsComparisonCommonDenominator = new TString("MC anchored to Pb-Pb");
+const int nDatasets = 4;
+const TString Datasets[nDatasets] = {"pp_sim_anchored_to_PbPb_5360GeV_gap2", "pp_sim_anchored_to_PbPb_5360GeV_gap3", "pp_sim_anchored_to_PbPb_5360GeV_gap4", "pp_sim_anchored_to_PbPb_5360GeV_gap5"};
+// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+const TString DatasetsNames[nDatasets] = {"gap2", "gap3", "gap4", "gap5"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
                                         };
-// const TString analysisWorkflow[nDatasets] = {"track-efficiency","track-efficiency"};
-const TString analysisWorkflow[nDatasets] = {"track-efficiency_central0010","track-efficiency_central0010","track-efficiency_central1030","track-efficiency_central1030","track-efficiency_central3050","track-efficiency_central3050","track-efficiency_central5070","track-efficiency_central5070"};
+const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+                                          "track-efficiency",
+                                          "track-efficiency",
+                                          "track-efficiency"
+                                          };
 
 const TString trainId = "";
-const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false};
-const std::string histDrawColorsOption = "colorPairs";
+const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
+const std::string histDrawColorsOption = "";
