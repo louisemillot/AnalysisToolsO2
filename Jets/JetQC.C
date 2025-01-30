@@ -228,10 +228,10 @@ void JetQC() {
   //   // Draw_Pt_Run2Run3Comparison_0010Cent_R040(iDataset, "jetCorrected");
   //   // Draw_Pt_Run2Run3Comparison_0010Cent_R040(iDataset, "jetUncorrected");
 
-  Draw_jet_resolution_MC_PtRangeComparison(iDataset, jetRadiusForDataComp, "");
+  // Draw_jet_resolution_MC_PtRangeComparison(iDataset, jetRadiusForDataComp, "");
   // Count_Nevents_perCentClass(iDataset, "");
-  Draw_Efficiency_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
-  Draw_Purity_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
+  // Draw_Efficiency_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
+  // Draw_Purity_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym);
   }
 
 
@@ -255,14 +255,14 @@ void JetQC() {
   }
   for(int iCentBin = 0; iCentBin < nCentralityBins; iCentBin++){
     float centRange[2] = {arrayCentralityBinning[iCentBin], arrayCentralityBinning[iCentBin+1]};
-    // Draw_Rho_CentralityProjection_DatasetComp(centRange, "normEntries");
+    Draw_Rho_CentralityProjection_DatasetComp(centRange, "normEntries");
+    Draw_BkgFluctuations_CentralityProjection_withFit_DatasetComp(centRange, drawnWindowBkgFluctZoom);
   }
 
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
     for(int iCentBin = 0; iCentBin < nCentralityBins; iCentBin++){
       float centRange[2] = {arrayCentralityBinning[iCentBin], arrayCentralityBinning[iCentBin+1]};
       // Draw_BkgFluctuations_CentralityProjection_withFit_MethodComp(centRange, iDataset, drawnWindowBkgFluctZoom);
-      // Draw_BkgFluctuations_CentralityProjection_withFit_DatasetComp(centRange, drawnWindowBkgFluctZoom);
     }
   }
 
@@ -802,10 +802,7 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, std::string opt
   // TString textContext(contextDatasetCompAndRadiusAndVarRange(jetRadius, etaRange, "eta"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, "", "#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(etaRange)+"}", ""));
 
-  std::array<std::array<float, 2>, 2> drawnWindow = drawnWindowAuto;
-  if (iJetFinderQaType == 1) {
-    drawnWindow = {{{-25, 200},{-999, -999}}};
-  }
+  std::array<std::array<float, 2>, 2> drawnWindow = {{{-25, 200},{-999, -999}}};
 
   std::array<std::array<float, 2>, 2> legendPlacement = {{{0.65, 0.6}, {0.85, 0.85}}}; // {{{x1, y1}, {x2, y2}}}
   std::array<std::array<float, 2>, 2> legendPlacementRatio = {{{0.6, 0.2}, {0.8, 0.45}}}; // {{{x1, y1}, {x2, y2}}}

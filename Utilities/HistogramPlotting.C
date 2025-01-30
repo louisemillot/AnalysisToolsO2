@@ -273,7 +273,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     }
     if (options.find("zoomextraextraratio") != std::string::npos) {
       minY = 0.93;
-      maxY = 1.05;
+      maxY = 1.;
       yUpMarginScaling = 1.1;
     }
     if (options.find("efficiency") != std::string::npos) {
