@@ -1234,28 +1234,28 @@ TFile* file_AliAnalysis;
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
-//////// -------- pp sim test Anchor Pb-Pb gap comparison-------- ////////
-TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("gap value");
-const TString* texDatasetsComparisonCommonDenominator = new TString("MC anchored to Pb-Pb");
-const int nDatasets = 4;
-const TString Datasets[nDatasets] = {"pp_sim_anchored_to_PbPb_5360GeV_gap2", "pp_sim_anchored_to_PbPb_5360GeV_gap3", "pp_sim_anchored_to_PbPb_5360GeV_gap4", "pp_sim_anchored_to_PbPb_5360GeV_gap5"};
-// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"gap2", "gap3", "gap4", "gap5"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
-                                        };
-const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
-                                          "jet-finder-charged-qa",
-                                          "jet-finder-charged-qa",
-                                          "jet-finder-charged-qa"
-                                          };
+// //////// -------- pp sim test Anchor Pb-Pb gap comparison-------- ////////
+// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("gap value");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("MC anchored to Pb-Pb");
+// const int nDatasets = 4;
+// const TString Datasets[nDatasets] = {"pp_sim_anchored_to_PbPb_5360GeV_gap2", "pp_sim_anchored_to_PbPb_5360GeV_gap3", "pp_sim_anchored_to_PbPb_5360GeV_gap4", "pp_sim_anchored_to_PbPb_5360GeV_gap5"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"gap2", "gap3", "gap4", "gap5"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
 
-const TString trainId = "";
-const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
-const std::string histDrawColorsOption = "";
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
+// const std::string histDrawColorsOption = "";
 
 
 // //////// -------- pp sim test Anchor Pb-Pb comparison to Jaime-------- ////////
@@ -1297,71 +1297,71 @@ const std::string histDrawColorsOption = "";
 
 
 
-// //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 6000occupancy - run(IR) comparison-------- ////////
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-// const TString* texDatasetsComparisonType = new TString("Data");
-// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23 golden runs");
-// const int nDatasets = 27;
-// const TString Datasets[nDatasets] = {"run544124","run544123","run544477","run544392","run544492","run544391","run544122","run544476","run544390","run544098","run544454","run544475","run544121","run544032","run544491","run544095","run544389","run544451","run544510","run544474","run544185","run544091","run544028","run544184","run544116","run544508","run544490"};
-// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-// const TString DatasetsNames[nDatasets] = {"6.6 kHz - run544124","11 kHz - run544123","13 kHz - run544477","13 kHz - run544392","15 kHz - run544492","15 kHz - run544391","16 kHz - run544122","16 kHz - run544476","18 kHz - run544390","18 kHz - run544098","19 kHz - run544454","19 kHz - run544475","22 kHz - run544121","23 kHz - run544032","24 kHz - run544491","25 kHz - run544095","27 kHz - run544389","28 kHz - run544451","29 kHz - run544510","29 kHz - run544474","29 kHz - run544185","29 kHz - run544091","30 kHz - run544028","32 kHz - run544184","38 kHz - run544116","39 kHz - run544508","43 kHz - run544490"};
-// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[11]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[12]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[13]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[14]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[15]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[16]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[17]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[18]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[19]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[20]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[21]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[22]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[23]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[24]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[25]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[26]+"/AnalysisResults.root")
-//                                         };
-// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa",
-//                                           "jet-finder-charged-qa"
-//                                           };
+//////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 6000occupancy - run(IR) comparison-------- ////////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+const TString* texDatasetsComparisonType = new TString("Data");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23 golden runs");
+const int nDatasets = 27;
+const TString Datasets[nDatasets] = {"run544124","run544123","run544477","run544392","run544492","run544391","run544122","run544476","run544390","run544098","run544454","run544475","run544121","run544032","run544491","run544095","run544389","run544451","run544510","run544474","run544185","run544091","run544028","run544184","run544116","run544508","run544490"};
+// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+const TString DatasetsNames[nDatasets] = {"6.6 kHz - run544124","11 kHz - run544123","13 kHz - run544477","13 kHz - run544392","15 kHz - run544492","15 kHz - run544391","16 kHz - run544122","16 kHz - run544476","18 kHz - run544390","18 kHz - run544098","19 kHz - run544454","19 kHz - run544475","22 kHz - run544121","23 kHz - run544032","24 kHz - run544491","25 kHz - run544095","27 kHz - run544389","28 kHz - run544451","29 kHz - run544510","29 kHz - run544474","29 kHz - run544185","29 kHz - run544091","30 kHz - run544028","32 kHz - run544184","38 kHz - run544116","39 kHz - run544508","43 kHz - run544490"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[11]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[12]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[13]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[14]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[15]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[16]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[17]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[18]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[19]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[20]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[21]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[22]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[23]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[24]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[25]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[26]+"/AnalysisResults.root")
+                                        };
+const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa",
+                                          "jet-finder-charged-qa"
+                                          };
 
-// const TString trainId = "";
-// const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
-// const std::string histDrawColorsOption = "";
+const TString trainId = "";
+const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+const std::string histDrawColorsOption = "";
