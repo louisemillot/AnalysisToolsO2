@@ -816,7 +816,7 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, std::string opt
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
       Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindow, legendPlacementRatio, contextPlacementAuto, "zoomratio1");
     } else {
-    Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindow, legendPlacementRatio, contextPlacementAuto, "zoomratio1,avoidFirst"+histDrawColorsOption);
+    Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindow, legendPlacementRatio, contextPlacementAuto, "zoomratio1,noMarkerFirst"+histDrawColorsOption);
     }
   }
   else {
@@ -886,7 +886,7 @@ void Draw_Eta_DatasetComparison(float jetRadius, float* PtRange, std::string opt
   Draw_TH1_Histograms_in_one(H1D_jetEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, yAxisLabel, texCollisionDataInfo, drawnWindow, legendPlacementAuto, contextPlacementAuto, "");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindow, legendPlacementAuto, contextPlacementAuto, "zoomratio1,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindow, legendPlacementAuto, contextPlacementAuto, "zoomratio1,noMarkerFirst");
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -953,7 +953,7 @@ void Draw_Phi_DatasetComparison(float jetRadius, float* PtRange, std::string opt
   Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texJetPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "histWithLine");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomratio1,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomratio1,noMarkerFirst");
   }
   else {
     cout << "Divide failed in Draw_Phi_DatasetComparison" << endl;
@@ -1130,7 +1130,7 @@ void Draw_Area_PtIntegrated_DatasetComparison(float jetRadius, float* PtRange) {
   Draw_TH1_Histograms_in_one(H1D_jetArea_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texJetArea, texJetNormAreaYield, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetArea_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texJetArea, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "standardratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetArea_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texJetArea, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "standardratio,noMarkerFirst");
   }
   else {
     cout << "Divide failed in Draw_Area_PtIntegrated_DatasetComparison" << endl;
@@ -1364,7 +1364,7 @@ void Draw_Area_PtIntegrated_BinningComparison(int iDataset, float jetRadius, flo
   Draw_TH1_Histograms_in_one(H1D_jetArea_rebinned, rebinValuesNames, nRebinValues, textContext, pdfName, texJetArea, texJetNormAreaYield, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetArea_rebinned_ratios, rebinValuesNames, nRebinValues, textContext, pdfName_ratio, texJetArea, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetArea_rebinned_ratios, rebinValuesNames, nRebinValues, textContext, pdfName_ratio, texJetArea, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,noMarkerFirst");
   }
   else {
     cout << "Divide failed in Draw_Area_PtIntegrated_BinningComparison" << endl;
@@ -1420,7 +1420,7 @@ void Draw_Area_PtIntegrated_BinningComparison(int iDataset, float jetRadius, flo
   TString* pdfName_jetArea_vs_nGhost_ratio = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_R="+Form("%.1f", jetRadius)+"_Area_vs_nGhost_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]+"_ratio");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetArea_vs_nGhost_ratios, jetAreaVsNGhost_CurveNames, 2, textContext, pdfName_ratio, texNGhost, texJetRatioAreaJetVsNGhost, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetArea_vs_nGhost_ratios, jetAreaVsNGhost_CurveNames, 2, textContext, pdfName_ratio, texNGhost, texJetRatioAreaJetVsNGhost, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,noMarkerFirst");
   }
   else {
     cout << "Divide failed in Draw_Area_PtIntegrated_BinningComparison" << endl;
@@ -2924,7 +2924,7 @@ void Draw_Pt_PbPbToPPComparison_HARDCODED(float jetRadius, float* etaRange, std:
 
   Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texJetPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logy");
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,avoidFirst");
+    Draw_TH1_Histograms_in_one(H1D_jetPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,noMarkerFirst");
   }
   else {
     cout << "Divide failed in Draw_Pt_DatasetComparison" << endl;
@@ -3361,7 +3361,7 @@ void Draw_Efficiency_Pt_DatasetComparison(float jetRadius, float* etaRange) {
       TString* pdfName_ratio_zoom = new TString("jet_Pt_efficiency"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio_zoom");
       //Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementratio, contextPlacementAuto, "logx,150MevLine,ratioLine");
     } else {
-    Draw_TH1_Histograms_in_one(H1D_jetPt_efficiency_ratio, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementratio, contextPlacementAuto, "logx,standardratio,avoidFirst,ratioLine"+histDrawColorsOption);
+    Draw_TH1_Histograms_in_one(H1D_jetPt_efficiency_ratio, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementratio, contextPlacementAuto, "logx,standardratio,noMarkerFirst,ratioLine"+histDrawColorsOption);
     }
   }
   else {
@@ -3478,7 +3478,7 @@ void Draw_Purity_Pt_DatasetComparison(float jetRadius, float* etaRange) {
       TString* pdfName_ratio_zoom = new TString("jet_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio_zoom");
       //Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementratio, contextPlacementAuto, "logx,150MevLine,ratioLine");
     } else {
-    Draw_TH1_Histograms_in_one(H1D_jetPt_purity_ratio, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementratio, contextPlacementAuto, "logx,standardratio,avoidFirst,ratioLine"+histDrawColorsOption);
+    Draw_TH1_Histograms_in_one(H1D_jetPt_purity_ratio, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementratio, contextPlacementAuto, "logx,standardratio,noMarkerFirst,ratioLine"+histDrawColorsOption);
     }
   }
   else {

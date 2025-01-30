@@ -169,9 +169,10 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // - "standardratio" : if in the options string, the Y range is [0,2.2]
   // - "zoomratio1" : if in the options string, the Y range is [0.6,1.54]
   // - "logy" : if in the options string, then the y axis of the plot is set to a log scale (except for the ratio plot)
-  // - "avoidFirst" : if in the options string, then the first histogram of the collection isn't plotted
+  // - "noMarkerFirst" : if in the options string, then the first histogram of the collection isn't plotted
 
   int largeCollectionThreshold = 14;
+  int collectionSizeColorThreshold = 6;
 
   // canvas settings
   TCanvas *canvas = new TCanvas ("canvas"+*pdfName, "canvas"+*pdfName, 800, 800);
@@ -267,12 +268,12 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     }
     if (options.find("zoomextraratio") != std::string::npos) {
       minY = 0.9;
-      maxY = 1.1;
+      maxY = 1.05;
       yUpMarginScaling = 1.1;
     }
     if (options.find("zoomextraextraratio") != std::string::npos) {
-      minY = 0.9;
-      maxY = 1.1;
+      minY = 0.93;
+      maxY = 1.05;
       yUpMarginScaling = 1.1;
     }
     if (options.find("efficiency") != std::string::npos) {
@@ -334,62 +335,67 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   TLegend * leg = new TLegend(xLeftLegend, yLowLegend, xRightLegend, yUpLegend);
 
   leg->SetTextSize(gStyle->GetTextSize()*0.7);
-  if (collectionSize >= 6) { // maybe fine tune that
+  if (collectionSize >= collectionSizeColorThreshold) { // maybe fine tune that
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
   }
   if (options.find("fit") != std::string::npos) {
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
   }
-  if (collectionSize >= 6) {
+  if (collectionSize >= collectionSizeColorThreshold) {
     gStyle->SetPalette(kRainbow); // for the choice of marker's colours; only use this if we have many histograms in the same plot
   }
   // cout << "test5" << endl;
 
   // draws histograms from collection, and setting the colors
+  int nColors = gStyle->GetNumberOfColors();
+  int histoPaletteColor;
   for (int i = 0; i < collectionSize; i++) {
-    if (i!=0 || options.find("avoidFirst") == std::string::npos) { // if i=0 requires that the option avoidFirst isn't there (== std::string::npos means it didn't find it in the elements 0 to npos-1, where npos is the size of the string options)
+    // if (i!=0 || options.find("noMarkerFirst") == std::string::npos) { // if i=0 requires that the option noMarkerFirst isn't there (== std::string::npos means it didn't find it in the elements 0 to npos-1, where npos is the size of the string options)
 
-      if (options.find("colorPairs") == std::string::npos) {
-        if (collectionSize >= 6) {
-          histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-          if (options.find("histWithLine") != std::string::npos) {
-            histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-          }
-        } else {
-          histograms_collection[i]->Draw("same");
-          if (options.find("histWithLine") != std::string::npos) {
-            histograms_collection[i]->Draw("][ Hist same");
-          }
-          histograms_collection[i]->SetMarkerColor(colors[i]);
-          histograms_collection[i]->SetLineColor(colors[i]);
+    if (options.find("colorPairs") == std::string::npos) {
+      if (collectionSize >= collectionSizeColorThreshold) {
+        histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        if (options.find("histWithLine") != std::string::npos) {
+          histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
         }
-        histograms_collection[i]->SetMarkerStyle(markers[i]);
-        if (collectionSize > largeCollectionThreshold) {
-          histograms_collection[i]->SetMarkerStyle(markers[2]);
-        }
-
       } else {
-        if (collectionSize >= 2*6) {
-          int nColors = gStyle->GetNumberOfColors();
-          int histoColor = (float)nColors / collectionSize * (int)i/2;
-          histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoColor));
-          histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoColor));
-          histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-          if (options.find("histWithLine") != std::string::npos) {
-            histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-          }
-        } else {
-          histograms_collection[i]->Draw("same");
-          if (options.find("histWithLine") != std::string::npos) {
-            histograms_collection[i]->Draw("][ Hist same");
-          }
-          histograms_collection[i]->SetMarkerColor(colors[(int)i/2]);
-          histograms_collection[i]->SetLineColor(colors[(int)i/2]);
+        histoPaletteColor = (float)nColors / collectionSize * (int)i;
+        histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
+        histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoPaletteColor));
+        histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        if (options.find("histWithLine") != std::string::npos) {
+          histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
         }
-        histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+
       }
-      leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
+      histograms_collection[i]->SetMarkerStyle(markers[i]);
+      if (collectionSize > largeCollectionThreshold) {
+        histograms_collection[i]->SetMarkerStyle(markers[2]);
+      }
+      if (i == 0 && options.find("noMarkerFirst") != std::string::npos) { // if i=0 requires and if option noMarkerFirst is there (!= std::string::npos means it found find it in the elements 0 to npos-1, where npos is the size of the string options)
+        histograms_collection[i]->SetMarkerStyle(1);
+      }
+    } else {
+      if (collectionSize >= 2*collectionSizeColorThreshold) {
+        histoPaletteColor = (float)nColors / collectionSize * (int)i/2;
+        histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
+        histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoPaletteColor));
+        histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        if (options.find("histWithLine") != std::string::npos) {
+          histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        }
+      } else {
+        histograms_collection[i]->Draw("same");
+        if (options.find("histWithLine") != std::string::npos) {
+          histograms_collection[i]->Draw("][ Hist same");
+        }
+        histograms_collection[i]->SetMarkerColor(colors[(int)i/2]);
+        histograms_collection[i]->SetLineColor(colors[(int)i/2]);
+      }
+      histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
     }
+    leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
+    // }
   }
   if (options.find("fit") != std::string::npos) {
     for (int i = 0; i < collectionSize; i++) {

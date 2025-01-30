@@ -296,9 +296,9 @@ void Draw_Pt_DatasetComparison() {
   Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtX, texTrackPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,logy"+histDrawColorsOption);
   if (divideSuccess == true) {
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
-      Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,zoomratio1");
+      Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "histWithLine,logx,zoomratio1");
     } else {
-      Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomratio1,avoidFirst,logx"+histDrawColorsOption);
+      Draw_TH1_Histograms_in_one(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "histWithLine,zoomratio1,noMarkerFirst,logx"+histDrawColorsOption);
     }
   }
   else {
@@ -378,12 +378,12 @@ void Draw_Eta_DatasetComparison(float* ptRange) {
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextPtRange(ptRange), ""));
 
   std::array<std::array<float, 2>, 2> drawnWindowEta = {{{-1, 1}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
-  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowEta, legendPlacementAuto, contextPlacementAuto, ""+histDrawColorsOption);
+  Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaX, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowEta, legendPlacementAuto, contextPlacementAuto, "minYnotZero,"+histDrawColorsOption);
   if (divideSuccess == true) {
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
-      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfNameEventNorm_ratio, texEtaX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomextraextraratio");
+      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfNameEventNorm_ratio, texEtaX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, ",zoomextraextraratio");
     } else {
-      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowEta, legendPlacementAuto, contextPlacementAuto, "zoomextraextraratio,avoidFirst"+histDrawColorsOption);
+      Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowEta, legendPlacementAuto, contextPlacementAuto, ",zoomextraextraratio,noMarkerFirst"+histDrawColorsOption);
     }
   }
   else {
@@ -442,7 +442,7 @@ void Draw_Eta_DatasetComparison_EntriesNorm(float* ptRange) {
 
   Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texEtaX, texTrackEtaYield_EntriesNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "minYnotZero"+histDrawColorsOption);
   if (divideSuccess == true) {
-    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomextraextraratio,avoidFirst"+histDrawColorsOption);
+    Draw_TH1_Histograms_in_one(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomextraextraratio,noMarkerFirst"+histDrawColorsOption);
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -519,13 +519,15 @@ void Draw_Phi_DatasetComparison(float* ptRange) {
   TString* pdfName_ratio = new TString((TString)"track_Phi_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]_ratio");
 
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextPtRange(ptRange), ""));
+  
+  std::array<std::array<float, 2>, 2> legendPlacementCustom = {{{0.6, 0.1}, {0.8, 0.35}}}; // {{{x1, y1}, {x2, y2}}}
 
-  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "histWithLine"+histDrawColorsOption);
+  Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementCustom, contextPlacementAuto, "histWithLine"+histDrawColorsOption);
   if (divideSuccess == true) {
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
       Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPhiX, texRatio, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomextraextraratio");
     } else {
-      Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomextraextraratio,avoidFirst"+histDrawColorsOption);
+      Draw_TH1_Histograms_in_one(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "zoomextraextraratio,noMarkerFirst"+histDrawColorsOption);
     }
   }
   else {
