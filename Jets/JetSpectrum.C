@@ -124,7 +124,7 @@ void JetSpectrum() {
 
   // find a way to input mcpPrior/mcdPrior and bayes/svd as a variables rather than typed out like this
 
-  Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
+  // Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
   // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
   // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
 
@@ -134,7 +134,10 @@ void JetSpectrum() {
   // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
 
-  // Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
+  for (int iDataset = 0; iDataset < nDatasets; iDataset++) {
+    Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
+  }
+  
 
   // Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
   // Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
