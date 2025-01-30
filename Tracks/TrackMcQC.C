@@ -29,6 +29,7 @@
 #include "../Utilities/HistogramUtilities.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
 #include "../Utilities/HistogramPlotting.C" // bizarre but only including the .h fils doesn't work for the standard 'root macro.C+' method, I need to include the .C as well
 
+
 #include<array>
 #include <iomanip>
 #include <sstream>
@@ -403,6 +404,7 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
       H1D_trackPt_efficiency_splitCorrected_concatenated[iDataset]->SetBinContent(H1D_trackPt_efficiency[iDataset]->GetNbinsX()+iBinX, H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset]->GetBinContent(iBinX));
       H1D_trackPt_efficiency_splitCorrected_concatenated[iDataset]->SetBinError(H1D_trackPt_efficiency[iDataset]->GetNbinsX()+iBinX, H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset]->GetBinError(iBinX));
     }
+    
   }
   TH1D* H1D_trackPt_efficiency_ratios[nDatasets];
   TString DatasetsNamesPairRatio[nDatasets];
@@ -446,7 +448,7 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
   // std::array<std::array<float, 2>, 2> drawnWindowLog = {{{-999, -999}
   //                                                         , {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
-  std::array<float, 2> contextPlacementEfficiency = {{0.22, 0.82}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<float, 2> contextPlacementEfficiency = {{0.33, 0.85}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementEfficiency = {{{0.55, 0.2}, {0.85, 0.6}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> drawnWindowLogEff = {{{(float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(1)
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(2))/2, 
@@ -458,8 +460,8 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
                                                           (float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX())
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinWidth(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX()))}
                                                           , {0.7, 2.2}}};
-  std::array<std::array<float, 2>, 2> legendPlacementEfficiencyRatio = {{{0.4, 0.5}, {0.7, 0.7}}}; 
-  std::array<float, 2> contextPlacementEfficiencyRatio = {{0.4, 0.82}};     
+  std::array<std::array<float, 2>, 2> legendPlacementEfficiencyRatio = {{{0.35, 0.5}, {0.7, 0.7}}}; 
+  std::array<float, 2> contextPlacementEfficiencyRatio = {{0.35, 0.85}};     
 
   if (divideSuccess == true) {
     Draw_TH1_Histograms_in_one(H1D_trackPt_efficiency_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEff, legendPlacementEfficiency, contextPlacementEfficiency, "logx,efficiency,150MevLine"+histDrawColorsOption);
@@ -482,6 +484,10 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange) {
   else {
     cout << "Divide failed in Draw_Pt_DatasetComparison" << endl;
   }
+
+
+
+
 }
 
 void Draw_Efficiency_Eta_DatasetComparison(float* ptRange) {
@@ -1294,7 +1300,8 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextEtaRange(etaRange), ""));
 
   std::array<std::array<float, 2>, 2> drawnWindowPurity = {{{-999, -999} , {0.6, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}} //0,6 et 1.2
-  std::array<float, 2> contextPlacementPurity = {{0.3, 0.82}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<float, 2> contextPlacementPurity = {{0.20, 0.85}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<float, 2> contextPlacementPurityratio = {{0.2, 0.85}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementPurity = {{{0.45, 0.2}, {0.8, 0.55}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   if (divideSuccess1 == true) {
@@ -1312,7 +1319,7 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange) {
   TString* pdfName_ratio = new TString("track_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio");
   if (divideSuccessRatio == true) {
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
-      Draw_TH1_Histograms_in_one(H1D_trackPt_purity_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowLog, legendPlacementPurityratio, contextPlacementPurity, "logx,150MevLine,standardratio,ratioLine");
+      Draw_TH1_Histograms_in_one(H1D_trackPt_purity_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowLog, legendPlacementPurityratio, contextPlacementPurityratio, "logx,150MevLine,standardratio,ratioLine");
       TString* pdfName_ratio_zoom = new TString("track_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio_zoom");
       //Draw_TH1_Histograms_in_one(H1D_trackPt_purity_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,ratioLine");
     } else {
