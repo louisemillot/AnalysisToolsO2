@@ -19,6 +19,7 @@
 
 //My Libraries
 #include "./nSubJettiness_settings.h"
+#include "./nSubJettiness_inputs.h"
 #include "../Settings/AxisTitles.h"
 #include "../Utilities/AnalysisUtilities.h"
 #include "../Utilities/HistogramUtilities.h"

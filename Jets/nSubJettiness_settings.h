@@ -69,31 +69,3 @@ const float nSubRatioMax = 1.2;
 
 // double pTbins[nJetType][20] = {{0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.6, 2.0, 2.4, 3.0},{0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 3.0},{0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 2.0, 2.4, 3.0}};
 // int nbinpT[nJetType] = {17,8,8};
-
-// TFile* file_AliAnalysis = new TFile("../AnalysisResults_Run2_merged_Jaime.root");
-
-
-// //////// -------- Inclusive vs D0 -------- ////////
-// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV"); 
-// const TString* texDatasetsComparisonType = new TString("Inclusive/HF");
-// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC22o apass6");
-// const int nDatasets = 2;
-// const TString Datasets[nDatasets] = {"Inclusive/JE_LHC22o_pass6_small_C_R6_18_F_R6_8", "HF_D0/JE_HF_LHC22_pass6_medium_2P3PDstar_D0C_R4_4"};
-// const TString DatasetsNames[nDatasets] = {"inclusive", "D0"};
-// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
-//                                         };
-// const TString analysisWorkflow = "jet-nsubjettiness";
-
-
-//////// -------- Inclusive - before/after cleaning of workflow -------- ////////
-TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV"); 
-const TString* texDatasetsComparisonType = new TString("Inclusive/HF");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC22o apass6");
-const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"Inclusive/JE_LHC22o_pass6_small_C_R6_18_F_R6_8", "Inclusive/cleaningOfWorkflow"};
-const TString DatasetsNames[nDatasets] = {"beforeCleaning", "afterCleaning"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
-                                        };
-const TString analysisWorkflow = "jet-nsubjettiness";
