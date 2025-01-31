@@ -350,15 +350,8 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   int nColors = gStyle->GetNumberOfColors();
   int histoPaletteColor;
   for (int i = 0; i < collectionSize; i++) {
-    // if (i!=0 || options.find("noMarkerFirst") == std::string::npos) { // if i=0 requires that the option noMarkerFirst isn't there (== std::string::npos means it didn't find it in the elements 0 to npos-1, where npos is the size of the string options)
-
-    if (options.find("colorPairs") == std::string::npos) {
+    if (options.find("colorPairs") == std::string::npos) { // if hasn't found "colorPairs" in options
       if (collectionSize >= collectionSizeColorThreshold) {
-        histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-        if (options.find("histWithLine") != std::string::npos) {
-          histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
-        }
-      } else {
         histoPaletteColor = (float)nColors / collectionSize * (int)i;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
         histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoPaletteColor));
@@ -366,7 +359,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
         if (options.find("histWithLine") != std::string::npos) {
           histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
         }
-
+      } else {
+        histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        if (options.find("histWithLine") != std::string::npos) {
+          histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        }
       }
       histograms_collection[i]->SetMarkerStyle(markers[i]);
       if (collectionSize > largeCollectionThreshold) {
@@ -375,7 +372,7 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       if (i == 0 && options.find("noMarkerFirst") != std::string::npos) { // if i=0 requires and if option noMarkerFirst is there (!= std::string::npos means it found find it in the elements 0 to npos-1, where npos is the size of the string options)
         histograms_collection[i]->SetMarkerStyle(1);
       }
-    } else {
+    } else { // if has found "colorPairs" in options
       if (collectionSize >= 2*collectionSizeColorThreshold) {
         histoPaletteColor = (float)nColors / collectionSize * (int)i/2;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
@@ -393,9 +390,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
         histograms_collection[i]->SetLineColor(colors[(int)i/2]);
       }
       histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+      if (i == 0 && options.find("noMarkerFirst") != std::string::npos) { // if i=0 requires and if option noMarkerFirst is there (!= std::string::npos means it found find it in the elements 0 to npos-1, where npos is the size of the string options)
+        histograms_collection[i]->SetMarkerStyle(1);
+      }
     }
     leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
-    // }
   }
   if (options.find("fit") != std::string::npos) {
     for (int i = 0; i < collectionSize; i++) {
