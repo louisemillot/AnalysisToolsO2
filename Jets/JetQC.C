@@ -21,6 +21,7 @@
 
 //My Libraries
 #include "./JetQC_settings.h"
+#include "./JetQC_inputs.h"
 #include "../Settings/AxisTitles.h"
 #include "../Settings/GlobalSettings.h"
 #include "../Utilities/AnalysisUtilities.h"

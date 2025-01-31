@@ -20,6 +20,7 @@
 
 //My Libraries
 #include "./TrackMcQC_settings.h"
+#include "./TrackMcQC_inputs.h"
 #include "../Settings/AxisTitles.h"
 #include "../Settings/GlobalSettings.h"
 #include "../Utilities/AnalysisUtilities.h"
