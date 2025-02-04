@@ -360,10 +360,12 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
           histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
         }
       } else {
-        histograms_collection[i]->Draw("same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        histograms_collection[i]->Draw("same");
         if (options.find("histWithLine") != std::string::npos) {
-          histograms_collection[i]->Draw("][ Hist same PMC PLC"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+          histograms_collection[i]->Draw("][ Hist same");
         }
+        histograms_collection[i]->SetMarkerColor(colors[(int)i]);
+        histograms_collection[i]->SetLineColor(colors[(int)i]);
       }
       histograms_collection[i]->SetMarkerStyle(markers[i]);
       if (collectionSize > largeCollectionThreshold) {
