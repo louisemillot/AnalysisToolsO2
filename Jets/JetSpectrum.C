@@ -1505,7 +1505,7 @@ bool  Get_Pt_JetEfficiency(TH1D* &H1D_jetEfficiency, int iDataset, int iRadius, 
   Get_Pt_spectrum_mcpMatched(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   H1D_jetEfficiency = (TH1D*)H1D_jetPt_mcpMatched->Clone("H1D_jetEfficiency"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]");
-  divideSuccess = H1D_jetEfficiency->Divide(H1D_jetPt_mcp);
+  divideSuccess = H1D_jetEfficiency->Divide(H1D_jetEfficiency, H1D_jetPt_mcp, 1., 1., "b");
   if (!divideSuccess){
     cout << "################## Get_Pt_JetEfficiency FAILED!!!!! ##################" << endl;
   }
@@ -1520,7 +1520,7 @@ bool  Get_Pt_JetEfficiency_fineBinning(TH1D* &H1D_jetEfficiency, int iDataset, i
   Get_Pt_spectrum_mcpMatched_fineBinning(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   H1D_jetEfficiency = (TH1D*)H1D_jetPt_mcpMatched->Clone("H1D_jetEfficiency_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_@cent["+Form("%.1f", centRange[0])+","+Form("%.1f", centRange[1])+"]");
-  divideSuccess = H1D_jetEfficiency->Divide(H1D_jetPt_mcp);
+  divideSuccess = H1D_jetEfficiency->Divide(H1D_jetEfficiency, H1D_jetPt_mcp, 1., 1., "b");
   if (!divideSuccess){
     cout << "################## Get_Pt_JetEfficiency FAILED!!!!! ##################" << endl;
   }
