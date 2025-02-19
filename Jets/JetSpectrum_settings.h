@@ -17,7 +17,7 @@ const int iJetLevel = 0;
 // const int nCentralityBins = 2;
 // const float arrayCentralityIntervals[nCentralityBins][2] = {{0, 10}, {50, 90}};
 const int nCentralityBins = 1;
-const float arrayCentralityIntervals[nCentralityBins][2] = {{00, 10}};
+const float arrayCentralityIntervals[nCentralityBins][2] = {{-999, 999}};
 // const float arrayCentralityIntervals[nCentralityBins][2] = {{50, 90}};
 
 
@@ -34,14 +34,14 @@ const bool doEvtNorm = 1;                               //  as of now, only chan
 const bool doWidthScalingAtEnd = 1;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
 
 char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics
+char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
 const bool useYSliceNorm = false; //SHOULD BE TRUE IF USING PRIOR
 char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
 char normMethod[] = "evtNorm"; // evtNorm, noNorm
 char optionsAnalysis[100] = "";
 
 const bool isPbPb = false; // if false -> pp
-const bool ppMcIsWeighted = false; // use if the MC has been weighted to have more high pt jets?
+const bool ppMcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
 int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active; only applied if useInitialResponseMethod is true
 bool applyFakes = true; // only applied if useInitialResponseMethod is true
 const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
@@ -59,7 +59,9 @@ const bool normunfoldedByNEvts = false;
 const bool useInitialResponseMethod = false; // discrepancy false vs true here seems to be that I do not model fakes in my initial method
 const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
 
-bool controlMC = false; // not yet implemented: weighted control MC, and control for PbPb
+bool controlMC = false; // uses MC as input for the unfolding, rather than data; not yet implemented: weighted control MC, and control for PbPb
+ACTUALLY? am i sure about it: doesnt take iDataset as input
+bool comparePbPbWithRun2 = false; // if isPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
 
 const bool drawIntermediateResponseMatrices = false;
 
