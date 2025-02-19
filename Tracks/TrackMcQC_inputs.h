@@ -460,3 +460,4 @@ const TString analysisWorkflow[nDatasets] = {"track-efficiency",
 const TString trainId = "";
 const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
 const std::string histDrawColorsOption = "";
+const bool datasetsAreSubsetsofId0 = false;

@@ -1788,7 +1788,7 @@ void Draw_Pt_gen_DatasetComparison(float* etaRange, std::string options) {
 
     H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPt_rebinned_ratios[iDataset]->Divide(H1D_trackPt_rebinned[iDataset], H1D_trackPt_rebinned[0]);
+    divideSuccess = H1D_trackPt_rebinned_ratios[iDataset]->Divide(H1D_trackPt_rebinned[iDataset], H1D_trackPt_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString trackComposition = "";
@@ -1857,7 +1857,7 @@ void Draw_Eta_gen_DatasetComparison(float* ptRange, std::string options) {
 
     H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
+    divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString trackComposition = "";
@@ -1929,7 +1929,7 @@ void Draw_Phi_gen_DatasetComparison(float* ptRange, float* etaRange, std::string
 
     H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[iDataset], H1D_trackPhi_rebinned[0]);
+    divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[iDataset], H1D_trackPhi_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString trackComposition = "";
@@ -1997,7 +1997,7 @@ void Draw_Pt_gen_DatasetComparison_H2CentVersion(std::string options) {
 
     H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPt_rebinned_ratios[iDataset]->Divide(H1D_trackPt_rebinned[iDataset], H1D_trackPt_rebinned[0]);
+    divideSuccess = H1D_trackPt_rebinned_ratios[iDataset]->Divide(H1D_trackPt_rebinned[iDataset], H1D_trackPt_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString* pdfName = new TString("track_Pt_gen_DataComp");
@@ -2045,7 +2045,7 @@ void Draw_Eta_gen_DatasetComparison_H2CentVersion(std::string options) {
 
     H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0]);
+    divideSuccess = H1D_trackEta_rebinned_ratios[iDataset]->Divide(H1D_trackEta_rebinned[iDataset], H1D_trackEta_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString* pdfNameEventNorm = new TString("track_Eta_gen_DataComp_EventNorm");
@@ -2094,7 +2094,7 @@ void Draw_Phi_gen_DatasetComparison_H2CentVersion(std::string options) {
 
     H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[iDataset], H1D_trackPhi_rebinned[0]);
+    divideSuccess = H1D_trackPhi_rebinned_ratios[iDataset]->Divide(H1D_trackPhi_rebinned[iDataset], H1D_trackPhi_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString* pdfName = new TString("track_Phi_gen_DataComp");

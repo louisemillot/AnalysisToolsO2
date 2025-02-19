@@ -661,7 +661,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
                                         
 
 
@@ -683,7 +683,7 @@ TFile* file_AliAnalysis;
 //                                             "jet-finder-charged-qa_sel8"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 
 
 // //////// -------- LHC23zzh - apass 4 -------- ////////
@@ -704,7 +704,7 @@ TFile* file_AliAnalysis;
 //                                             "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false};
 
 
@@ -728,7 +728,7 @@ TFile* file_AliAnalysis;
 //                                             "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 
 
 
@@ -748,7 +748,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -769,7 +769,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_noAreaLeadingJetCut"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -793,7 +793,7 @@ TFile* file_AliAnalysis;
 //                                             "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {true, true, false};
 
 // // jaime testJetAnchoredGapGen-20240801-155530
@@ -815,7 +815,7 @@ TFile* file_AliAnalysis;
 //                                             "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {true, true};
 
 // // jaime testJetAnchoredGapGen-20240801-155530
@@ -840,7 +840,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false};
 
 
@@ -848,8 +848,31 @@ TFile* file_AliAnalysis;
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
 // const TString* texDatasetsComparisonType = new TString("Occupancy analysis");
 // const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4 - sel8FullPbPb");
+// const int nDatasets = 4;
+// const TString Datasets[nDatasets] = {"sel8FullPbPb/LHC23zzh_apass4_occupancy01000", "sel8FullPbPb/LHC23zzh_apass4_occupancy05000", "sel8FullPbPb/LHC23zzh_apass4_occupancy10000", "sel8FullPbPb/LHC23zzh_apass4_occupancy20000"};
+// const TString DatasetsNames[nDatasets] = {"0k-1k occupancy", "1k-5k occupancy", "5k-10k occupancy", "10-20k occupancy"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+// const TString wagonId = "";
+// const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
+// const std::string histDrawColorsOption = "";
+
+
+// //////// -------- LHC23zzh - apass 4 occupancy analysis sel8FullPbPb-------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("Occupancy analysis");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4 - sel8FullPbPb");
 // const int nDatasets = 5;
-// const TString Datasets[nDatasets] = {"sel8FullPbPb/LHC23zzh_apass4_occupancy01000", "sel8FullPbPb/LHC23zzh_apass4_occupancy02000", "sel8FullPbPb/LHC23zzh_apass4_occupancy06000", "sel8FullPbPb/LHC23zzh_apass4_occupancy10000", "sel8FullPbPb/LHC23zzh_apass4_occupancy20000"};
+// const TString Datasets[nDatasets] = {"sel8FullPbPb/LHC23zzh_apass4_occupancy01000_train297793", "sel8FullPbPb/LHC23zzh_apass4_occupancy02000_train297794", "sel8FullPbPb/LHC23zzh_apass4_occupancy06000_train302311", "sel8FullPbPb/LHC23zzh_apass4_occupancy10000_train297796", "sel8FullPbPb/LHC23zzh_apass4_occupancy20000_train297797"};
 // const TString DatasetsNames[nDatasets] = {"0k-1k occupancy", "1k-2k occupancy", "2k-6k occupancy", "6k-10k occupancy", "10-20k occupancy"};
 // TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
 //                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
@@ -864,9 +887,10 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false};
 // const std::string histDrawColorsOption = "";
+
 
 
 // //////// -------- LHC23zzh - apass 4 occupancy analysis sel8Full-------- ////////
@@ -891,7 +915,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
 
 
@@ -927,7 +951,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false, false, false, false};
 // // const bool trackHistsObsoleteVersion[nDatasets] = {true, true, true, true, true, true, true, true};
 
@@ -952,7 +976,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false};
 
 
@@ -973,7 +997,7 @@ TFile* file_AliAnalysis;
 //                                             "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false};
 // const std::string histDrawColorsOption = "";
 
@@ -989,7 +1013,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -1025,7 +1049,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false, false, false, false};
 // // const bool trackHistsObsoleteVersion[nDatasets] = {true, true, true, true, true, true, true, true};
 
@@ -1051,7 +1075,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -1072,7 +1096,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_noAreaLeadingJetCut"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -1101,7 +1125,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false};
 // const std::string histDrawColorsOption = "";
 
@@ -1122,7 +1146,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -1140,7 +1164,7 @@ TFile* file_AliAnalysis;
 // TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")};
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"};
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {true};
 // const std::string histDrawColorsOption = "";
 
@@ -1161,7 +1185,7 @@ TFile* file_AliAnalysis;
 //                                             "jet-finder-charged-qa",
 //                                             };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {true, true};
 // const std::string histDrawColorsOption = "";
 
@@ -1179,7 +1203,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -1202,7 +1226,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
 // const std::string histDrawColorsOption = "";
 
@@ -1222,7 +1246,7 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false};
 // const std::string histDrawColorsOption = "";
 
@@ -1240,7 +1264,7 @@ TFile* file_AliAnalysis;
 // const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
 // const std::string histDrawColorsOption = "";
 
@@ -1311,27 +1335,142 @@ TFile* file_AliAnalysis;
 //                                           "jet-finder-charged-qa"
 //                                           };
 
-// const TString trainId = "";
+// const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 // const std::string histDrawColorsOption = "";
 
 
 
-//////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 6000occupancy - run(IR) comparison-------- ////////
+// //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 6000occupancy - run(IR) comparison-------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("run");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23 golden runs");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"NewJetSel","OldJetSel"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"NewJetSel","OldJetSel"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+// const TString wagonId = "";
+// const bool isDatasetWeighted[nDatasets] = {false,false};
+// const std::string histDrawColorsOption = "";
+
+
+
+// //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 1000 occupancy cut with new event sel -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("centrality");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_sel8FullPbPb_train345079","LHC23zzh_sel8FullPbPb_train345079"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"00-10%","50-70%"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_id24141",
+//                                           "jet-finder-charged-qa_id24142"
+//                                           };
+
+// const TString wagonId[nDatasets] = {"_id24141",
+//                                     "_id24142"
+//                                     };
+// const bool isDatasetWeighted[nDatasets] = {false,false};
+// const std::string histDrawColorsOption = "";
+
+
+
+// //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 1000 occupancy cut with new event sel -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("evtSel");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_oldSel8FullPbPb","LHC23zzh_newSel8FullPbPb_train346468"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"oldSel","newSel"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa_id9300"
+//                                           };
+
+// const TString wagonId[nDatasets] = {"",
+//                                     "_id9300"
+//                                     };
+// const bool isDatasetWeighted[nDatasets] = {false,false};
+// const std::string histDrawColorsOption = "";
+
+
+
+
+// //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 1000 occupancy cut with new event sel -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("centrality");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23zzh_newSel8FullPbPb_train346468_lowCent","LHC23zzh_newSel8FullPbPb_train346468_highCent"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"00-10%","50-70%"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa_id24141",
+//                                           "jet-finder-charged-qa_id24142"
+//                                           };
+
+// const TString wagonId[nDatasets] = {"_id24141",
+//                                     "_id24142"
+//                                     };
+// const bool isDatasetWeighted[nDatasets] = {false,false};
+// const std::string histDrawColorsOption = "";
+
+
+
+//////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 1000 occupancy cut with new event sel -------- ////////
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("run");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23 golden runs");
-const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"NewJetSel","OldJetSel"};
+const TString* texDatasetsComparisonType = new TString("ptlead");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh - 00-10%");
+const int nDatasets = 9;
+const TString Datasets[nDatasets] = {"LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736"};
 // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"NewJetSel","OldJetSel"};
+const TString DatasetsNames[nDatasets] = {"ptlead 0","ptlead 1","ptlead 2","ptlead 3","ptlead 4","ptlead 5","ptlead 7","ptlead 8","ptlead 9"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
-                                          "jet-finder-charged-qa"
+const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_id24762",
+                                          "jet-spectra-charged_ptlead01_id24762",
+                                          "jet-spectra-charged_ptlead02_id24762",
+                                          "jet-spectra-charged_ptlead03_id24762",
+                                          "jet-spectra-charged_ptlead04_id24762",
+                                          "jet-spectra-charged_ptlead05_id24796",
+                                          "jet-spectra-charged_ptlead07_id24796",
+                                          "jet-spectra-charged_ptlead08_id24796",
+                                          "jet-spectra-charged_ptlead09_id24796"
                                           };
 
-const TString trainId = "";
-const bool isDatasetWeighted[nDatasets] = {false,false};
+const TString wagonId[nDatasets] = {"_id24762",
+                                    "_id24762",
+                                    "_id24762",
+                                    "_id24762",
+                                    "_id24762",
+                                    "_id24796",
+                                    "_id24796",
+                                    "_id24796",
+                                    "_id24796"
+                                    };
+const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false};
 const std::string histDrawColorsOption = "";
+const bool datasetsAreSubsetsofId0 = true;

@@ -807,14 +807,14 @@ void Draw_Pt_DatasetComparison(float* etaRange, std::string options, float jetRa
     if (histDrawColorsOption.find("colorPairs") != std::string::npos) { //colorPairs assumes a Datasets array like so: {pair1_element1, pair2_element1, ..., pairN_element1, pair1_element2, pair2_element2, ..., pairN_element2}
       if (iDataset < nHistPairRatio) {
         DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
-        H1D_jetPt_rebinned_ratios[iDataset] = (TH1D*)H1D_jetPt_rebinned[2*iDataset]->Clone("jetPt_rebinned_ratios"+Datasets[2*iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
+        H1D_jetPt_rebinned_ratios[iDataset] = (TH1D*)H1D_jetPt_rebinned[2*iDataset]->Clone("jetPt_rebinned_ratios"+Datasets[2*iDataset]+DatasetsNames[2*iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
         H1D_jetPt_rebinned_ratios[iDataset]->Reset("M");
-        divideSuccess = H1D_jetPt_rebinned_ratios[iDataset]->Divide(H1D_jetPt_rebinned[2*iDataset], H1D_jetPt_rebinned[2*iDataset+1]);
+        divideSuccess = H1D_jetPt_rebinned_ratios[iDataset]->Divide(H1D_jetPt_rebinned[2*iDataset], H1D_jetPt_rebinned[2*iDataset+1], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
       }
     } else {
       H1D_jetPt_rebinned_ratios[iDataset] = (TH1D*)H1D_jetPt_rebinned[iDataset]->Clone("jetPt_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
       H1D_jetPt_rebinned_ratios[iDataset]->Reset("M");
-      divideSuccess = H1D_jetPt_rebinned_ratios[iDataset]->Divide(H1D_jetPt_rebinned[iDataset], H1D_jetPt_rebinned[0]);
+      divideSuccess = H1D_jetPt_rebinned_ratios[iDataset]->Divide(H1D_jetPt_rebinned[iDataset], H1D_jetPt_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
     }
   }
 
@@ -894,7 +894,7 @@ void Draw_Eta_DatasetComparison(float jetRadius, float* PtRange, std::string opt
 
     H1D_jetEta_rebinned_ratios[iDataset] = (TH1D*)H1D_jetEta_rebinned[iDataset]->Clone("jetEta_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
     H1D_jetEta_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_jetEta_rebinned_ratios[iDataset]->Divide(H1D_jetEta_rebinned[iDataset], H1D_jetEta_rebinned[0]);
+    divideSuccess = H1D_jetEta_rebinned_ratios[iDataset]->Divide(H1D_jetEta_rebinned[iDataset], H1D_jetEta_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Eta_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
@@ -963,7 +963,7 @@ void Draw_Phi_DatasetComparison(float jetRadius, float* PtRange, std::string opt
 
     H1D_jetPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_jetPhi_rebinned[iDataset]->Clone("jetPhi_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
     H1D_jetPhi_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_jetPhi_rebinned_ratios[iDataset]->Divide(H1D_jetPhi_rebinned[iDataset], H1D_jetPhi_rebinned[0]);
+    divideSuccess = H1D_jetPhi_rebinned_ratios[iDataset]->Divide(H1D_jetPhi_rebinned[iDataset], H1D_jetPhi_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Phi_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
@@ -1140,7 +1140,7 @@ void Draw_Area_PtIntegrated_DatasetComparison(float jetRadius, float* PtRange) {
 
     H1D_jetArea_rebinned_ratios[iDataset] = (TH1D*)H1D_jetArea_rebinned[iDataset]->Clone("jetArea_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
     H1D_jetArea_rebinned_ratios[iDataset]->Reset("M");
-    divideSuccess = H1D_jetArea_rebinned_ratios[iDataset]->Divide(H1D_jetArea_rebinned[iDataset], H1D_jetArea_rebinned[0]);
+    divideSuccess = H1D_jetArea_rebinned_ratios[iDataset]->Divide(H1D_jetArea_rebinned[iDataset], H1D_jetArea_rebinned[0], 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
   }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Area_@pT["+Form("%03.0f", PtCutLow)+","+Form("%03.0f", PtCutHigh)+"]"+jetFinderQaHistType[iJetFinderQaType]);
@@ -2664,7 +2664,7 @@ void Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio() {
     // H2D_rhoMult_rebinned[iDataset]->GetXaxis()->SetRange(0,H2D_rhoMult_rebinned[iDataset]->FindLastBinAbove(1, 1)); //(asks for the last bin on the x axis (axis number 1) to have strictly more than 1 entry)
     // H2D_rhoMult_rebinned[iDataset]->GetYaxis()->SetRange(1, H2D_rhoMult_rebinned[iDataset]->FindLastBinAbove(1, 2));
 
-    divideSuccess = H2D_rhoMult_ratios[iDataset]->Divide(H2D_rhoMult_rebinned[iDataset], H2D_rhoMult_ref_rebinned);
+    divideSuccess = H2D_rhoMult_ratios[iDataset]->Divide(H2D_rhoMult_rebinned[iDataset], H2D_rhoMult_ref_rebinned, 1., 1., datasetsAreSubsetsofId0 ? "b" : "");
     cout << "division of H2 for dataset " << iDataset << " is successful? " << divideSuccess << endl;
   }
 
