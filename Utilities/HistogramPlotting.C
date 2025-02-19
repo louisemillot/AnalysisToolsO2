@@ -9,7 +9,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sstream>
-#include<array>
+#include <array>
+#include "TGaxis.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Various Utilities /////////////////////////////////////////////////////////////////////////////////////
@@ -163,11 +164,11 @@ void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfol
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options, TF1** optionalFitCollection) {
+void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TString* legendList_string, TH1D** histograms_collection_ratios, const TString* legendList_string_ratios, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<float, 2> drawnWindowRatio, std::array<std::array<float, 2>, 2> legendPlacement, std::array<std::array<float, 2>, 2> legendPlacementRatio, std::array<float, 2> contextPlacement, std::string options, TF1** optionalFitCollection) {
   // has options:
   // - "autoratio" : if in the options string, the Y range is chosen automatically based on the difference to 1
-  // - "standardratio" : if in the options string, the Y range is [0,2.2]
-  // - "zoomratio1" : if in the options string, the Y range is [0.6,1.54]
+  // - "zoomToOneLarge" : if in the options string, the Y range is [0,2.2]
+  // - "zoomToOneMedium1" : if in the options string, the Y range is [0.6,1.54]
   // - "logy" : if in the options string, then the y axis of the plot is set to a log scale (except for the ratio plot)
   // - "noMarkerFirst" : if in the options string, then the first histogram of the collection isn't plotted
 
@@ -175,17 +176,38 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   int collectionSizeColorThreshold = 6;
 
   // canvas settings
-  TCanvas *canvas = new TCanvas ("canvas"+*pdfName, "canvas"+*pdfName, 800, 800);
+  TCanvas *canvas = new TCanvas ("canvasWithRatio"+*pdfName, "canvasWithRatio"+*pdfName, 800, 800);
+  TPad *padMainHist = new TPad("padMainHist","padMainHist",0.0, 0.0, 1.0, 1.0);
+  TPad *padRatio    = new TPad("padRatio","padRatio",      0.0, 0.0, 1.0, 0.3); // only used if "ratioInSameCanvas" is in options
   canvas->cd(0);
+  padMainHist->Draw();
+  padMainHist->SetFillColor(0);
+  padMainHist->SetFrameFillStyle(0);
+
+  if (options.find("ratioInSameCanvas") != std::string::npos) {
+    gPad->SetBottomMargin(0.01);
+    gPad->SetTopMargin(0);
+    padMainHist->SetPad(0.0, 0.3, 1.0, 1.0);
+    // padMainHist->SetTopMargin(0.01);
+    padMainHist->SetBottomMargin(0);
+    padMainHist->SetGridx(); // Vertical grid  
+
+    canvas->cd(0);
+    padRatio->Draw();
+    padRatio->SetTopMargin(0);
+    padRatio->SetBottomMargin(0.3);
+    padRatio->SetGridx(); // Vertical grid
+    padRatio->SetFillColor(0);
+    padRatio->SetFrameFillStyle(0);
+  }
+  padMainHist->cd();
 
   float minY_collection[collectionSize];
   float maxY_collection[collectionSize];
+  float minY_ratio_collection[collectionSize];
+  float maxY_ratio_collection[collectionSize];
   float minX_collection[collectionSize];
   float maxX_collection[collectionSize];
-
-  // cout << "test1" << endl;
-  // char* ratioOptionCheck = "ratio";
-  // char* OptionPtr = &options;
 
   for (int i = 0; i < collectionSize; i++) {
     if (options.find("autoXrange") != std::string::npos) {
@@ -199,6 +221,9 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       // cout << "test1.1b" << endl;
     }
     maxY_collection[i] = histograms_collection[i]->GetMaximum();
+    if (options.find("ratioInSameCanvas") != std::string::npos) {
+      maxY_ratio_collection[i] = histograms_collection_ratios[i]->GetMaximum();
+    }
     // cout << "test1.2" << endl;
     
     if (options.find("logy") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
@@ -213,11 +238,24 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       minY_collection[i] = histograms_collection[i]->GetMinimum();
       // cout << "test1.3c" << endl;
     }
+
+    if (options.find("ratioInSameCanvas") != std::string::npos) {
+      if (options.find("ratioLogy") != std::string::npos) { //  || options.find("ratio") != NULL not sure why I had this here
+        minY_ratio_collection[i] = histograms_collection_ratios[i]->GetMinimum(1E-10);
+        // cout << "test1.3a" << endl;
+      }
+      else {
+        minY_ratio_collection[i] = histograms_collection_ratios[i]->GetMinimum();
+        // cout << "test1.3c" << endl;
+      }
+    }
   }
   // cout << "test2" << endl;
 
   float yUpMarginScaling, yDownMarginScaling;
   float maxX, minX, maxY, minY;
+  float maxY_ratio;
+  float minY_ratio;
 
   yDownMarginScaling = 1;
   maxX = findMaxFloat(maxX_collection, collectionSize);
@@ -225,6 +263,8 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   maxY = findMaxFloat(maxY_collection, collectionSize);
   minY = findMinFloat(minY_collection, collectionSize);
   maxY > 0 ? yUpMarginScaling = 1.4 : yUpMarginScaling = 0.6;
+  maxY_ratio = findMaxFloat(maxY_ratio_collection, collectionSize);
+  minY_ratio = findMinFloat(minY_ratio_collection, collectionSize);
 
   if (options.find("logy") != std::string::npos) {
     yUpMarginScaling = 100;
@@ -243,7 +283,6 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     } else {
       minY = 0.;
     }
-  // cout << "test3" << endl;
 
     if (options.find("autoratio") != std::string::npos) {
       float deltaMax = max(1-minY, maxY-1);
@@ -251,27 +290,27 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       maxY = 1+deltaMax;
       yUpMarginScaling = 1.3;
     }
-    if (options.find("standardratio") != std::string::npos) {
+    if (options.find("zoomToOneLarge") != std::string::npos) {
       minY = 0;
       maxY = 2;
       yUpMarginScaling = 1.1;
     }
-    if (options.find("zoomratio1") != std::string::npos) {
+    if (options.find("zoomToOneMedium1") != std::string::npos) {
       minY = 0.6;
       maxY = 1.4;
       yUpMarginScaling = 1.1;
     }
-    if (options.find("zoomratio2") != std::string::npos) {
+    if (options.find("zoomToOneMedium2") != std::string::npos) {
       minY = 0.8;
       maxY = 1.2;
       yUpMarginScaling = 1.1;
     }
-    if (options.find("zoomextraratio") != std::string::npos) {
+    if (options.find("zoomToOneExtra") != std::string::npos) {
       minY = 0.9;
       maxY = 1.05;
       yUpMarginScaling = 1.1;
     }
-    if (options.find("zoomextraextraratio") != std::string::npos) {
+    if (options.find("zoomToOneExtraExtra") != std::string::npos) {
       minY = 0.93;
       maxY = 1.;
       yUpMarginScaling = 1.1;
@@ -281,7 +320,35 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
       maxY = 1.5;
       yUpMarginScaling = 1.1;
     }
+
+    // choosing y-range for second plot if ratioInSameCanvas is requested
+    if (options.find("ratioInSameCanvas") != std::string::npos) {
+      float deltaMax = max(1-minY, maxY-1);
+      minY_ratio = max((float)0., 1-deltaMax);
+      maxY_ratio = 1+deltaMax;
+      if (options.find("ratioZoomToOneLarge") != std::string::npos) {
+        minY_ratio = 0;
+        maxY_ratio = 2;
+      }
+      if (options.find("ratioZoomToOneMedium1") != std::string::npos) {
+        minY_ratio = 0.6;
+        maxY_ratio = 1.4;
+      }
+      if (options.find("ratioZoomToOneMedium2") != std::string::npos) {
+        minY_ratio = 0.8;
+        maxY_ratio = 1.2;
+      }
+      if (options.find("ratioZoomToOneExtra") != std::string::npos) {
+        minY_ratio = 0.9;
+        maxY_ratio = 1.1;
+      }
+      if (options.find("ratioZoomToOneExtraExtra") != std::string::npos) {
+        minY_ratio = 0.93;
+        maxY_ratio = 1.07;
+      }
+    }
   }
+    // cout << "test3" << endl;
 
   if (!std::equal(std::begin(drawnWindow[0]), std::end(drawnWindow[0]), std::begin(drawnWindowAuto[0]), std::end(drawnWindowAuto[0]))) {
     minX = drawnWindow[0][0];
@@ -294,20 +361,43 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
     maxY = drawnWindow[1][1];
   }
 
-
-
+  if (options.find("ratioInSameCanvas") != std::string::npos) {
+    if (!std::equal(std::begin(drawnWindowRatio), std::end(drawnWindowRatio), std::begin(drawnWindowAuto[1]), std::end(drawnWindowAuto[1]))) {
+      minY = drawnWindowRatio[0];
+      maxY = drawnWindowRatio[1];
+    }
+  }
 
   TH1 *hFrame = canvas->DrawFrame(minX, yDownMarginScaling*minY, maxX, yUpMarginScaling*maxY);
+  TH1 *hFrameRatio;
+  if (options.find("ratioInSameCanvas") != std::string::npos) {
+    padRatio->cd();
+    hFrameRatio = padRatio->DrawFrame(minX, minY_ratio, maxX, maxY_ratio); // REALLY NOT SURE THIS IS WORKING, TO BE CHECKED
+    padMainHist->cd();
+  }
   if (options.find("logy") != std::string::npos) {
-    canvas->SetLogy();
+    padMainHist->SetLogy();
   }  
   if (options.find("logx") != std::string::npos) {
-    canvas->SetLogx();
+    padMainHist->SetLogx();
+    if (options.find("ratioInSameCanvas") != std::string::npos) {
+      // padRatio->cd();
+      padRatio->SetLogx();
+      // padMainHist->cd();
+    }
   }
     // cout << "test4" << endl;
 
   hFrame->SetXTitle(texXtitle->Data());
   hFrame->SetYTitle(texYtitle->Data());
+  // hFrame->GetYaxis()->SetLabelFont(63); // TESTESTEST;
+  // hFrame->GetYaxis()->SetLabelSize(16); //in pixels
+  if (options.find("ratioInSameCanvas") != std::string::npos) {
+    hFrameRatio->SetXTitle(texXtitle->Data());
+    hFrameRatio->SetYTitle(texYtitle->Data());
+    hFrameRatio->GetYaxis()->SetLabelFont(63);
+    hFrameRatio->GetYaxis()->SetLabelSize(16); //in pixels
+  }
   // hFrame->GetYaxis()->SetTitleOffset(2);
 
   // legend settings
@@ -315,31 +405,51 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   double yLowLegend = 0.75;
   double xRightLegend = 0.8;
   double yUpLegend = 0.87;
+
+  double xLeftLegendRatio = 0.7;
+  double yLowLegendRatio = 0.75;
+  double xRightLegendRatio = 0.8;
+  double yUpLegendRatio = 0.87;
+
   if (collectionSize > largeCollectionThreshold) {
     xLeftLegend = 0.65;
     yLowLegend = 0.6;
     xRightLegend = 0.85;
     yUpLegend = 0.85;
+
+    xLeftLegendRatio = 0.4;
+    yLowLegendRatio = 0.4;
+    xRightLegendRatio = 0.9;
+    yUpLegendRatio = 0.7;
   }
   if (!std::equal(std::begin(legendPlacement[0]), std::end(legendPlacement[0]), std::begin(legendPlacementAuto[0]), std::end(legendPlacementAuto[0]))) {
     xLeftLegend = legendPlacement[0][0];
     yLowLegend = legendPlacement[0][1];
   }
   if (!std::equal(std::begin(legendPlacement[1]), std::end(legendPlacement[1]), std::begin(legendPlacementAuto[1]), std::end(legendPlacementAuto[1]))) {
-    // leg = TLegend(0.7, 0.75, legendPlacement[1][0], legendPlacement[1][1]);
-    // leg->SetY1NDC(legendPlacement[1][0]);
-    // leg->SetY2NDC(legendPlacement[1][1]);
     xRightLegend = legendPlacement[1][0];
     yUpLegend = legendPlacement[1][1];
   }
+  if (!std::equal(std::begin(legendPlacementRatio[0]), std::end(legendPlacementRatio[0]), std::begin(legendPlacementAuto[0]), std::end(legendPlacementAuto[0]))) {
+    xLeftLegendRatio = legendPlacementRatio[0][0];
+    yLowLegendRatio = legendPlacementRatio[0][1];
+  }
+  if (!std::equal(std::begin(legendPlacementRatio[1]), std::end(legendPlacementRatio[1]), std::begin(legendPlacementAuto[1]), std::end(legendPlacementAuto[1]))) {
+    xRightLegendRatio = legendPlacementRatio[1][0];
+    yUpLegendRatio = legendPlacementRatio[1][1];
+  }
   TLegend * leg = new TLegend(xLeftLegend, yLowLegend, xRightLegend, yUpLegend);
+  TLegend * legRatios = new TLegend(xLeftLegendRatio, yLowLegendRatio, xRightLegendRatio, yUpLegendRatio);
 
   leg->SetTextSize(gStyle->GetTextSize()*0.7);
+  legRatios->SetTextSize(gStyle->GetTextSize()*0.7);
   if (collectionSize >= collectionSizeColorThreshold) { // maybe fine tune that
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
+    legRatios->SetTextSize(gStyle->GetTextSize()*0.3);
   }
   if (options.find("fit") != std::string::npos) {
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
+    legRatios->SetTextSize(gStyle->GetTextSize()*0.3);
   }
   if (collectionSize >= collectionSizeColorThreshold) {
     gStyle->SetPalette(kRainbow); // for the choice of marker's colours; only use this if we have many histograms in the same plot
@@ -355,49 +465,146 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
         histoPaletteColor = (float)nColors / collectionSize * (int)i;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
         histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoPaletteColor));
-        histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        histograms_collection[i]->Draw("same"); 
+        if (options.find("ratioInSameCanvas") != std::string::npos) {
+          padRatio->cd();
+          histograms_collection_ratios[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
+          histograms_collection_ratios[i]->SetMarkerColor(gStyle->GetColorPalette(histoPaletteColor));
+          histograms_collection_ratios[i]->Draw("same");
+          padMainHist->cd();
+        }
+
         if (options.find("histWithLine") != std::string::npos) {
           histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+          if (options.find("ratioInSameCanvas") != std::string::npos) {
+            padRatio->cd();
+            histograms_collection_ratios[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+            padMainHist->cd();
+          }
         }
       } else {
-        histograms_collection[i]->Draw("same");
-        if (options.find("histWithLine") != std::string::npos) {
-          histograms_collection[i]->Draw("][ Hist same");
-        }
         histograms_collection[i]->SetMarkerColor(colors[(int)i]);
         histograms_collection[i]->SetLineColor(colors[(int)i]);
+        histograms_collection[i]->Draw("same");
+        if (options.find("ratioInSameCanvas") != std::string::npos) {
+          padRatio->cd();
+          histograms_collection_ratios[i]->SetMarkerColor(colors[(int)i]);
+          histograms_collection_ratios[i]->SetLineColor(colors[(int)i]);
+          histograms_collection_ratios[i]->Draw("same");
+          padMainHist->cd();
+        }
+
+        if (options.find("histWithLine") != std::string::npos) {
+          histograms_collection[i]->Draw("][ Hist same");
+          if (options.find("ratioInSameCanvas") != std::string::npos) {
+            padRatio->cd();
+            histograms_collection_ratios[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+            padMainHist->cd();
+          }
+        }
       }
+
       histograms_collection[i]->SetMarkerStyle(markers[i]);
+      if (options.find("ratioInSameCanvas") != std::string::npos) {
+        padRatio->cd();
+        histograms_collection_ratios[i]->SetMarkerStyle(markers[i]);
+        padMainHist->cd();
+      }
+
       if (collectionSize > largeCollectionThreshold) {
         histograms_collection[i]->SetMarkerStyle(markers[2]);
+        if (options.find("ratioInSameCanvas") != std::string::npos) {
+          padRatio->cd();
+          histograms_collection_ratios[i]->SetMarkerStyle(markers[2]);
+          padMainHist->cd();
+        }
       }
       if (i == 0 && options.find("noMarkerFirst") != std::string::npos) { // if i=0 requires and if option noMarkerFirst is there (!= std::string::npos means it found find it in the elements 0 to npos-1, where npos is the size of the string options)
         histograms_collection[i]->SetMarkerStyle(1);
+        if (options.find("ratioInSameCanvas") != std::string::npos) {
+          padRatio->cd();
+          histograms_collection_ratios[i]->SetMarkerStyle(1);
+          padMainHist->cd();
+        }
       }
     } else { // if has found "colorPairs" in options
       if (collectionSize >= 2*collectionSizeColorThreshold) {
         histoPaletteColor = (float)nColors / collectionSize * (int)i/2;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
         histograms_collection[i]->SetMarkerColor(gStyle->GetColorPalette(histoPaletteColor));
-        histograms_collection[i]->Draw("same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+        histograms_collection[i]->Draw("same"); 
+        if (options.find("ratioInSameCanvas") != std::string::npos) {
+          padRatio->cd();
+          histograms_collection_ratios[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
+          histograms_collection_ratios[i]->SetMarkerColor(gStyle->GetColorPalette(histoPaletteColor));
+          histograms_collection_ratios[i]->Draw("same"); 
+          padMainHist->cd();
+        }
+
         if (options.find("histWithLine") != std::string::npos) {
           histograms_collection[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+          if (options.find("ratioInSameCanvas") != std::string::npos) {
+            padRatio->cd();
+            histograms_collection_ratios[i]->Draw("][ Hist same"); // PMC uses the palette chosen with gStyle->SetPalette() to chose the colours of the markers, PLC for the lines
+            padMainHist->cd();
+          }
         }
       } else {
         histograms_collection[i]->Draw("same");
-        if (options.find("histWithLine") != std::string::npos) {
-          histograms_collection[i]->Draw("][ Hist same");
-        }
         histograms_collection[i]->SetMarkerColor(colors[(int)i/2]);
         histograms_collection[i]->SetLineColor(colors[(int)i/2]);
+        if (options.find("ratioInSameCanvas") != std::string::npos) {
+          padRatio->cd();
+          histograms_collection_ratios[i]->Draw("same");
+          histograms_collection_ratios[i]->SetMarkerColor(colors[(int)i/2]);
+          histograms_collection_ratios[i]->SetLineColor(colors[(int)i/2]);
+          padMainHist->cd();
+        }
+
+        if (options.find("histWithLine") != std::string::npos) {
+          histograms_collection[i]->Draw("][ Hist same");
+          if (options.find("ratioInSameCanvas") != std::string::npos) {
+            padRatio->cd();
+            histograms_collection_ratios[i]->Draw("][ Hist same");
+            padMainHist->cd();
+          }
+        }
       }
       histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+      if (options.find("ratioInSameCanvas") != std::string::npos) {
+        padRatio->cd();
+        histograms_collection_ratios[i]->SetMarkerStyle(markersColorPairs[i]);
+        padMainHist->cd();
+      }
+          
       if (i == 0 && options.find("noMarkerFirst") != std::string::npos) { // if i=0 requires and if option noMarkerFirst is there (!= std::string::npos means it found find it in the elements 0 to npos-1, where npos is the size of the string options)
         histograms_collection[i]->SetMarkerStyle(1);
+        if (options.find("ratioInSameCanvas") != std::string::npos) {
+          padRatio->cd();
+          histograms_collection_ratios[i]->SetMarkerStyle(1);
+          padMainHist->cd();
+        }
       }
     }
     leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
+    if (options.find("ratioInSameCanvas") != std::string::npos) {
+      padRatio->cd();
+      legRatios->AddEntry(histograms_collection_ratios[i], legendList_string_ratios[i], "LP");
+      padMainHist->cd();
+    }
   }
+  padMainHist->cd();
+
+  TGaxis *axis = new TGaxis( minX, minY, maxX, maxY, minY, maxY, 510,"");
+  // TGaxis *axis = new TGaxis( -5, 20, -5, 220, 20,220,510,"");
+  if (options.find("ratioInSameCanvas") != std::string::npos) {
+    hFrame->GetYaxis()->SetLabelSize(0.);
+    axis->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+    axis->SetLabelSize(15);
+    axis->Draw();
+  }
+
+  // draws fit functions if requested
   if (options.find("fit") != std::string::npos) {
     for (int i = 0; i < collectionSize; i++) {
       optionalFitCollection[i]->SetNpx(2000);
@@ -408,6 +615,11 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
 
   if (collectionSize >= 2) {
     leg->Draw("same");
+    if (options.find("ratioInSameCanvas") != std::string::npos) {
+      padRatio->cd();
+      legRatios->Draw("same");
+      padMainHist->cd();
+    }
   }
   // cout << "test6" << endl;
 
@@ -486,17 +698,35 @@ void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* leg
   // }
 }
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options) {
-  // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
+void Draw_TH1_Histograms_ratioInSameCanvas(TH1D** histograms_collection, const TString* legendList_string,TH1D** histograms_collection_ratios, const TString* legendList_string_ratios, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<float, 2> drawnWindowRatio, std::array<std::array<float, 2>, 2> legendPlacement, std::array<std::array<float, 2>, 2> legendPlacementRatio, std::array<float, 2> contextPlacement, std::string options, TF1** optionalFitCollection) {
+  Draw_TH1_Histograms_MasterFunction(histograms_collection, legendList_string, histograms_collection_ratios, legendList_string_ratios, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, drawnWindowRatio, legendPlacement, legendPlacementRatio, contextPlacement, options+(std::string)"ratioInSameCanvas", optionalFitCollection);
+}
+
+void Draw_TH1_Histograms_ratioInSameCanvas(TH1D** histograms_collection, const TString* legendList_string,TH1D** histograms_collection_ratios, const TString* legendList_string_ratios, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<float, 2> drawnWindowRatio, std::array<std::array<float, 2>, 2> legendPlacement, std::array<std::array<float, 2>, 2> legendPlacementRatio, std::array<float, 2> contextPlacement, std::string options) {
+  // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms function; it will only be used if 'options' has fit in it
   TF1* optionalFitCollectionDummy[collectionSize];
-  Draw_TH1_Histograms_in_one(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options, optionalFitCollectionDummy);
+  Draw_TH1_Histograms_ratioInSameCanvas(histograms_collection, legendList_string, histograms_collection_ratios, legendList_string_ratios, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, drawnWindowRatio, legendPlacement, legendPlacementRatio, contextPlacement, options, optionalFitCollectionDummy);
+}
+
+void Draw_TH1_Histograms(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options, TF1** optionalFitCollection) {
+  TH1D* histograms_collection_ratios_dummy[collectionSize];
+  const TString* legendList_string_ratios_dummy;
+  std::array<float, 2> drawnWindowRatioDummy;
+  std::array<std::array<float, 2>, 2> legendPlacementRatioDummy;
+  Draw_TH1_Histograms_MasterFunction(histograms_collection, legendList_string, histograms_collection_ratios_dummy, legendList_string_ratios_dummy, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, drawnWindowRatioDummy, legendPlacement, legendPlacementRatioDummy, contextPlacement, options, optionalFitCollection);
+}
+
+void Draw_TH1_Histograms(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options) {
+  // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms function; it will only be used if 'options' has fit in it
+  TF1* optionalFitCollectionDummy[collectionSize];
+  Draw_TH1_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options, optionalFitCollectionDummy);
 }
 
 void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<std::array<float, 2>, 2> legendPlacement, std::array<float, 2> contextPlacement, std::string options) {
   TH1D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
-  Draw_TH1_Histograms_in_one(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options);
+  Draw_TH1_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options);
 }
 
 void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options, TPolyLine* optionalLine) {
@@ -618,11 +848,10 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
 }
 
 void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
-  // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms_in_one can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms_in_one function; it will only be used if 'options' has fit in it
+  // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms function; it will only be used if 'options' has fit in it
   TPolyLine* optionalLine;
   Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, th2Contours, th2ContourNumber, options, optionalLine);
 }
-
 
 void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
   TH2D* singleHistArray[1] = {histogram};

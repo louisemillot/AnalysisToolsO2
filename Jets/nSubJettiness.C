@@ -35,7 +35,7 @@ using namespace std;
 void SetStyle(Bool_t graypalette=kFALSE);
 void LoadLibs();
 
-void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle);
+void Draw_TH1_Histograms(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle);
 void Draw_DeltaR_nSubAxes(int iDataset, double* subRatioRange, TString* &texXtitle, TString* &texYtitle);
 void Draw_NSubjettiness(int iDataset, double* deltaRRange, TString* &texXtitle, TString* &texYtitle);
 
@@ -185,7 +185,7 @@ void Draw_NSubjettiness(int iDataset, double* subRatioRange, TString* &texXtitle
   TString* pdfName = new TString("nSubjettiness_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_AxisTypeComparison_"+Form("%.0f", PtCutLow)+"<Pt<"+Form("%.0f", PtCutHigh)+"GeV_"+DatasetsNames[iDataset]);
   const TString textContext("#splitline{"+jetType[iJetType]+" "+jetLevel[iJetLevel]+" #minus "+DatasetsNames[iDataset]+"}{"+Form("%.0f", PtCutLow)+" < Pt < "+Form("%.0f", PtCutHigh)+" GeV}");
 
-  Draw_TH1_Histograms_in_one(H1D_NSubjettiness_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle, texCollisionDataInfo, "");
+  Draw_TH1_Histograms(H1D_NSubjettiness_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle, texCollisionDataInfo, "");
   cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << endl;
   cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << endl;
   cout << "NORMALISATION IS WRONG ; also naming ; im saying 1/Nevts but I dont get the number of events anywhere" << endl;
@@ -236,7 +236,7 @@ void Draw_DeltaR_nSubAxes(int iDataset, double* deltaRRange, TString* &texXtitle
   TString* pdfName = new TString("DeltaR_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_AxisTypeComparison_"+Form("%.0f", PtCutLow)+"<Pt<"+Form("%.0f", PtCutHigh)+"GeV_"+DatasetsNames[iDataset]);
   const TString textContext("#splitline{"+jetType[iJetType]+" "+jetLevel[iJetLevel]+" #minus "+DatasetsNames[iDataset]+"}{"+Form("%.0f", PtCutLow)+" < Pt < "+Form("%.0f", PtCutHigh)+" GeV}");
 
-  Draw_TH1_Histograms_in_one(H1D_DeltaR_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle, texCollisionDataInfo, "");
+  Draw_TH1_Histograms(H1D_DeltaR_projectedY_rebinnedY, AxisTypeLegend, nAxisTypes, textContext, pdfName, texXtitle, texYtitle, texCollisionDataInfo, "");
   cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << endl;
   cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << endl;
   cout << "NORMALISATION IS WRONG ; also naming ; im saying 1/Nevts but I dont get the number of events anywhere" << endl;
@@ -246,7 +246,7 @@ void Draw_DeltaR_nSubAxes(int iDataset, double* deltaRRange, TString* &texXtitle
 }
 
 // obsolete, now in HistogramUtilities.C
-// void Draw_TH1_Histograms_in_one(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle) {
+// void Draw_TH1_Histograms(TH1D** histograms_collection, const TString* legendList_string, int collectionSize, const TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle) {
 
 //   ////plots
 //   TCanvas *canvas = new TCanvas ("canvas"+*pdfName, "canvas"+*pdfName, 800, 800);
