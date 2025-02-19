@@ -67,7 +67,7 @@ void Draw_Pt_ratio_etaNeg_etaPos_TRDonly_vs_noTRD(int iDataset, float* etaRange)
 void Draw_Pt_RadiusComparison_mcp(int iDataset, float* etaRange);
 
 // Dataset comparison
-void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, std::string options);
+void Draw_Pt_DatasetComparison(float* etaRange, std::string options, float jetRadiusForJetFinderWorkflow);
 void Draw_Eta_DatasetComparison(float jetRadius, float* PtRange, std::string options);
 void Draw_Phi_DatasetComparison(float jetRadius, float* PtRange, std::string options);
 void Draw_Pt_ratio_etaNeg_etaPos_DatasetComparison(float jetRadius, float* etaRange);
@@ -157,7 +157,7 @@ void JetQC() {
   // float jetPtMinCut, jetPtMaxCut;
   // float jetPtMinCutArray[nPtBins+1] = {0.15, 200};
 
-  Draw_Pt_DatasetComparison(jetRadiusForDataComp, etaRangeSym, "normEvents");
+  Draw_Pt_DatasetComparison(etaRangeSym, "normEvents", jetRadiusForDataComp);
   for(int iPtBin = 0; iPtBin < nPtBins; iPtBin++){
     jetPtMinCut = jetPtMinCutArray[iPtBin];
     jetPtMaxCut = jetPtMinCutArray[iPtBin+1];
@@ -734,7 +734,8 @@ void Draw_JetPhi_vs_JetEta_RadiusComparison(int iDataset) {
   
 }
 
-void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, std::string options) {
+void Draw_Pt_DatasetComparison(float* etaRange, std::string options, float jetRadiusForJetFinderWorkflow = 0.2) {
+  float jetRadius = jetRadiusForJetFinderWorkflow; // obsolete for new jet-spectra-charged as we don't do radii comparisons that often and so files will only have 1 radius
 
   TH3D* H3D_jetRjetPtjetEta[nDatasets];
   TH1D* H1D_jetPt[nDatasets];
@@ -751,17 +752,34 @@ void Draw_Pt_DatasetComparison(float jetRadius, float* etaRange, std::string opt
   TString* yAxisLabel;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
 
-    H3D_jetRjetPtjetEta[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_r_jet_pt_jet_eta"+jetFinderQaHistType[iJetFinderQaType]))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+jetRadius+Form("%.1f", etaRange[0])+"<eta<"+Form("%.1f", etaRange[1]));
+    if (analysisWorkflow[iDataset].Contains("jet-finder-charged-qa") == true) {
+      H3D_jetRjetPtjetEta[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_r_jet_pt_jet_eta"+jetFinderQaHistType[iJetFinderQaType]))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+jetRadius+Form("%.1f", etaRange[0])+"<eta<"+Form("%.1f", etaRange[1]));
 
-    int ibinEta_low = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutLow);
-    int ibinEta_high = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutHigh);
-    if (ibinEta_low == 0) 
-      cout << "WARNING: Pt_DatasetComparison is counting the underflow with the chosen etaRange" << endl;
-    if (ibinEta_high == H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->GetNbins()+1) 
-      cout << "WARNING: Pt_DatasetComparison is counting the overflow with the chosen etaRange" << endl;
-    ibinJetRadius = H3D_jetRjetPtjetEta[iDataset]->GetXaxis()->FindBin(jetRadius+GLOBAL_epsilon);
- 
-    H1D_jetPt[iDataset] = (TH1D*)H3D_jetRjetPtjetEta[iDataset]->ProjectionY("jetPt_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high, "e");
+      int ibinEta_low = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutLow);
+      int ibinEta_high = H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->FindBin(EtaCutHigh);
+      if (ibinEta_low == 0) 
+        cout << "WARNING: Pt_DatasetComparison is counting the underflow with the chosen etaRange" << endl;
+      if (ibinEta_high == H3D_jetRjetPtjetEta[iDataset]->GetZaxis()->GetNbins()+1) 
+        cout << "WARNING: Pt_DatasetComparison is counting the overflow with the chosen etaRange" << endl;
+      ibinJetRadius = H3D_jetRjetPtjetEta[iDataset]->GetXaxis()->FindBin(jetRadius+GLOBAL_epsilon);
+  
+      H1D_jetPt[iDataset] = (TH1D*)H3D_jetRjetPtjetEta[iDataset]->ProjectionY("jetPt_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinJetRadius, ibinJetRadius, ibinEta_low, ibinEta_high, "e");
+
+    } else if (analysisWorkflow[iDataset].Contains("jet-spectra-charged") == true) {
+      H3D_jetRjetPtjetEta[iDataset] = (TH3D*)((TH3D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h3_jet_pt_eta_phi"+jetFinderQaHistType[iJetFinderQaType]))->Clone("Draw_Pt_DatasetComparison"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+jetRadius+Form("%.1f", etaRange[0])+"<eta<"+Form("%.1f", etaRange[1]));
+
+      int ibinEta_low = H3D_jetRjetPtjetEta[iDataset]->GetYaxis()->FindBin(EtaCutLow);
+      int ibinEta_high = H3D_jetRjetPtjetEta[iDataset]->GetYaxis()->FindBin(EtaCutHigh);
+      if (ibinEta_low == 0) 
+        cout << "WARNING: Pt_DatasetComparison is counting the underflow with the chosen etaRange" << endl;
+      if (ibinEta_high == H3D_jetRjetPtjetEta[iDataset]->GetYaxis()->GetNbins()+1) 
+        cout << "WARNING: Pt_DatasetComparison is counting the overflow with the chosen etaRange" << endl;
+  
+      H1D_jetPt[iDataset] = (TH1D*)H3D_jetRjetPtjetEta[iDataset]->ProjectionX("jetPt_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ibinEta_low, ibinEta_high, 0, -1, "e");
+
+    } else {
+      cout << "Requested workflow is incorrect: it should be jet-finder-charged-qa or jet-spectra-charged" << endl;
+    }
     H1D_jetPt_rebinned[iDataset] = (TH1D*)H1D_jetPt[iDataset]->Rebin(5.,"jetPt_rebinned_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
 
     if (options.find("normEntries") != std::string::npos) {
