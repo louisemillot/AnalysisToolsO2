@@ -123,31 +123,4 @@ const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged"+trainIdU
 const TString trainIdMC = "_id24998";
 const TString analysisWorkflowMC = "jet-spectra-charged"+trainIdMC;
 
-
-// changelist: 
-// - adding analysisWorkflowBkg variable for fluctuation response
-// - changed isDataPbPb bool to useFactorisedMatrix, and reworked the isDataPbPb, ppMcIsWeighted (now mcIsWeighted), useFactorisedMatrix to be used only when necessary
-// - replace file_O2Analysis_ppSimDetectorEffect name by file_O2Analysis_MCfileForMatrix as it can be used for Pb-Pb with gen purpose mc
-// - adding compatibility with jet-spectra-charged workflow
-// - removed all centralty mention; now we assume the centrality has been selected before making the AO2D
-// - normunfoldedByNEvts was set to !normunfoldedByNEvts in tests, instead of normunfoldedByNEvts
-// - renamed doEvtNorm to normaliseDistribsBeforeUnfolding, and normUnfoldedByNEvts to normaliseDistribsAfterUnfolding
-// - removed option "evtNorm" check as it was doing the same as normaliseDistribsBeforeUnfolding
-
-// TODO: 
-// - normUnfoldedByNEvts vs doEvtNorm vs options.find("evtNorm") ?????
-//     - normUnfoldedByNEvts: 
-//         - appears three times, in Get_Pt_spectrum_unfolded_preWidthScaling, Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling and Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling
-//         - if false, no normalisation is done at all (not even entries norm)
-//         -> probably should be renamed normaliseDistribsAfterUnfolding
-//     - doEvtNorm: 
-//         - appears where normUnfoldedByNEvts does (get_pt_spectrum_unfolded.....)
-//         - appears in: Draw_Pt_spectrum_raw, Draw_Pt_spectrum_mcp, Draw_Pt_spectrum_mcdMatched and Draw_Pt_spectrum_unfolded, only for LABELS
-//         - appears in Get_Pt_spectrum_bkgCorrected_rec/gen/fineBinning_preWidthScaling, Get_Pt_spectrum_mcp_gen/fineBinning_preWidthScaling, Get_Pt_spectrum_mcd_rec/fine/genBinning_preWidthScaling, Get_Pt_spectrum_mcdMatched_gen/rec/fineBinning_preWidthScaling, Get_Pt_spectrum_mcpMatched_gen/fine/recBinning_preWidthScaling
-//         -> probably should be renamed normaliseDistribsBeforeUnfolding, and only affect the Get_Pt_spectrum_ nonunfolded functions
-//       and draw raw/mcp/mcdMatched and unfolded labels should be set with something like normaliseDistribsBeforeUnfolding || normaliseDistribsAfterUnfolding (although what happens if both are normalised?)
-
-//       "evtNorm" option is always used with doEvtNorm -> probably should just be removed; also entriesnorm never used
-
-
 #endif
