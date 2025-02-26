@@ -36,7 +36,7 @@ void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TStr
 // Preferred colors and markers
 // const int fillColors[] = {kGray+1,  kRed-10, kBlue-9, kGreen-8, kMagenta-9, kOrange-9,kCyan-8,kYellow-7,}; // for syst bands
 const int colors[]               = {kRed+1, kBlack, kBlue+1, kGreen+3, kMagenta+1, kOrange-1, kCyan+2, kYellow+2, kGray+1};
-const int markers[]              = {kFullSquare, kFullCircle, kFullDiamond, kFullTriangleUp, kFullTriangleDown, kFullCross, kFullStar, kFullCrossX, kFullFourTrianglesX, kFullDoubleDiamond};
-const int markersColorPairs[]    = {kFullSquare, kOpenSquare, kFullCircle, kOpenCircle, kFullDiamond, kOpenDiamond, kFullTriangleUp, kOpenTriangleUp, kFullTriangleDown, kOpenTriangleDown};
+const int markers[]              = {kFullSquare, kFullCircle, kFullTriangleUp, kFullTriangleDown, kFullDiamond, kFullCross, kFullCrossX, kFullStar, kFullFourTrianglesX, kFullDoubleDiamond, kFullDiamond, kFullCross, kFullStar, kFullDoubleDiamond};
+const int markersColorPairs[]    = {kFullSquare, kOpenSquare, kFullCircle, kOpenCircle, kFullTriangleUp, kOpenTriangleUp, kFullTriangleDown, kOpenTriangleDown, kFullDiamond, kOpenDiamond, kFullCross, kOpenCross, kFullCrossX, kOpenCrossX, kFullStar, kOpenStar, kFullFourTrianglesX, kOpenFourTrianglesX, kFullDoubleDiamond, kOpenDoubleDiamond, kFullDiamond, kOpenDiamond, kFullCross, kOpenCross, kFullStar, kOpenStar, kFullDoubleDiamond, kOpenDoubleDiamond};
 
 #endif
