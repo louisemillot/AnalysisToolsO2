@@ -1436,10 +1436,10 @@ TFile* file_AliAnalysis;
 TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
 const TString* texDatasetsComparisonType = new TString("ptlead");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh - 00-10%");
-const int nDatasets = 9;
-const TString Datasets[nDatasets] = {"LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736","LHCzzh_apass4_train352736"};
+const int nDatasets = 11;
+const TString Datasets[nDatasets] = {"LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501"};
 // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"ptlead 0","ptlead 1","ptlead 2","ptlead 3","ptlead 4","ptlead 5","ptlead 7","ptlead 8","ptlead 9"};
+const TString DatasetsNames[nDatasets] = {"none", "#it{p}_{T,lead} > 1 GeV/c", "#it{p}_{T,lead} > 2 GeV/c", "#it{p}_{T,lead} > 3 GeV/c", "#it{p}_{T,lead} > 4 GeV/c", "#it{p}_{T,lead} > 5 GeV/c", "#it{p}_{T,lead} > 7 GeV/c", "#it{p}_{T,lead} > 8 GeV/c", "#it{p}_{T,lead} > 9 GeV/c", "#it{p}_{T,lead} > 15 GeV/c", "#it{p}_{T,lead} > 20 GeV/c"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
@@ -1448,7 +1448,9 @@ TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/An
                                         new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
                                         new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root")
+                                        new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
+                                        new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root")
                                         };
 const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_id24762",
                                           "jet-spectra-charged_ptlead01_id24762",
@@ -1457,6 +1459,8 @@ const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_id24762",
                                           "jet-spectra-charged_ptlead04_id24762",
                                           "jet-spectra-charged_ptlead05_id24796",
                                           "jet-spectra-charged_ptlead07_id24796",
+                                          "jet-spectra-charged_ptlead08_id24796",
+                                          "jet-spectra-charged_ptlead09_id24796",
                                           "jet-spectra-charged_ptlead08_id24796",
                                           "jet-spectra-charged_ptlead09_id24796"
                                           };
@@ -1469,8 +1473,60 @@ const TString wagonId[nDatasets] = {"_id24762",
                                     "_id24796",
                                     "_id24796",
                                     "_id24796",
+                                    "_id24796",
+                                    "_id24796",
                                     "_id24796"
                                     };
-const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false};
-const std::string histDrawColorsOption = "";
+const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false};
+const std::string histDrawColorsOption = "efficiency";
 const bool datasetsAreSubsetsofId0 = true;
+
+
+// //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts - 1000 occupancy cut with new event sel -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("ptlead");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh - 50-70%");
+// const int nDatasets = 11;
+// const TString Datasets[nDatasets] = {"LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501","LHCzzh_apass4_train353501"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"none", "#it{p}_{T,lead} > 1 GeV/c", "#it{p}_{T,lead} > 2 GeV/c", "#it{p}_{T,lead} > 3 GeV/c", "#it{p}_{T,lead} > 4 GeV/c", "#it{p}_{T,lead} > 5 GeV/c", "#it{p}_{T,lead} > 7 GeV/c", "#it{p}_{T,lead} > 8 GeV/c", "#it{p}_{T,lead} > 9 GeV/c", "#it{p}_{T,lead} > 15 GeV/c", "#it{p}_{T,lead} > 20 GeV/c"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_id24797",
+//                                           "jet-spectra-charged_ptlead01_id24797",
+//                                           "jet-spectra-charged_ptlead02_id24797",
+//                                           "jet-spectra-charged_ptlead03_id24797",
+//                                           "jet-spectra-charged_ptlead04_id24797",
+//                                           "jet-spectra-charged_ptlead05_id24798",
+//                                           "jet-spectra-charged_ptlead07_id24798",
+//                                           "jet-spectra-charged_ptlead08_id24798",
+//                                           "jet-spectra-charged_ptlead09_id24798",
+//                                           "jet-spectra-charged_ptlead08_id24798",
+//                                           "jet-spectra-charged_ptlead09_id24798"
+//                                           };
+
+// const TString wagonId[nDatasets] = {"_id24797",
+//                                     "_id24797",
+//                                     "_id24797",
+//                                     "_id24797",
+//                                     "_id24797",
+//                                     "_id24798",
+//                                     "_id24798",
+//                                     "_id24798",
+//                                     "_id24798",
+//                                     "_id24798",
+//                                     "_id24798"
+//                                     };
+// const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false};
+// const std::string histDrawColorsOption = "efficiency";
+// const bool datasetsAreSubsetsofId0 = true;
