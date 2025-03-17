@@ -102,8 +102,8 @@ void TrackMcQC() {
   // TString* Extra = new TString("");
   
   float etaRange[2] = {-0.9, 0.9};
-   Draw_Efficiency_Pt_DatasetComparison(etaRange);
-  float ptRange1[2] = {0.15, 100};
+  Draw_Efficiency_Pt_DatasetComparison(etaRange);
+  float ptRange[2] = {0.15, 100};
   // Draw_Efficiency_Eta_DatasetComparison(ptRange1);
   // Draw_Efficiency_Phi_DatasetComparison(ptRange1, etaRange);
 
@@ -135,9 +135,9 @@ void TrackMcQC() {
 
   // float ptRange[2] = {0.150, 100};
   // float etaRange[2] = {-0.9, 0.9};
-  // Draw_Pt_gen_DatasetComparison(etaRange, "primaries, ratio");
-  // Draw_Eta_gen_DatasetComparison(ptRange, "primaries, ratio");
-  // Draw_Phi_gen_DatasetComparison(ptRange, etaRange, "primaries, ratio");
+  Draw_Pt_gen_DatasetComparison(etaRange, "primaries, ratio, entriesNorm");
+  Draw_Eta_gen_DatasetComparison(ptRange, "primaries, ratio, entriesNorm");
+  Draw_Phi_gen_DatasetComparison(ptRange, etaRange, "primaries, ratio, entriesNorm");
   // Draw_Pt_gen_DatasetComparison(etaRange, "secondaries, ratio");
   // Draw_Eta_gen_DatasetComparison(ptRange, "secondaries, ratio");
   // Draw_Phi_gen_DatasetComparison(ptRange, etaRange, "secondaries, ratio");
@@ -1778,13 +1778,19 @@ void Draw_Pt_gen_DatasetComparison(float* etaRange, std::string options) {
 
     // NormaliseYieldToNEntries(H1D_trackPt_rebinned[iDataset]);
 
-    if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]), analysisWorkflow[iDataset];
-    } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]), analysisWorkflow[iDataset], analysisWorkflow[iDataset];
+    if (options.find("evtNorm") != std::string::npos) {
+      if (isDatasetWeighted[iDataset]) {
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
+      } else {
+        Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
+      }
+      NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], Nevents);
+      cout << "Dataset " << iDataset << ": Nevents = " << Nevents << endl;
     }
-    NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], Nevents);
-    cout << "Dataset " << iDataset << ": Nevents = " << Nevents << endl;
+    if (options.find("entriesNorm") != std::string::npos) {
+        NormaliseYieldToIntegral(H1D_trackPt_rebinned[iDataset]);
+    }
+
 
     H1D_trackPt_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPt_rebinned[iDataset]->Clone("trackPt_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackPt_rebinned_ratios[iDataset]->Reset("M");
@@ -1802,12 +1808,23 @@ void Draw_Pt_gen_DatasetComparison(float* etaRange, std::string options) {
     trackComposition = (TString)"primaries+secondaries";
   }
 
-  TString* pdfName = new TString("track_Pt_gen_DataComp"+trackComposition);
-  TString* pdfName_ratio = new TString("track_Pt_gen_DataComp_ratio"+trackComposition);
-
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtMC, texTrackPtYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,logy");
+  TString* textYaxis;
+  TString pdfNameNorm;
+  if (options.find("evtNorm") != std::string::npos) {
+    textYaxis = texTrackPtYield_EventNorm;
+    pdfNameNorm = (TString)"_EventNorm";
+  }
+  if (options.find("entriesNorm") != std::string::npos) {
+    textYaxis = texTrackPtYield_EntriesNorm;
+    pdfNameNorm = (TString)"_EntriesNorm";
+  }
+
+  TString* pdfName = new TString("track_Pt_gen_DataComp"+trackComposition+pdfNameNorm);
+  TString* pdfName_ratio = new TString("track_Pt_gen_DataComp_ratio"+trackComposition+pdfNameNorm);
+
+  Draw_TH1_Histograms(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtMC, textYaxis, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,logy");
   if (divideSuccess == true && options.find("ratio") != std::string::npos) {
     Draw_TH1_Histograms(H1D_trackPt_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,noMarkerFirst");
   }
@@ -1848,12 +1865,17 @@ void Draw_Eta_gen_DatasetComparison(float* ptRange, std::string options) {
     H1D_trackEta_rebinned[iDataset] = (TH1D*)H1D_trackEta[iDataset]->Rebin(5.,"trackEta_rebinned"+Datasets[iDataset]+DatasetsNames[iDataset]);
 
 
-    if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]), analysisWorkflow[iDataset];
-    } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]), analysisWorkflow[iDataset], analysisWorkflow[iDataset];
+    if (options.find("evtNorm") != std::string::npos) {
+      if (isDatasetWeighted[iDataset]) {
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
+      } else {
+        Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
+      }
+      NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], Nevents);
     }
-    NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], Nevents);
+    if (options.find("entriesNorm") != std::string::npos) {
+        NormaliseYieldToIntegral(H1D_trackEta_rebinned[iDataset]);
+    }
 
     H1D_trackEta_rebinned_ratios[iDataset] = (TH1D*)H1D_trackEta_rebinned[iDataset]->Clone("trackEta_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackEta_rebinned_ratios[iDataset]->Reset("M");
@@ -1871,15 +1893,25 @@ void Draw_Eta_gen_DatasetComparison(float* ptRange, std::string options) {
     trackComposition = (TString)"primaries+secondaries";
   }
 
-  TString* pdfNameEventNorm = new TString("track_Eta_gen_DataComp_EventNorm"+trackComposition);
-  TString* pdfNameEventNorm_ratio = new TString("track_Eta_gen_DataComp_EventNorm_ratio"+trackComposition);
-
-
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfNameEventNorm, texEtaMC, texTrackEtaYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
+  TString* textYaxis;
+  TString pdfNameNorm;
+  if (options.find("evtNorm") != std::string::npos) {
+    textYaxis = texTrackEtaYield_EventNorm;
+    pdfNameNorm = (TString)"_EventNorm";
+  }
+  if (options.find("entriesNorm") != std::string::npos) {
+    textYaxis = texTrackEtaYield_EntriesNorm;
+    pdfNameNorm = (TString)"_EntriesNorm";
+  }
+
+  TString* pdfName = new TString("track_Eta_gen_DataComp"+trackComposition+pdfNameNorm);
+  TString* pdfName_ratio = new TString("track_Eta_gen_DataComp_ratio"+trackComposition+pdfNameNorm);
+
+  Draw_TH1_Histograms(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaMC, textYaxis, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
   if (divideSuccess == true && options.find("ratio") != std::string::npos) {
-    Draw_TH1_Histograms(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfNameEventNorm_ratio, texEtaMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,noMarkerFirst");
+    Draw_TH1_Histograms(H1D_trackEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,noMarkerFirst");
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -1918,14 +1950,18 @@ void Draw_Phi_gen_DatasetComparison(float* ptRange, float* etaRange, std::string
     H1D_trackPhi_rebinned[iDataset] = (TH1D*)H1D_trackPhi[iDataset]->Rebin(5.,"trackPhi_rebinned_"+Datasets[iDataset]+DatasetsNames[iDataset]);
     cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() preNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << endl;
 
-    // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iDataset]);
-    if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset]), analysisWorkflow[iDataset];
-    } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset]);
+    if (options.find("evtNorm") != std::string::npos) {
+      if (isDatasetWeighted[iDataset]) {
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
+      } else {
+        Nevents = GetNEventsSelected_TrackEffWorkflow(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
+      }
+      NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], Nevents);
+      cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() postNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << ", Nevents = " << Nevents << endl;
     }
-    NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], Nevents);
-    cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() postNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << ", Nevents = " << Nevents << endl;
+    if (options.find("entriesNorm") != std::string::npos) {
+        NormaliseYieldToIntegral(H1D_trackPhi_rebinned[iDataset]);
+    }
 
     H1D_trackPhi_rebinned_ratios[iDataset] = (TH1D*)H1D_trackPhi_rebinned[iDataset]->Clone("trackPhi_rebinned_ratios"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackPhi_rebinned_ratios[iDataset]->Reset("M");
@@ -1943,12 +1979,23 @@ void Draw_Phi_gen_DatasetComparison(float* ptRange, float* etaRange, std::string
     trackComposition = (TString)"_primaries+secondaries";
   }
 
-  TString* pdfName = new TString("track_Phi_gen_DataComp"+trackComposition);
-  TString* pdfName_ratio = new TString("track_Phi_gen_DataComp_ratio"+trackComposition);
-
   TString textContext(contextTrackDatasetComp(""));
 
-  Draw_TH1_Histograms(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiMC, texTrackPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
+  TString* textYaxis;
+  TString pdfNameNorm;
+  if (options.find("evtNorm") != std::string::npos) {
+    textYaxis = texTrackPhiYield_EventNorm;
+    pdfNameNorm = (TString)"_EventNorm";
+  }
+  if (options.find("entriesNorm") != std::string::npos) {
+    textYaxis = texTrackPhiYield_EntriesNorm;
+    pdfNameNorm = (TString)"_EntriesNorm";
+  }
+
+  TString* pdfName = new TString("track_Phi_gen_DataComp"+trackComposition+pdfNameNorm);
+  TString* pdfName_ratio = new TString("track_Phi_gen_DataComp_ratio"+trackComposition+pdfNameNorm);
+
+  Draw_TH1_Histograms(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiMC, textYaxis, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
   if (divideSuccess == true && options.find("ratio") != std::string::npos) {
     Draw_TH1_Histograms(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiMC, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "autoratio,noMarkerFirst");
   }
@@ -1988,9 +2035,9 @@ void Draw_Pt_gen_DatasetComparison_H2CentVersion(std::string options) {
     // NormaliseYieldToNEntries(H1D_trackPt_rebinned[iDataset]);
 
     if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset]), analysisWorkflow[iDataset];
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
     } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset]), analysisWorkflow[iDataset];
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackPt_rebinned[iDataset], Nevents);
 
@@ -2037,9 +2084,9 @@ void Draw_Eta_gen_DatasetComparison_H2CentVersion(std::string options) {
 
 
     if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset]), analysisWorkflow[iDataset];
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
     } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset]), analysisWorkflow[iDataset];
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackEta_rebinned[iDataset], Nevents);
 
@@ -2085,9 +2132,9 @@ void Draw_Phi_gen_DatasetComparison_H2CentVersion(std::string options) {
 
     // NormaliseYieldToNEntries(H1D_trackPhi_rebinned[iDataset]);
     if (isDatasetWeighted[iDataset]) {
-      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
     } else {
-      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset]);
+      Nevents = GetNEventsSelected_TrackEffWorkflow_gen(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
     }
     NormaliseYieldToNEvents(H1D_trackPhi_rebinned[iDataset], Nevents);
     cout << "H1D_trackPhi_rebinned[iDataset]->GetEntries() postNorm = " << H1D_trackPhi_rebinned[iDataset]->Integral() << ", Nevents = " << Nevents << endl;
