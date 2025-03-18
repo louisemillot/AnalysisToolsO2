@@ -9,6 +9,7 @@
 
 TString* texRapidity = new TString("y");
 TString* texPtX = new TString("#it{p}_{T} (GeV/#it{c})");
+TString* texPtLeadX = new TString("#it{p}_{T, lead} (GeV/#it{c})");
 TString* texEtaX = new TString("#it{#eta}");
 TString* texPhiX = new TString("#it{#phi} (rad)");
 TString* texNTracksX = new TString("#it{N}_{tracks in jet}");
@@ -96,6 +97,8 @@ TString* texPartVzYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{tr
 
 TString* texPartYYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dy");
 
+TString* texPtPeak = new TString("#it{p}_{T,jet rec} - #it{A}_{jet} * #it{#rho} (GeV/#it{c}) of peak");
+TString* texPtAtThreshold = new TString("#it{p}_{T,jet rec} - #it{A}_{jet} * #it{#rho} (GeV/#it{c}) at 95% threshold");
 
 //////////////////////////
 ////////// Jets //////////
@@ -115,7 +118,8 @@ TString* texJetEtaYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in ce
 TString* texJetEtaYield_EntriesNorm_CentWindow = new TString("1/#it{N}_{jet}^{in cent} d#it{N}_{jet}/d#it{#eta}");
 TString* texJetPhiYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in cent} d#it{N}_{jet}/d#it{#phi}");
 TString* texJetNormNTracksYield = new TString("1/#it{N}_{ev} d#it{N}_{jet}/d#it{N}_{tracks}");
-TString* texJetNormAreaYield = new TString("1/#it{N}_{ev} d#it{N}_{jet}/d#it{A}_{jet}");
+TString* texEvtNormAreaYield = new TString("1/#it{N}_{ev} d#it{N}_{jet}/d#it{A}_{jet}");
+TString* texJetNormAreaYield = new TString("1/#it{N}_{jet} d#it{N}_{jet}/d#it{A}_{jet}");
 
 
 TString* texJetRatioEtaComparison = new TString("#it{N}_{jet}^{ #eta > 0} / #it{N}_{jet}^{ #eta < 0}");
@@ -152,6 +156,7 @@ TString* texTrackPhiYield_EventNorm_CentWindow = new TString("1/#it{N}_{ev}^{in 
 TString* texMeanPt = new TString("<#it{p}_{T}>");
 TString* texMeanEta = new TString("<#eta>");
 TString* texMeanNtracks = new TString("<N_{tracks}>");
+TString* texTrackPtYield_JetsNorm = new TString("1/#it{N}_{jets} d#it{N}_{track}/d#it{p}_{T} (GeV/#it{c})^{-1}");
 
 
 ////////////////////////////
