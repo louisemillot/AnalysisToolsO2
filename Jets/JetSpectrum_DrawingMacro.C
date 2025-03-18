@@ -513,7 +513,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   cout << "Draw_Pt_spectrum_unfolded test - 4" << endl;
 
   // comparison with refolded
-  TString unfoldedRefoldedCompLegend[3] = {"refolded manually", "refolded roounfold", "measured"};
+  TString unfoldedRefoldedCompLegend[3] = {"refolded manually", "refolded roounfold (noErrors)", "measured"};
   TString* pdfName_refoldedComp = new TString(pdfTitleBase+unfoldingInfo+"_RefoldedComp");
   Draw_TH1_Histograms(H1D_jetPt_unfolded_refoldedComp, unfoldedRefoldedCompLegend, 3, textContext, pdfName_refoldedComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindow, legendPlacementAuto, contextPlacementAuto, "logy");
   if (divideSuccessMeasuredRefolded[0] && divideSuccessMeasuredRefolded[1]) {

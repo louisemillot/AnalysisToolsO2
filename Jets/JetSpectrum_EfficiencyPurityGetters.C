@@ -98,16 +98,13 @@ bool Get_Pt_JetFakes(TH1D* &H1D_jetFakes, int iDataset, int iRadius, std::string
   TH1D* H1D_jetPt_mcdMatched;
   bool divideSuccess;
 
-    cout << "test Get_Pt_JetFakes 1" << endl;
 
   Get_Pt_spectrum_mcd_recBinning(H1D_jetPt_mcd, iDataset, iRadius, options);
-    cout << "test Get_Pt_JetFakes 2" << endl;
   Get_Pt_spectrum_mcdMatched_recBinning(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
-    cout << "test Get_Pt_JetFakes 3" << endl;
 
 
   H1D_jetFakes = (TH1D*)H1D_jetPt_mcdMatched->Clone("H1D_jetFakes"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius]));
-  divideSuccess = H1D_jetFakes->Divide(H1D_jetPt_mcd);
+  divideSuccess = H1D_jetFakes->Divide(H1D_jetFakes, H1D_jetPt_mcd, 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency (purity similar to efficiency)
   if (!divideSuccess){
     cout << "################## Get_Pt_JetFakes FAILED!!!!! ##################" << endl;
   }
@@ -123,7 +120,7 @@ bool Get_Pt_JetFakes_fineBinning(TH1D* &H1D_jetFakes, int iDataset, int iRadius,
   Get_Pt_spectrum_mcdMatched_fineBinning(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   H1D_jetFakes = (TH1D*)H1D_jetPt_mcdMatched->Clone("H1D_jetFakes_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius]));
-  divideSuccess = H1D_jetFakes->Divide(H1D_jetPt_mcd);
+  divideSuccess = H1D_jetFakes->Divide(H1D_jetFakes, H1D_jetPt_mcd, 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency (purity similar to efficiency)
   if (!divideSuccess){
     cout << "################## Get_Pt_JetFakes FAILED!!!!! ##################" << endl;
   }

@@ -219,7 +219,6 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
   RooUnfoldSvd* unfoldSvdInitialiser = new RooUnfoldSvd(response, measured, unfoldParameterSvdInitial); // instance of RooUnfoldSvd only used to find the best regularisation parameter; the unfolded spectrum returned by it is not retrived
   RooUnfold* unfold = unfoldBayes; // default Bayes
   TH1D* hist_unfold;
-  cout << "Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm test - 1" << endl;
 
   int unfoldParameter;
   if (options.find("Svd") != std::string::npos) {
@@ -249,7 +248,6 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
     unfold = unfoldBayes;
   }  
 
-  cout << "Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm test - 2" << endl;
 
   H1D_jetPt_unfolded = (TH1D*)hist_unfold->Clone("H1D_jetPt_unfolded"+partialUniqueSpecifier);
 
@@ -260,7 +258,6 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
   } else {
     divideSuccessEff = Get_Pt_JetEfficiency_fineBinning(H1D_jetEfficiency, iDataset, iRadius, options);
   }
-  cout << "Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm test - 3" << endl;
 
   if (useManualRespMatrixSettingMethod) {
     if (applyEfficiencies > 0) {
@@ -276,7 +273,6 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
       }
     }
   }
-  cout << "Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm test - 4" << endl;
 
   if (drawIntermediateResponseMatrices) {
     TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding = (TH2D*)unfold->response()->Hresponse()->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding"+partialUniqueSpecifier);
@@ -290,7 +286,6 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
-  cout << "Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm test - 5" << endl;
 
   // if (doWidthScalingEarly) {
   //   TransformRawHistToYield(H1D_jetPt_unfolded);
@@ -299,8 +294,6 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
   std::pair<int, RooUnfold*> unfoldInfo(unfoldParameter, unfold);
   return unfoldInfo;
 }
-
-
 std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScaling(TH1D* &H1D_jetPt_unfolded, int iDataset, int iRadius, int unfoldParameterInput, std::string options) {
   std::pair<int, RooUnfold*> unfoldInfo = Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfolded, iDataset, iRadius, unfoldParameterInput, options);
   cout << "Get_Pt_spectrum_unfolded_preWidthScaling test 1" << endl;
@@ -382,7 +375,8 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H1D_j
   cout << "((((((((((((((((()))))))))))))))))" << endl;
   cout << "REFOLDING TEST: pre efficiency" << endl;
   for(int iBinX = 0; iBinX <= H1D_jetPt_unfolded->GetNbinsX()+1; iBinX++){
-    cout << "H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinContent(iBinX) << endl;
+    cout << "  H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinContent(iBinX) << endl;
+    cout << "e_H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinError(iBinX) << endl;
   }
   
 
@@ -470,7 +464,6 @@ void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H1D_j
 
   // cout << "still not giving back the measured used as input to the unfolding; got an issue somewhere" << endl;
 }
-
 void Get_Pt_spectrum_unfoldedThenRefolded_preWidthScaling(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, int unfoldParameterInput, std::string options) {
   Get_Pt_spectrum_unfoldedThenRefolded_preWidthScalingAndEvtNorm(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, unfoldParameterInput, options);
 
@@ -496,6 +489,8 @@ void Get_Pt_spectrum_unfoldedThenRefolded(TH1D* &H1D_jetPt_unfoldedThenRefolded,
 
 
 void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, int unfoldParameterInput, std::string options) {
+  // ApplyToTruth function doesn't apply errors on folding
+  
   // Matches exactly with the manual method IF NO PRIOR
   // if I have a non flat prior, then the roounfold method gives me a good closure test, but not the manual method!
 
@@ -585,7 +580,6 @@ void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtN
 
   // cout << "still not giving back the measured used as input to the unfolding; got an issue somewhere" << endl;
 }
-
 void Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScaling(TH1D* &H1D_jetPt_unfoldedThenRefolded, int iDataset, int iRadius, int unfoldParameterInput, std::string options) {
   Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm(H1D_jetPt_unfoldedThenRefolded, iDataset, iRadius, unfoldParameterInput, options);
 
