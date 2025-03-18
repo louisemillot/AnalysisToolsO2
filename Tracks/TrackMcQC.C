@@ -1822,7 +1822,7 @@ void Draw_Pt_gen_DatasetComparison(float* etaRange, std::string options) {
   }
 
   TString* pdfName = new TString("track_Pt_gen_DataComp"+trackComposition+pdfNameNorm);
-  TString* pdfName_ratio = new TString("track_Pt_gen_DataComp_ratio"+trackComposition+pdfNameNorm);
+  TString* pdfName_ratio = new TString("track_Pt_gen_DataComp"+trackComposition+pdfNameNorm+"_ratio");
 
   Draw_TH1_Histograms(H1D_trackPt_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPtMC, textYaxis, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,logy");
   if (divideSuccess == true && options.find("ratio") != std::string::npos) {
@@ -1907,7 +1907,7 @@ void Draw_Eta_gen_DatasetComparison(float* ptRange, std::string options) {
   }
 
   TString* pdfName = new TString("track_Eta_gen_DataComp"+trackComposition+pdfNameNorm);
-  TString* pdfName_ratio = new TString("track_Eta_gen_DataComp_ratio"+trackComposition+pdfNameNorm);
+  TString* pdfName_ratio = new TString("track_Eta_gen_DataComp"+trackComposition+pdfNameNorm+"_ratio");
 
   Draw_TH1_Histograms(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaMC, textYaxis, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
   if (divideSuccess == true && options.find("ratio") != std::string::npos) {
@@ -1993,7 +1993,7 @@ void Draw_Phi_gen_DatasetComparison(float* ptRange, float* etaRange, std::string
   }
 
   TString* pdfName = new TString("track_Phi_gen_DataComp"+trackComposition+pdfNameNorm);
-  TString* pdfName_ratio = new TString("track_Phi_gen_DataComp_ratio"+trackComposition+pdfNameNorm);
+  TString* pdfName_ratio = new TString("track_Phi_gen_DataComp"+trackComposition+pdfNameNorm+"_ratio");
 
   Draw_TH1_Histograms(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiMC, textYaxis, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
   if (divideSuccess == true && options.find("ratio") != std::string::npos) {
