@@ -8,29 +8,35 @@
 //////////////////////////////       file access choice       ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-// //////// -------- Pb-Pb -------- ////////
-// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-// const TString* texDatasetsComparisonType = new TString("");
-// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
-// const int nDatasets = 1;
-// const TString Datasets[nDatasets] = {"LHC23zzh_apass4_occupancy01000_train297793"};
-// const TString DatasetsNames[nDatasets] = {""};
-// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
-//                                       };
-// // TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
-// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
-// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_train_256548/AnalysisResults.root");
-// TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC24b1b_sel8MC_train239181/OneRun/AnalysisResults.root")};
 
-// // const TString trainId = "_id12832";
-// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
-// // const TString trainId = "_id12436";
-// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
-// const TString trainId = "";
-// const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
+//////// -------- LHC23zzh pass 4 with - pp sim anchored to PbPb 10%  ///////
+TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+const TString* texDatasetsComparisonType = new TString("");
+const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+const int nDatasets = 1;
+const TString Datasets[nDatasets] = {"LHC23zzh_apass4_occupancy01000_train367637"};
+const TString DatasetsNames[nDatasets] = {""};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+                                      };
+// TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
+// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
+// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
+TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_R02_train372532/AnalysisResults.root");
+TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_R02_train372532/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
 
-// const TString analysisWorkflowMC = "jet-finder-charged-qa";
+// const TString trainId = "_id12832";
+// const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+// const TString trainId = "_id12436";
+// const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
+const TString trainIdData = "_id26156";
+const TString analysisWorkflowData = "jet-spectra-charged_central"+trainIdData;
+const TString trainIdBkg = "";
+const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
+const TString trainIdUnfoldingControl = "";
+const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_noOccupancyCut"+trainIdUnfoldingControl;
 
+const TString trainIdMC = "";
+const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdMC;
 
 
 
@@ -94,33 +100,73 @@
 
 
 
-//////// -------- Pb-Pb spectrum with Wenhui Angantyr files tests -------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("");
-const TString* texDatasetsComparisonCommonDenominator = new TString("");
-const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"Data_halfMCAngantyr_train356485"};
-const TString DatasetsNames[nDatasets] = {""};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
-                                      };
-// TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
-// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
-// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
-TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr_train356485/AnalysisResults.root");
-TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/MC_halfMCAngantyr_train356485/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
+// //////// -------- Pb-Pb spectrum with Wenhui Angantyr files tests -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"Data_halfMCAngantyr_train361349"};
+// const TString DatasetsNames[nDatasets] = {""};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                       };
+// // TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
+// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr_train361349/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/MC_halfMCAngantyr_train361349/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
 
-// const TString trainId = "_id12832";
-// const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
-// const TString trainId = "_id12436";
-// const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
-const TString trainIdData = "_id24998";
-const TString analysisWorkflowData = "jet-spectra-charged"+trainIdData;
-const TString trainIdBkg = "_id24998";
-const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
-const TString trainIdUnfoldingControl = "_id24998";
-const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged"+trainIdUnfoldingControl;
+// // const TString trainId = "_id12832";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+// // const TString trainId = "_id12436";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
+// const TString trainIdData = "";
+// const TString analysisWorkflowData = "jet-spectra-charged"+trainIdData;
+// const TString trainIdBkg = "";
+// const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
+// const TString trainIdUnfoldingControl = "";
+// const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged"+trainIdUnfoldingControl;
 
-const TString trainIdMC = "_id24998";
-const TString analysisWorkflowMC = "jet-spectra-charged"+trainIdMC;
+// const TString trainIdMC = "";
+// const TString analysisWorkflowMC = "jet-spectra-charged"+trainIdMC;
+
+
+
+
+
+
+
+
+// //////// -------- LHC25b6 - pp sim anchored to PbPb 10%  - just looking at eff and purity ////////
+// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV - Pb-Pb anchor"); 
+// const TString* texDatasetsComparisonType = new TString("");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"LHC25b6_pp_sim_PbPbAnchor_10percent_train366181_jetSpectrumWorkflow"};
+// const TString DatasetsNames[nDatasets] = {"LHC25b6"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                       };
+// // TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
+// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_train366181_jetSpectrumWorkflow/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_train366181_jetSpectrumWorkflow/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
+
+// // const TString trainId = "_id12832";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+// // const TString trainId = "_id12436";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
+// const TString trainIdData = "";
+// const TString analysisWorkflowData = "jet-spectra-charged"+trainIdData;
+// const TString trainIdBkg = "";
+// const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
+// const TString trainIdUnfoldingControl = "";
+// const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged"+trainIdUnfoldingControl;
+
+// const TString trainIdMC = "";
+// const TString analysisWorkflowMC = "jet-spectra-charged"+trainIdMC;
+
+
+
+
 
 #endif
