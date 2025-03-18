@@ -75,8 +75,8 @@ const bool drawIntermediateResponseMatrices = false;
 // - useManualRespMatrixSettingMethod if false, manual and roounfold refolding not consistent; what seems to be failing is the manual (manual multiplication of matrices) refolding in this case 
 //   (though it works fine if useManualRespMatrixSettingMethod is true); if useManualRespMatrixSettingMethod is false, then the response matrix is filled weirdly (joonsuk Unfolding) with roounfold methods: RooUnfoldResponse->Fill(), Fake() and Miss()
 // -----> for now only use useManualRespMatrixSettingMethod = true; if time, find out what's wrong in refolding in other method
-
-float ptWindowDisplay[2] = {5, 200};
+// - manual refold has error issues
+float ptWindowDisplay[2] = {10, 200};
 std::array<std::array<float, 2>, 2> drawnWindow = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
 
@@ -152,12 +152,18 @@ std::array<std::array<float, 2>, 2> drawnWindow = {{{ptWindowDisplay[0], ptWindo
 
 
 // // PbPb
-// // Hannah bossi identical fo rrun 2 comparison
+// // Hannah bossi identical fo run 2 comparison
 // double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
 // int nBinPtJetsRec[nRadius] = {19,19,19};
 // double ptBinsJetsGen[nRadius][30] = {{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
 // int nBinPtJetsGen[nRadius] = {9,9,9};
 
+
+// PbPb Aimeric default
+double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+int nBinPtJetsRec[nRadius] = {20,20,20};
+double ptBinsJetsGen[nRadius][30] = {{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
+int nBinPtJetsGen[nRadius] = {9,9,9};
 
 // ///////////////Wenhui binning for Data unfolding GP PbPb MC/////////////////////////////
 // double ptBinsJetsRec[nRadius][30] = {{-5, 0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 200},
@@ -170,11 +176,11 @@ std::array<std::array<float, 2>, 2> drawnWindow = {{{ptWindowDisplay[0], ptWindo
 // int nBinPtJetsGen[nRadius] = {17,17,17};
 
 
-// Joonsuk binning for pp
-double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9, 10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
-int nBinPtJetsRec[nRadius] = {20,20,20};
-double ptBinsJetsGen[nRadius][30] = {{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
-int nBinPtJetsGen[nRadius] = {20,20,20};
+// // Joonsuk binning for pp
+// double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9, 10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+// int nBinPtJetsRec[nRadius] = {20,20,20};
+// double ptBinsJetsGen[nRadius][30] = {{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+// int nBinPtJetsGen[nRadius] = {20,20,20};
 
 
 // Double_t ptbin[21] = {5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200};
