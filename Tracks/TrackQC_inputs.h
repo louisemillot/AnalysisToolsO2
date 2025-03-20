@@ -614,26 +614,78 @@ TFile* file_AliAnalysis; //dummy
 // const bool trackHistsObsoleteVersion[nDatasets] = {false,false};
 
 
-//////// -------- LHC23zzh - apass 4 occupancy analysis sel8FullPbPb-------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("Occupancy analysis");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4 - sel8FullPbPb");
-const int nDatasets = 4;
-const TString Datasets[nDatasets] = {"sel8FullPbPb/LHC23zzh_apass4_occupancy01000", "sel8FullPbPb/LHC23zzh_apass4_occupancy05000", "sel8FullPbPb/LHC23zzh_apass4_occupancy10000", "sel8FullPbPb/LHC23zzh_apass4_occupancy20000"};
-const TString DatasetsNames[nDatasets] = {"0k-1k occupancy", "1k-5k occupancy", "5k-10k occupancy", "10-20k occupancy"};
+// //////// -------- LHC23zzh - apass 4 occupancy analysis sel8FullPbPb-------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("Occupancy analysis");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh pass4 - sel8FullPbPb");
+// const int nDatasets = 4;
+// const TString Datasets[nDatasets] = {"sel8FullPbPb/LHC23zzh_apass4_occupancy01000", "sel8FullPbPb/LHC23zzh_apass4_occupancy05000", "sel8FullPbPb/LHC23zzh_apass4_occupancy10000", "sel8FullPbPb/LHC23zzh_apass4_occupancy20000"};
+// const TString DatasetsNames[nDatasets] = {"0k-1k occupancy", "1k-5k occupancy", "5k-10k occupancy", "10-20k occupancy"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa",
+//                                           "jet-finder-charged-qa"
+//                                           };
+
+// const TString wagonId = "";
+// const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
+// const std::string histDrawColorsOption = "";
+// const bool trackHistsObsoleteVersion[nDatasets] = {false,false};
+// const bool datasetsAreSubsetsofId0 = false;
+
+
+// //////// -------- LHC23zzh - apass 4 - 1000 occupancy cut with new event sel, and tighter eta (0.8 for tracks, 0.6 for jets - central 00-10% -------- ////////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("centrality");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHCzzh_apass4_jetspectra_train365500","LHCzzh_apass4_jetspectra_train365500"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"00-10%","50-70%"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                         };
+
+// const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_central",
+//                                              "jet-spectra-charged_peripheral"
+//                                           };
+
+// const TString wagonId[nDatasets] = {"",
+//                                     ""
+//                                     };
+// const bool isDatasetWeighted[nDatasets] = {false,false};
+// const std::string histDrawColorsOption = "";
+// const bool datasetsAreSubsetsofId0 = false;
+// const bool trackHistsObsoleteVersion[nDatasets] = {false,false};
+
+
+
+//////// -------- LHC25b6 - pp sim anchored to PbPb 10% ////////
+TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV");
+const TString* texDatasetsComparisonType = new TString("");
+const TString* texDatasetsComparisonCommonDenominator = new TString("");
+const int nDatasets = 2;
+const TString Datasets[nDatasets] = {"LHC25b6_pp_sim_PbPbAnchor_10percent_train370115", "LHC25b4a_pp_ref_Tracks_train371362"};
+// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+const TString DatasetsNames[nDatasets] = {"jet-jet MC Pb-Pb anchor", "ppRef gen.purp. MC"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+                                          new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };
-const TString analysisWorkflow[nDatasets] = {"jet-finder-charged-qa",
-                                          "jet-finder-charged-qa",
-                                          "jet-finder-charged-qa",
-                                          "jet-finder-charged-qa"
+
+const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+                                             "track-efficiency"
                                           };
 
-const TString wagonId = "";
-const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
+const TString wagonId[nDatasets] = {"",
+                                    ""
+                                    };
+const bool isDatasetWeighted[nDatasets] = {true, false};
 const std::string histDrawColorsOption = "";
-const bool trackHistsObsoleteVersion[nDatasets] = {false,false};
 const bool datasetsAreSubsetsofId0 = false;
+const bool trackHistsObsoleteVersion[nDatasets] = {true,true};
+
