@@ -14,7 +14,7 @@ TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV");
 const TString* texDatasetsComparisonType = new TString("");
 const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
 const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass4_occupancy01000_train367637"};
+const TString Datasets[nDatasets] = {"LHC23zzh_apass4_occupancy01000_train372068"};
 const TString DatasetsNames[nDatasets] = {""};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                       };
@@ -37,6 +37,7 @@ const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_noOccupan
 
 const TString trainIdMC = "";
 const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdMC;
+const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 
 
@@ -65,6 +66,7 @@ const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdM
 
 // const TString analysisWorkflowMC = "jet-finder-charged-qa";
 // // const TString analysisWorkflowMC = "jet-finder-charged-qa_global_CollMatch";
+// const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 
 
@@ -93,6 +95,7 @@ const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdM
 // const TString analysisWorkflow_unfoldingControl = "jet-finder-charged-qa"+trainId;
 
 // const TString analysisWorkflowMC = "jet-finder-charged-qa";
+// const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 
 
@@ -128,6 +131,7 @@ const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdM
 
 // const TString trainIdMC = "";
 // const TString analysisWorkflowMC = "jet-spectra-charged"+trainIdMC;
+// const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 
 
@@ -164,9 +168,40 @@ const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdM
 
 // const TString trainIdMC = "";
 // const TString analysisWorkflowMC = "jet-spectra-charged"+trainIdMC;
+// const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 
 
+
+// //////// -------- test LHC25b6 efficiency finderQA vs spectraCharged ///////
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
+// const TString* texDatasetsComparisonType = new TString("");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+// const int nDatasets = 1;
+// const TString Datasets[nDatasets] = {"LHC25b6_localWorkflow"};
+// const TString DatasetsNames[nDatasets] = {"spectraCharged"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+//                                       };
+// // TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
+// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/LHC25b6_localWorkflow/AnalysisResults.root");
+// TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC25b6_localWorkflow/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
+
+// // const TString trainId = "_id12832";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+// // const TString trainId = "_id12436";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
+// const TString trainIdData = "_id26156";
+// const TString analysisWorkflowData = "jet-spectra-charged_central"+trainIdData;
+// const TString trainIdBkg = "";
+// const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
+// const TString trainIdUnfoldingControl = "";
+// const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_noOccupancyCut"+trainIdUnfoldingControl;
+
+// const TString trainIdMC = "";
+// const TString analysisWorkflowMC = "jet-spectra-charged"+trainIdMC;
+// const bool etaCutOnMatchedJetsIsObsoleteVersion = false;
 
 
 #endif
