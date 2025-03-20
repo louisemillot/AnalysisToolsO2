@@ -29,9 +29,9 @@ const float centralityRange[2] = {0, 10};
 
 
 
-char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
-const bool useYSliceNorm = false; //SHOULD BE TRUE IF USING PRIOR
+char mergingPrior[] = "mcpPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics
+char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
+const bool useYSliceNorm = true; //SHOULD BE TRUE IF USING PRIOR
 char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
@@ -65,23 +65,28 @@ bool comparePbPbWithRun2 = false; // if isDataPbPb == true, then do the comparis
 
 bool automaticBestSvdParameter = false;
 
-const bool drawIntermediateResponseMatrices = false;
+const bool drawIntermediateResponseMatrices = true;
 
 // 18/03 remarks:
 // - applyFakes and applyEfficiencies:
 //      checked if useManualRespMatrixSettingMethod is true, but the non-initial response method does take fake into account; 
 //      maybe rename applyFakes/EfficienciesIfInitialResponseMethod; 
-//      also, is also used if useManualRespMatrixSettingMethod is false in Get_Pt_spectrum_unfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm --> UNDERSTAND WHY
+//      also, is also used if useManualRespMatrixSettingMethod is false in Get_Pt_spectrum_dataUnfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm --> UNDERSTAND WHY
 // - useManualRespMatrixSettingMethod if false, manual and roounfold refolding not consistent; what seems to be failing is the manual (manual multiplication of matrices) refolding in this case 
 //   (though it works fine if useManualRespMatrixSettingMethod is true); if useManualRespMatrixSettingMethod is false, then the response matrix is filled weirdly (joonsuk Unfolding) with roounfold methods: RooUnfoldResponse->Fill(), Fake() and Miss()
 // -----> for now only use useManualRespMatrixSettingMethod = true; if time, find out what's wrong in refolding in other method
-// - manual refold has error issues
+// - manual refold has error issues; if I use "Joonsuk binning for pp" it's fine, but if I use "PbPb Aimeric old" then errors explode in the refolding plot; 
+//   and it looks like bins 8 and 9 have weirdly immense errors (not the case with joonsuk binning)
+//   differences between two binnings: 1) joonsuk has same bin count for gen and rec, mine has less for gen; 2) joonsuk rec starts at same value as gen, I start rec above gen
+//   "PbPb Aimeric default" works much better;
+
+
 float ptWindowDisplay[2] = {10, 200};
-std::array<std::array<float, 2>, 2> drawnWindow = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
 
-// char mergingPrior[] = "noMergingPrior";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noMergingPrior, testAliPhysics
-// char unfoldingPrior[] = "noPrior";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPrior, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
+// char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics
+// char unfoldingPrior[] = "noPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
 // const bool useYSliceNorm = false; //SHOULD BE TRUE IF USING PRIOR
 // char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
 // char optionsAnalysis[100] = "";
@@ -160,10 +165,16 @@ std::array<std::array<float, 2>, 2> drawnWindow = {{{ptWindowDisplay[0], ptWindo
 
 
 // PbPb Aimeric default
-double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
-int nBinPtJetsRec[nRadius] = {20,20,20};
-double ptBinsJetsGen[nRadius][30] = {{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
-int nBinPtJetsGen[nRadius] = {9,9,9};
+double ptBinsJetsRec[nRadius][30] = {{10., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+int nBinPtJetsRec[nRadius] = {21,22,22};
+double ptBinsJetsGen[nRadius][30] = {{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.}};
+int nBinPtJetsGen[nRadius] = {13,13,13};
+
+// // PbPb Aimeric old
+// double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+// int nBinPtJetsRec[nRadius] = {20,20,20};
+// double ptBinsJetsGen[nRadius][30] = {{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
+// int nBinPtJetsGen[nRadius] = {9,9,9};
 
 // ///////////////Wenhui binning for Data unfolding GP PbPb MC/////////////////////////////
 // double ptBinsJetsRec[nRadius][30] = {{-5, 0, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 200},
@@ -177,7 +188,7 @@ int nBinPtJetsGen[nRadius] = {9,9,9};
 
 
 // // Joonsuk binning for pp
-// double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9, 10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
+// double ptBinsJetsRec[nRadius][30] = {{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
 // int nBinPtJetsRec[nRadius] = {20,20,20};
 // double ptBinsJetsGen[nRadius][30] = {{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200},{5,  6,  7,  8,  9,  10, 12, 14,  16,  18, 20, 25, 30, 40, 50, 60, 70, 85, 100, 140, 200}};
 // int nBinPtJetsGen[nRadius] = {20,20,20};
@@ -423,8 +434,8 @@ int nBinPtJetsGen[nRadius] = {9,9,9};
 // fine binning standard, for pp and Pb-Pb factorised
 // int nBinPtJetsFine[nRadius] = {120,120,120};
 int nBinPtJetsFine[nRadius] = {115,115,115};
-double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
-// double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+// double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
+double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -445,8 +456,8 @@ double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
                                        180., 185.,
                                        190., 195.,
                                        200.},
-                                     {05., 06., 07., 08., 09.,
-                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                    //  {05., 06., 07., 08., 09.,
+                                     {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -467,8 +478,8 @@ double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
                                        180., 185.,
                                        190., 195.,
                                        200.},
-                                     {05., 06., 07., 08., 09.,
-                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                    //  {05., 06., 07., 08., 09.,
+                                     {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
