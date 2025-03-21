@@ -14,7 +14,7 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
 void NormaliseYSlicesToOne(TH2D* H2D_hist);
 void NormaliseXSlicesToOne(TH2D* H2D_hist);
 void NormaliseXSlicesToOneNoUnderOverFlows(TH2D* H2D_hist);
-void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum);
+void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum, bool doPriorDivision);
 void TransformRawResponseToYieldResponse(TH2D* H2D_hist);
 
 
