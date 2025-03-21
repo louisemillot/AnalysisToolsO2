@@ -46,10 +46,10 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(TH2D* &H2D
     TH2D* H2D_jetPtResponseMatrix_fineBinningPreTransforms = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->Clone("H2D_jetPtResponseMatrix_fineBinningPreTransforms"+partialUniqueSpecifier);
 
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-    TString* pdfName_preRebin = new TString("ResponseMatrices/responseMatrix_combined_fineBinningPreTransforms"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-    TString* pdfName_preRebin_logz = new TString("ResponseMatrices/responseMatrix_combined_fineBinningPreTransforms"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
+    TString* pdfName_preRebin = new TString("ResponseMatrices/responseMatrix_combined_fineBinningPreTransforms"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName_preRebin_logz = new TString("ResponseMatrices/responseMatrix_combined_fineBinningPreTransforms"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
-    TString textContext_preRebin(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContext_preRebincontextCustomTwoFields(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
 
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_fineBinningPreTransforms, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_fineBinningPreTransforms, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
@@ -174,10 +174,10 @@ void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDatase
     }
     
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-    TString* pdfName_preRebin = new TString("ResponseMatrices/responseMatrix_combined_postReweightWithPrior"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-    TString* pdfName_preRebin_logz = new TString("ResponseMatrices/responseMatrix_combined_postReweightWithPrior"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
+    TString* pdfName_preRebin = new TString("ResponseMatrices/responseMatrix_combined_postReweightWithPrior"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName_preRebin_logz = new TString("ResponseMatrices/responseMatrix_combined_postReweightWithPrior"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
-    TString textContext_preRebin(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContext_preRebin(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
 
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postReweightWithPrior, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postReweightWithPrior, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
@@ -249,10 +249,10 @@ void MergeResponseMatrixBins(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int i
     }
 
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postBinMerge"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postBinMerge"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
     TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_postBinMerge"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
-    TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), "");
 
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postBinMerge, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postBinMerge, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
@@ -289,10 +289,10 @@ void NormYSlicesAndScaleRespByWidth(TH2D* &H2D_jetPtResponseMatrix, int iDataset
     }
 
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postYSliceNormAndWidthNorm"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postYSliceNormAndWidthNorm"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
     TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_postYSliceNormAndWidthNorm"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
-    TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
 
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postYSliceNormAndWidthNorm, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postYSliceNormAndWidthNorm, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");

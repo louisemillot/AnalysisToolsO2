@@ -125,10 +125,10 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
   if (drawIntermediateResponseMatrices) {
     TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting"+partialUniqueSpecifier);
 
-    TString* pdfNamePost = new TString("responseMatrix_combined_postWeighting"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    TString* pdfNamePost = new TString("responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
     TString* pdfNamePost_logz = new TString("responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_logz");
 
-    TString textContextPost(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContextPost(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
 
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting, textContextPost, pdfNamePost, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting, textContextPost, pdfNamePost_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
@@ -239,7 +239,7 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
     // plot svd d distribution
     TH1D* H1D_D = tsvdUnfold->GetD();
     TString* pdfName_regparam = new TString("Svd_regularisationd_distribution_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+(TString)mergingPrior+"_"+(TString)unfoldingPrior);
-    TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
     std::array<std::array<float, 2>, 2> drawnWindowSvdParam = {{{0, 30}, {0.01, 10000}}}; // {{xmin, xmax}, {ymin, ymax}}
     Draw_TH1_Histogram(H1D_D, textContext, pdfName_regparam, texSvdDvector, texSvdK, texCollisionDataInfo, drawnWindowSvdParam, legendPlacementAuto, contextPlacementAuto, "logy");
 
@@ -278,10 +278,10 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAndEvtNorm(TH
   if (drawIntermediateResponseMatrices) {
     TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding = (TH2D*)unfold->response()->Hresponse()->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding"+partialUniqueSpecifier);
 
-    TString* pdfName = new TString("responseMatrix_combined_postUnfolding"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    TString* pdfName = new TString("responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
     TString* pdfName_logz = new TString("responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_logz");
 
-    TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
 
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
@@ -364,10 +364,10 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_preWidthScalingAndEvtNorm(TH1D* &H
   if (drawIntermediateResponseMatrices) {
     TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding"+partialUniqueSpecifier);
 
-    TString* pdfName = new TString("responseMatrix_combined_duringRefolding"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    TString* pdfName = new TString("responseMatrix_combined_duringRefolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
     TString* pdfName_logz = new TString("responseMatrix_combined_duringRefolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_logz");
 
-    TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+    TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
 
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
     Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");

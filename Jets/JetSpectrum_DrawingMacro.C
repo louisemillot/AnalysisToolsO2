@@ -328,7 +328,7 @@ void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
   TString* pdfName = new TString("ResponseMatrices/responseMatrix_fluctuationsBackground_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
   TString* pdfNameFullRes = new TString("ResponseMatrices/responseMatrix_fluctuationsBackground_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_FullRes");
 
-  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+  TString textContext = contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), "");
 
 
   double th2ContourCustom[1] = {0.000001}; // hardcoded at 10-6 for now
@@ -360,7 +360,7 @@ void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius) {
   TString* pdfName = new TString("ResponseMatrices/responseMatrix_detectorEffects_"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
   TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_detectorEffects_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
-  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+  TString textContext = contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), "");
 
   Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorResponse, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
   Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorResponse, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
@@ -392,7 +392,7 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
   TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
   TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
-  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+  TString textContext = contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), "");
 
   Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
   Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
@@ -633,7 +633,7 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
   
   partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
 
-  TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+  TString textContext = contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), "");
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+partialUniqueSpecifier+"_Pt_unfolded_"+unfoldingInfo);
 
