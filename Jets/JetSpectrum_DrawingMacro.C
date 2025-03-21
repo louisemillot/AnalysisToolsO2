@@ -91,30 +91,30 @@ void JetSpectrum_DrawingMacro() {
   int iRadius = 0;
 
   // // find a way to input mcpPrior/mcdPrior and bayes/svd as a variables rather than typed out like this
-  Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
-  Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
-  Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
+  // Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
+  // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
+  // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
 
   // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
-  Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis);
-  Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
-  Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
 
-  Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
-  Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
-  Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
+  // Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
+  // Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
 
   // int unfoldParameterInput = 6;
   // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput, optionsAnalysis);
-  int unfoldParameterInput2 = 8;
-  Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
+  // int unfoldParameterInput2 = 8;
+  // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
   // int unfoldParameterInput3 = 10;
   // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput3, optionsAnalysis);
 
-  // int unfoldParameterInputMin = 6;
-  // int unfoldParameterInputMax = 11;
-  // int unfoldParameterInputStep = 2;
-  // Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, unfoldParameterInputMin, unfoldParameterInputMax, unfoldParameterInputStep, optionsAnalysis);
+  int unfoldParameterInputMin = 4;
+  int unfoldParameterInputMax = 13;
+  int unfoldParameterInputStep = 2;
+  Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, unfoldParameterInputMin, unfoldParameterInputMax, unfoldParameterInputStep, optionsAnalysis);
 }
 
 /////////////////////////////////////////////////////
@@ -280,7 +280,9 @@ void Draw_kinematicEfficiency(int iDataset, int iRadius, std::string options) {
 
   Get_ResponseMatrix_Pt_KinematicEffiency(H1D_kinematicEfficiency, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning, name_H1D_kinematicEfficiency, iRadius);
 
-  TString* pdfName = new TString("kinematicEfficiency_"+partialUniqueSpecifier);
+  TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
+
+  TString* pdfName = new TString("kinematicEfficiency_"+partialUniqueSpecifier+priorInfo);
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
@@ -374,7 +376,7 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
   Get_PtResponseMatrix_Fluctuations(H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius);
   Get_PtResponseMatrix_detectorResponse(H2D_jetPtResponseMatrix_detectorResponse, iDataset, iRadius);
   Get_PtResponseMatrix_DetectorAndFluctuationsCombined(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, H2D_jetPtResponseMatrix_detectorResponse, H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius, options);
-  ReweightResponseMatrixWithPrior(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, iDataset, iRadius, options);
+  FinaliseResponseMatrix(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, iDataset, iRadius, options);
 
   TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 

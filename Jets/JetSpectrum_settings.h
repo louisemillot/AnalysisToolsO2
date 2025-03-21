@@ -29,10 +29,15 @@ const float centralityRange[2] = {0, 10};
 
 
 
-char mergingPrior[] = "mcpPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics
+char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics
 char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
-const bool useYSliceNorm = true; //SHOULD BE TRUE IF USING PRIOR
-char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
+const bool doYSliceNormToOneDetResp = true; // should be true (done by marta)
+const bool doYSliceNormToOneCombinedResp = false; // should be false (not done by marta); breaks unfolding with svd if true
+const bool doUnfoldingPriorDivision = false; // unfolding doesn't work anymore if this is done, gives almost flat pT distribution, though refolding test is good; I am not sure why, might be because roounfold already does that; one good reason to avoid it anyway, is that roounfold already seems to deal with errors; my error propagation doesn't take into account off-diagonal covariance elements, and so can only be worse 
+const bool scaleRespByWidth = false; 
+const bool matrixTransformationOrder = 0; //0: reweight with unfoldingPrior, then rebin with merging prior, then do YSliceNorm and scaleRespByWidth if set to true (0 seems to work well); 1: rebin, then YSliceNorm and scaleRespByWidth, then reweight; 2: rebin, then reweight, then YSliceNorm and scaleRespByWidth
+
+char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
 const bool isDataPbPb = true; // if false -> pp
@@ -44,14 +49,13 @@ int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1:
 bool applyFakes = true; // only applied if useManualRespMatrixSettingMethod is true; 18/03: if false?
 const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
 
-const bool scaleRespByWidth = false;
-const bool doWidthScalingEarly = false;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
-const bool doWidthScalingAtEnd = true;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
+const bool doWidthScalingEarly = false;                         // to avoid pT bin width having an influence on spectrum; which one should be done? early or end? for now will be done at end
+const bool doWidthScalingAtEnd = true;                          //
 
 
 // all three below should probably be true;
 // but then it breaks svd convergence! find out why;
-const bool normDetRespByNEvts = false; //that's what breaks svd; https://arxiv.org/pdf/hep-ph/9509307 seems to say one should use the number of events matrix (see last paragraph of conclusion) instead of a probability matrix
+const bool normDetRespByNEvts = false; //that's what breaks svd; https://arxiv.org/pdf/hep-ph/9509307 seems to say one should use the number of events matrix (see last paragraph of conclusion) instead of a probability matrix, to further reduce errors
 const bool normGenAndMeasByNEvts = false;
 
 const bool normaliseDistribsAfterUnfolding = true;   //both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with they are 1E-j, so should be set to true
@@ -65,7 +69,7 @@ bool comparePbPbWithRun2 = false; // if isDataPbPb == true, then do the comparis
 
 bool automaticBestSvdParameter = false;
 
-const bool drawIntermediateResponseMatrices = true;
+const bool drawIntermediateResponseMatrices = false;
 
 // 18/03 remarks:
 // - applyFakes and applyEfficiencies:
@@ -81,13 +85,13 @@ const bool drawIntermediateResponseMatrices = true;
 //   "PbPb Aimeric default" works much better;
 
 
-float ptWindowDisplay[2] = {10, 200};
+float ptWindowDisplay[2] = {10, 140};
 std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
 
 // char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics
 // char unfoldingPrior[] = "noPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
-// const bool useYSliceNorm = false; //SHOULD BE TRUE IF USING PRIOR
+// const bool doYSliceNormToOneDetResp = false; //SHOULD BE TRUE IF USING PRIOR
 // char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
 // char optionsAnalysis[100] = "";
 
@@ -165,8 +169,10 @@ std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindow
 
 
 // PbPb Aimeric default
-double ptBinsJetsRec[nRadius][30] = {{10., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+double ptBinsJetsRec[nRadius][30] = {{10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+// double ptBinsJetsRec[nRadius][30] = {{40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
 int nBinPtJetsRec[nRadius] = {21,22,22};
+// int nBinPtJetsRec[nRadius] = {15,22,22};
 double ptBinsJetsGen[nRadius][30] = {{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.}};
 int nBinPtJetsGen[nRadius] = {13,13,13};
 
@@ -431,75 +437,75 @@ int nBinPtJetsGen[nRadius] = {13,13,13};
 //                                        190., 195.,
 //                                        200.}}; // shift+option+left click hold lets one edit columns in vs code
 
-// fine binning standard, for pp and Pb-Pb factorised
-// int nBinPtJetsFine[nRadius] = {120,120,120};
-int nBinPtJetsFine[nRadius] = {115,115,115};
-// double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
-double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
-                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
-                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
-                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
-                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
-                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
-                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
-                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
-                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
-                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
-                                       100., 105.,
-                                       110., 115.,
-                                       120., 125.,
-                                       130., 135.,
-                                       140., 145.,
-                                       150., 155.,
-                                       160., 165.,
-                                       170., 175.,
-                                       180., 185.,
-                                       190., 195.,
-                                       200.},
-                                    //  {05., 06., 07., 08., 09.,
-                                     {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
-                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
-                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
-                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
-                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
-                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
-                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
-                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
-                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
-                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
-                                       100., 105.,
-                                       110., 115.,
-                                       120., 125.,
-                                       130., 135.,
-                                       140., 145.,
-                                       150., 155.,
-                                       160., 165.,
-                                       170., 175.,
-                                       180., 185.,
-                                       190., 195.,
-                                       200.},
-                                    //  {05., 06., 07., 08., 09.,
-                                     {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
-                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
-                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
-                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
-                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
-                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
-                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
-                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
-                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
-                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
-                                       100., 105.,
-                                       110., 115.,
-                                       120., 125.,
-                                       130., 135.,
-                                       140., 145.,
-                                       150., 155.,
-                                       160., 165.,
-                                       170., 175.,
-                                       180., 185.,
-                                       190., 195.,
-                                       200.},}; // shift+option+left click hold lets one edit columns in vs code
+// // fine binning standard, for pp and Pb-Pb factorised
+// // int nBinPtJetsFine[nRadius] = {120,120,120};
+// int nBinPtJetsFine[nRadius] = {115,115,115};
+// // double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
+// double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+//                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+//                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+//                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+//                                         40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+//                                         50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+//                                         60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+//                                         70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+//                                         80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+//                                         90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+//                                        100., 105.,
+//                                        110., 115.,
+//                                        120., 125.,
+//                                        130., 135.,
+//                                        140., 145.,
+//                                        150., 155.,
+//                                        160., 165.,
+//                                        170., 175.,
+//                                        180., 185.,
+//                                        190., 195.,
+//                                        200.},
+//                                     //  {05., 06., 07., 08., 09.,
+//                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+//                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+//                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+//                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+//                                         40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+//                                         50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+//                                         60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+//                                         70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+//                                         80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+//                                         90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+//                                        100., 105.,
+//                                        110., 115.,
+//                                        120., 125.,
+//                                        130., 135.,
+//                                        140., 145.,
+//                                        150., 155.,
+//                                        160., 165.,
+//                                        170., 175.,
+//                                        180., 185.,
+//                                        190., 195.,
+//                                        200.},
+//                                     //  {05., 06., 07., 08., 09.,
+//                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+//                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+//                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+//                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+//                                         40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+//                                         50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+//                                         60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+//                                         70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+//                                         80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+//                                         90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+//                                        100., 105.,
+//                                        110., 115.,
+//                                        120., 125.,
+//                                        130., 135.,
+//                                        140., 145.,
+//                                        150., 155.,
+//                                        160., 165.,
+//                                        170., 175.,
+//                                        180., 185.,
+//                                        190., 195.,
+//                                        200.},}; // shift+option+left click hold lets one edit columns in vs code
 
 
 
@@ -634,74 +640,74 @@ double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 
 
 
 
-// // int nBinPtJetsFine[nRadius] = {200,200,200};
-// int nBinPtJetsFine[nRadius] = {195,195,195};
-// double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
-// // double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
-//                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
-//                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
-//                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
-//                                         40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
-//                                         50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
-//                                         60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
-//                                         70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
-//                                         80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
-//                                         90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
-//                                        100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
-//                                        110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
-//                                        120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
-//                                        130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
-//                                        140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
-//                                        150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
-//                                        160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
-//                                        170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
-//                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
-//                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
-//                                        200},
-//                                      {05., 06., 07., 08., 09.,
-//                                     //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
-//                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
-//                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
-//                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
-//                                         40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
-//                                         50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
-//                                         60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
-//                                         70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
-//                                         80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
-//                                         90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
-//                                        100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
-//                                        110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
-//                                        120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
-//                                        130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
-//                                        140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
-//                                        150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
-//                                        160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
-//                                        170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
-//                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
-//                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
-//                                        200},
-//                                      {05., 06., 07., 08., 09.,
-//                                     //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
-//                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
-//                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
-//                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
-//                                         40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
-//                                         50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
-//                                         60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
-//                                         70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
-//                                         80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
-//                                         90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
-//                                        100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
-//                                        110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
-//                                        120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
-//                                        130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
-//                                        140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
-//                                        150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
-//                                        160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
-//                                        170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
-//                                        180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
-//                                        190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
-//                                        200}}; // shift+option+left click hold lets one edit columns in vs code
+// int nBinPtJetsFine[nRadius] = {200,200,200};
+int nBinPtJetsFine[nRadius] = {195,195,195};
+double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
+// double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
+                                       150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
+                                       160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
+                                       170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
+                                       180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
+                                       190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
+                                       200},
+                                     {05., 06., 07., 08., 09.,
+                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
+                                       150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
+                                       160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
+                                       170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
+                                       180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
+                                       190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
+                                       200},
+                                     {05., 06., 07., 08., 09.,
+                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
+                                       150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
+                                       160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
+                                       170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
+                                       180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
+                                       190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
+                                       200}}; // shift+option+left click hold lets one edit columns in vs code
 
 
 #endif

@@ -43,14 +43,16 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(TH2D* &H2D
         mkdir("pngFolder/ResponseMatrices", 0700);
     }
     
+    TH2D* H2D_jetPtResponseMatrix_fineBinningPreTransforms = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->Clone("H2D_jetPtResponseMatrix_fineBinningPreTransforms"+partialUniqueSpecifier);
+
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-    TString* pdfName_preRebin = new TString("ResponseMatrices/responseMatrix_combined_preRebinning"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-    TString* pdfName_preRebin_logz = new TString("ResponseMatrices/responseMatrix_combined_preRebinning"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
+    TString* pdfName_preRebin = new TString("ResponseMatrices/responseMatrix_combined_fineBinningPreTransforms"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName_preRebin_logz = new TString("ResponseMatrices/responseMatrix_combined_fineBinningPreTransforms"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
     TString textContext_preRebin(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_fineBinningPreTransforms, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_fineBinningPreTransforms, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
   }
   // cout << "bin(topleft 1,N) = " << H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->GetBinContent(1,H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->GetNbinsY()) << endl;
   // cout << "bin(bottom left 1,1) = " << H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->GetBinContent(1,1) << endl;
@@ -60,41 +62,166 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(TH2D* &H2D
 void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, TH2D* H2D_jetPtResponseMatrix_detectorResponse, TH2D* H2D_jetPtResponseMatrix_fluctuations, int iDataset, int iRadius, std::string options) {
   // https://github.com/alisw/AliPhysics/blob/master/PWGJE/PWGJE/AliAnaChargedJetResponseMaker.cxx for ann example that works, by marta verveij
 
+  // function should be removed when time allows as it doesn't do anything more than that Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning()
+
   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
 
-  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin;
-  Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, H2D_jetPtResponseMatrix_detectorResponse, H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius, options);
+  Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, H2D_jetPtResponseMatrix_detectorResponse, H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius, options);
+}
 
+void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int iRadius, std::string options) {
+   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+ 
+  // before this, all y-slices (ie pt gen slices) have been normalised to 1;means each pt gen slice has a proba of 1
+  // withthis function, we give each slice a weight so that they have different normalisation values, corresponding to the prior 
+
+  // TH2D* H2D_jetPtResponseMatrix_preReweightWithPrior = H2D_jetPtResponseMatrix->Clone();
+
+  // prior choice; none by default (flat)
+  TH1D* priorSpectrumWeighting;
+  if (options.find("mcpPriorUnfolding") != std::string::npos) {
+    if (!normGenAndMeasByNEvts) {
+      if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+      } else {
+        Get_Pt_spectrum_mcp_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+      }
+    } else {
+       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+      } else {
+        Get_Pt_spectrum_mcp_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+      }
+    }
+    WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
+    // for (int i = 1; i < priorSpectrumWeighting->GetNbinsX(); i++)
+    // {
+    //   cout << "prior(" << i << ")" << priorSpectrumWeighting->GetBinContent(i)<< endl;
+    //   cout << "responseIntegralLine(" << i << ")" << H2D_jetPtResponseMatrix->Integral(1,H2D_jetPtResponseMatrix->GetNbinsX(), i, i)<< endl;
+    // }
+    
+  }
+  if (options.find("mcdPriorUnfolding") != std::string::npos) {
+    if (!normGenAndMeasByNEvts) {
+      if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+      } else {
+        Get_Pt_spectrum_mcd_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+      } 
+    } else {
+      if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options);
+      } else {
+        Get_Pt_spectrum_mcd_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      }
+    }
+    WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
+  }
+  if (options.find("measuredPriorUnfolding") != std::string::npos) {
+    if (!normGenAndMeasByNEvts) {
+      if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+      } else {
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+      }
+    } else {
+      if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options);
+      } else {
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      }
+    }
+    WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
+  }
+  if (options.find("testAliPhysics") != std::string::npos) {
+    if (!normGenAndMeasByNEvts) {
+      if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+      } else {
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
+      }
+    } else {
+      if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options);
+      } else {
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      }
+    }
+    H2D_jetPtResponseMatrix = (TH2D*)NormalizeResponsMatrixYaxisWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting)->Clone(H2D_jetPtResponseMatrix->GetName()+(TString)"_testAliPhysics");
+  }
+  // cout << "((((((((((((((((((((((((()))))))))))))))))))))))))" << endl;
+  // cout << "pre norm that shouldn't be" << endl;
+  // cout << "H2D_jetPtResponseMatrix->Integral(1, N, 1, 1)" << H2D_jetPtResponseMatrix->Integral(1, H2D_jetPtResponseMatrix->GetNbinsX(), 1, 1) << endl;
+  // cout << "H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1)" << H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1) << endl;
+  // // NormaliseXSlicesToOneNoUnderOverFlows(H2D_jetPtResponseMatrix);
+  // // NormaliseYSlicesToOneNoUnderOverFlows(H2D_jetPtResponseMatrix);
+  // cout << "post norm that shouldn't be" << endl;
+  // cout << "H2D_jetPtResponseMatrix->Integral(1, N, 1, 1)" << H2D_jetPtResponseMatrix->Integral(1, H2D_jetPtResponseMatrix->GetNbinsX(), 1, 1) << endl;
+  // cout << "H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1)" << H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1) << endl;
+  // cout << "((((((((((((((((((((((((()))))))))))))))))))))))))" << endl;
+
+
+  if (drawIntermediateResponseMatrices) {
+    TH2D* H2D_jetPtResponseMatrix_postReweightWithPrior = (TH2D*)H2D_jetPtResponseMatrix->Clone("H2D_jetPtResponseMatrix_postReweightWithPrior"+partialUniqueSpecifier);
+
+    struct stat st1{};
+    if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
+        mkdir("pdfFolder/ResponseMatrices", 0700);
+    }
+    struct stat st2{};
+    if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
+        mkdir("pngFolder/ResponseMatrices", 0700);
+    }
+    
+    TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
+    TString* pdfName_preRebin = new TString("ResponseMatrices/responseMatrix_combined_postReweightWithPrior"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName_preRebin_logz = new TString("ResponseMatrices/responseMatrix_combined_postReweightWithPrior"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
+
+    TString textContext_preRebin(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
+
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postReweightWithPrior, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postReweightWithPrior, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+  }
+}
+
+
+
+void MergeResponseMatrixBins(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int iRadius, std::string options) {
   // Merge bins of the combined response matrix with fine binning to get the coarse one
   TH1D* priorSpectrumMerging;
   bool debugBool = false;
+
+  TH2D* H2D_jetPtResponseMatrix_postBinMerge;
+
+  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+
   Get_Pt_spectrum_mcp_fineBinning(priorSpectrumMerging, iDataset, iRadius, false, options); //take mcp as prior by default
   if (options.find("mcpPriorMerging") != std::string::npos) {
     priorSpectrumMerging->Reset("M");
     Get_Pt_spectrum_mcp_fineBinning(priorSpectrumMerging, iDataset, iRadius, false, options); 
-    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D_PriorWeightedBinMerging(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrumMerging, debugBool).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
+    H2D_jetPtResponseMatrix_postBinMerge = (TH2D*)RebinVariableBins2D_PriorWeightedBinMerging(H2D_jetPtResponseMatrix, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrumMerging, debugBool).Clone("MergeResponseMatrixBins"+partialUniqueSpecifier);
   }
   if (options.find("mcdPriorMerging") != std::string::npos) {
     priorSpectrumMerging->Reset("M");
     Get_Pt_spectrum_mcd_fineBinning(priorSpectrumMerging, iDataset, iRadius, options);
-    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D_PriorWeightedBinMerging(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrumMerging, debugBool).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
+    H2D_jetPtResponseMatrix_postBinMerge = (TH2D*)RebinVariableBins2D_PriorWeightedBinMerging(H2D_jetPtResponseMatrix, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrumMerging, debugBool).Clone("MergeResponseMatrixBins"+partialUniqueSpecifier);
   }
   if (options.find("measuredPriorMerging") != std::string::npos) {
     priorSpectrumMerging->Reset("M");
     Get_Pt_spectrum_bkgCorrected_fineBinning(priorSpectrumMerging, iDataset, iRadius, options);
-    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D_PriorWeightedBinMerging(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrumMerging, debugBool).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
+    H2D_jetPtResponseMatrix_postBinMerge = (TH2D*)RebinVariableBins2D_PriorWeightedBinMerging(H2D_jetPtResponseMatrix, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], priorSpectrumMerging, debugBool).Clone("MergeResponseMatrixBins"+partialUniqueSpecifier);
   }
   if (options.find("noPriorMerging") != std::string::npos) {
-    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], debugBool).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
+    H2D_jetPtResponseMatrix_postBinMerge = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], debugBool).Clone("MergeResponseMatrixBins"+partialUniqueSpecifier);
   }
   if (options.find("testAliPhysics") != std::string::npos) {
-    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D_aliPhysics(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], debugBool)->Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
+    H2D_jetPtResponseMatrix_postBinMerge = (TH2D*)RebinVariableBins2D_aliPhysics(H2D_jetPtResponseMatrix, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], debugBool)->Clone("MergeResponseMatrixBins"+partialUniqueSpecifier);
   }
   // normalising priorSpectrum with evtNorm doesn't change anything as the weighting does prior_content(i)/prior_integral()
   // dividing priorSpectrum by binwidth doesn't change anything for the same reason
 
-
-  // H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], true).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
+  H2D_jetPtResponseMatrix = (TH2D*)H2D_jetPtResponseMatrix_postBinMerge->Clone("RespMatrix_MergeResponseMatrixBins_output_"+partialUniqueSpecifier);
+  // H2D_jetPtResponseMatrix_postBinMerge = (TH2D*)RebinVariableBins2D(H2D_jetPtResponseMatrix_preRebin, nBinPtJetsRec[iRadius], nBinPtJetsGen[iRadius], ptBinsJetsRec[iRadius], ptBinsJetsGen[iRadius], true).Clone("Get_PtResponseMatrix_DetectorAndFluctuationsCombined"+partialUniqueSpecifier);
 
 
   // When looking at combined response matrix before normalisation, large bins in y will look strange, and out of place compared to other bin slices of same size; this is because it potentially merges A LOT of bins together; it'll look a lot better after normalisation:
@@ -110,7 +237,7 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
   //   }
   // }
   if (drawIntermediateResponseMatrices) {
-    TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm"+partialUniqueSpecifier);
+    // TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postBinMerge = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postBinMerge"+partialUniqueSpecifier);
 
     struct stat st1{};
     if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
@@ -122,31 +249,35 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
     }
 
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_preNorm"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_preNorm"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
+    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postBinMerge"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_postBinMerge"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
     TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preNorm, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postBinMerge, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postBinMerge, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
   // TransformRawResponseToYieldResponse(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined);
   // cout << "Should I normalise the combined matrix?" << endl;
   // cout << "     Marta doesn't do it, but it looks like I need it due to merging (some bins are very large)" << endl;
   // cout << "     it's actually done in AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin" << endl;
+}
 
 
-  if (useYSliceNorm) {
-    NormaliseYSlicesToOne(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined); // Marta doesn't do it, but it looks like I need it due to merging (some bins are very large) ; actually marta probably uses it: AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin does it by default inside the rebinning function, and it takes into account the whole Fine range (1fine, Nfine)
+
+void NormYSlicesAndScaleRespByWidth(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int iRadius, std::string options) {
+  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+
+  if (doYSliceNormToOneCombinedResp) {
+    NormaliseYSlicesToOne(H2D_jetPtResponseMatrix); // Marta doesn't do it, but it looks like I need it due to merging (some bins are very large) ; actually marta probably uses it: AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin does it by default inside the rebinning function, and it takes into account the whole Fine range (1fine, Nfine)
   } 
   if (scaleRespByWidth) {
-    H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Scale(1., "width");
+    H2D_jetPtResponseMatrix->Scale(1., "width");
   }
 
   if (drawIntermediateResponseMatrices) {
-    TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting"+partialUniqueSpecifier);
-
+    TH2D* H2D_jetPtResponseMatrix_postYSliceNormAndWidthNorm = (TH2D*)H2D_jetPtResponseMatrix->Clone("NormYSlicesAndScaleRespByWidth"+partialUniqueSpecifier);
 
     struct stat st1{};
     if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
@@ -158,73 +289,35 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined(TH2D* &H2D_jetPtRespon
     }
 
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_preWeighting"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_preWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
+    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postYSliceNormAndWidthNorm"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_postYSliceNormAndWidthNorm"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
     TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_preWeighting, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postYSliceNormAndWidthNorm, textContext, pdfName, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(H2D_jetPtResponseMatrix_postYSliceNormAndWidthNorm, textContext, pdfName_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 }
 
-void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int iRadius, std::string options) {
-  
-  // before this, all y-slices (ie pt gen slices) have been normalised to 1;means each pt gen slice has a proba of 1
-  // withthis function, we give each slice a weight so that they have different normalisation values, corresponding to the prior 
-
-  // prior choice; none by default (flat)
-  TH1D* priorSpectrumWeighting;
-  if (options.find("mcpPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_mcp_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
-    } else {
-      Get_Pt_spectrum_mcp_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
-    }
-    WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
-    // for (int i = 1; i < priorSpectrumWeighting->GetNbinsX(); i++)
-    // {
-    //   cout << "prior(" << i << ")" << priorSpectrumWeighting->GetBinContent(i)<< endl;
-    //   cout << "responseIntegralLine(" << i << ")" << H2D_jetPtResponseMatrix->Integral(1,H2D_jetPtResponseMatrix->GetNbinsX(), i, i)<< endl;
-    // }
-    
+void FinaliseResponseMatrix(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int iRadius, std::string options) {
+  if (matrixTransformationOrder == 0) {
+    ReweightResponseMatrixWithPrior(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    MergeResponseMatrixBins(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    NormYSlicesAndScaleRespByWidth(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+  } else if (matrixTransformationOrder == 1) {
+    MergeResponseMatrixBins(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    NormYSlicesAndScaleRespByWidth(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    ReweightResponseMatrixWithPrior(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+  } else if (matrixTransformationOrder == 2) {
+    MergeResponseMatrixBins(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    ReweightResponseMatrixWithPrior(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    NormYSlicesAndScaleRespByWidth(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+  } else if (matrixTransformationOrder == 3) {
+    ReweightResponseMatrixWithPrior(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    NormYSlicesAndScaleRespByWidth(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
+    MergeResponseMatrixBins(H2D_jetPtResponseMatrix, iDataset, iRadius, options);
   }
-  if (options.find("mcdPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_mcd_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
-    } else {
-      Get_Pt_spectrum_mcd_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
-    }
-    WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
-  }
-  if (options.find("measuredPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
-    } else {
-      Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
-    }
-    WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting);
-  }
-  if (options.find("testAliPhysics") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
-    } else {
-      Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
-    }
-    H2D_jetPtResponseMatrix = (TH2D*)NormalizeResponsMatrixYaxisWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting)->Clone(H2D_jetPtResponseMatrix->GetName()+(TString)"_testAliPhysics");
-  }
-  // cout << "((((((((((((((((((((((((()))))))))))))))))))))))))" << endl;
-  // cout << "pre norm that shouldn't be" << endl;
-  // cout << "H2D_jetPtResponseMatrix->Integral(1, N, 1, 1)" << H2D_jetPtResponseMatrix->Integral(1, H2D_jetPtResponseMatrix->GetNbinsX(), 1, 1) << endl;
-  // cout << "H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1)" << H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1) << endl;
-  // // NormaliseXSlicesToOneNoUnderOverFlows(H2D_jetPtResponseMatrix);
-  // // NormaliseYSlicesToOneNoUnderOverFlows(H2D_jetPtResponseMatrix);
-  // cout << "post norm that shouldn't be" << endl;
-  // cout << "H2D_jetPtResponseMatrix->Integral(1, N, 1, 1)" << H2D_jetPtResponseMatrix->Integral(1, H2D_jetPtResponseMatrix->GetNbinsX(), 1, 1) << endl;
-  // cout << "H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1)" << H2D_jetPtResponseMatrix->Integral(0, -1, 1, 1) << endl;
-  // cout << "((((((((((((((((((((((((()))))))))))))))))))))))))" << endl;
 }
-
 
 void ReweightResponseMatrixWithPrior_fineBinning(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int iRadius, std::string options) {
   
@@ -298,7 +391,7 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
   // keep (gen, gen) for the bins; rec will be introduced in the fluctuation response, and by multiplication will stay in the combined matrix
   TH2D* H2D_response = (TH2D*)RebinVariableBins2D(H2D_gen_det_geoMatched, nBinPtJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], ptBinsJetsFine[iRadius]).Clone("Get_PtResponseMatrix_detectorResponse_rebinned"+partialUniqueSpecifier);
 
-  if (useYSliceNorm) {
+  if (doYSliceNormToOneDetResp) {
     NormaliseYSlicesToOne(H2D_response);
   }
   if (normDetRespByNEvts) {
