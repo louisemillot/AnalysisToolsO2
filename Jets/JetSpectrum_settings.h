@@ -33,11 +33,12 @@ char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, m
 char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
 const bool doYSliceNormToOneDetResp = true; // should be true (done by marta)
 const bool doYSliceNormToOneCombinedResp = false; // should be false (not done by marta); breaks unfolding with svd if true
-const bool doUnfoldingPriorDivision = false; // unfolding doesn't work anymore if this is done, gives almost flat pT distribution, though refolding test is good; I am not sure why, might be because roounfold already does that; one good reason to avoid it anyway, is that roounfold already seems to deal with errors; my error propagation doesn't take into account off-diagonal covariance elements, and so can only be worse 
-const bool scaleRespByWidth = false; 
-const bool matrixTransformationOrder = 0; //0: reweight with unfoldingPrior, then rebin with merging prior, then do YSliceNorm and scaleRespByWidth if set to true (0 seems to work well); 1: rebin, then YSliceNorm and scaleRespByWidth, then reweight; 2: rebin, then reweight, then YSliceNorm and scaleRespByWidth
+const bool doUnfoldingPriorDivision = true; // keep false for now ; unfolding doesn't work anymore if this is done, gives almost flat pT distribution, though refolding test is good; I am not sure why, might be because roounfold already does that; one good reason to avoid it; anyway, is that roounfold already seems to deal with errors; my error propagation doesn't take into account off-diagonal covariance elements, and so can only be worse 
+const bool scaleRespByWidth = false; // keep false, does not work well if true
+const bool matrixTransformationOrder = 0; // use 0
+ //0: reweight with unfoldingPrior, then rebin with merging prior, then do YSliceNorm and scaleRespByWidth if set to true (works well 0); 1: rebin, then YSliceNorm and scaleRespByWidth, then reweight; 2: rebin, then reweight, then YSliceNorm and scaleRespByWidth
 
-char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
+char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
 const bool isDataPbPb = true; // if false -> pp
@@ -47,87 +48,32 @@ const bool useFactorisedMatrix = true; // use factorised response matrix for unf
 const bool mcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
 int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active; only applied if useManualRespMatrixSettingMethod is true
 bool applyFakes = true; // only applied if useManualRespMatrixSettingMethod is true; 18/03: if false?
-const bool useFineBinningTest = false; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
+const bool useFineBinningTest = false; 
 
 const bool doWidthScalingEarly = false;                         // to avoid pT bin width having an influence on spectrum; which one should be done? early or end? for now will be done at end
 const bool doWidthScalingAtEnd = true;                          //
 
 
-// all three below should probably be true;
-// but then it breaks svd convergence! find out why;
 const bool normDetRespByNEvts = false; //that's what breaks svd; https://arxiv.org/pdf/hep-ph/9509307 seems to say one should use the number of events matrix (see last paragraph of conclusion) instead of a probability matrix, to further reduce errors
 const bool normGenAndMeasByNEvts = false;
 
-const bool normaliseDistribsAfterUnfolding = true;   //both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with they are 1E-j, so should be set to true
-const bool normaliseDistribsBeforeUnfolding = true;   //both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with they are 1E-j, so should be set to true
+const bool normaliseDistribsAfterUnfolding = true; // keep true; both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with it they are 1E-j, so should be set to true
+const bool normaliseDistribsBeforeUnfolding = true; // keep true; both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with they are 1E-j, so should be set to true
 
-const bool useManualRespMatrixSettingMethod = true; // 18/03 remark: if set to true, both refold methods are constistent; if set to false, the roounfold one is identical as if true, but the manual one becomes different and bad
-const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
+const bool useManualRespMatrixSettingMethod = true; // keep true; false uses Joonsuk's resp matrix setup with roounfold methods; if set to true, both refold methods are constistent; if set to false, the roounfold one is identical as if true, but the manual one becomes different and bad
+const bool normaliseRespYSliceForRefold = true; // keep true; THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
 
 bool controlMC = false; // use file_O2Analysis_ppSimDetectorEffect_unfoldingControl MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file), rather than real data, and as comparison to gen (with h_jet_pt_part distrib on file); weighted control MC, and control for PbPb are not yet implemented
-bool comparePbPbWithRun2 = false; // if isDataPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
+bool comparePbPbWithRun2 = true; // if isDataPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
 
-bool automaticBestSvdParameter = false;
+bool automaticBestSvdParameter = false; // automatic function not well setup yet, should work on it; keep false for now
 
 const bool drawIntermediateResponseMatrices = false;
 
-// 18/03 remarks:
-// - applyFakes and applyEfficiencies:
-//      checked if useManualRespMatrixSettingMethod is true, but the non-initial response method does take fake into account; 
-//      maybe rename applyFakes/EfficienciesIfInitialResponseMethod; 
-//      also, is also used if useManualRespMatrixSettingMethod is false in Get_Pt_spectrum_dataUnfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAndEvtNorm --> UNDERSTAND WHY
-// - useManualRespMatrixSettingMethod if false, manual and roounfold refolding not consistent; what seems to be failing is the manual (manual multiplication of matrices) refolding in this case 
-//   (though it works fine if useManualRespMatrixSettingMethod is true); if useManualRespMatrixSettingMethod is false, then the response matrix is filled weirdly (joonsuk Unfolding) with roounfold methods: RooUnfoldResponse->Fill(), Fake() and Miss()
-// -----> for now only use useManualRespMatrixSettingMethod = true; if time, find out what's wrong in refolding in other method
-// - manual refold has error issues; if I use "Joonsuk binning for pp" it's fine, but if I use "PbPb Aimeric old" then errors explode in the refolding plot; 
-//   and it looks like bins 8 and 9 have weirdly immense errors (not the case with joonsuk binning)
-//   differences between two binnings: 1) joonsuk has same bin count for gen and rec, mine has less for gen; 2) joonsuk rec starts at same value as gen, I start rec above gen
-//   "PbPb Aimeric default" works much better;
 
-
-float ptWindowDisplay[2] = {10, 140};
+float ptWindowDisplay[2] = {10, 140}; // used for drawn histograms of unfolded distrib
 std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
-
-// char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics
-// char unfoldingPrior[] = "noPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
-// const bool doYSliceNormToOneDetResp = false; //SHOULD BE TRUE IF USING PRIOR
-// char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
-// char optionsAnalysis[100] = "";
-
-// const bool isDataPbPb = true; // if false -> pp
-// const bool doBkgSubtractionInData = true;
-// const bool doBkgSubtractionInMC = false;
-// const bool useFactorisedMatrix = true; // use factorised response matrix for unfolding, or not
-// const bool mcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
-// int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active; only applied if useManualRespMatrixSettingMethod is true
-// bool applyFakes = true; // only applied if useManualRespMatrixSettingMethod is true
-// const bool useFineBinningTest = true; //looks like this gives the same flat distrib as when using coarse binning: so rebinning isnt the issue; need to change finBinning back to start at 0 when I dont use this
-
-// const bool scaleRespByWidth = false;
-// const bool doWidthScalingEarly = false;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
-// const bool doWidthScalingAtEnd = true;                          //  doesn't seem to have any effect, so I can probably use it: doesn't change the ratios (at least measured/unfolded and mcp/unfolded, haven't checked folded/unfolded)
-
-
-// // all three below should probably be true;
-// // but then it breaks svd convergence! find out why;
-// const bool normDetRespByNEvts = false; //that's what breaks svd; https://arxiv.org/pdf/hep-ph/9509307 seems to say one should use the number of events matrix (see last paragraph of conclusion) instead of a probability matrix
-// const bool normGenAndMeasByNEvts = false;
-
-// const bool normaliseDistribsAfterUnfolding = true;   //both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with they are 1E-j, so should be set to true
-// const bool normaliseDistribsBeforeUnfolding = true;   //both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with they are 1E-j, so should be set to true
-
-// const bool useManualRespMatrixSettingMethod = false; // discrepancy false vs true here seems to be that I do not model fakes in my initial method
-// const bool normaliseRespYSliceForRefold = true; // ??????? THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
-
-// bool controlMC = false; // use file_O2Analysis_ppSimDetectorEffect_unfoldingControl MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file), rather than real data, and as comparison to gen (with h_jet_pt_part distrib on file); weighted control MC, and control for PbPb are not yet implemented
-// bool comparePbPbWithRun2 = false; // if isDataPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
-
-// const bool drawIntermediateResponseMatrices = false;
-
-
-// float ptWindowDisplay[2] = {5, 200};
-// std::array<std::array<float, 2>, 2> drawnWindow = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
 
 ////////////////////////////////////////////////
@@ -170,9 +116,7 @@ std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindow
 
 // PbPb Aimeric default
 double ptBinsJetsRec[nRadius][30] = {{10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
-// double ptBinsJetsRec[nRadius][30] = {{40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
 int nBinPtJetsRec[nRadius] = {21,22,22};
-// int nBinPtJetsRec[nRadius] = {15,22,22};
 double ptBinsJetsGen[nRadius][30] = {{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.}};
 int nBinPtJetsGen[nRadius] = {13,13,13};
 

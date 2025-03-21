@@ -374,15 +374,8 @@ TH2* NormalizeResponsMatrixYaxisWithPrior(TH2 *h2RM, TH1 *hPrior) { // aliphysic
 
 void WeightMatrixWithPrior(TH2D* H2D_hist, TH1D* priorSpectrum, bool doPriorDivision = false){
   cout << "Weighting y-slices" << endl;
-  // ACTUALLY I DONT THINK THIS SHOULD BE USED, THE PRIOR SEEMS TO BE SET UP DIFFERENTLY
-  // looks like I shouldn't wieght the under and overflows, or it puts too much weight on the overflow
-  // maybe I should make the kinematic efficiency matrix before any re-weighting
-
-  // actually what's important here is that the y-projection is the prior
 
   double binContent, binError, binErrorA, binErrorB;
-
-
 
 
   // multiplication
