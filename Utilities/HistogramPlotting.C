@@ -36,6 +36,15 @@ float findMaxFloat(float* array, int length){
 ////////////////////////////////////////////////////////////////////////////// Histogram Context /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+TString contextCustomFourFields(TString mainContext, TString secondaryContext, TString tertiaryContext, TString quaternaryContext, __attribute__ ((unused)) std::string options){
+  TString texContextFinal;
+  // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
+  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{"+tertiaryContext+"}{"+quaternaryContext+"}}";
+  // texContextFinal = "testtesttestest";
+  return texContextFinal;
+}
+
+
 TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, __attribute__ ((unused)) std::string options){
   TString texContextFinal;
   texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
@@ -45,11 +54,18 @@ TString contextCustomThreeFields(TString mainContext, TString secondaryContext, 
 }
 
 TString contextCustomTwoFields(TString mainContext, TString secondaryContext, std::string options){
-  return contextCustomThreeFields(mainContext, (TString)"" , secondaryContext, options);
+  TString texContextFinal;
+  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{}";
+  return texContextFinal;
+  // return contextCustomThreeFields(mainContext, (TString)"" , secondaryContext, options);
+
 }
 
 TString contextCustomOneField(TString mainContext, std::string options){
-  return contextCustomTwoFields(mainContext, (TString)"", options);
+  TString texContextFinal;
+  texContextFinal = "#splitline{"+mainContext+"}{}";
+  return texContextFinal;
+  // return contextCustomTwoFields(mainContext, (TString)"", options);
 }
 
 TString contextPtRange(float* PtRange){

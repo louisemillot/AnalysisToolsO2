@@ -10,9 +10,13 @@
 
 
 //////// -------- LHC23zzh pass 4 with - pp sim anchored to PbPb 10%  ///////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
-const TString* texDatasetsComparisonType = new TString("");
-const TString* texDatasetsComparisonCommonDenominator = new TString("LHC23zzh");
+TString* texEnergy = new TString("#sqrt{#it{s}} = 5.36 TeV"); 
+TString* texCollisionDataType = new TString("Pb-Pb Data"); 
+TString* texCollisionDataInfo = new TString((TString)*texCollisionDataType+" "+(TString)*texEnergy); 
+TString* texCollisionMCType = new TString("pp PYTHIA"); 
+TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+" "+(TString)*texEnergy); 
+const TString* texDatasetsComparisonType = new TString("00-10% centrality");
+const TString* texDatasetsComparisonCommonDenominator = new TString("");
 const int nDatasets = 1;
 const TString Datasets[nDatasets] = {"LHC23zzh_apass4_occupancy01000_train372068"};
 const TString DatasetsNames[nDatasets] = {""};
@@ -36,7 +40,7 @@ const TString trainIdUnfoldingControl = "";
 const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_noOccupancyCut"+trainIdUnfoldingControl;
 
 const TString trainIdMC = "";
-const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdMC;
+const TString analysisWorkflowMC = "jet-spectra-charged_leadTrack05"+trainIdMC;
 const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 

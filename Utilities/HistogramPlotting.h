@@ -4,6 +4,7 @@
 float findMinFloat(float* array, int length);
 float findMaxFloat(float* array, int length);
 
+TString contextCustomFourFields(TString mainContext, TString secondaryContext, TString tertiaryContext, TString quaternaryContext, std::string options);
 TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, std::string options);
 TString contextCustomTwoFields(TString mainContext, TString secondaryContext, std::string options);
 TString contextCustomOneField(TString mainContext, std::string options);
