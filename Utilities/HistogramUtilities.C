@@ -213,9 +213,9 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
         for(int iBinXFine = ibinX_low; iBinXFine <= ibinX_high; iBinXFine++){
           H2D_hist_content = H2D_hist_temp->GetBinContent(iBinXFine, iBinYFine);
           H2D_hist_contentError = H2D_hist_temp->GetBinError(iBinXFine, iBinYFine);
-          abs(H2D_hist_content < GLOBAL_epsilon) ? H2D_hist_contentErrorA = 0 : H2D_hist_contentErrorA = H2D_hist_contentError*H2D_hist_contentError / (H2D_hist_content*H2D_hist_content);
-          abs(priorBinNorm < GLOBAL_epsilon)     ? H2D_hist_contentErrorB = 0 : H2D_hist_contentErrorB = priorBinNormError*priorBinNormError / (priorBinNorm*priorBinNorm);
-          abs(priorBinNorm < GLOBAL_epsilon) ? H2D_hist_content = 0 : H2D_hist_content = H2D_hist_content * 1./priorBinNorm; // do I really give the value 0 if denominator is 0 ?
+          abs(H2D_hist_content) < GLOBAL_epsilon ? H2D_hist_contentErrorA = 0 : H2D_hist_contentErrorA = H2D_hist_contentError*H2D_hist_contentError / (H2D_hist_content*H2D_hist_content);
+          abs(priorBinNorm) < GLOBAL_epsilon     ? H2D_hist_contentErrorB = 0 : H2D_hist_contentErrorB = priorBinNormError*priorBinNormError / (priorBinNorm*priorBinNorm);
+          abs(priorBinNorm) < GLOBAL_epsilon ? H2D_hist_content = 0 : H2D_hist_content = H2D_hist_content * 1./priorBinNorm; // do I really give the value 0 if denominator is 0 ?
           H2D_hist_temp->SetBinContent(iBinXFine, iBinYFine, H2D_hist_content);
           H2D_hist_temp->SetBinError(iBinXFine, iBinYFine, sqrt(H2D_hist_content*H2D_hist_content * (H2D_hist_contentErrorA + H2D_hist_contentErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
         }
@@ -273,8 +273,8 @@ void NormaliseYSlicesToOne(TH2D* H2D_hist){
     genSliceNorm = H2D_hist->IntegralAndError(0, H2D_hist->GetNbinsX()+1, iBinY, iBinY, genSliceNormError); // in AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin it goes from 1 to N but  (1,N) in there is the fine matrix min and max bins; while here we already coarsened the matrix, and so that NFine is in the overflow and 1 in the underflow
     for(int iBinX = 0; iBinX <= H2D_hist->GetNbinsX()+1; iBinX++){ // 0 and n+1 take underflow and overflow into account
       abs(H2D_hist->GetBinContent(iBinX, iBinY)) < GLOBAL_epsilon ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
-      abs(genSliceNorm < GLOBAL_epsilon)                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
-      abs(genSliceNorm < GLOBAL_epsilon) ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
+      abs(genSliceNorm) < GLOBAL_epsilon                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
+      abs(genSliceNorm) < GLOBAL_epsilon ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
       H2D_hist->SetBinContent(iBinX, iBinY, binContent);
       H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
     }
@@ -290,8 +290,8 @@ void NormaliseYSlicesToOneNoUnderOverFlows(TH2D* H2D_hist){
 
     for(int iBinX = 1; iBinX <= H2D_hist->GetNbinsX(); iBinX++){ // 0 and n+1 take underflow and overflow into account
       abs(H2D_hist->GetBinContent(iBinX, iBinY)) < GLOBAL_epsilon ? binErrorB = 0 : binErrorB = H2D_hist->GetBinError(iBinX, iBinY)*H2D_hist->GetBinError(iBinX, iBinY) / (H2D_hist->GetBinContent(iBinX, iBinY)*H2D_hist->GetBinContent(iBinX, iBinY));
-      abs(genSliceNorm < GLOBAL_epsilon)                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
-      abs(genSliceNorm < GLOBAL_epsilon) ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
+      abs(genSliceNorm) < GLOBAL_epsilon                          ? binErrorA = 0 : binErrorA = genSliceNormError*genSliceNormError / (genSliceNorm*genSliceNorm);
+      abs(genSliceNorm) < GLOBAL_epsilon ? binContent = 0 : binContent = H2D_hist->GetBinContent(iBinX, iBinY) *1./genSliceNorm; // do I really give the value 0 if denominator is 0 ? 
       H2D_hist->SetBinContent(iBinX, iBinY, binContent);
       H2D_hist->SetBinError(iBinX, iBinY, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
     }
