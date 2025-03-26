@@ -11,12 +11,12 @@
 
 //////// -------- LHC23zzh pass 4 with - pp sim anchored to PbPb 10%  ///////
 TString* texEnergy = new TString("#sqrt{#it{s}} = 5.36 TeV"); 
-TString* texCollisionDataType = new TString("Pb-Pb Data"); 
+TString* texCollisionDataType = new TString("Data: Pb-Pb 00-10%"); 
 TString* texCollisionDataInfo = new TString((TString)*texCollisionDataType+" "+(TString)*texEnergy); 
-TString* texCollisionMCType = new TString("pp PYTHIA"); 
+TString* texCollisionMCType = new TString("MC: pp PYTHIA"); 
 TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+" "+(TString)*texEnergy); 
 const TString* texDatasetsComparisonType = new TString("00-10% centrality");
-const TString* texDatasetsComparisonCommonDenominator = new TString("");
+const TString* texDatasetsComparisonCommonDenominator = new TString("ALICE performance");
 const int nDatasets = 1;
 const TString Datasets[nDatasets] = {"LHC23zzh_apass4_occupancy01000_train372068"};
 const TString DatasetsNames[nDatasets] = {""};

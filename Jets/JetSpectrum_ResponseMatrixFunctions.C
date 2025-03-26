@@ -85,17 +85,17 @@ void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDatase
   // prior choice; none by default (flat)
   TH1D* priorSpectrumWeighting;
   if (options.find("mcpPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+        Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
       } else {
-        Get_Pt_spectrum_mcp_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+        Get_Pt_spectrum_mcp_genBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
       }
     } else {
        if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+        Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, false, options); 
       } else {
-        Get_Pt_spectrum_mcp_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+        Get_Pt_spectrum_mcp_genBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, false, options); 
       }
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting, doUnfoldingPriorDivision);
@@ -107,49 +107,49 @@ void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDatase
     
   }
   if (options.find("mcdPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
       } else {
-        Get_Pt_spectrum_mcd_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_mcd_genBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
       } 
     } else {
       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options);
       } else {
-        Get_Pt_spectrum_mcd_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+        Get_Pt_spectrum_mcd_genBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options); 
       }
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting, doUnfoldingPriorDivision);
   }
   if (options.find("measuredPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
       } else {
-        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
       }
     } else {
       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options);
       } else {
-        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options); 
       }
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting, doUnfoldingPriorDivision);
   }
   if (options.find("testAliPhysics") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options);
       } else {
-        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
       }
     } else {
       if (matrixTransformationOrder == 0 || matrixTransformationOrder == 3) {
-        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options);
+        Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options);
       } else {
-        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+        Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options); 
       }
     }
     H2D_jetPtResponseMatrix = (TH2D*)NormalizeResponsMatrixYaxisWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting)->Clone(H2D_jetPtResponseMatrix->GetName()+(TString)"_testAliPhysics");
@@ -347,34 +347,34 @@ void ReweightResponseMatrixWithPrior_fineBinning(TH2D* &H2D_jetPtResponseMatrix,
   // prior choice; none by default (flat)
   TH1D* priorSpectrumWeighting;
   if (options.find("mcpPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
+      Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, false, options); 
     } else {
-      Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, false, options); 
+      Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, false, options); 
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting, doUnfoldingPriorDivision);
   }
   if (options.find("mcdPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
+      Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
     } else {
-      Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options); 
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting, doUnfoldingPriorDivision);
   }
   if (options.find("measuredPriorUnfolding") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
     } else {
-      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options); 
     }
     WeightMatrixWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting, doUnfoldingPriorDivision);
   }
   if (options.find("testAliPhysics") != std::string::npos) {
-    if (!normGenAndMeasByNEvts) {
-      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
+    if (!normGenAndMeasByNEvtsBeforeUnfolding) {
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(priorSpectrumWeighting, iDataset, iRadius, options); 
     } else {
-      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(priorSpectrumWeighting, iDataset, iRadius, options); 
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(priorSpectrumWeighting, iDataset, iRadius, options); 
     }
     H2D_jetPtResponseMatrix = (TH2D*)NormalizeResponsMatrixYaxisWithPrior(H2D_jetPtResponseMatrix, priorSpectrumWeighting)->Clone(H2D_jetPtResponseMatrix->GetName()+(TString)"_testAliPhysics");
   }
@@ -476,22 +476,39 @@ void Get_PtResponseMatrix_Fluctuations(TH2D* &H2D_jetPtResponseMatrix_fluctuatio
     H1D_fluctuations = (TH1D*)H2D_fluctuations_centrality->ProjectionY("bkgFluctuationCentrality_highRes_"+partialUniqueSpecifier, ibinCent_low, ibinCent_high, "e");
 
     NormaliseRawHistToIntegral(H1D_fluctuations); // normalising fluctuations to 1
+    // cout << "Integral H1D_fluctuations: " << H1D_fluctuations->Integral(1, H1D_fluctuations->GetNbinsX()) << endl;
 
-    TH2D H2D_response = TH2D("H2D_response_"+partialUniqueSpecifier, "H2D_response_"+partialUniqueSpecifier, nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius]); // actually doesn't work if original histogram has fixed bin size
+    TH2D H2D_response = TH2D("H2D_response_"+partialUniqueSpecifier, "H2D_response_"+partialUniqueSpecifier, nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius]); 
 
     //==================== Build response matrix: shift deltaPt by pT gen along the pT rec axis ====================//
     int ibinZeroFluct= H1D_fluctuations->FindBin(0+GLOBAL_epsilon);
     double integralError;
+    double ptGen, ptRec_low, ptRec_up;
+    int iBin_fluct_low, iBin_fluct_high;
     for(int iBinRec = 0; iBinRec <= H2D_response.GetNbinsX()+1; iBinRec++){
       for(int iBinGen = 0; iBinGen <= H2D_response.GetNbinsY()+1; iBinGen++){
-        double ptGen = H2D_response.GetYaxis()->GetBinLowEdge(iBinGen); // was bincenter before but then it'd give .5 values of GeV, and 
-        double ptRec_low = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec);
-        double ptRec_up = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec+1);
-        int iBin_fluct_low = H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon);
-        int iBin_fluct_high = H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen - GLOBAL_epsilon);
+        ptGen = H2D_response.GetYaxis()->GetBinCenter(iBinGen); // was bincenter before but then it'd give .5 values of GeV, and 
+        ptRec_low = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec);
+        ptRec_up = H2D_response.GetXaxis()->GetBinLowEdge(iBinRec+1);
+        // int iBin_fluct_low = H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon);
+        // int iBin_fluct_high = H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen - GLOBAL_epsilon);
+        iBin_fluct_low = H1D_fluctuations->GetXaxis()->FindBin(ptRec_low - ptGen + GLOBAL_epsilon);
+        if (iBinGen == 10 && (iBin_fluct_low >= iBin_fluct_high)) { // checks iBinRec =10 so that the message doesn't appear NbinsX*NBinsY times
+          cout << "Get_PtResponseMatrix_Fluctuations: some bins are counted twice in the integral, binning needs to be looked at, right now the fluctuation matrix has too many entries" << endl;
+        }
+        iBin_fluct_high = H1D_fluctuations->GetXaxis()->FindBin(ptRec_up - ptGen - GLOBAL_epsilon)-1;
         H2D_response.SetBinContent(iBinRec, iBinGen, H1D_fluctuations->IntegralAndError(iBin_fluct_low, iBin_fluct_high, integralError)); 
         H2D_response.SetBinError(iBinRec, iBinGen, integralError); 
+        // if (iBinRec == 10) {
+        //   cout << "DeltaBin = " << iBin_fluct_high - iBin_fluct_low << ", iBin_low = " << iBin_fluct_low << ", iBin_high = " << iBin_fluct_high << endl;
+        // }
       }
+    }
+    float integralCheck = H2D_response.Integral(1, H2D_response.GetNbinsX(), 10, 10);
+    if (!(integralCheck > 0.999)) {
+      cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+      cout << "!!!!!!Response matrix of fluctuations does not have line integral equal to 1; something is wrong with binning!!!!!!" << endl;
+      cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
     }
 
     //========================================= Build response matrix end =========================================//

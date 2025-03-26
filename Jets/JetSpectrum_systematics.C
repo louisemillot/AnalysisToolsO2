@@ -156,10 +156,24 @@ void Get_systematics_UnfoldMethod(TH1D* &hSystematicUncertainty, TH1D* &hSystema
   TH1D* H1D_jetPt_unfolded[nUnfoldingMethods];
   TH1D* H1D_jetPt_unfolded_differences[nUnfoldingMethods-1];
 
+
+  TH1D* measuredInput;
+  if (!normGenAndMeasByNEvtsBeforeUnfolding) {
+    Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEndAndEvtNorm(measuredInput, iDataset, iRadius, options); 
+    if (useFineBinningTest) {
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(measuredInput, iDataset, iRadius, options);
+    }
+  } else{
+    Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEnd(measuredInput, iDataset, iRadius, options);
+    if (useFineBinningTest) {
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(measuredInput, iDataset, iRadius, options);
+    }
+  }
+
   char optionsAnalysis_withUnfoldingMethod[100] = "";
   for(int iMethod = 0; iMethod < nUnfoldingMethods; iMethod++){
     snprintf(optionsAnalysis_withUnfoldingMethod, sizeof(optionsAnalysis_withUnfoldingMethod), "%s,%s", options, unfoldingMethodList[iMethod]);
-    Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iMethod], iDataset, iRadius, centRange, unfoldParameterInput, optionsAnalysis_withUnfoldingMethod);
+    Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iMethod], measuredInput, iDataset, iRadius, centRange, unfoldParameterInput, optionsAnalysis_withUnfoldingMethod);
 
     if (iMethod != 0) {
       H1D_jetPt_unfolded_differences[iMethod-1] = (TH1D*)H1D_jetPt_unfolded[iMethod]->Clone("H1D_jetPt_unfolded_differences"+partialUniqueSpecifier);
@@ -222,7 +236,21 @@ void Draw_Systematics_UnfoldMethod(int iDataset, int iRadius, int unfoldParamete
   TH1D* H1D_jetPt_unfolded;
   char optionsAnalysis_withUnfoldingMethod[100] = "";
   snprintf(optionsAnalysis_withUnfoldingMethod, sizeof(optionsAnalysis_withUnfoldingMethod), "%s,%s", options, unfoldingMethod);
-  Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded, iDataset, iRadius, centRange, unfoldParameterInput, optionsAnalysis_withUnfoldingMethod);
+
+  TH1D* measuredInput;
+  if (!normGenAndMeasByNEvtsBeforeUnfolding) {
+    Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEndAndEvtNorm(measuredInput, iDataset, iRadius, options); 
+    if (useFineBinningTest) {
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(measuredInput, iDataset, iRadius, options);
+    }
+  } else{
+    Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEnd(measuredInput, iDataset, iRadius, options);
+    if (useFineBinningTest) {
+      Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(measuredInput, iDataset, iRadius, options);
+    }
+  }
+  
+  Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded, measuredInput, iDataset, iRadius, centRange, unfoldParameterInput, optionsAnalysis_withUnfoldingMethod);
   hSystematicUncertainty->Divide(H1D_jetPt_unfolded); //get it as a ratio of ref corrected yield
   hSystematicUncertainty_PreBarlow->Divide(H1D_jetPt_unfolded); //get it as a ratio of ref corrected yield
 
