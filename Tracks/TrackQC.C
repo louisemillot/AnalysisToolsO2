@@ -112,16 +112,16 @@ void TrackQC() {
   float jetPtMinCutArray[nPtBins+1] = {0, 200};
 
 
-  // Draw_Pt_DatasetComparison("evtNorm");
+  Draw_Pt_DatasetComparison("evtNorm");
   Draw_Pt_DatasetComparison("entriesNorm");
   for(int iPtBin = 0; iPtBin < nPtBins; iPtBin++){
     jetPtMinCut = jetPtMinCutArray[iPtBin];
     jetPtMaxCut = jetPtMinCutArray[iPtBin+1];
 
     float ptRange[2] = {jetPtMinCut, jetPtMaxCut};
-    // Draw_Eta_DatasetComparison(ptRange, "evtNorm");
+    Draw_Eta_DatasetComparison(ptRange, "evtNorm");
     Draw_Eta_DatasetComparison(ptRange, "entriesNorm");
-    // Draw_Phi_DatasetComparison(ptRange, "evtNorm");
+    Draw_Phi_DatasetComparison(ptRange, "evtNorm");
     Draw_Phi_DatasetComparison(ptRange, "entriesNorm");
 
   // Draw_Eta_DatasetComparison_trackSelComp();
@@ -708,7 +708,7 @@ void Draw_Pt_Run2Run3Comparison_0010Cent(int iDataset) {
   double* O2ptBins = &O2H1DPtbinsVector[0];
   H1D_run2_trackPt_rebinned = (TH1D*)H1D_run2_trackPt->Rebin(H1D_trackPt_rebinned->GetNbinsX(), "H1D_run2_trackPt_rebinned", O2ptBins);
 
-  int nEvents_CentWindow;
+  double nEvents_CentWindow;
   TH1D* H1D_Centrality_Run2= (TH1D*)((TObject*)file_AliAnalysis->Get("JetCore_JetCore_57_2050_04_histos"))->FindObject("fHistCentrality");
   int iBinCent_low = H1D_Centrality_Run2->GetXaxis()->FindBin(0 + GLOBAL_epsilon);
   int iBinCent_high = H1D_Centrality_Run2->GetXaxis()->FindBin(10 - GLOBAL_epsilon);
@@ -787,7 +787,7 @@ void Draw_Eta_Run2Run3Comparison_0010Cent(int iDataset) {
   double* O2etaBins = &O2H1DEtabinsVector[0];
   H1D_run2_trackEta_rebinned = (TH1D*)H1D_run2_trackEta->Rebin(H1D_trackEta_rebinned->GetNbinsX(), "H1D_run2_trackEta_rebinned", O2etaBins);
 
-  int nEvents_CentWindow;
+  double nEvents_CentWindow;
   TH1D* H1D_Centrality_Run2= (TH1D*)((TObject*)file_AliAnalysis->Get("JetCore_JetCore_57_2050_04_histos"))->FindObject("fHistCentrality");
   int iBinCent_low = H1D_Centrality_Run2->GetXaxis()->FindBin(0 + GLOBAL_epsilon);
   int iBinCent_high = H1D_Centrality_Run2->GetXaxis()->FindBin(10 - GLOBAL_epsilon);
@@ -848,7 +848,7 @@ void Draw_Phi_Run2Run3Comparison_0010Cent(int iDataset) {
   double* O2phiBins = &O2H1DPhibinsVector[0];
   H1D_run2_trackPhi_rebinned = (TH1D*)H1D_run2_trackPhi->Rebin(H1D_trackPhi_rebinned->GetNbinsX(), "H1D_run2_trackPhi_rebinned", O2phiBins);
 
-  int nEvents_CentWindow;
+  double nEvents_CentWindow;
   TH1D* H1D_Centrality_Run2= (TH1D*)((TObject*)file_AliAnalysis->Get("JetCore_JetCore_57_2050_04_histos"))->FindObject("fHistCentrality");
   int iBinCent_low = H1D_Centrality_Run2->GetXaxis()->FindBin(0 + GLOBAL_epsilon);
   int iBinCent_high = H1D_Centrality_Run2->GetXaxis()->FindBin(10 - GLOBAL_epsilon);
