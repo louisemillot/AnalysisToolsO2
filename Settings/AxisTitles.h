@@ -134,6 +134,8 @@ TString* texRatioMcpUnfolded = new TString("mcp / unfolded");
 TString* texRatioRun2Unfolded = new TString("run2 / run3");
 TString* texRatioMeasuredUnfolded = new TString("measured / unfolded");
 TString* texRatioRefoldedMeasured = new TString("refolded / measured");
+TString* texRatioMcpFoldedVsMcp = new TString("mcp-folded / mcp");
+TString* texRatioMcpFoldedUnfoldedMcp = new TString("mcp-folded unfolded / mcp");
 
 
 TString* texTrackEfficiencyRatioEtaComparison = new TString("#epsilon^{ #eta > 0} / #epsilon^{ #eta < 0}");

@@ -422,29 +422,56 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   TH1D* H1D_jetPt_mcpFolded2;
   TH1D* H1D_jetPt_mcpFoldedThenUnfolded;
   TH1D* H1D_jetPt_unfolded_mcpComp[2];
-  TH1D* H1D_jetPt_unfolded_run2Comp[2];
+  TH1D* H1D_jetPt_unfolded_run2Comp[3];
   TH1D* H1D_jetPt_unfolded_measuredComp[2];
   TH1D* H1D_jetPt_unfolded_refoldedComp[3];
   TH1D* H1D_jetPt_unfolded_mcpFoldedComp[2];
   TH1D* H1D_jetPt_unfolded_mcpFoldedUnfoldedComp[2];
   TH1D* H1D_jetPt_mcp;
   TH1D* H1D_jetPt_mcp_recBinControl;
-  TH1D* H1D_jetPt_run2;
+  TH1D* H1D_jetPt_run2_HannaBossiLauraFile;
+  TGraph* Graph_jetPt_run2_MLPaperFile;
+  TH1D* H1D_jetPt_run2_MLPaperFile = new TH1D("H1D_jetPt_run2_MLPaperFile", "H1D_jetPt_run2_MLPaperFile", nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius]);
   TH1D* H1D_jetPt_ratio_mcp;
-  TH1D* H1D_jetPt_ratio_run2;
+  TH1D* H1D_jetPt_ratio_run2[2];
   TH1D* H1D_jetPt_ratio_measured;
   TH1D* H1D_jetPt_ratio_measuredRefolded[2];
   TH1D* H1D_jetPt_ratio_mcpFoldedMcp;
   TH1D* H1D_jetPt_ratio_mcpFoldedUnfoldedMcp;
 
+  // RUN 2 settings
   if (isDataPbPb && comparePbPbWithRun2) {
-    H1D_jetPt_run2 = (TH1D*)((TH1D*)file_O2Analysis_run2ComparisonFile->Get("Bayesian_Unfoldediter15"))->Clone("H1D_jetPt_run2");
+    H1D_jetPt_run2_HannaBossiLauraFile = (TH1D*)((TH1D*)file_O2Analysis_run2ComparisonFileHannaBossiLaura->Get("Bayesian_Unfoldediter15"))->Clone("H1D_jetPt_run2_HannaBossiLauraFile");
     int NcollRun2 = 4619963; // central (see Laura discussion mattermost) 
-    H1D_jetPt_run2->Scale(1./NcollRun2);
+    H1D_jetPt_run2_HannaBossiLauraFile->Scale(1./NcollRun2);
+
+    double Ncoll;
+    if (centralityRange[0] == 00 && centralityRange[1] == 10) {
+      Ncoll = (1780.9+1387.0)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf
+    } else if (centralityRange[0] == 50 && centralityRange[1] == 70) {
+      Ncoll = (103.7+46.1)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf
+    } else {
+      cout << "comparison with run2: Ncoll hasn't been calculated for this centrality interval" << endl;
+    }
+    double sigmaNN = 68.4; // value for sqrt(s) = 5.44 closest to 5.36 https://arxiv.org/abs/1710.07098
+    double T_AA = Ncoll / sigmaNN;
+    Graph_jetPt_run2_MLPaperFile = ((TGraph*)((TDirectoryFile*)file_O2Analysis_run2ComparisonFileMLPaper->Get("Figure 3a top R020"))->FindObjectAny("Graph1D_y1"));
+    // H1D_jetPt_run2_MLPaperFile = (TH1D*)((TH1D*)(file_O2Analysis_run2ComparisonFileMLPaper->Get("Figure 3a top R020"))->FindObject("Graph1D_y1"))->Clone("H1D_jetPt_run2_MLPaperFile");
+    int Ngraph = Graph_jetPt_run2_MLPaperFile->GetN();
+    for (int i=0; i < Ngraph; ++i) // setting bin contents to the TGraph values
+    {
+      double x,y;
+      Graph_jetPt_run2_MLPaperFile->GetPoint(i, x, y);
+      H1D_jetPt_run2_MLPaperFile->Fill(x, y); // uncertainties are of course screwed up
+      int iHist = H1D_jetPt_run2_MLPaperFile->GetXaxis()->FindBin(x);
+      H1D_jetPt_run2_MLPaperFile->SetBinError(iHist, Graph_jetPt_run2_MLPaperFile->GetErrorY(i));
+    }
+    H1D_jetPt_run2_MLPaperFile->Scale(T_AA);
+    // now the spectre from the file is 1/N d2N/dpTdeta, instead of 1/T_AA 1/N d2N/dpTdeta
   }
 
   bool divideSuccessMcp;
-  bool divideSuccessRun2;
+  bool divideSuccessRun2[2];
   bool divideSuccessMeasured;
   bool divideSuccessMeasuredRefolded[2];
   bool divideSuccessMcpFoldedMcp;
@@ -501,9 +528,12 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   // comparison with run2 
   if (isDataPbPb && comparePbPbWithRun2) {
     H1D_jetPt_unfolded_run2Comp[0] = (TH1D*)H1D_jetPt_unfolded->Clone("H1D_jetPt_unfolded_run2Comp"+partialUniqueSpecifier);
-    H1D_jetPt_unfolded_run2Comp[1] = (TH1D*)H1D_jetPt_run2->Clone("H1D_jetPt_unfolded_run2Comp"+partialUniqueSpecifier);
-    H1D_jetPt_ratio_run2 = (TH1D*)H1D_jetPt_run2->Clone("H1D_jetPt_ratio_run2"+partialUniqueSpecifier);
-    divideSuccessRun2 = H1D_jetPt_ratio_run2->Divide(H1D_jetPt_unfolded);
+    H1D_jetPt_unfolded_run2Comp[1] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_unfolded_run2Comp_HannaBossiLauraFile"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_run2Comp[2] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_unfolded_run2Comp_MLPaperFile"+partialUniqueSpecifier);
+    H1D_jetPt_ratio_run2[0] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_ratio_run2_HannaBossiLauraFile"+partialUniqueSpecifier);
+    H1D_jetPt_ratio_run2[1] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_ratio_run2_MLPaperFile"+partialUniqueSpecifier);
+    divideSuccessRun2[0] = H1D_jetPt_ratio_run2[0]->Divide(H1D_jetPt_unfolded);
+    divideSuccessRun2[1] = H1D_jetPt_ratio_run2[1]->Divide(H1D_jetPt_unfolded);
   }
   // comparison with refolded
   if (!useFineBinningTest) {
@@ -608,12 +638,12 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
 
   // comparison with Run 2
   if (isDataPbPb && comparePbPbWithRun2) {
-  TString unfoldedRun2CompLegend[2] = {"unfolded Run3", "unfolded Run2 0-10%"};
+  TString unfoldedRun2CompLegend[3] = {"unfolded Run3", "unfolded Run2 Hanna", "unfolded Run2 ML"};
     TString* pdfName_run2Comp = new TString(pdfTitleBase+unfoldingInfo+"_run2Comp");
-    Draw_TH1_Histograms(H1D_jetPt_unfolded_run2Comp, unfoldedRun2CompLegend, 2, textContext, pdfName_run2Comp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
-    if (divideSuccessRun2){
+    Draw_TH1_Histograms(H1D_jetPt_unfolded_run2Comp, unfoldedRun2CompLegend, 3, textContext, pdfName_run2Comp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
+    if (divideSuccessRun2[0] && divideSuccessRun2[1]) {
       TString* pdfName_ratio_run2 = new TString(pdfTitleBase+unfoldingInfo+"_ratioRun2");
-      Draw_TH1_Histogram(H1D_jetPt_ratio_run2, textContext, pdfName_ratio_run2, texPtX, texRatioRun2Unfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine");
+      Draw_TH1_Histograms(H1D_jetPt_ratio_run2, unfoldedRun2CompLegend, 2, textContext, pdfName_ratio_run2, texPtX, texRatioRun2Unfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine");
     }
   }
 

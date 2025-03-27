@@ -7,6 +7,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////       file access choice       ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
+TFile* file_O2Analysis_run2ComparisonFileHannaBossiLaura = new TFile("Datasets/Run2_Unfolding_AreaBased_HannahMethod_R020_Nominal_ExtendedPtRange/Unfolding_AreaBased_HannahMethod_R020_Nominal_ExtendedPtRange.root");
+TFile* file_O2Analysis_run2ComparisonFileMLPaper = new TFile("Datasets/Run2_Unfolding_MachineLearningMethod_R020/Ch-jetSuppression_PbPb502TeV.root");
 
 
 //////// -------- LHC23zzh pass 4 with - pp sim anchored to PbPb 10%  ///////
