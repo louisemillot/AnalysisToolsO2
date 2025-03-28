@@ -11,6 +11,8 @@
 #include <sstream>
 #include <array>
 #include "TGaxis.h"
+#include <string>
+#include <filesystem>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Various Utilities /////////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +33,24 @@ float findMaxFloat(float* array, int length){
   return max;
 }
 
+// Returns:
+//   true upon success.
+//   false upon failure, and set the std::error_code & err accordingly.
+bool CreateDirectoryRecursive(std::string const & dirName, std::error_code & err) //https://stackoverflow.com/questions/71658440/c17-create-directories-automatically-given-a-file-path
+{
+    err.clear();
+    if (!std::filesystem::create_directories(dirName, err))
+    {
+        if (std::filesystem::exists(dirName))
+        {
+            // The folder already exists:
+            err.clear();
+            return true;    
+        }
+        return false;
+    }
+    return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Histogram Context /////////////////////////////////////////////////////////////////////////////////////
@@ -696,18 +716,31 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
 
 
 
-
-  struct stat st1{};
-  if (stat("pdfFolder/", &st1) == -1) {
-      mkdir("pdfFolder/", 0700);
-  }
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/", errEPS);
   canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
-
-  struct stat st2{};
-  if (stat("pngFolder/", &st2) == -1) {
-      mkdir("pngFolder/", 0700);
-  }
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
+  canvas->SaveAs("epsFolder/"+*pdfName+".eps");
+
+  // struct stat st1{};
+  // if (stat("pdfFolder/", &st1) == -1) {
+  //     mkdir("pdfFolder/", 0700);
+  // }
+  // canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
+
+  // struct stat st2{};
+  // if (stat("pngFolder/", &st2) == -1) {
+  //     mkdir("pngFolder/", 0700);
+  // }
+  // canvas->SaveAs("pngFolder/"+*pdfName+".png");
+
+  // struct stat st3{};
+  // if (stat("epsFolder/", &st3) == -1) {
+  //   mkdir("epsFolder/", 0700);
+  // }
+  // canvas->SaveAs("epsFolder/"+*pdfName+".eps");
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
   //   cout << "histograms_collection[0]->GetBinContent(iCentralityBin) = " << histograms_collection[0]->GetBinContent(iCentralityBin) << endl;
@@ -870,17 +903,33 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     textInfo->DrawLatex(0.18,0.65,legendList_string[i]);
   }
 
-  struct stat st1{};
-  if (stat("pdfFolder/", &st1) == -1) {
-      mkdir("pdfFolder/", 0700);
-  }
-  canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
 
-  struct stat st2{};
-  if (stat("pngFolder/", &st2) == -1) {
-      mkdir("pngFolder/", 0700);
-  }
+
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/", errEPS);
+  canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
+  canvas->SaveAs("epsFolder/"+*pdfName+".eps");
+  
+  // struct stat st1{};
+  // if (stat("pdfFolder/", &st1) == -1) {
+  //     mkdir("pdfFolder/", 0700);
+  // }
+  // canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
+
+  // struct stat st2{};
+  // if (stat("pngFolder/", &st2) == -1) {
+  //     mkdir("pngFolder/", 0700);
+  // }
+  // canvas->SaveAs("pngFolder/"+*pdfName+".png");
+
+  // struct stat st3{};
+  // if (stat("epsFolder/", &st3) == -1) {
+  //   mkdir("epsFolder/", 0700);
+  // }
+  // canvas->SaveAs("epsFolder/"+*pdfName+".eps");
 }
 
 void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 3> drawnWindow2D, double* th2Contours, int th2ContourNumber, std::string options) {

@@ -3,6 +3,7 @@
 
 float findMinFloat(float* array, int length);
 float findMaxFloat(float* array, int length);
+bool CreateDirectoryRecursive(std::string const & dirName, std::error_code & err);
 
 TString contextCustomFourFields(TString mainContext, TString secondaryContext, TString tertiaryContext, TString quaternaryContext, std::string options);
 TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, std::string options);

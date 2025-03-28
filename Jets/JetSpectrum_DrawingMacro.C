@@ -314,14 +314,22 @@ void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
 
   TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
-  struct stat st1{};
-  if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
-      mkdir("pdfFolder/ResponseMatrices", 0700);
-  }
-  struct stat st2{};
-  if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
-      mkdir("pngFolder/ResponseMatrices", 0700);
-  }
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/ResponseMatrices", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/ResponseMatrices", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/ResponseMatrices", errEPS);
+  // struct stat st1{};
+  // if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
+  //     mkdir("pdfFolder/ResponseMatrices", 0700);
+  // }
+  // struct stat st2{};
+  // if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
+  //     mkdir("pngFolder/ResponseMatrices", 0700);
+  // }
+  // struct stat st3{};
+  // if (stat("epsFolder/ResponseMatrices", &st3) == -1) {
+  //     mkdir("epsFolder/ResponseMatrices", 0700);
+  // }
 
   TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_fluctuationsBackground_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
   // TString* pdfNameFullRes_logz = new TString("ResponseMatrices/responseMatrix_fluctuationsBackground_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"FullRes_logz");
@@ -354,14 +362,23 @@ void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius) {
 
   TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
-  struct stat st1{};
-  if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
-      mkdir("pdfFolder/ResponseMatrices", 0700);
-  }
-  struct stat st2{};
-  if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
-      mkdir("pngFolder/ResponseMatrices", 0700);
-  }
+
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/ResponseMatrices", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/ResponseMatrices", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/ResponseMatrices", errEPS);
+  // struct stat st1{};
+  // if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
+  //     mkdir("pdfFolder/ResponseMatrices", 0700);
+  // }
+  // struct stat st2{};
+  // if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
+  //     mkdir("pngFolder/ResponseMatrices", 0700);
+  // }
+  // struct stat st3{};
+  // if (stat("epsFolder/ResponseMatrices", &st3) == -1) {
+  //     mkdir("epsFolder/ResponseMatrices", 0700);
+  // }
 
   TString* pdfName = new TString("ResponseMatrices/responseMatrix_detectorEffects_"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
   TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_detectorEffects_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
@@ -391,14 +408,23 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
 
   TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
-  struct stat st1{};
-  if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
-      mkdir("pdfFolder/ResponseMatrices", 0700);
-  }
-  struct stat st2{};
-  if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
-      mkdir("pngFolder/ResponseMatrices", 0700);
-  }
+
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/ResponseMatrices", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/ResponseMatrices", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/ResponseMatrices", errEPS);
+  // struct stat st1{};
+  // if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
+  //     mkdir("pdfFolder/ResponseMatrices", 0700);
+  // }
+  // struct stat st2{};
+  // if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
+  //     mkdir("pngFolder/ResponseMatrices", 0700);
+  // }
+  // struct stat st3{};
+  // if (stat("epsFolder/ResponseMatrices", &st3) == -1) {
+  //     mkdir("epsFolder/ResponseMatrices", 0700);
+  // }
 
   TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
   TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
@@ -589,14 +615,22 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   }
   TString unfoldingInfo = (TString)unfoldingMethod+"-k="+Form("%i", unfoldParameter)+"-"+(TString)mergingPrior+"-"+(TString)unfoldingPrior+"-"+unfoldingCode+"-matrixTransfo"+matrixTransformationOrder;
 
-  struct stat st1{};
-  if (stat("pdfFolder/IterationsDump", &st1) == -1) {
-      mkdir("pdfFolder/IterationsDump", 0700);
-  }
-  struct stat st2{};
-  if (stat("pngFolder/IterationsDump", &st2) == -1) {
-      mkdir("pngFolder/IterationsDump", 0700);
-  }
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/ResponseMatrices", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/ResponseMatrices", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/ResponseMatrices", errEPS);
+  // struct stat st1{};
+  // if (stat("pdfFolder/IterationsDump", &st1) == -1) {
+  //     mkdir("pdfFolder/IterationsDump", 0700);
+  // }
+  // struct stat st2{};
+  // if (stat("pngFolder/IterationsDump", &st2) == -1) {
+  //     mkdir("pngFolder/IterationsDump", 0700);
+  // }
+  // struct stat st3{};
+  // if (stat("epsFolder/ResponseMatrices", &st3) == -1) {
+  //     mkdir("epsFolder/ResponseMatrices", 0700);
+  // }
 
   TString textContext = contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), "");
 
