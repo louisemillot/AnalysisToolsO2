@@ -745,7 +745,7 @@ void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TStr
   Draw_TH1_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options);
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options, TPolyLine* optionalLine) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 3> drawnWindow2D, double* th2Contours, int th2ContourNumber, std::string options, TPolyLine* optionalLine) {
 
   double width = collectionSize*900;
   double height = 800;
@@ -780,15 +780,33 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
 
-  if (std::equal(std::begin(drawnWindow), std::end(drawnWindow), std::begin(drawnWindowAuto), std::end(drawnWindowAuto))) {
+
+  if (std::equal(std::begin(drawnWindow2D[0]), std::end(drawnWindow2D[0]), std::begin(drawnWindow2DAuto[0]), std::end(drawnWindow2DAuto[0]))) { // auto x axis
     if (options.find("autoRangeSame") != std::string::npos) {
       int maxXbin = 0;
-      int maxYbin = 0;
       int symBinLimitMin = 9999999;
       for (int i = 0; i < collectionSize; i++) {
         if (maxXbin < histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 1)) {
           maxXbin = histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 1);// (asks for the first/last bin on the x axis (axis number 1) to have strictly more than 1 entry)
         }
+      }
+      for (int i = 0; i < collectionSize; i++) {
+        histograms_collection[i]->GetXaxis()->SetRange(1, maxXbin);
+      }
+    }
+  } else {
+    double minX = drawnWindow2D[0][0];
+    double maxX = drawnWindow2D[0][1];
+    for (int i = 0; i < collectionSize; i++) {
+      histograms_collection[i]->GetXaxis()->SetRangeUser(minX, maxX);
+    }
+  }
+
+  if (std::equal(std::begin(drawnWindow2D[1]), std::end(drawnWindow2D[1]), std::begin(drawnWindow2DAuto[1]), std::end(drawnWindow2DAuto[1]))) { // auto y axis
+    if (options.find("autoRangeSame") != std::string::npos) {
+      int maxYbin = 0;
+      int symBinLimitMin = 9999999;
+      for (int i = 0; i < collectionSize; i++) {
         if (maxYbin < histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2)) {
           maxYbin = histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2);// (asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
         }
@@ -805,20 +823,28 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
           histograms_collection[i]->GetYaxis()->SetRange(symBinLimitMin, histograms_collection[i]->GetNbinsY() - symBinLimitMin); //getting symmetric window around 0 on Y axis
         }
         else {
-          histograms_collection[i]->GetXaxis()->SetRange(1, maxXbin);
           histograms_collection[i]->GetYaxis()->SetRange(1, maxYbin);
         }
       }
     }
-    // else draws with unchanged histogram window
-  } else { // if not drawnWindowAuto, then set the window to match the one entered in drawnWindow
-    int minX = drawnWindow[0][0];
-    int maxX = drawnWindow[0][1];
-    int minY = drawnWindow[1][0];
-    int maxY = drawnWindow[1][1];
+  } else {
+    double minY = drawnWindow2D[1][0];
+    double maxY = drawnWindow2D[1][1];
     for (int i = 0; i < collectionSize; i++) {
-      histograms_collection[i]->GetXaxis()->SetRangeUser(minX, maxX);
       histograms_collection[i]->GetYaxis()->SetRangeUser(minY, maxY);
+    }
+  }
+
+  if (std::equal(std::begin(drawnWindow2D[2]), std::end(drawnWindow2D[2]), std::begin(drawnWindow2DAuto[2]), std::end(drawnWindow2DAuto[2]))) { // auto z axis
+    for (int i = 0; i < collectionSize; i++) {
+      histograms_collection[i]->GetZaxis()->SetRangeUser(histograms_collection[i]->GetMinimum(GLOBAL_epsilon), histograms_collection[i]->GetMaximum());
+    }
+  } else {
+    double minZ = drawnWindow2D[2][0];
+    double maxZ = drawnWindow2D[2][1];
+    for (int i = 0; i < collectionSize; i++) {
+      cout << "kjsfkdsjhglkfdjhgkdjhgdkjhgkdfjhgdkjfhkfdjhgkdfjhgkdjhgkdfjhgkdfhjg" << minZ << ", " << maxZ << endl;
+      histograms_collection[i]->GetZaxis()->SetRangeUser(minZ, maxZ);
     }
   }
 
@@ -828,12 +854,6 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
       optionalLine->Draw("");
       optionalLine->SetLineColor(kRed);
     }
-  }
-
-  // cout << "---------------- TH2 drawing; getting min and max test:" << endl;
-  for (int i = 0; i < collectionSize; i++) {
-    histograms_collection[i]->GetZaxis()->SetRangeUser(histograms_collection[i]->GetMinimum(GLOBAL_epsilon), histograms_collection[i]->GetMaximum());
-    // cout << "min = " << histograms_collection[i]->GetMinimum(GLOBAL_epsilon) << ", max = " << histograms_collection[i]->GetMaximum() << endl;
   }
 
   gStyle->SetPalette(kBird); // a better palette than the kRainbow that was used by default; https://root.cern.ch/doc/master/classTColor.html lists it as one of the better palettes for Colour Vision Deficiencies 
@@ -863,17 +883,17 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 3> drawnWindow2D, double* th2Contours, int th2ContourNumber, std::string options) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms function; it will only be used if 'options' has fit in it
   TPolyLine* optionalLine;
-  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, th2Contours, th2ContourNumber, options, optionalLine);
+  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow2D, th2Contours, th2ContourNumber, options, optionalLine);
 }
 
-void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
+void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 3> drawnWindow2D, double* th2Contours, int th2ContourNumber, std::string options) {
   TH2D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
-  Draw_TH2_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, th2Contours, th2ContourNumber, options);
+  Draw_TH2_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow2D, th2Contours, th2ContourNumber, options);
 
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){

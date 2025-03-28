@@ -27,7 +27,7 @@ const float centralityRange[2] = {0, 10};
 
 
 
-char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics
+char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics //// THIS stemmed from amisunderstanding of what was being done by Marta; should be kept to noPriorMerging
 char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
 const bool doYSliceNormToOneDetResp = true; // should be true (done by marta)
 const bool doYSliceNormToOneCombinedResp = false; // should be false (not done by marta); breaks unfolding with svd if true
@@ -74,6 +74,10 @@ std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindow
 
 
 // If I normalise before rebinning, then after rebinning the normalisation wont still be there, because I will merge several line together
+
+// I should change the naming of draw_mcp (to account for  unfolding control case), also change how unfolding control is done
+
+// when merging the bins in y axis, normalisation will go weird
 
 ////////////////////////////////////////////////
 ////////// Unfolding settings - end ////////////

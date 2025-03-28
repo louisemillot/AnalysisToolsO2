@@ -146,8 +146,8 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
     TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting).Clone("responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
 
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfNamePost, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfNamePost_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfNamePost, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfNamePost_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
   cout << "RooUnfoldResponse setting - start" << endl;
@@ -315,8 +315,8 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
     TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding).Clone("responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
 
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
 
@@ -416,8 +416,8 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_preWidthScalingAtEndAndEvtNorm(TH1
     // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
     TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding).Clone("responseMatrix_combined_duringRefolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
 
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
   cout << "((((((((((((((((()))))))))))))))))" << endl;

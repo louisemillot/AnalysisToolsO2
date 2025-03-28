@@ -600,13 +600,13 @@ void Draw_JetArea_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
   // TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  // Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetArea, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+  // Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfName, texPtX, texJetArea, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
-  Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogz, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetArea, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogz, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetArea, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   // TString* pdfNamelogy = new TString(*pdfName + "_logx");
-  // Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texJetArea, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logx");
+  // Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texJetArea, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logx");
   // TString* pdfNamelogyz = new TString(*pdfName + "_logxz");
-  // Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texJetArea, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logxlogz");
+  // Draw_TH2_Histograms(H2D_jetArea, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texJetArea, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logxlogz");
 }
 
 void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
@@ -637,9 +637,9 @@ void Draw_JetNTracks_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
 
-  Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetNTracks, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+  Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfName, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetNTracks, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
-  Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfNamelogz, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetNTracks, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histograms(H2D_jetNTracks, RadiusLegend, nRadius, textContext, pdfNamelogz, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetNTracks, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
 }
 
 void Draw_JetEta_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
@@ -670,13 +670,13 @@ void Draw_JetEta_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
 
-  // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfName, texPtX, texEtaX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+  // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfName, texPtX, texEtaX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
   Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogz, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texEtaX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
   // TString* pdfNamelogy = new TString(*pdfName + "_logx");
-  // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texEtaX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logx");
+  // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texEtaX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logx");
   // TString* pdfNamelogyz = new TString(*pdfName + "_logxz");
-  // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texEtaX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logxlogz");
+  // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texEtaX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logxlogz");
 }
 
 void Draw_JetPhi_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
@@ -707,13 +707,13 @@ void Draw_JetPhi_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
   // TString textContext(contextDatasetRadiusCompAndVarRange(iDataset, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, Datasets[iDataset], contextPtRange(PtRange), ""));
 
-  // Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfName, texPtX, texPhiX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+  // Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfName, texPtX, texPhiX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
-  Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texPhiX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texPhiX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   // TString* pdfNamelogy = new TString(*pdfName + "_logx");
-  // Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texPhiX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logx");
+  // Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texPhiX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logx");
   // TString* pdfNamelogyz = new TString(*pdfName + "_logxz");
-  // Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texPhiX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logxlogz");
+  // Draw_TH2_Histograms(H2D_jetPhi, RadiusLegend, nRadius, textContext, pdfNamelogyz, texPtX, texPhiX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logxlogz");
 }
 
 void Draw_JetPhi_vs_JetEta_RadiusComparison(int iDataset) {
@@ -1247,7 +1247,7 @@ void Draw_JetTRDratio_vs_JetEta(int iDataset) {
 
   TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
-  Draw_TH2_Histograms(H2D_jetEtajetTRDratio, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracksRatio, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+  Draw_TH2_Histograms(H2D_jetEtajetTRDratio, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracksRatio, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
 }
 
 void Draw_JetTRDcount_vs_JetEta(int iDataset) {
@@ -1268,7 +1268,7 @@ void Draw_JetTRDcount_vs_JetEta(int iDataset) {
 
   TString textContext("#splitline{"+*texDatasetsComparisonCommonDenominator+" "+DatasetsNames[iDataset]+"}{2023 QC}");
 
-  Draw_TH2_Histograms(H2D_jetEtajetTRD, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracks, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
+  Draw_TH2_Histograms(H2D_jetEtajetTRD, histCollectionLegend, nHistCollection, textContext, pdfName, texEtaX, texJetNTrdTracks, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
 }
 
 void Draw_Pt_ratio_etaNeg_etaPos_TRDonly_vs_noTRD(int iDataset, float* etaRange) {
@@ -1548,7 +1548,7 @@ void Draw_Rho_vs_Centrality_DatasetComp() {
   // TString textContext(contextDatasetComp(""));
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH2_Histograms(H2D_rhoCentrality_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texCentrality, texRho, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
+  Draw_TH2_Histograms(H2D_rhoCentrality_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texCentrality, texRho, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
 }
 
 
@@ -1570,7 +1570,7 @@ void Draw_SelectedMultiplicity_vs_Centrality_DatasetComp() {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH2_Histograms(H2D_multCentrality_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texCentrality, texSelectedMultiplicity, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
+  Draw_TH2_Histograms(H2D_multCentrality_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texCentrality, texSelectedMultiplicity, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
 }
 
 void Draw_Rho_vs_SelectedMultiplicity_DatasetComp() {
@@ -1592,7 +1592,7 @@ void Draw_Rho_vs_SelectedMultiplicity_DatasetComp() {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
+  Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
 }
 
 void Draw_Rho_vs_SelectedMultiplicity_DatasetComp_withCutDemarcation() {
@@ -1616,7 +1616,7 @@ void Draw_Rho_vs_SelectedMultiplicity_DatasetComp_withCutDemarcation() {
   float lineEdgesX[4] = {0, 500, 1200, 1200};
   float lineEdgesY[4] = {10, 35, 84, 100};
   TPolyLine* demarcation = new TPolyLine(4, lineEdgesX, lineEdgesY);
-  Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame,drawLines", demarcation);
+  Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame,drawLines", demarcation);
 }
 
 
@@ -1638,7 +1638,7 @@ void Draw_Rho_vs_LeadingJetPt_DatasetComp() {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH2_Histograms(H2D_rhoLeadJet_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texLeadJetPt, texRho, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
+  Draw_TH2_Histograms(H2D_rhoLeadJet_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texLeadJetPt, texRho, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
 }
 
 void Draw_BkgFluctuations_vs_Centrality_DatasetComp(std::array<std::array<float, 2>, 2> drawnWindow) {
@@ -1677,7 +1677,7 @@ void Draw_BkgFluctuations_vs_Centrality_DatasetComp(std::array<std::array<float,
   TString placeHolderLegend[1] = {""};
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
-  Draw_TH2_Histograms(H2D_fluctuations_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texCentrality, texBkgFluctuationRandomCone, texCollisionDataInfo, drawnWindow, th2ContoursNone, contourNumberNone, "logz,autoRangeSameSym");
+  Draw_TH2_Histograms(H2D_fluctuations_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texCentrality, texBkgFluctuationRandomCone, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSameSym");
 }
 
 
@@ -2741,7 +2741,7 @@ void Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio() {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH2_Histograms(H2D_rhoMult_ratios, DatasetsNames, nDatasets-1, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
+  Draw_TH2_Histograms(H2D_rhoMult_ratios, DatasetsNames, nDatasets-1, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
 }
 
 // void Draw_Rho_vs_SelectedMultiplicity_CentralityComp(int iDataset) {
@@ -2776,7 +2776,7 @@ void Draw_Rho_vs_SelectedMultiplicity_DatasetCompRatio() {
 
 //   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-//   Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nCentralityBins, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
+//   Draw_TH2_Histograms(H2D_rhoMult_rebinned, DatasetsNames, nCentralityBins, textContext, pdfName, texSelectedMultiplicity, texRho, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz,autoRangeSame");
 // }
 
 

@@ -149,6 +149,7 @@ TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, 
   if (debug == true) {cout << "___________ end RebinVariableBins2D" << endl;}
 
   return H2D_hist_rebinned;
+  // why am i using this histName and ss?
 }
 TH2D RebinVariableBins2D(TH2D* H2D_hist, int nBinsX, int nBinsY, double* binsX, double* binsY){
   return RebinVariableBins2D(H2D_hist, nBinsX, nBinsY, binsX, binsY, false);
@@ -239,8 +240,8 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
     TString textContext_preRebin((TString)"");
 
 
-    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
   std::stringstream ss;

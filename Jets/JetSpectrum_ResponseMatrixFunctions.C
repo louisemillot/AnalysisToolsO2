@@ -55,8 +55,8 @@ void Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(TH2D* &H2D
     // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
     TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_fineBinningPreTransforms).Clone("responseMatrix_combined_fineBinningPreTransforms"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
 
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
   // cout << "bin(topleft 1,N) = " << H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->GetBinContent(1,H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->GetNbinsY()) << endl;
   // cout << "bin(bottom left 1,1) = " << H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning->GetBinContent(1,1) << endl;
@@ -189,8 +189,8 @@ void ReweightResponseMatrixWithPrior(TH2D* &H2D_jetPtResponseMatrix, int iDatase
     // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
     TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_postReweightWithPrior).Clone("responseMatrix_combined_postReweightWithPrior"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
 
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_preRebin_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 }
 
@@ -269,8 +269,8 @@ void MergeResponseMatrixBins(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int i
     // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
     TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_postBinMerge).Clone("responseMatrix_combined_postReweightWithPrior"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
 
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
   // TransformRawResponseToYieldResponse(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined);
@@ -314,8 +314,8 @@ void NormYSlicesAndScaleRespByWidth(TH2D* &H2D_jetPtResponseMatrix, int iDataset
     // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
     TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_postYSliceNormAndWidthNorm).Clone("responseMatrix_combined_postReweightWithPrior"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
 
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 }
 
