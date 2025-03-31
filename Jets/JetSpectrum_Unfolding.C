@@ -81,7 +81,7 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
   bool divideSuccessFakes;
   TH1D* H1D_jetFakes;
   if (useManualRespMatrixSettingMethod) {
-    if (applyFakes) {
+    if (applyFakes && (options.find("noPurity") == std::string::npos)) { // if applyFakes AND if option noPurity has not been found in options; necessary check for the mcp-folded unfolding test as we don't want the fake correction
       if (!useFineBinningTest){ 
         divideSuccessFakes = Get_Pt_JetFakes(H1D_jetFakes, iDataset, iRadius, options);
       } else {
@@ -94,7 +94,6 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
       }
     }
   }
-
 
   // TH1D* measured;
   // Get_Pt_spectrum_bkgCorrected_recBinning(measured, iDataset, iRadius, options);
@@ -280,13 +279,17 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     if (applyEfficiencies > 0) {
       if (applyEfficiencies == 2 || applyEfficiencies == 3) {
         if (divideSuccessEff){
-          H1D_jetPt_unfolded->Divide(H1D_jetEfficiency);
+          if (options.find("noEff") == std::string::npos) { // if option noEff has not been found in options; necessary check for the mcp-folded unfolding test as we don't want the eff correction
+            H1D_jetPt_unfolded->Divide(H1D_jetEfficiency);
+          }
         } else {
           cout << "################## Get_Pt_JetEfficiency FAILED!!!!! in Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNorm ##################" << endl;
         }
       }
       if ((applyEfficiencies == 1 || applyEfficiencies == 3) && !useFineBinningTest) {
-        H1D_jetPt_unfolded->Divide(H1D_kinematicEfficiency);
+        if (options.find("noKineEff") == std::string::npos) { // if option noKineEff has not been found in options; necessary check for the mcp-folded unfolding test as we don't want the kine eff correction
+          H1D_jetPt_unfolded->Divide(H1D_kinematicEfficiency);
+        }
       }
     }
   }
@@ -331,7 +334,7 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEnd(TH1D* &
   std::pair<int, RooUnfold*> unfoldInfo = Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_unfolded, measuredInput, iDataset, iRadius, unfoldParameterInput, options);
   cout << "Get_Pt_spectrum_unfolded_preWidthScalingAtEnd test 1" << endl;
   if (normaliseDistribsAfterUnfolding){
-    if (!controlMC) {
+    if (!controlMC && options.find("inputIsMC") == std::string::npos) { // if option controlMC is false, and if inputIsMC has not been found in options; necessary check for the mcp-folded unfolding test as we want to normalise by the number of events in the MC file
       NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflowData));
     } else {
       if (!mcIsWeighted) {
@@ -675,18 +678,19 @@ void Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEndAndEvtNorm(TH
     divideSuccessEff = Get_Pt_JetEfficiency_fineBinning(H1D_jetEfficiency, iDataset, iRadius, options);
   // }
 
-  if (applyEfficiencies > 0) {
-    if (applyEfficiencies == 2 || applyEfficiencies == 3) {
-      if (divideSuccessEff){
-        H1D_jetPt_mcp_control->Multiply(H1D_jetEfficiency);
-      } else {
-        cout << "################## H1D_jetPt_mcp_control->Multiply(H1D_jetEfficiency) failed because Get_Pt_JetEfficiency() FAILED!!!!! ##################" << endl;
-      }
-    }
-    if ((applyEfficiencies == 1 || applyEfficiencies == 3) && !useFineBinningTest) {
+  // we do not apply efficiencies on this folding exercise with fluctuations
+  // if (applyEfficiencies > 0) {
+  //   if (applyEfficiencies == 2 || applyEfficiencies == 3) {
+  //     if (divideSuccessEff){
+  //       H1D_jetPt_mcp_control->Multiply(H1D_jetEfficiency);
+  //     } else {
+  //       cout << "################## H1D_jetPt_mcp_control->Multiply(H1D_jetEfficiency) failed because Get_Pt_JetEfficiency() FAILED!!!!! ##################" << endl;
+  //     }
+  //   }
+  //   if ((applyEfficiencies == 1 || applyEfficiencies == 3) && !useFineBinningTest) {
       // H1D_jetPt_mcp_control->Multiply(H1D_kinematicEfficiency);
-    }
-  }
+  //   }
+  // }
 
 
   TH2D* refoldingResponseMatrix;

@@ -1,4 +1,5 @@
 #include "TStyle.h"
+#include "TGraph.h"
 #include "TFile.h"
 #include "TFitResult.h"
 #include "TH1F.h"
@@ -95,24 +96,24 @@ void JetSpectrum_DrawingMacro() {
   Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
   Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
 
-  // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
-  // Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis);
-  // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
-  // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
+  // // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
+  Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis);
+  Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
+  Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
 
-  // Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
-  // Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
-  // Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
+  Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
+  Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
+  Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
 
   // int unfoldParameterInput = 6;
   // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput, optionsAnalysis);
-  // int unfoldParameterInput2 = 8;
-  // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
+  int unfoldParameterInput2 = 8;
+  Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
   // int unfoldParameterInput3 = 10;
   // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput3, optionsAnalysis);
 
   // int unfoldParameterInputMin = 4;
-  // int unfoldParameterInputMax = 13;
+  // int unfoldParameterInputMax = 20;
   // int unfoldParameterInputStep = 2;
   // Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, unfoldParameterInputMin, unfoldParameterInputMax, unfoldParameterInputStep, optionsAnalysis);
 }
@@ -251,8 +252,11 @@ void Draw_Pt_spectrum_mcdMatched(int iDataset, int iRadius, std::string options)
 void Draw_Pt_efficiency_jets(int iDataset, int iRadius, std::string options) {
   TH1D* H1D_jetEfficiency;
   bool divideSuccess;
-
-  divideSuccess = Get_Pt_JetEfficiency(H1D_jetEfficiency, iDataset, iRadius, options);
+  if (useFineBinningTest) {
+    divideSuccess = Get_Pt_JetEfficiency_fineBinning(H1D_jetEfficiency, iDataset, iRadius, options);
+  } else {
+    divideSuccess = Get_Pt_JetEfficiency(H1D_jetEfficiency, iDataset, iRadius, options);
+  }
   
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_efficiency");
 
@@ -346,11 +350,11 @@ void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
   double th2ContourCustom[1] = {0.000001}; // hardcoded at 10-6 for now
   int contourNumberCustom = 1;
 
-  std::array<std::array<float, 2>, 3> drawnWindowYaxianRequest = {{{-999, -999}, {-999, -999}, {1e-6, 1e-1}}}; // {{xmin, xmax}, {ymin, ymax}, {zmin, zmax}} /// put AUTO again after perf figure is done
+  // std::array<std::array<float, 2>, 3> drawnWindowYaxianRequest = {{{-999, -999}, {-999, -999}, {1e-6, 1e-1}}}; // {{xmin, xmax}, {ymin, ymax}, {zmin, zmax}} /// put AUTO again after perf figure is done
 
-  // Draw_TH2_Histogram(H2D_jetPtResponseMatrix_fluctuations, textContext, pdfName_logz, texPtJetBkgCorrX, texPtJetBkgFreeX, texCollisionDataInfo, drawnWindowAuto, th2ContourCustom, contourNumberCustom, "logz");
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetBkgFreeX, texPtJetBkgCorrX, &texCombinedMatrix, drawnWindowYaxianRequest, th2ContoursNone, contourNumberNone, "logz");
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetBkgFreeX, texPtJetBkgCorrX, &texCombinedMatrix, drawnWindowYaxianRequest, th2ContoursNone, contourNumberNone, "");
+  // Draw_TH2_Histogram(H2D_jetPtResponseMatrix_fluctuations, textContext, pdfName_logz, texPtJetBkgCorrX, texPtJetBkgFreeX, texCollisionDataInfo, drawnWindow2DAuto, th2ContourCustom, contourNumberCustom, "logz");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetBkgFreeX, texPtJetBkgCorrX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetBkgFreeX, texPtJetBkgCorrX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
 }
 
 void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius) {
@@ -534,6 +538,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   }
 
   unfoldParameter = Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded, measuredInput, iDataset, iRadius, unfoldParameterInput, options).first;
+  TH1D* H1D_jetPt_unfolded2 = (TH1D*)H1D_jetPt_unfolded->Clone("eklsngkjdfngdkjnbgdfkjng");
 
   cout << "comparison with raw measured" << endl; 
   if (!useFineBinningTest) {
@@ -548,10 +553,10 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   divideSuccessMeasured = H1D_jetPt_ratio_measured->Divide(H1D_jetPt_unfolded);
 
   cout << "comparison with mcp truth" << endl; 
-  H1D_jetPt_unfolded_mcpComp[0] = (TH1D*)H1D_jetPt_unfolded->Clone("H1D_jetPt_unfolded_mcpComp"+partialUniqueSpecifier);
+  H1D_jetPt_unfolded_mcpComp[0] = (TH1D*)H1D_jetPt_unfolded2->Clone("H1D_jetPt_unfolded_mcpComp"+partialUniqueSpecifier);
   H1D_jetPt_unfolded_mcpComp[1] = (TH1D*)H1D_jetPt_mcp->Clone("H1D_jetPt_unfolded_mcpComp"+partialUniqueSpecifier);
   H1D_jetPt_ratio_mcp = (TH1D*)H1D_jetPt_mcp->Clone("H1D_jetPt_ratio_mcp"+partialUniqueSpecifier);
-  divideSuccessMcp = H1D_jetPt_ratio_mcp->Divide(H1D_jetPt_unfolded);
+  divideSuccessMcp = H1D_jetPt_ratio_mcp->Divide(H1D_jetPt_unfolded2);
 
   cout << "comparison with run2" << endl; 
   if (isDataPbPb && comparePbPbWithRun2) {
@@ -598,7 +603,7 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   } else{
     Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEnd(H1D_jetPt_mcpFolded2, iDataset, iRadius, options);
   }  
-  Get_Pt_spectrum_unfolded(H1D_jetPt_mcpFoldedThenUnfolded, H1D_jetPt_mcpFolded2, iDataset, iRadius, unfoldParameterInput, options);
+  Get_Pt_spectrum_unfolded(H1D_jetPt_mcpFoldedThenUnfolded, H1D_jetPt_mcpFolded2, iDataset, iRadius, unfoldParameterInput, options+", noKineEff, noPurity, noEff, inputIsMC"); // input is mcp with fluctuations smearing: there are no fake jets, and the ptbinrange is the gen one so no kine efficiency
   H1D_jetPt_unfolded_mcpFoldedUnfoldedComp[0] = (TH1D*)H1D_jetPt_mcpFoldedThenUnfolded->Clone("H1D_jetPt_mcpFoldedUnfoldedComp_mcpFoldedUnfolded"+partialUniqueSpecifier);
   H1D_jetPt_unfolded_mcpFoldedUnfoldedComp[1] = (TH1D*)H1D_jetPt_mcp->Clone("H1D_jetPt_mcpFoldedUnfoldedComp_mcp"+partialUniqueSpecifier);
   H1D_jetPt_ratio_mcpFoldedUnfoldedMcp = (TH1D*)H1D_jetPt_mcpFoldedThenUnfolded->Clone("H1D_jetPt_ratio_mcpFoldedUnfoldedMcp"+partialUniqueSpecifier);
@@ -616,9 +621,9 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   TString unfoldingInfo = (TString)unfoldingMethod+"-k="+Form("%i", unfoldParameter)+"-"+(TString)mergingPrior+"-"+(TString)unfoldingPrior+"-"+unfoldingCode+"-matrixTransfo"+matrixTransformationOrder;
 
   std::error_code errPDF, errPNG, errEPS;
-  CreateDirectoryRecursive((std::string)"pdfFolder/ResponseMatrices", errPDF);
-  CreateDirectoryRecursive((std::string)"pngFolder/ResponseMatrices", errPNG);
-  CreateDirectoryRecursive((std::string)"epsFolder/ResponseMatrices", errEPS);
+  CreateDirectoryRecursive((std::string)"pdfFolder/IterationsDump", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/IterationsDump", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/IterationsDump", errEPS);
   // struct stat st1{};
   // if (stat("pdfFolder/IterationsDump", &st1) == -1) {
   //     mkdir("pdfFolder/IterationsDump", 0700);

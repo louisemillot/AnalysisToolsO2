@@ -13,14 +13,15 @@ TFile* file_O2Analysis_run2ComparisonFileMLPaper = new TFile("Datasets/Run2_Unfo
 
 //////// -------- LHC23zzh pass 4 with - pp sim anchored to PbPb 10%  ///////
 TString* texEnergy = new TString("#sqrt{#it{s}} = 5.36 TeV"); 
-TString* texCollisionDataType = new TString("Data: Pb-Pb 00-10%"); 
+TString* texCollisionDataType = new TString("Data Pb-Pb 00-10%"); 
 TString* texCollisionDataInfo = new TString((TString)*texCollisionDataType+" "+(TString)*texEnergy); 
-TString* texCollisionMCType = new TString("MC: pp PYTHIA"); 
+TString* texCollisionMCType = new TString("MC pp PYTHIA"); 
 TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+" "+(TString)*texEnergy); 
 const TString* texDatasetsComparisonType = new TString("00-10% centrality");
+// const TString* texDatasetsComparisonType = new TString("50-70% centrality");
 const TString* texDatasetsComparisonCommonDenominator = new TString("ALICE performance");
 const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23zzh_apass4_occupancy01000_train372068"};
+const TString Datasets[nDatasets] = {"LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068"};
 const TString DatasetsNames[nDatasets] = {""};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
                                       };
@@ -36,13 +37,14 @@ TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datase
 // const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
 const TString trainIdData = "_id26156";
 const TString analysisWorkflowData = "jet-spectra-charged_central"+trainIdData;
+// const TString analysisWorkflowData = "jet-spectra-charged_peripheral"+trainIdData;
 const TString trainIdBkg = "";
 const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
 const TString trainIdUnfoldingControl = "";
 const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_noOccupancyCut"+trainIdUnfoldingControl;
 
 const TString trainIdMC = "";
-const TString analysisWorkflowMC = "jet-spectra-charged_leadTrack05"+trainIdMC;
+const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdMC;
 const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 

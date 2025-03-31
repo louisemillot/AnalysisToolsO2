@@ -287,8 +287,18 @@ void NormYSlicesAndScaleRespByWidth(TH2D* &H2D_jetPtResponseMatrix, int iDataset
   if (doYSliceNormToOneCombinedResp) {
     NormaliseYSlicesToOne(H2D_jetPtResponseMatrix); // Marta doesn't do it, but it looks like I need it due to merging (some bins are very large) ; actually marta probably uses it: AliAnaChargedJetResponseMaker::MakeResponseMatrixRebin does it by default inside the rebinning function, and it takes into account the whole Fine range (1fine, Nfine)
   } 
-  if (scaleRespByWidth) {
+  if (scaleRespByXYWidth) {
     H2D_jetPtResponseMatrix->Scale(1., "width");
+  }
+  if (scaleRespByYWidth) {
+    double binWidthY;
+    for(int iBinGen = 1; iBinGen <= H2D_jetPtResponseMatrix->GetNbinsY(); iBinGen++){
+      binWidthY = H2D_jetPtResponseMatrix->GetYaxis()->GetBinWidth(iBinGen);
+      for(int iBinRec = 1; iBinRec <= H2D_jetPtResponseMatrix->GetNbinsX(); iBinRec++){
+        H2D_jetPtResponseMatrix->SetBinContent(iBinRec, iBinGen, 1./binWidthY * H2D_jetPtResponseMatrix->GetBinContent(iBinRec, iBinGen));
+        H2D_jetPtResponseMatrix->SetBinError(iBinRec, iBinGen, 1./binWidthY * H2D_jetPtResponseMatrix->GetBinError(iBinRec, iBinGen));
+      }
+    }
   }
 
   if (drawIntermediateResponseMatrices) {

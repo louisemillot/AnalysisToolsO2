@@ -20,6 +20,7 @@ const int randomConeType = 1;
 
 
 const float centralityRange[2] = {0, 10};
+// const float centralityRange[2] = {50, 70};
 
 ////////////////////////////////////////////////
 ////////// Unfolding settings - start //////////
@@ -32,21 +33,24 @@ char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfol
 const bool doYSliceNormToOneDetResp = true; // should be true (done by marta)
 const bool doYSliceNormToOneCombinedResp = false; // should be false (not done by marta); breaks unfolding with svd if true
 const bool doUnfoldingPriorDivision = false; // keep false for now ; unfolding doesn't work anymore if this is done, gives almost flat pT distribution, though refolding test is good; I am not sure why, might be because roounfold already does that; one good reason to avoid it; anyway, is that roounfold already seems to deal with errors; my error propagation doesn't take into account off-diagonal covariance elements, and so can only be worse 
-const bool scaleRespByWidth = false; // keep false, does not work well if true
+const bool scaleRespByXYWidth = false; // keep false, does not work well if true; although necessary (along with matrixTransformationOrder 1) to get a good looking response matrix with every entry below 1, unfolding with this struggles a bit though not horrible, it's still not great looking
+const bool scaleRespByYWidth = false; // keep false
 const bool matrixTransformationOrder = 0; // use 0
- //0: reweight with unfoldingPrior, then rebin with merging prior, then do YSliceNorm and scaleRespByWidth if set to true (works well 0); 1: rebin, then YSliceNorm and scaleRespByWidth, then reweight; 2: rebin, then reweight, then YSliceNorm and scaleRespByWidth
+ //0: reweight with unfoldingPrior, then rebin with merging prior, then do YSliceNorm and scaleRespByXYWidth if set to true (works well 0); 
+ //1: rebin, then YSliceNorm and scaleRespByXYWidth, then reweight; 
+ //2: rebin, then reweight, then YSliceNorm and scaleRespByXYWidth
 
-char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
+char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
 const bool isDataPbPb = true; // if false -> pp
-const bool doBkgSubtractionInData = true;
+const bool doBkgSubtractionInData = false;
 const bool doBkgSubtractionInMC = false;
-const bool useFactorisedMatrix = true; // use factorised response matrix for unfolding, or not
+const bool useFactorisedMatrix = false; // use factorised response matrix for unfolding, or not
 const bool mcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
-int applyEfficiencies = 3; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active; only applied if useManualRespMatrixSettingMethod is true
+int applyEfficiencies = 3 ; // for test purposes: 0: no efficiency correction, 1: kine only, 2: jet finding efficiency only, 3: both active; only applied if useManualRespMatrixSettingMethod is true
 bool applyFakes = true; // only applied if useManualRespMatrixSettingMethod is true; 18/03: if false?
-const bool useFineBinningTest = false; 
+const bool useFineBinningTest = true; 
 
 const bool doWidthScalingEarly = false;                         // to avoid pT bin width having an influence on spectrum; which one should be done? early or end? for now will be done at end
 const bool doWidthScalingAtEnd = true;                          //
@@ -61,23 +65,25 @@ const bool normaliseDistribsBeforeUnfolding = true; // keep true; both normalise
 const bool useManualRespMatrixSettingMethod = true; // keep true; false uses Joonsuk's resp matrix setup with roounfold methods; if set to true, both refold methods are constistent; if set to false, the roounfold one is identical as if true, but the manual one becomes different and bad
 const bool normaliseRespYSliceForRefold = true; // keep true; THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
 
-bool controlMC = false; // use file_O2Analysis_ppSimDetectorEffect_unfoldingControl MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file), rather than real data, and as comparison to gen (with h_jet_pt_part distrib on file); weighted control MC, and control for PbPb are not yet implemented
-bool comparePbPbWithRun2 = true; // if isDataPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFileHannaBossiLauraFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
+bool controlMC = true; // use file_O2Analysis_ppSimDetectorEffect_unfoldingControl MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file), rather than real data, and as comparison to gen (with h_jet_pt_part distrib on file); weighted control MC, and control for PbPb are not yet implemented
+bool comparePbPbWithRun2 = false; // if isDataPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFileHannaBossiLauraFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
 
 bool automaticBestSvdParameter = false; // automatic function not well setup yet, should work on it; keep false for now
 
 const bool drawIntermediateResponseMatrices = false;
 
 
-float ptWindowDisplay[2] = {0, 140}; // used for drawn histograms of unfolded distrib
+float ptWindowDisplay[2] = {0, 200}; // used for drawn histograms of unfolded distrib
 std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
+bool smoothenEfficiency = true;
+bool smoothenMCP = true;
 
-// If I normalise before rebinning, then after rebinning the normalisation wont still be there, because I will merge several line together
+// when merging the bins in y axis, normalisation of y-slices to 1 will not be conserved; scaleRespByXYWidth = true along with matrixTransformationOrder 1 will save it; NEED TO HAVE mcpPrioUnfolding, else svd fails
 
 // I should change the naming of draw_mcp (to account for  unfolding control case), also change how unfolding control is done
 
-// when merging the bins in y axis, normalisation will go weird
+
 
 ////////////////////////////////////////////////
 ////////// Unfolding settings - end ////////////
@@ -117,12 +123,12 @@ std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindow
 // int nBinPtJetsGen[nRadius] = {9,9,9};
 
 
-// PbPb
-// ML paper identical fo run 2 comparison
-double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
-int nBinPtJetsRec[nRadius] = {19,19,19};
-double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
-int nBinPtJetsGen[nRadius] = {11,9,9};
+// // PbPb
+// // ML paper identical fo run 2 comparison
+// double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
+// int nBinPtJetsRec[nRadius] = {19,19,19};
+// double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
+// int nBinPtJetsGen[nRadius] = {11,9,9};
 
 
 // // PbPb Aimeric default
@@ -200,60 +206,122 @@ int nBinPtJetsGen[nRadius] = {11,9,9};
 
 
 // // pT binninb for jets tests
-// int nBinPtJetsRec[nRadius] = {14,14,14};
-// double ptBinsJetsRec[nRadius][20] = {{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
-// int nBinPtJetsGen[nRadius] = {26,26,26};
-// double ptBinsJetsGen[nRadius][201] = {{  0.,  5.,
-//                                         10., 15.,
-//                                         20., 25.,
-//                                         30., 35.,
-//                                         40., 45.,
-//                                         50., 55.,
-//                                         60., 65.,
-//                                         70., 75.,
-//                                         80., 85.,
-//                                         90., 95.,
-//                                        100.,
-//                                        110.,
-//                                        120.,
-//                                        130.,
-//                                        140.,
-//                                        150.,
-//                                        200},               
-//                                      {   0.,  5.,
-//                                         10., 15.,
-//                                         20., 25.,
-//                                         30., 35.,
-//                                         40., 45.,
-//                                         50., 55.,
-//                                         60., 65.,
-//                                         70., 75.,
-//                                         80., 85.,
-//                                         90., 95.,
-//                                        100.,
-//                                        110.,
-//                                        120.,
-//                                        130.,
-//                                        140.,
-//                                        150.,
-//                                        200},               
-//                                      {   0.,  5.,
-//                                         10., 15.,
-//                                         20., 25.,
-//                                         30., 35.,
-//                                         40., 45.,
-//                                         50., 55.,
-//                                         60., 65.,
-//                                         70., 75.,
-//                                         80., 85.,
-//                                         90., 95.,
-//                                        100.,
-//                                        110.,
-//                                        120.,
-//                                        130.,
-//                                        140.,
-//                                        150.,
-//                                        200}};
+int nBinPtJetsRec[nRadius] = {180,120,120};
+double ptBinsJetsRec[nRadius][201] = {{
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
+                                       150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
+                                       160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
+                                       170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
+                                       180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
+                                       190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
+                                       200},
+                                     {
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.},
+                                     {
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.}}; // shift+option+left click hold lets one edit columns in vs code
+int nBinPtJetsGen[nRadius] = {195,195,195};
+double ptBinsJetsGen[nRadius][201] = {{05., 06., 07., 08., 09.,
+// double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
+                                       150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
+                                       160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
+                                       170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
+                                       180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
+                                       190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
+                                       200},
+                                     {05., 06., 07., 08., 09.,
+                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
+                                       150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
+                                       160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
+                                       170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
+                                       180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
+                                       190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
+                                       200},
+                                     {05., 06., 07., 08., 09.,
+                                    //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+                                        10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
+                                        20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
+                                        30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
+                                        40., 41., 42., 43., 44., 45., 46., 47., 48., 49.,
+                                        50., 51., 52., 53., 54., 55., 56., 57., 58., 59.,
+                                        60., 61., 62., 63., 64., 65., 66., 67., 68., 69.,
+                                        70., 71., 72., 73., 74., 75., 76., 77., 78., 79.,
+                                        80., 81., 82., 83., 84., 85., 86., 87., 88., 89.,
+                                        90., 91., 92., 93., 94., 95., 96., 97., 98., 99.,
+                                       100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,
+                                       110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,
+                                       120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,
+                                       130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,
+                                       140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,
+                                       150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,
+                                       160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,
+                                       170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,
+                                       180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,
+                                       190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,
+                                       200}}; // shift+option+left click hold lets one edit columns in vs code
 
 
 // // pT binninb for jets tests

@@ -87,7 +87,7 @@ TString* texTrackPurity = new TString("p = nTrack_{sign} / (nTrack_{sign}+nTrack
 
 
 TString* texJetKinematicEfficiency = new TString("Jet kinematic efficiency");
-TString* texJetEfficiency = new TString("#epsilon = nJet_{mcd,matched}^{sel8 coll} / nJet_{mcp}^{sel8 coll}");
+TString* texJetEfficiency = new TString("#epsilon = nJet_{mcp,matched}^{sel coll} / nJet_{mcp}^{sel coll}");
 TString* texJetPurity = new TString("#epsilon = nJet_{signal} / (nJet_{signal}+nJet_{background})");
 TString* texFakeRatio = new TString("N^{mcd, matched}_{jets} / N^{mcd}_{jets}");
 
