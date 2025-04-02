@@ -179,17 +179,6 @@ void CentralityLegend(TString* centralityLegend, const float arrayCentralityInte
   }
 }
 
-void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfoldIterationMax, int step){
-  const int nUnfoldIteration = std::floor((unfoldIterationMax - unfoldIterationMin + 1)/step);
-  std::stringstream ss;
-  ss.precision(2);
-  for(int iUnfoldIteration = 0; iUnfoldIteration < nUnfoldIteration; iUnfoldIteration++){
-    ss << "k_{unfold} = " << iUnfoldIteration * step + unfoldIterationMin;
-    iterationLegend[iUnfoldIteration] = (TString)ss.str();
-    ss.str("");
-    ss.clear();
-  }
-}
 
 
 
@@ -496,7 +485,7 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
   int nColors = gStyle->GetNumberOfColors();
   int histoPaletteColor;
   for (int i = 0; i < collectionSize; i++) {
-    if (options.find("colorPairs") == std::string::npos) { // if hasn't found "colorPairs" in options
+    if (options.find("twoByTwoDatasetPairs") == std::string::npos) { // if hasn't found "twoByTwoDatasetPairs" in options
       if (collectionSize >= collectionSizeColorThreshold) {
         histoPaletteColor = (float)nColors / collectionSize * (int)i;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
@@ -563,7 +552,7 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
           padMainHist->cd();
         }
       }
-    } else { // if has found "colorPairs" in options
+    } else { // if has found "twoByTwoDatasetPairs" in options
       if (collectionSize >= 2*collectionSizeColorThreshold) {
         histoPaletteColor = (float)nColors / collectionSize * (int)i/2;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
@@ -912,7 +901,7 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
   canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
   canvas->SaveAs("epsFolder/"+*pdfName+".eps");
-  
+
   // struct stat st1{};
   // if (stat("pdfFolder/", &st1) == -1) {
   //     mkdir("pdfFolder/", 0700);

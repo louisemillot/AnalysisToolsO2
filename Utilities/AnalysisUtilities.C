@@ -42,9 +42,11 @@ long int GetNEventsSel8(TFile* file_O2Analysis) {
 
 long int GetNEventsSelected_JetFramework(TFile* file_O2Analysis, const char analysisWorkflow[]) {
   return ((TH1I*)file_O2Analysis->Get((TString)analysisWorkflow+"/h_collisions"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account;
+
 }
 double GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis, const char analysisWorkflow[]) {
   return ((TH1F*)file_O2Analysis->Get((TString)analysisWorkflow+"/h_collisions_weighted"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account; 
+
 }
 
 

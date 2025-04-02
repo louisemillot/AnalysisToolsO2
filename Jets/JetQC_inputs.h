@@ -750,7 +750,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- LHC23zzh - apass 4 withOUT area and leadingtrackpt cuts-------- ////////
@@ -771,7 +771,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -864,7 +864,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- LHC23zzh - apass 4 occupancy analysis sel8FullPbPb-------- ////////
@@ -889,7 +889,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -955,7 +955,7 @@ TFile* file_AliAnalysis;
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false, false, false, false};
 // // const bool trackHistsObsoleteVersion[nDatasets] = {true, true, true, true, true, true, true, true};
 
-// const std::string histDrawColorsOption = "colorPairs";
+// const std::string histDatasetComparisonStructure = "twoByTwoDatasetPairs";
 
 
 // //////// -------- LHC23zzh - apass 4 train train253451 vs train247272 - bkgFluct unexpected change-------- ////////
@@ -999,7 +999,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 // //////// -------- Run 3 data apass4 - merged runs -------- ////////
 // TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}} = 5.36 TeV"); 
@@ -1015,7 +1015,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1053,7 +1053,7 @@ TFile* file_AliAnalysis;
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false, false, false, false};
 // // const bool trackHistsObsoleteVersion[nDatasets] = {true, true, true, true, true, true, true, true};
 
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1077,7 +1077,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- LHC23zzh - apass 4 withOUT area and leadingtrackpt cuts-------- ////////
@@ -1098,7 +1098,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- LHC23zzh - apass 4 new event sel tests-------- ////////
@@ -1127,7 +1127,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- LHC23zzh - apass 4 Golden Runs FULL -------- ////////
@@ -1148,7 +1148,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1166,7 +1166,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {true};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- local pp test sim anchored to PbPb comparison to pp anchor -------- ////////
@@ -1187,7 +1187,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {true, true};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts-------- ////////
@@ -1205,7 +1205,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 // //////// -------- pp sim test Anchor Pb-Pb gap comparison-------- ////////
 // TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV");
@@ -1228,7 +1228,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- pp sim test Anchor Pb-Pb comparison to Jaime-------- ////////
@@ -1248,7 +1248,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 // //////// -------- pp sim test Anchor Pb-Pb -------- ////////
@@ -1266,7 +1266,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1337,7 +1337,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1359,7 +1359,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1382,7 +1382,7 @@ TFile* file_AliAnalysis;
 //                                     "_id24142"
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1405,7 +1405,7 @@ TFile* file_AliAnalysis;
 //                                     "_id9300"
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1429,7 +1429,7 @@ TFile* file_AliAnalysis;
 //                                     "_id24142"
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 
 
 
@@ -1480,7 +1480,7 @@ TFile* file_AliAnalysis;
 //                                     "_id24796"
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false};
-// const std::string histDrawColorsOption = "efficiency";
+// const std::string histDatasetComparisonStructure = "efficiency";
 // const bool datasetsAreSubsetsofId0 = true;
 
 
@@ -1531,7 +1531,7 @@ TFile* file_AliAnalysis;
 //                                     "_id24798"
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false};
-// const std::string histDrawColorsOption = "efficiency";
+// const std::string histDatasetComparisonStructure = "efficiency";
 // const bool datasetsAreSubsetsofId0 = true;
 
 
@@ -1555,7 +1555,7 @@ TFile* file_AliAnalysis;
 //                                     "_id25499"
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1578,7 +1578,7 @@ TFile* file_AliAnalysis;
 //                                     "_id24798"
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1601,7 +1601,7 @@ TFile* file_AliAnalysis;
 //                                     ""
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1628,7 +1628,7 @@ TFile* file_AliAnalysis;
 //                                     };
 
 // const bool isDatasetWeighted[nDatasets] = {false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1659,7 +1659,7 @@ TFile* file_AliAnalysis;
 //                                     ""
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1686,7 +1686,7 @@ TFile* file_AliAnalysis;
 //                                     ""
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {true, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1712,7 +1712,7 @@ TFile* file_AliAnalysis;
 // const TString wagonId[nDatasets] = {""
 //                                     };
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1736,7 +1736,7 @@ TFile* file_AliAnalysis;
 //                                     };
 
 // const bool isDatasetWeighted[nDatasets] = {true};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1759,7 +1759,7 @@ TFile* file_AliAnalysis;
 //                                     };
 
 // const bool isDatasetWeighted[nDatasets] = {true};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1831,7 +1831,7 @@ TFile* file_AliAnalysis;
 
 // const TString wagonId = "";
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -1904,5 +1904,5 @@ const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_central_id2615
 
 const TString wagonId = "";
 const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
-const std::string histDrawColorsOption = "";
+const std::string histDatasetComparisonStructure = "";
 const bool datasetsAreSubsetsofId0 = false;

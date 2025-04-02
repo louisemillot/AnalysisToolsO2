@@ -19,8 +19,6 @@ TString contextDatasetCompAndRadius(TString mainContext, float jetRadius, std::s
 TString contextDatasetComp(TString mainContext, std::string options);
 
 void CentralityLegend(TString* centralityLegend, const float** arrayCentralityIntervals, int nCentralityBins);
-// void IterationLegend(TString* iterationLegend, int nIterationmax);
-void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfoldIterationMax, int step);
 
 void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TString* legendList_string, TH1D** histograms_collection_ratios, const TString* legendList_string_ratios, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<float, 2> drawnWindowRatio, std::array<std::array<float, 2>, 2> legendPlacement, std::array<std::array<float, 2>, 2> legendPlacementRatio, std::array<float, 2> contextPlacement, std::string options, TF1** optionalFitCollection);
 

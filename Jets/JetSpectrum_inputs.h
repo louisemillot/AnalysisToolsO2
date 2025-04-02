@@ -28,8 +28,8 @@ TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/An
 // TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
 // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
 // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
-TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_R02_train372532/AnalysisResults.root");
-TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_R02_train372532/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
+TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_R02_train380970/AnalysisResults.root");
+TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_10percent_R02_train380970/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
 
 // const TString trainId = "_id12832";
 // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
@@ -45,7 +45,7 @@ const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_noOccupan
 
 const TString trainIdMC = "";
 const TString analysisWorkflowMC = "jet-spectra-charged_noOccupancyCut"+trainIdMC;
-const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
+const bool etaCutOnMatchedJetsIsObsoleteVersion = false;
 
 
 
@@ -81,7 +81,11 @@ const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 
 
 // //////// -------- pp spectrum with Joonsuk files tests -------- ////////
-// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 13.6 TeV"); 
+// TString* texEnergy = new TString("#sqrt{#it{s}} = 13.6 TeV"); 
+// TString* texCollisionDataType = new TString("Data pp"); 
+// TString* texCollisionDataInfo = new TString((TString)*texCollisionDataType+" "+(TString)*texEnergy); 
+// TString* texCollisionMCType = new TString("MC pp PYTHIA"); 
+// TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+" "+(TString)*texEnergy); 
 // const TString* texDatasetsComparisonType = new TString("");
 // const TString* texDatasetsComparisonCommonDenominator = new TString("");
 // const int nDatasets = 1;
@@ -98,6 +102,9 @@ const bool etaCutOnMatchedJetsIsObsoleteVersion = true;
 // // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
 // // const TString trainId = "_id12436";
 // // const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
+// const TString trainIdBkg = "";
+// const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
+
 // const TString trainId = "";
 // const TString analysisWorkflowData = "jet-finder-charged-qa"+trainId;
 // const TString analysisWorkflow_unfoldingControl = "jet-finder-charged-qa"+trainId;

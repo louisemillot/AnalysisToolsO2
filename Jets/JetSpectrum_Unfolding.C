@@ -253,7 +253,8 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
 
     // plot svd d distribution
     TH1D* H1D_D = tsvdUnfold->GetD();
-    TString* pdfName_regparam = new TString("Svd_regularisationd_distribution_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+(TString)mergingPrior+"_"+(TString)unfoldingPrior);
+    TString inputUnfoldingName = (options.find("inputIsMCPFoldedTest") != std::string::npos) ? "_mcpFoldedTestInput" : "";
+    TString* pdfName_regparam = new TString("Svd_regularisationd_distribution_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+(TString)mergingPrior+"_"+(TString)unfoldingPrior+inputUnfoldingName);
     TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
     std::array<std::array<float, 2>, 2> drawnWindowSvdParam = {{{0, 30}, {0.01, 10000}}}; // {{xmin, xmax}, {ymin, ymax}}
     Draw_TH1_Histogram(H1D_D, textContext, pdfName_regparam, texSvdDvector, texSvdK, texCollisionDataInfo, drawnWindowSvdParam, legendPlacementAuto, contextPlacementAuto, "logy");
@@ -262,7 +263,7 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     unfoldParameter = unfoldParameterInput;
     hist_unfold = (TH1D*)(unfoldBayes->Hreco());
     unfold = unfoldBayes;
-  }  
+  } 
 
 
   H1D_jetPt_unfolded = (TH1D*)hist_unfold->Clone("H1D_jetPt_unfolded"+partialUniqueSpecifier);
@@ -705,7 +706,7 @@ void Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEndAndEvtNorm(TH
   if (!useFineBinningTest) {
     H1D_jetPt_mcpFolded = (TH1D*)H1D_jetPt_mcp_control_folded->Rebin(nBinPtJetsRec[iRadius],"H1D_jetPt_mcp_control_folded_recBinning_mcpFoldedWithFluctuationsThenUnfolded"+RadiusLegend[iRadius]+Datasets[iDataset]+DatasetsNames[iDataset], ptBinsJetsRec[iRadius]);
   } else {
-    H1D_jetPt_mcpFolded = (TH1D*)H1D_jetPt_mcp_control_folded->Clone("Get_Pt_spectrum_mcpFoldedWithFluctuationsThenUnfolded_preWidthScalingAtEndAndEvtNorm"+partialUniqueSpecifier);
+    H1D_jetPt_mcpFolded = (TH1D*)H1D_jetPt_mcp_control_folded->Clone("Get_Pt_spectrum_mcpFoldedWithFluctuationsThenUnfolded_preWidthScalingAtEndAndEvtNorm_Clone"+partialUniqueSpecifier);
   }
   // bool divideSuccessFakes;
   // TH1D* H1D_jetFakes;

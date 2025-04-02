@@ -395,7 +395,7 @@
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "colorPairs";
+// const std::string histDatasetComparisonStructure = "twoByTwoDatasetPairs";
 
 // //////// -------- local pp test sim anchored to PbPb comparison to pp anchor -------- ////////
 // TString* texCollisionDataInfo = new TString("PbPb MC #sqrt{#it{s}} = 5.36 TeV");
@@ -434,7 +434,7 @@
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false};
-// const std::string histDrawColorsOption = "colorPairs";
+// const std::string histDatasetComparisonStructure = "twoByTwoDatasetPairs";
 
 
 
@@ -459,7 +459,7 @@
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
-// const std::string histDrawColorsOption = "";
+// const std::string histDatasetComparisonStructure = "";
 // const bool datasetsAreSubsetsofId0 = false;
 
 
@@ -483,7 +483,7 @@ const TString wagonId[nDatasets] = {"",
                                     ""
                                     };
 const bool isDatasetWeighted[nDatasets] = {true, false};
-const std::string histDrawColorsOption = "";
+const std::string histDatasetComparisonStructure = "";
 const bool datasetsAreSubsetsofId0 = false;
 
 
