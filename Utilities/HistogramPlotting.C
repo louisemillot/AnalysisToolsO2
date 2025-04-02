@@ -595,10 +595,10 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
           }
         }
       }
-      histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+      histograms_collection[i]->SetMarkerStyle(markerstwoByTwoDatasetPairs[i]);
       if (options.find("ratioInSameCanvas") != std::string::npos) {
         padRatio->cd();
-        histograms_collection_ratios[i]->SetMarkerStyle(markersColorPairs[i]);
+        histograms_collection_ratios[i]->SetMarkerStyle(markerstwoByTwoDatasetPairs[i]);
         padMainHist->cd();
       }
           
