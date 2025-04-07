@@ -56,6 +56,14 @@ bool CreateDirectoryRecursive(std::string const & dirName, std::error_code & err
 ////////////////////////////////////////////////////////////////////////////// Histogram Context /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+TString contextCustomFiveFields(TString mainContext, TString secondaryContext, TString tertiaryContext, TString quaternaryContext, TString quinaryContext, __attribute__ ((unused)) std::string options){
+  TString texContextFinal;
+  // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
+  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{"+tertiaryContext+"}{#splitline{"+quaternaryContext+"}{"+quinaryContext+"}}}";
+  // texContextFinal = "testtesttestest";
+  return texContextFinal;
+}
+
 TString contextCustomFourFields(TString mainContext, TString secondaryContext, TString tertiaryContext, TString quaternaryContext, __attribute__ ((unused)) std::string options){
   TString texContextFinal;
   // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
@@ -75,7 +83,7 @@ TString contextCustomThreeFields(TString mainContext, TString secondaryContext, 
 
 TString contextCustomTwoFields(TString mainContext, TString secondaryContext, std::string options){
   TString texContextFinal;
-  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{}";
+  texContextFinal = "#splitline{"+mainContext+"}{"+secondaryContext+"}";
   return texContextFinal;
   // return contextCustomThreeFields(mainContext, (TString)"" , secondaryContext, options);
 
@@ -116,7 +124,7 @@ TString contextCentRange(float* CentRange){
 
 TString contextJetRadius(float jetRadius){
   std::stringstream ss;
-  ss << " R = " << jetRadius;
+  ss << "#it{R} = " << jetRadius;
   TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
   return textContext;
