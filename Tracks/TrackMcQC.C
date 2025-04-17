@@ -102,27 +102,39 @@ void TrackMcQC() {
   // TString* Extra = new TString("");
   bool useSplit = false; //set to true if you want to see the influence of split
   float etaRange[2] = {-0.9, 0.9};
-   Draw_Efficiency_Pt_DatasetComparison(etaRange,useSplit);
-  float ptRange[2] = {0.15, 100};
-  Draw_Efficiency_Eta_DatasetComparison(ptRange,useSplit);
-  Draw_Efficiency_Phi_DatasetComparison(ptRange, etaRange, useSplit);
+  //  Draw_Efficiency_Pt_DatasetComparison(etaRange,useSplit);
+  // float ptRange[2] = {0.15, 100};
+  float ptRange[5] = {0, 0.15, 0.5, 1, 100};
+  size_t size = sizeof(ptRange) / sizeof(ptRange[0]);
+
+  for (size_t i = 0; i < size - 1; ++i) {
+    float currentRange[2] = {ptRange[i], ptRange[i + 1]};  // Tableau de 2 éléments
+    
+    cout << "Appel avec : [" << currentRange[0] << ", " << currentRange[1] << "]" << endl;
+    
+    // Appel correct avec 2 arguments : le tableau + le booléen
+    Draw_Efficiency_Eta_DatasetComparison(currentRange, useSplit);  
+  }
+
+  // Draw_Efficiency_Eta_DatasetComparison(ptRange,useSplit);
+  // Draw_Efficiency_Phi_DatasetComparison(ptRange, etaRange, useSplit);
 
   // Draw_Efficiency_Pt_ratio_etaNeg_etaPos_DatasetComparison(etaRange, useSplit);
   // // Draw_Efficiency_Phi_DatasetComparison_finerPhi(ptRange1, etaRange); // only works with very specific datasets created locally
 
-  Draw_Purity_Pt_DatasetComparison(etaRange, useSplit);
-  Draw_Purity_Eta_DatasetComparison(etaRange, useSplit);
-  Draw_Purity_Phi_DatasetComparison(etaRange, useSplit);
+  // Draw_Purity_Pt_DatasetComparison(etaRange, useSplit);
+  // Draw_Purity_Eta_DatasetComparison(etaRange, useSplit);
+  // Draw_Purity_Phi_DatasetComparison(etaRange, useSplit);
   // Draw_Purity_Pt_ratio_etaNeg_etaPos_DatasetComparison(etaRange, useSplit);
 
   // int nPtRanges = 4;
   // float ptRange[5] = {0, 0.15, 0.5, 1, 100};
-  // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-  //   Draw_Efficiency_Eta_PtRangeComparison(ptRange, nPtRanges, iDataset, "");
-  //   Draw_Efficiency_Eta_PtRangeComparison(ptRange, nPtRanges, iDataset, "scaled");
+  for(int iDataset = 0; iDataset < nDatasets; iDataset++){
+    // Draw_Efficiency_Eta_PtRangeComparison(ptRange, nPtRanges, iDataset, "");
+    // Draw_Efficiency_Eta_PtRangeComparison(ptRange, nPtRanges, iDataset, "scaled");
   //   Draw_Efficiency_Phi_PtRangeComparison(ptRange, nPtRanges, etaRange, iDataset, "");
   //   Draw_Efficiency_Phi_PtRangeComparison(ptRange, nPtRanges, etaRange, iDataset, "scaled");
-  // }
+  }
 
 
   // FOR SIMULATION CHECKS, don't use in standard mc files
@@ -376,7 +388,7 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange, bool useSplit) {
       //getting the efficiency : for split corrected 
       H1D_trackPt_efficiency_splitCorrected[iDataset] = (TH1D*)H1D_trackPt_mcparticles_rebinned[iDataset]->Clone("trackPt_efficiency_split"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_trackPt_efficiency_splitCorrected[iDataset]->Reset("M");
-      divideSuccess_split = H1D_trackPt_efficiency_splitCorrected[iDataset]->Divide(H1D_trackPt_assoctracks_split_rebinned[iDataset], H1D_trackPt_mcparticles_rebinned[iDataset]);
+      divideSuccess_split = H1D_trackPt_efficiency_splitCorrected[iDataset]->Divide(H1D_trackPt_assoctracks_split_rebinned[iDataset], H1D_trackPt_mcparticles_rebinned[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
       H1D_trackPt_efficiency_splitCorrected[iDataset]->Scale(-1.);
       H1D_trackPt_efficiency_splitCorrected[iDataset]->Add(H1D_trackPt_efficiency[iDataset],1.);
       H1D_trackPt_efficiency_splitCorrected_ptHigh[iDataset] = (TH1D*)H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset]->Clone("trackPt_efficiency_split_ptHigh"+Datasets[iDataset]+DatasetsNames[iDataset]);
@@ -387,10 +399,10 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange, bool useSplit) {
       //getting the efficiency : for split only
       H1D_trackPt_efficiency_split[iDataset] = (TH1D*)H1D_trackPt_mcparticles_rebinned[iDataset]->Clone("trackPt_efficiency_split"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_trackPt_efficiency_split[iDataset]->Reset("M");
-      divideSuccess_split_notCorrected = H1D_trackPt_efficiency_split[iDataset]->Divide(H1D_trackPt_assoctracks_split_rebinned[iDataset], H1D_trackPt_mcparticles_rebinned[iDataset]);
+      divideSuccess_split_notCorrected = H1D_trackPt_efficiency_split[iDataset]->Divide(H1D_trackPt_assoctracks_split_rebinned[iDataset], H1D_trackPt_mcparticles_rebinned[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
       H1D_trackPt_efficiency_splitNotCorrected_ptHigh[iDataset] = (TH1D*)H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset]->Clone("trackPt_efficiency_splitNotCorrected_ptHigh"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_trackPt_efficiency_splitNotCorrected_ptHigh[iDataset]->Reset("M");
-      divideSuccess_split__notCorrectedPtHigh = H1D_trackPt_efficiency_splitNotCorrected_ptHigh[iDataset]->Divide(H1D_trackPt_assoctracks_split_ptHigh_rebinned[iDataset], H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset], 1., 1., "b");
+      divideSuccess_split__notCorrectedPtHigh = H1D_trackPt_efficiency_splitNotCorrected_ptHigh[iDataset]->Divide(H1D_trackPt_assoctracks_split_ptHigh_rebinned[iDataset], H1D_trackPt_mcparticles_ptHigh_rebinned[iDataset], 1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     }
 
     // Merging high and low pt histograms:
@@ -444,12 +456,12 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange, bool useSplit) {
         DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
         H1D_trackPt_efficiency_ratios[iDataset] = (TH1D*)H1D_trackPt_efficiency_concatenated[2*iDataset]->Clone("H1D_trackPt_efficiency_concatenated_ratio"+Datasets[iDataset]+DatasetsNames[iDataset]);
         H1D_trackPt_efficiency_ratios[iDataset]->Reset("M");
-        divideSuccessRatio = H1D_trackPt_efficiency_ratios[iDataset]->Divide(H1D_trackPt_efficiency_concatenated[2*iDataset], H1D_trackPt_efficiency_concatenated[2*iDataset+1]);
+        divideSuccessRatio = H1D_trackPt_efficiency_ratios[iDataset]->Divide(H1D_trackPt_efficiency_concatenated[2*iDataset], H1D_trackPt_efficiency_concatenated[2*iDataset+1],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
       }
     } else {
       H1D_trackPt_efficiency_ratios[iDataset] = (TH1D*)H1D_trackPt_efficiency_concatenated[iDataset]->Clone("H1D_trackPt_efficiency_concatenated_ratio"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_trackPt_efficiency_ratios[iDataset]->Reset("M");
-      divideSuccessRatio = H1D_trackPt_efficiency_ratios[iDataset]->Divide(H1D_trackPt_efficiency_concatenated[iDataset], H1D_trackPt_efficiency_concatenated[0]);
+      divideSuccessRatio = H1D_trackPt_efficiency_ratios[iDataset]->Divide(H1D_trackPt_efficiency_concatenated[iDataset], H1D_trackPt_efficiency_concatenated[0],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     }
   }
 
@@ -468,7 +480,7 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange, bool useSplit) {
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(2))/2, 
                                                           (float)(H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinLowEdge(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX())
                                                           +H1D_trackPt_efficiency_concatenated[0]->GetXaxis()->GetBinWidth(H1D_trackPt_efficiency_concatenated[0]->GetNbinsX()))}
-                                                          , {0.90, 1.05}}}; // {{xmin, xmax}, {ymin, ymax}}
+                                                          , {0.90, 1.1}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementratio = {{{0.55, 0.55}, {0.9, 0.9}}}; // {{xmin, xmax}, {ymin, ymax}}                                                   
                                                     
   cout << "drawnWindowLog x: {" << drawnWindowLog[0][0] << ", " << drawnWindowLog[0][1] << "}"<< endl;
@@ -616,7 +628,7 @@ void Draw_Efficiency_Eta_DatasetComparison(float* ptRange, bool useSplit) {
     // H1D_trackEta_efficiency_splitAndSecondaryCorrected[iDataset]->Add(H1D_trackEta_efficiency_splitCorrected[iDataset],1.);
   }
 
-  std::array<std::array<float, 2>, 2> drawnWindowLogEffRatio = {{{-999,-999} , {0.62, 0.76}}};
+  std::array<std::array<float, 2>, 2> drawnWindowLogEffRatio = {{{-999,-999} , {0.55, 0.73}}};
 
   TString* pdfNameEntriesNorm = new TString("track_Eta_efficiency"+dummyName[0]+"_@pt["+Form("%.2f", ptRange[0])+","+Form("%.1f", ptRange[1])+"]");
   TString* pdfNameEntriesNorm_zoom = new TString("track_Eta_efficiency"+dummyName[0]+"_@pt["+Form("%.2f", ptRange[0])+","+Form("%.1f", ptRange[1])+"]_zoom");
@@ -744,15 +756,16 @@ void Draw_Efficiency_Phi_DatasetComparison(float* ptRange, float* etaRange, bool
 
   // TString textContext(contextDatasetComp(""));
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, "#splitline{"+contextPtRange(ptRange)+"}{"+contextEtaRange(etaRange)+"}", ""));
-  std::array<std::array<float, 2>, 2> legendPlacementPhi = {{{0.55, 0.55}, {0.85, 0.85}}};
-  std::array<std::array<float, 2>, 2> drawnWindowLogEffRatioZoom = {{{-999,-999} , {0.45, 0.82}}};
+  std::array<std::array<float, 2>, 2> legendPlacementPhi = {{{0.55, 0.55}, {0.85, 0.86}}};
+  std::array<std::array<float, 2>, 2> drawnWindowLogEffRatioZoom = {{{-999,-999} , {0.35, 0.85}}};
   std::array<std::array<float, 2>, 2> legendPlacementPhiZoom = {{{0.2, 0.2}, {0.4, 0.45}}};
+  std::array<float, 2> contextPlacementEfficiencyRatio = {{0.20, 0.86}}; 
 
 
 
   if (divideSuccess == true) {
     Draw_TH1_Histograms(H1D_trackPhi_efficiency, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm, texPhiMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementPhi, contextPlacementAuto, "efficiency");
-    Draw_TH1_Histograms(H1D_trackPhi_efficiency, DatasetsNames, nDatasets, textContext, pdfNameEntriesNormZoom, texPhiMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEffRatioZoom, legendPlacementPhiZoom, contextPlacementAuto, "efficiency");
+    Draw_TH1_Histograms(H1D_trackPhi_efficiency, DatasetsNames, nDatasets, textContext, pdfNameEntriesNormZoom, texPhiMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEffRatioZoom, legendPlacementPhiZoom, contextPlacementEfficiencyRatio, "efficiency");
 
   }
   else {
@@ -1308,14 +1321,14 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
     
     H1D_primaryPurity_denominator[iDataset] = (TH1D*)H1D_trackPt_primary_rebinned[iDataset]->Clone("trackPt_primaryPurity_denominator_rebinned1"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_primaryPurity_denominator[iDataset]->Add(H1D_trackPt_secondary_rebinned[iDataset],1.);
-    divideSuccess = H1D_trackPt_primaryPurity[iDataset]->Divide(H1D_trackPt_primary_rebinned[iDataset], H1D_primaryPurity_denominator[iDataset]);
+    divideSuccess = H1D_trackPt_primaryPurity[iDataset]->Divide(H1D_trackPt_primary_rebinned[iDataset], H1D_primaryPurity_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     H1D_trackPtHigh_primaryPurity[iDataset] = (TH1D*)H1D_trackPtHigh_primary_rebinned[iDataset]->Clone("trackPtHigh_primaryPurity_rebinned"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_trackPtHigh_primaryPurity[iDataset]->Reset("M");
     
     H1D_primaryPurity_High_denominator[iDataset] = (TH1D*)H1D_trackPtHigh_primary_rebinned[iDataset]->Clone("trackPtHigh_primaryPurity_denominator_rebinned1"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_primaryPurity_High_denominator[iDataset]->Add(H1D_trackPtHigh_secondary_rebinned[iDataset],1.);
-    divideSuccess_High = H1D_trackPtHigh_primaryPurity[iDataset]->Divide(H1D_trackPtHigh_primary_rebinned[iDataset], H1D_primaryPurity_High_denominator[iDataset]);
+    divideSuccess_High = H1D_trackPtHigh_primaryPurity[iDataset]->Divide(H1D_trackPtHigh_primary_rebinned[iDataset], H1D_primaryPurity_High_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     if (useSplit == true) {
       // % of primary with split corrected
@@ -1325,7 +1338,7 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
       H1D_numerator_corrected[iDataset] = (TH1D*)H1D_trackPt_primary_rebinned[iDataset]->Clone("trackPt_primaryPurity_numerator_corrected"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_numerator_corrected[iDataset]->Add(H1D_trackPt_splitPrimaryTracks_rebinned[iDataset], -1);
     
-      divideSuccess_SplitCorrected = H1D_trackPt_primaryPurity_SplitCorrected[iDataset]->Divide(H1D_numerator_corrected[iDataset], H1D_primaryPurity_denominator[iDataset]);
+      divideSuccess_SplitCorrected = H1D_trackPt_primaryPurity_SplitCorrected[iDataset]->Divide(H1D_numerator_corrected[iDataset], H1D_primaryPurity_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     
       H1D_trackPtHigh_primaryPurity_SplitCorrected[iDataset] = (TH1D*)H1D_trackPtHigh_primary_rebinned[iDataset]->Clone("trackPtHigh_primaryPurityCorrected_rebinned"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_trackPtHigh_primaryPurity_SplitCorrected[iDataset]->Reset("M");
@@ -1333,18 +1346,18 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
       H1D_numerator_corrected_high[iDataset] = (TH1D*)H1D_trackPtHigh_primary_rebinned[iDataset]->Clone("trackPtHigh_primaryPurity_numerator_corrected"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_numerator_corrected_high[iDataset]->Add(H1D_trackPtHigh_splitPrimaryTracks_rebinned[iDataset], -1);
     
-      divideSuccess_SplitCorrected_High = H1D_trackPtHigh_primaryPurity_SplitCorrected[iDataset]->Divide(H1D_numerator_corrected_high[iDataset], H1D_primaryPurity_High_denominator[iDataset]);
+      divideSuccess_SplitCorrected_High = H1D_trackPtHigh_primaryPurity_SplitCorrected[iDataset]->Divide(H1D_numerator_corrected_high[iDataset], H1D_primaryPurity_High_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     
       // % of split primary 
       H1D_trackPt_primaryPurity_Split[iDataset] = (TH1D*)H1D_trackPt_splitPrimaryTracks_rebinned[iDataset]->Clone("trackPt_primaryPuritySplit_rebinned"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_trackPt_primaryPurity_Split[iDataset]->Reset("M");
     
-      divideSuccess_Split = H1D_trackPt_primaryPurity_Split[iDataset]->Divide(H1D_trackPt_splitPrimaryTracks_rebinned[iDataset], H1D_primaryPurity_denominator[iDataset]);
+      divideSuccess_Split = H1D_trackPt_primaryPurity_Split[iDataset]->Divide(H1D_trackPt_splitPrimaryTracks_rebinned[iDataset], H1D_primaryPurity_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
       H1D_trackPtHigh_primaryPurity_Split[iDataset] = (TH1D*)H1D_trackPtHigh_splitPrimaryTracks_rebinned[iDataset]->Clone("trackPtHigh_primaryPuritySplit_rebinned"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_trackPtHigh_primaryPurity_Split[iDataset]->Reset("M");
     
-      divideSuccess_Split_High = H1D_trackPtHigh_primaryPurity_Split[iDataset]->Divide(H1D_trackPtHigh_splitPrimaryTracks_rebinned[iDataset], H1D_primaryPurity_High_denominator[iDataset]);
+      divideSuccess_Split_High = H1D_trackPtHigh_primaryPurity_Split[iDataset]->Divide(H1D_trackPtHigh_splitPrimaryTracks_rebinned[iDataset], H1D_primaryPurity_High_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     }
 
@@ -1398,12 +1411,12 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
           DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
           H1D_trackPt_purity_ratios[iDataset] = (TH1D*)H1D_trackPt_purity_concatenated[2*iDataset]->Clone("H1D_trackPt_purity_concatenated_ratio"+Datasets[iDataset]+DatasetsNames[iDataset]);
           H1D_trackPt_purity_ratios[iDataset]->Reset("M");
-          divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[2*iDataset], H1D_trackPt_purity_concatenated[2*iDataset+1]);
+          divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[2*iDataset], H1D_trackPt_purity_concatenated[2*iDataset+1],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
         }
       } else {
         H1D_trackPt_purity_ratios[iDataset] = (TH1D*)H1D_trackPt_purity_concatenated[iDataset]->Clone("H1D_trackPt_purity_concatenated_ratio"+Datasets[iDataset]+DatasetsNames[iDataset]);
         H1D_trackPt_purity_ratios[iDataset]->Reset("M");
-        divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[iDataset], H1D_trackPt_purity_concatenated[0]);
+        divideSuccessRatio = H1D_trackPt_purity_ratios[iDataset]->Divide(H1D_trackPt_purity_concatenated[iDataset], H1D_trackPt_purity_concatenated[0],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
       }
     }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1447,9 +1460,9 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
 
 
   std::array<std::array<float, 2>, 2> drawnWindowLog = {{{-999, -999} , {0.8, 1.2}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<std::array<float, 2>, 2> drawnWindowLogZoom = {{{-999, -999} , {0.99, 1.02}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowLogZoom = {{{-999, -999} , {0.99, 1.006}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementPurityRatio = {{{0.3, 0.2}, {0.8, 0.4}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<std::array<float, 2>, 2> legendPlacementPurityRatioZoom = {{{0.25, 0.48}, {0.4, 0.75}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> legendPlacementPurityRatioZoom = {{{0.35, 0.23}, {0.5, 0.53}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   TString* pdfName_ratio = new TString("track_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio");
   if (divideSuccessRatio == true) {
@@ -1510,7 +1523,7 @@ void Draw_Purity_Eta_DatasetComparison(float* etaRange, bool useSplit) {
 
     H1D_primaryPurity_denominator[iDataset] = (TH1D*)H1D_trackEta_primary[iDataset]->Clone("trackEta_primaryPurity_denominator"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_primaryPurity_denominator[iDataset]->Add(H1D_trackEta_secondary[iDataset],1.);
-    divideSuccess = H1D_trackEta_primaryPurity[iDataset]->Divide(H1D_trackEta_primary[iDataset], H1D_primaryPurity_denominator[iDataset]);
+    divideSuccess = H1D_trackEta_primaryPurity[iDataset]->Divide(H1D_trackEta_primary[iDataset], H1D_primaryPurity_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // naming the histogram and resetting it to have a chosen name
     if (useSplit == true) {
@@ -1519,7 +1532,7 @@ void Draw_Purity_Eta_DatasetComparison(float* etaRange, bool useSplit) {
 
       H1D_splitPurity_denominator[iDataset] = (TH1D*)H1D_trackEta_primary[iDataset]->Clone("trackEta_splitPurity_denominator"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_splitPurity_denominator[iDataset]->Add(H1D_trackEta_splitPrimaryTracks[iDataset],1.);
-      divideSuccess_split = H1D_trackEta_splitPurity[iDataset]->Divide(H1D_trackEta_primary[iDataset], H1D_splitPurity_denominator[iDataset]);
+      divideSuccess_split = H1D_trackEta_splitPurity[iDataset]->Divide(H1D_trackEta_primary[iDataset], H1D_splitPurity_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
       }
   }
 
@@ -1532,7 +1545,7 @@ void Draw_Purity_Eta_DatasetComparison(float* etaRange, bool useSplit) {
 
 
   std::array<std::array<float, 2>, 2> drawnZoom_prim = {{{(float)H1D_trackEta_primaryPurity[0]->GetXaxis()->GetXmin(), (float)H1D_trackEta_primaryPurity[0]->GetXaxis()->GetXmax()}, 
-                                                    {0.95, 0.99}}}; // {{xmin, xmax}, {ymin, ymax}}
+                                                    {0.94, 0.97}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> drawnZoom_split = {{{(float)H1D_trackEta_primaryPurity[0]->GetXaxis()->GetXmin(), (float)H1D_trackEta_primaryPurity[0]->GetXaxis()->GetXmax()}, 
                                                     {0.996, 1.002}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementPurityEtaZoom = {{{0.28, 0.18}, {0.45, 0.43}}}; // {{xmin, xmax}, {ymin, ymax}}
@@ -1594,7 +1607,7 @@ void Draw_Purity_Phi_DatasetComparison(float* etaRange, bool useSplit) {
 
     H1D_primaryPurity_denominator[iDataset] = (TH1D*)H1D_trackPhi_primary[iDataset]->Clone("trackPhi_primaryPurity_denominator"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_primaryPurity_denominator[iDataset]->Add(H1D_trackPhi_secondary[iDataset],1.);
-    divideSuccess = H1D_trackPhi_primaryPurity[iDataset]->Divide(H1D_trackPhi_primary[iDataset], H1D_primaryPurity_denominator[iDataset]);
+    divideSuccess = H1D_trackPhi_primaryPurity[iDataset]->Divide(H1D_trackPhi_primary[iDataset], H1D_primaryPurity_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // naming the histogram and resetting it to have a chosen name
     if (useSplit == true) {
@@ -1603,7 +1616,7 @@ void Draw_Purity_Phi_DatasetComparison(float* etaRange, bool useSplit) {
 
     H1D_splitPurity_denominator[iDataset] = (TH1D*)H1D_trackPhi_primary[iDataset]->Clone("trackPhi_splitPurity_denominator"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_splitPurity_denominator[iDataset]->Add(H1D_trackPhi_splitPrimaryTracks[iDataset],1.);
-    divideSuccess_split = H1D_trackPhi_splitPurity[iDataset]->Divide(H1D_trackPhi_primary[iDataset], H1D_splitPurity_denominator[iDataset]);
+    divideSuccess_split = H1D_trackPhi_splitPurity[iDataset]->Divide(H1D_trackPhi_primary[iDataset], H1D_splitPurity_denominator[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     }
   }
 
@@ -1616,7 +1629,7 @@ void Draw_Purity_Phi_DatasetComparison(float* etaRange, bool useSplit) {
 
 
   std::array<std::array<float, 2>, 2> drawnZoom_prim = {{{(float)H1D_trackPhi_primaryPurity[0]->GetXaxis()->GetXmin(), (float)H1D_trackPhi_primaryPurity[0]->GetXaxis()->GetXmax()}, 
-                                                    {0.95, 0.99}}}; // {{xmin, xmax}, {ymin, ymax}}
+                                                    {0.92, 0.98}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> drawnZoom_split = {{{(float)H1D_trackPhi_primaryPurity[0]->GetXaxis()->GetXmin(), (float)H1D_trackPhi_primaryPurity[0]->GetXaxis()->GetXmax()}, 
                                                     {0.995, 1.005}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> legendPlacementPurityZoom = {{{0.2, 0.17}, {0.35, 0.35}}}; // {{xmin, xmax}, {ymin, ymax}}
@@ -1818,7 +1831,7 @@ void Draw_Purity_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange, bool 
 
     H1D_primaryPurity_denominator_pos[iDataset] = (TH1D*)H1D_trackPt_primary_pos[iDataset]->Clone("trackPt_primaryPurity_denominator_pos"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_primaryPurity_denominator_pos[iDataset]->Add(H1D_trackPt_secondary_pos[iDataset],1.);
-    divideSuccess = H1D_trackPt_primaryPurity_pos[iDataset]->Divide(H1D_trackPt_primary_pos[iDataset], H1D_primaryPurity_denominator_pos[iDataset]);
+    divideSuccess = H1D_trackPt_primaryPurity_pos[iDataset]->Divide(H1D_trackPt_primary_pos[iDataset], H1D_primaryPurity_denominator_pos[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // naming the histogram and resetting it to have a chosen name
     if (useSplit == true) {
@@ -1827,7 +1840,7 @@ void Draw_Purity_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange, bool 
 
       H1D_splitPurity_denominator_pos[iDataset] = (TH1D*)H1D_trackPt_primary_pos[iDataset]->Clone("trackPt_splitPurity_denominator_pos"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_splitPurity_denominator_pos[iDataset]->Add(H1D_trackPt_splitPrimaryTracks_pos[iDataset],1.);
-      divideSuccess_split = H1D_trackPt_splitPurity_pos[iDataset]->Divide(H1D_trackPt_primary_pos[iDataset], H1D_splitPurity_denominator_pos[iDataset]);
+      divideSuccess_split = H1D_trackPt_splitPurity_pos[iDataset]->Divide(H1D_trackPt_primary_pos[iDataset], H1D_splitPurity_denominator_pos[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     }
     // negative etas
     H1D_trackPt_primary_neg[iDataset] = (TH1D*)H3D_trackPtEtaPhi_primaryTracks[iDataset]->ProjectionX("trackPt_primary_neg"+Datasets[iDataset]+DatasetsNames[iDataset], ibinEta_zero_track, ibinEta_high_track, 0, -1, "e");
@@ -1841,7 +1854,7 @@ void Draw_Purity_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange, bool 
 
     H1D_primaryPurity_denominator_neg[iDataset] = (TH1D*)H1D_trackPt_primary_neg[iDataset]->Clone("trackPt_primaryPurity_denominator_neg"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_primaryPurity_denominator_neg[iDataset]->Add(H1D_trackPt_secondary_neg[iDataset],1.);
-    divideSuccess = H1D_trackPt_primaryPurity_neg[iDataset]->Divide(H1D_trackPt_primary_neg[iDataset], H1D_primaryPurity_denominator_neg[iDataset]);
+    divideSuccess = H1D_trackPt_primaryPurity_neg[iDataset]->Divide(H1D_trackPt_primary_neg[iDataset], H1D_primaryPurity_denominator_neg[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     // naming the histogram and resetting it to have a chosen name
     if (useSplit == true) {
@@ -1850,17 +1863,17 @@ void Draw_Purity_Pt_ratio_etaNeg_etaPos_DatasetComparison(float* etaRange, bool 
 
       H1D_splitPurity_denominator_neg[iDataset] = (TH1D*)H1D_trackPt_primary_neg[iDataset]->Clone("trackPt_splitPurity_denominator_neg"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_splitPurity_denominator_neg[iDataset]->Add(H1D_trackPt_splitPrimaryTracks_neg[iDataset],1.);
-      divideSuccess_split = H1D_trackPt_splitPurity_neg[iDataset]->Divide(H1D_trackPt_primary_neg[iDataset], H1D_splitPurity_denominator_neg[iDataset]);
+      divideSuccess_split = H1D_trackPt_splitPurity_neg[iDataset]->Divide(H1D_trackPt_primary_neg[iDataset], H1D_splitPurity_denominator_neg[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     }
     //// ratio eta right / eta left
     H1D_primaryPurityPt_etaRightLeftRatio[iDataset] = (TH1D*)H1D_primaryPurity_denominator_neg[iDataset]->Clone("H1D_primaryPurityPt_etaRightLeftRatio"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H1D_primaryPurityPt_etaRightLeftRatio[iDataset]->Reset("M");
-    divideSuccess_etaNegPos_prim = H1D_primaryPurityPt_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_primaryPurity_pos[iDataset], H1D_trackPt_primaryPurity_neg[iDataset]);
+    divideSuccess_etaNegPos_prim = H1D_primaryPurityPt_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_primaryPurity_pos[iDataset], H1D_trackPt_primaryPurity_neg[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
 
     if (useSplit == true) {
       H1D_splitPurityPt_etaRightLeftRatio[iDataset] = (TH1D*)H1D_splitPurity_denominator_neg[iDataset]->Clone("H1D_splitPurityPt_etaRightLeftRatio"+Datasets[iDataset]+DatasetsNames[iDataset]);
       H1D_splitPurityPt_etaRightLeftRatio[iDataset]->Reset("M");
-      divideSuccess_etaNegPos_split = H1D_splitPurityPt_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_splitPurity_pos[iDataset], H1D_trackPt_splitPurity_neg[iDataset]);
+      divideSuccess_etaNegPos_split = H1D_splitPurityPt_etaRightLeftRatio[iDataset]->Divide(H1D_trackPt_splitPurity_pos[iDataset], H1D_trackPt_splitPurity_neg[iDataset],1., 1., "b"); // option b for binomial because efficiency: https://twiki.cern.ch/twiki/bin/view/ALICE/PWGLFPAGSTRANGENESSEfficiency
     }
   }
   TString* pdfName = new TString("track_Pt_primaryPurity_etaRightLeftRatio"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]");
