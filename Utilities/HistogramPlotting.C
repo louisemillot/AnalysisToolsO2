@@ -97,11 +97,14 @@ TString contextCustomOneField(TString mainContext, std::string options){
 }
 
 TString contextPtRange(float* PtRange){
+  int lowBoundPrec = PtRange[0] < 10 ? 2 : 0;
+  int highBoundPrec = PtRange[1] < 10 ? 2 : 0; 
+
   std::stringstream ss;
   ss.setf(std::ios::fixed);
-  ss.precision(2);
+  ss.precision(lowBoundPrec);
   ss << PtRange[0] << " < #it{p}_{T} < ";
-  ss.precision(0);
+  ss.precision(highBoundPrec);
   ss << PtRange[1];
   TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
