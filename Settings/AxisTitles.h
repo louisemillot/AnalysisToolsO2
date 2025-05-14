@@ -87,7 +87,7 @@ TString* texTrackPurity = new TString("p = nTrack_{sign} / (nTrack_{sign}+nTrack
 
 
 TString* texJetKinematicEfficiency = new TString("Jet kinematic efficiency");
-TString* texJetEfficiency = new TString("#epsilon = nJet_{mcd,matched}^{sel8 coll} / nJet_{mcp}^{sel8 coll}");
+TString* texJetEfficiency = new TString("#epsilon = nJet_{mcp,matched}^{sel coll} / nJet_{mcp}^{sel coll}");
 TString* texJetPurity = new TString("#epsilon = nJet_{signal} / (nJet_{signal}+nJet_{background})");
 TString* texFakeRatio = new TString("N^{mcd, matched}_{jets} / N^{mcd}_{jets}");
 
@@ -134,6 +134,8 @@ TString* texRatioMcpUnfolded = new TString("mcp / unfolded");
 TString* texRatioRun2Unfolded = new TString("run2 / run3");
 TString* texRatioMeasuredUnfolded = new TString("measured / unfolded");
 TString* texRatioRefoldedMeasured = new TString("refolded / measured");
+TString* texRatioMcpFoldedVsMcp = new TString("mcp-folded / mcp");
+TString* texRatioMcpFoldedUnfoldedMcp = new TString("mcp-folded unfolded / mcp");
 
 
 TString* texTrackEfficiencyRatioEtaComparison = new TString("#epsilon^{ #eta > 0} / #epsilon^{ #eta < 0}");

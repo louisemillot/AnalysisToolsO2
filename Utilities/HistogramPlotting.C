@@ -11,6 +11,8 @@
 #include <sstream>
 #include <array>
 #include "TGaxis.h"
+#include <string>
+#include <filesystem>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Various Utilities /////////////////////////////////////////////////////////////////////////////////////
@@ -31,10 +33,45 @@ float findMaxFloat(float* array, int length){
   return max;
 }
 
+// Returns:
+//   true upon success.
+//   false upon failure, and set the std::error_code & err accordingly.
+bool CreateDirectoryRecursive(std::string const & dirName, std::error_code & err) //https://stackoverflow.com/questions/71658440/c17-create-directories-automatically-given-a-file-path
+{
+    err.clear();
+    if (!std::filesystem::create_directories(dirName, err))
+    {
+        if (std::filesystem::exists(dirName))
+        {
+            // The folder already exists:
+            err.clear();
+            return true;    
+        }
+        return false;
+    }
+    return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////// Histogram Context /////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+TString contextCustomFiveFields(TString mainContext, TString secondaryContext, TString tertiaryContext, TString quaternaryContext, TString quinaryContext, __attribute__ ((unused)) std::string options){
+  TString texContextFinal;
+  // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
+  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{"+tertiaryContext+"}{#splitline{"+quaternaryContext+"}{"+quinaryContext+"}}}";
+  // texContextFinal = "testtesttestest";
+  return texContextFinal;
+}
+
+TString contextCustomFourFields(TString mainContext, TString secondaryContext, TString tertiaryContext, TString quaternaryContext, __attribute__ ((unused)) std::string options){
+  TString texContextFinal;
+  // texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{"+tertiaryContext+"}";
+  texContextFinal = "#splitline{"+mainContext+" "+secondaryContext+"}{#splitline{"+tertiaryContext+"}{"+quaternaryContext+"}}";
+  // texContextFinal = "testtesttestest";
+  return texContextFinal;
+}
+
 
 TString contextCustomThreeFields(TString mainContext, TString secondaryContext, TString tertiaryContext, __attribute__ ((unused)) std::string options){
   TString texContextFinal;
@@ -45,19 +82,29 @@ TString contextCustomThreeFields(TString mainContext, TString secondaryContext, 
 }
 
 TString contextCustomTwoFields(TString mainContext, TString secondaryContext, std::string options){
-  return contextCustomThreeFields(mainContext, (TString)"" , secondaryContext, options);
+  TString texContextFinal;
+  texContextFinal = "#splitline{"+mainContext+"}{"+secondaryContext+"}";
+  return texContextFinal;
+  // return contextCustomThreeFields(mainContext, (TString)"" , secondaryContext, options);
+
 }
 
 TString contextCustomOneField(TString mainContext, std::string options){
-  return contextCustomTwoFields(mainContext, (TString)"", options);
+  TString texContextFinal;
+  texContextFinal = "#splitline{"+mainContext+"}{}";
+  return texContextFinal;
+  // return contextCustomTwoFields(mainContext, (TString)"", options);
 }
 
 TString contextPtRange(float* PtRange){
+  int lowBoundPrec = PtRange[0] < 10 ? 2 : 0;
+  int highBoundPrec = PtRange[1] < 10 ? 2 : 0; 
+
   std::stringstream ss;
   ss.setf(std::ios::fixed);
-  ss.precision(2);
+  ss.precision(lowBoundPrec);
   ss << PtRange[0] << " < #it{p}_{T} < ";
-  ss.precision(0);
+  ss.precision(highBoundPrec);
   ss << PtRange[1];
   TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
@@ -80,7 +127,7 @@ TString contextCentRange(float* CentRange){
 
 TString contextJetRadius(float jetRadius){
   std::stringstream ss;
-  ss << " R = " << jetRadius;
+  ss << "#it{R} = " << jetRadius;
   TString textContext((TString)ss.str());
   // TString texDataset(Form("%.0f", PtRange[0])+" < #it{p}_{T} < "+Form("%.0f", PtRange[1]));
   return textContext;
@@ -143,17 +190,6 @@ void CentralityLegend(TString* centralityLegend, const float arrayCentralityInte
   }
 }
 
-void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfoldIterationMax, int step){
-  const int nUnfoldIteration = std::floor((unfoldIterationMax - unfoldIterationMin + 1)/step);
-  std::stringstream ss;
-  ss.precision(2);
-  for(int iUnfoldIteration = 0; iUnfoldIteration < nUnfoldIteration; iUnfoldIteration++){
-    ss << "k_{unfold} = " << iUnfoldIteration * step + unfoldIterationMin;
-    iterationLegend[iUnfoldIteration] = (TString)ss.str();
-    ss.str("");
-    ss.clear();
-  }
-}
 
 
 
@@ -460,7 +496,7 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
   int nColors = gStyle->GetNumberOfColors();
   int histoPaletteColor;
   for (int i = 0; i < collectionSize; i++) {
-    if (options.find("colorPairs") == std::string::npos) { // if hasn't found "colorPairs" in options
+    if (options.find("twoByTwoDatasetPairs") == std::string::npos) { // if hasn't found "twoByTwoDatasetPairs" in options
       if (collectionSize >= collectionSizeColorThreshold) {
         histoPaletteColor = (float)nColors / collectionSize * (int)i;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
@@ -527,7 +563,7 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
           padMainHist->cd();
         }
       }
-    } else { // if has found "colorPairs" in options
+    } else { // if has found "twoByTwoDatasetPairs" in options
       if (collectionSize >= 2*collectionSizeColorThreshold) {
         histoPaletteColor = (float)nColors / collectionSize * (int)i/2;
         histograms_collection[i]->SetLineColor(gStyle->GetColorPalette(histoPaletteColor));
@@ -570,10 +606,10 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
           }
         }
       }
-      histograms_collection[i]->SetMarkerStyle(markersColorPairs[i]);
+      histograms_collection[i]->SetMarkerStyle(markerstwoByTwoDatasetPairs[i]);
       if (options.find("ratioInSameCanvas") != std::string::npos) {
         padRatio->cd();
-        histograms_collection_ratios[i]->SetMarkerStyle(markersColorPairs[i]);
+        histograms_collection_ratios[i]->SetMarkerStyle(markerstwoByTwoDatasetPairs[i]);
         padMainHist->cd();
       }
           
@@ -680,18 +716,31 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
 
 
 
-
-  struct stat st1{};
-  if (stat("pdfFolder/", &st1) == -1) {
-      mkdir("pdfFolder/", 0700);
-  }
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/", errEPS);
   canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
-
-  struct stat st2{};
-  if (stat("pngFolder/", &st2) == -1) {
-      mkdir("pngFolder/", 0700);
-  }
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
+  canvas->SaveAs("epsFolder/"+*pdfName+".eps");
+
+  // struct stat st1{};
+  // if (stat("pdfFolder/", &st1) == -1) {
+  //     mkdir("pdfFolder/", 0700);
+  // }
+  // canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
+
+  // struct stat st2{};
+  // if (stat("pngFolder/", &st2) == -1) {
+  //     mkdir("pngFolder/", 0700);
+  // }
+  // canvas->SaveAs("pngFolder/"+*pdfName+".png");
+
+  // struct stat st3{};
+  // if (stat("epsFolder/", &st3) == -1) {
+  //   mkdir("epsFolder/", 0700);
+  // }
+  // canvas->SaveAs("epsFolder/"+*pdfName+".eps");
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
   //   cout << "histograms_collection[0]->GetBinContent(iCentralityBin) = " << histograms_collection[0]->GetBinContent(iCentralityBin) << endl;
@@ -729,7 +778,7 @@ void Draw_TH1_Histogram(TH1D* histogram, TString Context, TString* pdfName, TStr
   Draw_TH1_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacement, options);
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options, TPolyLine* optionalLine) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 3> drawnWindow2D, double* th2Contours, int th2ContourNumber, std::string options, TPolyLine* optionalLine) {
 
   double width = collectionSize*900;
   double height = 800;
@@ -764,15 +813,33 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     // leg->AddEntry(histograms_collection[i], legendList_string[i], "LP");
   }
 
-  if (std::equal(std::begin(drawnWindow), std::end(drawnWindow), std::begin(drawnWindowAuto), std::end(drawnWindowAuto))) {
+
+  if (std::equal(std::begin(drawnWindow2D[0]), std::end(drawnWindow2D[0]), std::begin(drawnWindow2DAuto[0]), std::end(drawnWindow2DAuto[0]))) { // auto x axis
     if (options.find("autoRangeSame") != std::string::npos) {
       int maxXbin = 0;
-      int maxYbin = 0;
       int symBinLimitMin = 9999999;
       for (int i = 0; i < collectionSize; i++) {
         if (maxXbin < histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 1)) {
           maxXbin = histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 1);// (asks for the first/last bin on the x axis (axis number 1) to have strictly more than 1 entry)
         }
+      }
+      for (int i = 0; i < collectionSize; i++) {
+        histograms_collection[i]->GetXaxis()->SetRange(1, maxXbin);
+      }
+    }
+  } else {
+    double minX = drawnWindow2D[0][0];
+    double maxX = drawnWindow2D[0][1];
+    for (int i = 0; i < collectionSize; i++) {
+      histograms_collection[i]->GetXaxis()->SetRangeUser(minX, maxX);
+    }
+  }
+
+  if (std::equal(std::begin(drawnWindow2D[1]), std::end(drawnWindow2D[1]), std::begin(drawnWindow2DAuto[1]), std::end(drawnWindow2DAuto[1]))) { // auto y axis
+    if (options.find("autoRangeSame") != std::string::npos) {
+      int maxYbin = 0;
+      int symBinLimitMin = 9999999;
+      for (int i = 0; i < collectionSize; i++) {
         if (maxYbin < histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2)) {
           maxYbin = histograms_collection[i]->FindLastBinAbove(GLOBAL_epsilon, 2);// (asks for the first/last bin on the y axis (axis number 2) to have strictly more than 1 entry)
         }
@@ -789,20 +856,28 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
           histograms_collection[i]->GetYaxis()->SetRange(symBinLimitMin, histograms_collection[i]->GetNbinsY() - symBinLimitMin); //getting symmetric window around 0 on Y axis
         }
         else {
-          histograms_collection[i]->GetXaxis()->SetRange(1, maxXbin);
           histograms_collection[i]->GetYaxis()->SetRange(1, maxYbin);
         }
       }
     }
-    // else draws with unchanged histogram window
-  } else { // if not drawnWindowAuto, then set the window to match the one entered in drawnWindow
-    int minX = drawnWindow[0][0];
-    int maxX = drawnWindow[0][1];
-    int minY = drawnWindow[1][0];
-    int maxY = drawnWindow[1][1];
+  } else {
+    double minY = drawnWindow2D[1][0];
+    double maxY = drawnWindow2D[1][1];
     for (int i = 0; i < collectionSize; i++) {
-      histograms_collection[i]->GetXaxis()->SetRangeUser(minX, maxX);
       histograms_collection[i]->GetYaxis()->SetRangeUser(minY, maxY);
+    }
+  }
+
+  if (std::equal(std::begin(drawnWindow2D[2]), std::end(drawnWindow2D[2]), std::begin(drawnWindow2DAuto[2]), std::end(drawnWindow2DAuto[2]))) { // auto z axis
+    for (int i = 0; i < collectionSize; i++) {
+      histograms_collection[i]->GetZaxis()->SetRangeUser(histograms_collection[i]->GetMinimum(GLOBAL_epsilon), histograms_collection[i]->GetMaximum());
+    }
+  } else {
+    double minZ = drawnWindow2D[2][0];
+    double maxZ = drawnWindow2D[2][1];
+    for (int i = 0; i < collectionSize; i++) {
+      cout << "kjsfkdsjhglkfdjhgkdjhgdkjhgkdfjhgdkjfhkfdjhgkdfjhgkdjhgkdfjhgkdfhjg" << minZ << ", " << maxZ << endl;
+      histograms_collection[i]->GetZaxis()->SetRangeUser(minZ, maxZ);
     }
   }
 
@@ -812,12 +887,6 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
       optionalLine->Draw("");
       optionalLine->SetLineColor(kRed);
     }
-  }
-
-  // cout << "---------------- TH2 drawing; getting min and max test:" << endl;
-  for (int i = 0; i < collectionSize; i++) {
-    histograms_collection[i]->GetZaxis()->SetRangeUser(histograms_collection[i]->GetMinimum(GLOBAL_epsilon), histograms_collection[i]->GetMaximum());
-    // cout << "min = " << histograms_collection[i]->GetMinimum(GLOBAL_epsilon) << ", max = " << histograms_collection[i]->GetMaximum() << endl;
   }
 
   gStyle->SetPalette(kBird); // a better palette than the kRainbow that was used by default; https://root.cern.ch/doc/master/classTColor.html lists it as one of the better palettes for Colour Vision Deficiencies 
@@ -834,30 +903,46 @@ void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList
     textInfo->DrawLatex(0.18,0.65,legendList_string[i]);
   }
 
-  struct stat st1{};
-  if (stat("pdfFolder/", &st1) == -1) {
-      mkdir("pdfFolder/", 0700);
-  }
-  canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
 
-  struct stat st2{};
-  if (stat("pngFolder/", &st2) == -1) {
-      mkdir("pngFolder/", 0700);
-  }
+
+  std::error_code errPDF, errPNG, errEPS;
+  CreateDirectoryRecursive((std::string)"pdfFolder/", errPDF);
+  CreateDirectoryRecursive((std::string)"pngFolder/", errPNG);
+  CreateDirectoryRecursive((std::string)"epsFolder/", errEPS);
+  canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
   canvas->SaveAs("pngFolder/"+*pdfName+".png");
+  canvas->SaveAs("epsFolder/"+*pdfName+".eps");
+
+  // struct stat st1{};
+  // if (stat("pdfFolder/", &st1) == -1) {
+  //     mkdir("pdfFolder/", 0700);
+  // }
+  // canvas->SaveAs("pdfFolder/"+*pdfName+".pdf");
+
+  // struct stat st2{};
+  // if (stat("pngFolder/", &st2) == -1) {
+  //     mkdir("pngFolder/", 0700);
+  // }
+  // canvas->SaveAs("pngFolder/"+*pdfName+".png");
+
+  // struct stat st3{};
+  // if (stat("epsFolder/", &st3) == -1) {
+  //   mkdir("epsFolder/", 0700);
+  // }
+  // canvas->SaveAs("epsFolder/"+*pdfName+".eps");
 }
 
-void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
+void Draw_TH2_Histograms(TH2D** histograms_collection, const TString* legendList_string, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 3> drawnWindow2D, double* th2Contours, int th2ContourNumber, std::string options) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms function; it will only be used if 'options' has fit in it
   TPolyLine* optionalLine;
-  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, th2Contours, th2ContourNumber, options, optionalLine);
+  Draw_TH2_Histograms(histograms_collection, legendList_string, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow2D, th2Contours, th2ContourNumber, options, optionalLine);
 }
 
-void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, double* th2Contours, int th2ContourNumber, std::string options) {
+void Draw_TH2_Histogram(TH2D* histogram, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 3> drawnWindow2D, double* th2Contours, int th2ContourNumber, std::string options) {
   TH2D* singleHistArray[1] = {histogram};
   TString dummyLegend[1] = {(TString)""};
   int dummyCollectionSize = 1;
-  Draw_TH2_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, th2Contours, th2ContourNumber, options);
+  Draw_TH2_Histograms(singleHistArray, dummyLegend, dummyCollectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow2D, th2Contours, th2ContourNumber, options);
 
 
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){

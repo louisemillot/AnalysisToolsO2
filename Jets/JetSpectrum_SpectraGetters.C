@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -35,9 +35,9 @@ void Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1
   }
 
   if (!controlMC) {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_recBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
   } else {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflow_unfoldingControl+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_recBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
   }
   H1D_jetPt_defaultBin->Sumw2();
   
@@ -49,7 +49,7 @@ void Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1
 }
 
 
-void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -62,7 +62,7 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1
   if (!controlMC) {
     H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
   } else {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflow_unfoldingControl+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
   }
   H1D_jetPt_defaultBin->Sumw2();
 
@@ -73,7 +73,7 @@ void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1
   }
 }
 
-void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -84,9 +84,9 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H
   }
 
   if (!controlMC) {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
   } else {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowData+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_genBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflow_unfoldingControl+"/"+histogramName))->Clone("Get_Pt_spectrum_bkgCorrected_fineBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
   }
   H1D_jetPt_defaultBin->Sumw2();
 
@@ -97,7 +97,7 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H
   }
 }
 
-void Get_Pt_spectrum_mcp_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcp_genBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -110,9 +110,19 @@ void Get_Pt_spectrum_mcp_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
   if (!fcontrolMC){
     H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
   } else {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowMC+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_genBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflow_unfoldingControl+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_genBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
   }
   H1D_jetPt_defaultBin->Sumw2();
+
+
+  if (smoothenMCP) {
+    for(int i = 1; i <= H1D_jetPt_defaultBin->GetNbinsX()-1; i++){
+      if ((H1D_jetPt_defaultBin->GetBinContent(i+1) - H1D_jetPt_defaultBin->GetBinContent(i)) > 0.01) {
+        H1D_jetPt_defaultBin->SetBinContent(i+1, H1D_jetPt_defaultBin->GetBinContent(i));
+        H1D_jetPt_defaultBin->SetBinError(i+1, H1D_jetPt_defaultBin->GetBinError(i));
+      }
+    }
+  }
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcp_rebinned_genBinning_"+Datasets[iDataset]+DatasetsNames[iDataset]+RadiusLegend[iRadius]+Datasets[iDataset]+DatasetsNames[iDataset], ptBinsJetsGen[iRadius]);
 
@@ -121,7 +131,7 @@ void Get_Pt_spectrum_mcp_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
   }
 }
 
-void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -134,20 +144,27 @@ void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_
   if (!fcontrolMC){
     H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
   } else {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowMC+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_fineBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflow_unfoldingControl+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_fineBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
   }
   H1D_jetPt_defaultBin->Sumw2();
-  cout << "test Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm 1" << endl;
+
+  if (smoothenMCP) {
+    for(int i = 1; i <= H1D_jetPt_defaultBin->GetNbinsX()-1; i++){
+      if ((H1D_jetPt_defaultBin->GetBinContent(i+1) - H1D_jetPt_defaultBin->GetBinContent(i)) > 0.01) {
+        H1D_jetPt_defaultBin->SetBinContent(i+1, H1D_jetPt_defaultBin->GetBinContent(i));
+        H1D_jetPt_defaultBin->SetBinError(i+1, H1D_jetPt_defaultBin->GetBinError(i));
+      }
+    }
+  }
 
   H1D_jetPt_mcp = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsFine[iRadius],"jetPt_mcp_rebinned_fineBinning_"+Datasets[iDataset]+DatasetsNames[iDataset]+RadiusLegend[iRadius]+Datasets[iDataset]+DatasetsNames[iDataset], ptBinsJetsFine[iRadius]);
-  cout << "test Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm 2" << endl;
 
   if (doWidthScalingEarly) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
 
-void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -160,18 +177,27 @@ void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
   if (!fcontrolMC){
     H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_recBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
   } else {
-    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflowMC+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_recBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
+    H1D_jetPt_defaultBin = (TH1D*)((TH1D*)file_O2Analysis_ppSimDetectorEffect_unfoldingControl->Get(analysisWorkflow_unfoldingControl+"/"+histogramName))->Clone("Get_Pt_spectrum_mcp_recBinning_unfoldingControl"+Datasets[iDataset]+DatasetsNames[iDataset]);
   }
   H1D_jetPt_defaultBin->Sumw2();
 
-  H1D_jetPt_mcp = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsGen[iRadius],"jetPt_mcp_rebinned_recBinning"+RadiusLegend[iRadius]+Datasets[iDataset]+DatasetsNames[iDataset], ptBinsJetsGen[iRadius]);
+  if (smoothenMCP) {
+    for(int i = 1; i <= H1D_jetPt_defaultBin->GetNbinsX()-1; i++){
+      if ((H1D_jetPt_defaultBin->GetBinContent(i+1) - H1D_jetPt_defaultBin->GetBinContent(i)) > 0.01) {
+        H1D_jetPt_defaultBin->SetBinContent(i+1, H1D_jetPt_defaultBin->GetBinContent(i));
+        H1D_jetPt_defaultBin->SetBinError(i+1, H1D_jetPt_defaultBin->GetBinError(i));
+      }
+    }
+  }
+
+  H1D_jetPt_mcp = (TH1D*)H1D_jetPt_defaultBin->Rebin(nBinPtJetsRec[iRadius],"jetPt_mcp_rebinned_recBinning"+RadiusLegend[iRadius]+Datasets[iDataset]+DatasetsNames[iDataset], ptBinsJetsRec[iRadius]);
 
   if (doWidthScalingEarly) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
 
-void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -191,7 +217,7 @@ void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_
   }
 }
 
-void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -211,7 +237,7 @@ void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
   }
 }
 
-void Get_Pt_spectrum_mcd_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcd_genBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH1D* H1D_jetPt_defaultBin;
 
   TString histogramName = "";
@@ -231,7 +257,7 @@ void Get_Pt_spectrum_mcd_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_m
   }
 }
 
-void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH2D* H2D_jetPtMcdjetPtMcp;
   TH3D* H3D_jetRjetPtTagjetPtBase;
 
@@ -240,7 +266,11 @@ void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_
     if (doBkgSubtractionInMC) {
       H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_Pt_spectrum_mcpMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
     } else {
-      H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcpMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      if (etaCutOnMatchedJetsIsObsoleteVersion == true) {
+        H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcpMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      } else {
+        H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcpetaconstraint"))->Clone("Get_Pt_spectrum_mcpMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      }
     }
     H2D_jetPtMcdjetPtMcp->Sumw2();
 
@@ -264,7 +294,7 @@ void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_
   }
 }
 
-void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH2D* H2D_jetPtMcdjetPtMcp;
   TH3D* H3D_jetRjetPtTagjetPtBase;
 
@@ -274,7 +304,11 @@ void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D
     if (doBkgSubtractionInMC) {
       H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_Pt_spectrum_mcpMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
     } else {
-      H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcpMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      if (etaCutOnMatchedJetsIsObsoleteVersion == true) {
+        H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcpMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      } else {
+        H2D_jetPtMcdjetPtMcp = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcpetaconstraint"))->Clone("Get_Pt_spectrum_mcpMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      }
     }
     H2D_jetPtMcdjetPtMcp->Sumw2();
 
@@ -298,7 +332,7 @@ void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D
   }
 }
 
-void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH2D* H2D_jetPtMcdjetPtMcd;
   TH3D* H3D_jetRjetPtTagjetPtBase;
 
@@ -307,7 +341,11 @@ void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_
     if (doBkgSubtractionInMC) {
       H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_Pt_spectrum_mcdMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
     } else {
-      H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcdMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      if (etaCutOnMatchedJetsIsObsoleteVersion == true) {
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcdMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      } else {
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcdetaconstraint"))->Clone("Get_Pt_spectrum_mcdMatched_genBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      }
     }
     H2D_jetPtMcdjetPtMcd->Sumw2();
 
@@ -331,7 +369,7 @@ void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_
   }
 }
 
-void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH2D* H2D_jetPtMcdjetPtMcd;
   TH3D* H3D_jetRjetPtTagjetPtBase;
 
@@ -341,7 +379,11 @@ void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_
     if (doBkgSubtractionInMC) {
       H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_Pt_spectrum_mcdMatched_recBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
     } else {
-      H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcdMatched_recBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      if (etaCutOnMatchedJetsIsObsoleteVersion == true) {
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcdMatched_recBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      } else {
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcdetaconstraint"))->Clone("Get_Pt_spectrum_mcdMatched_recBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      }
     }
     H2D_jetPtMcdjetPtMcd->Sumw2();
 
@@ -365,7 +407,7 @@ void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_
   }
 }
 
-void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
+void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, __attribute__ ((unused)) std::string options) {
   TH2D* H2D_jetPtMcdjetPtMcd;
   TH3D* H3D_jetRjetPtTagjetPtBase;
 
@@ -375,7 +417,11 @@ void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D
     if (doBkgSubtractionInMC) {
       H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_Pt_spectrum_mcdMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
     } else {
-      H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcdMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      if (etaCutOnMatchedJetsIsObsoleteVersion == true) {
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_Pt_spectrum_mcdMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      } else {
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcdetaconstraint"))->Clone("Get_Pt_spectrum_mcdMatched_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      }
     }
     H2D_jetPtMcdjetPtMcd->Sumw2();
 
@@ -399,59 +445,71 @@ void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAndEvtNorm(TH1D* &H1D
   }
 }
 
-void Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScaling(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt, iDataset, iRadius, options);
+void Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt, iDataset, iRadius, options);
 
 
   if (normaliseDistribsBeforeUnfolding) {
     if (!controlMC) {
       NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflowData));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      if (mcIsWeighted) {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      }
     }
   }
 }
 void Get_Pt_spectrum_bkgCorrected_recBinning(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScaling(H1D_jetPt, iDataset, iRadius, options);
+  Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEnd(H1D_jetPt, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
 }
-void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAndEvtNorm(H1D_jetPt, iDataset, iRadius, options);
+void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt, iDataset, iRadius, options);
 
 
   if (normaliseDistribsBeforeUnfolding) {
     if (!controlMC) {
       NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflowData));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      if (mcIsWeighted) {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      }
     }
   }
 }
 
 void Get_Pt_spectrum_bkgCorrected_genBinning(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScaling(H1D_jetPt, iDataset, iRadius, options);
+  Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEnd(H1D_jetPt, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
 }
 
-void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt, iDataset, iRadius, options);
+void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (!controlMC) {
       NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflowData));
     } else {
-      NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      if (mcIsWeighted) {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      } else {
+        NormaliseRawHistToNEvents(H1D_jetPt, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl, analysisWorkflow_unfoldingControl));
+      }
     }
   }
 }
 void Get_Pt_spectrum_bkgCorrected_fineBinning(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScaling(H1D_jetPt, iDataset, iRadius, options);
+  Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(H1D_jetPt, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
@@ -459,8 +517,8 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning(TH1D* &H1D_jetPt, int iDataset, in
 }
 
 
-void Get_Pt_spectrum_mcp_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
-  Get_Pt_spectrum_mcp_genBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
+void Get_Pt_spectrum_mcp_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
+  Get_Pt_spectrum_mcp_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -479,15 +537,15 @@ void Get_Pt_spectrum_mcp_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iD
   }
 }
 void Get_Pt_spectrum_mcp_genBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
-  Get_Pt_spectrum_mcp_genBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
+  Get_Pt_spectrum_mcp_genBinning_preWidthScalingAtEnd(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
 
-void Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
-  Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
+void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
+  Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -506,15 +564,15 @@ void Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int i
   }
 }
 void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
-  Get_Pt_spectrum_mcp_fineBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
+  Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEnd(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 }
 
-void Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -525,15 +583,15 @@ void Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int i
   }
 }
 void Get_Pt_spectrum_mcd_fineBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcd_fineBinning_preWidthScaling(H1D_jetPt_mcd, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEnd(H1D_jetPt_mcd, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
 }
 
-void Get_Pt_spectrum_mcd_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcd_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcd_recBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -544,15 +602,15 @@ void Get_Pt_spectrum_mcd_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iD
   }
 }
 void Get_Pt_spectrum_mcd_recBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcd_recBinning_preWidthScaling(H1D_jetPt_mcd, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcd_recBinning_preWidthScalingAtEnd(H1D_jetPt_mcd, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
 }
 
-void Get_Pt_spectrum_mcd_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcd_genBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcd_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcd_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcd, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -563,15 +621,15 @@ void Get_Pt_spectrum_mcd_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd, int iD
   }
 }
 void Get_Pt_spectrum_mcd_genBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcd_genBinning_preWidthScaling(H1D_jetPt_mcd, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcd_genBinning_preWidthScalingAtEnd(H1D_jetPt_mcd, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
 }
 
-void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -582,15 +640,15 @@ void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcdM
   }
 }
 void Get_Pt_spectrum_mcdMatched_genBinning(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcdMatched_genBinning_preWidthScaling(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAtEnd(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
 }
 
-void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -601,15 +659,15 @@ void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcdM
   }
 }
 void Get_Pt_spectrum_mcdMatched_recBinning(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcdMatched_recBinning_preWidthScaling(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAtEnd(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
 }
 
-void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -620,15 +678,15 @@ void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcd
   }
 }
 void Get_Pt_spectrum_mcdMatched_fineBinning(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScaling(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAtEnd(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
 }
 
-void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -639,15 +697,15 @@ void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScaling(TH1D* &H1D_jetPt_mcpM
   }
 }
 void Get_Pt_spectrum_mcpMatched_genBinning(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcpMatched_genBinning_preWidthScaling(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAtEnd(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcpMatched);
   }
 }
 
-void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
+void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
+  Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -658,15 +716,15 @@ void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp
   }
 }
 void Get_Pt_spectrum_mcpMatched_fineBinning(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
-  Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScaling(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
+  Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAtEnd(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcpMatched);
   }
 }
 
-void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
-  Get_Pt_spectrum_mcp_recBinning_preWidthScalingAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
+void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
+  Get_Pt_spectrum_mcp_recBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
   if (normaliseDistribsBeforeUnfolding) {
     if (mcIsWeighted) {
@@ -685,7 +743,7 @@ void Get_Pt_spectrum_mcp_recBinning_preWidthScaling(TH1D* &H1D_jetPt_mcp, int iD
   }
 }
 void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
-  Get_Pt_spectrum_mcp_recBinning_preWidthScaling(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
+  Get_Pt_spectrum_mcp_recBinning_preWidthScalingAtEnd(H1D_jetPt_mcp, iDataset, iRadius, fcontrolMC, options);
 
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);

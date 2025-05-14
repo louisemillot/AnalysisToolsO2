@@ -439,7 +439,7 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange, bool useSplit) {
   int nHistPairRatio = (int)nDatasets / 2;
   bool divideSuccessRatio;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    if (histDrawColorsOption.find("colorPairs") != std::string::npos) { //colorPairs assumes a Datasets array like so: {pair1_element1, pair1_element2, pair2_element1, pair2_element2..., pairN_element1, pairN_element2}
+    if (histDatasetComparisonStructure.find("twoByTwoDatasetPairs") != std::string::npos) { //twoByTwoDatasetPairs assumes a Datasets array like so: {pair1_element1, pair1_element2, pair2_element1, pair2_element2..., pairN_element1, pairN_element2}
       if (iDataset < nHistPairRatio) {
         DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
         H1D_trackPt_efficiency_ratios[iDataset] = (TH1D*)H1D_trackPt_efficiency_concatenated[2*iDataset]->Clone("H1D_trackPt_efficiency_concatenated_ratio"+Datasets[iDataset]+DatasetsNames[iDataset]);
@@ -501,10 +501,10 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange, bool useSplit) {
   }
   if (useSplit == true) {
     if (divideSuccess_split == true && divideSuccess_split_ptHigh == true ) {
-      Draw_TH1_Histograms(H1D_trackPt_efficiency_splitCorrected_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_splitCorrected, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEff_SplitCorrected, legendPlacementEfficiency, contextPlacementEfficiency, "logx,efficiency,150MevLine"+histDrawColorsOption);
+      Draw_TH1_Histograms(H1D_trackPt_efficiency_splitCorrected_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_splitCorrected, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEff_SplitCorrected, legendPlacementEfficiency, contextPlacementEfficiency, "logx,efficiency,150MevLine"+histDatasetComparisonStructure);
     }
     if (divideSuccess_split_notCorrected == true && divideSuccess_split__notCorrectedPtHigh ==true) {
-      Draw_TH1_Histograms(H1D_trackPt_efficiency_split_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_split, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEff_SplitCorrected, legendPlacementEfficiency, contextPlacementEfficiency, "logx,efficiency,150MevLine"+histDrawColorsOption);
+      Draw_TH1_Histograms(H1D_trackPt_efficiency_split_concatenated, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_split, texPtMC, texTrackEfficiency, texCollisionDataInfo, drawnWindowLogEff_SplitCorrected, legendPlacementEfficiency, contextPlacementEfficiency, "logx,efficiency,150MevLine"+histDatasetComparisonStructure);
     }
   }
   else {
@@ -512,12 +512,12 @@ void Draw_Efficiency_Pt_DatasetComparison(float* etaRange, bool useSplit) {
   }
   TString* pdfName_ratio = new TString("track_Pt_efficiency"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio");
   if (divideSuccessRatio == true) {
-    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+    if (histDatasetComparisonStructure.find("twoByTwoDatasetPairs") != std::string::npos) {
       Draw_TH1_Histograms(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogEffRatio, legendPlacementEfficiencyRatio, contextPlacementEfficiencyRatio, "logx,150MevLine,zoomToOneLarge,ratioLine");
       TString* pdfName_ratio_zoom = new TString("track_Pt_efficiency"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio_zoom");
       //Draw_TH1_Histograms(H1D_trackPt_efficiency_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementratio, contextPlacementAuto, "logx,150MevLine,ratioLine");
     } else {
-    Draw_TH1_Histograms(H1D_trackPt_efficiency_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementratio, contextPlacementAuto, "logx,150MevLine,zoomToOneLarge,noMarkerFirst,ratioLine"+histDrawColorsOption);
+    Draw_TH1_Histograms(H1D_trackPt_efficiency_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementratio, contextPlacementAuto, "logx,150MevLine,zoomToOneLarge,noMarkerFirst,ratioLine"+histDatasetComparisonStructure);
     }
   }
   else {
@@ -1370,7 +1370,7 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
     int nHistPairRatio = (int)nDatasets / 2;
     bool divideSuccessRatio;
     for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-      if (histDrawColorsOption.find("colorPairs") != std::string::npos) { //colorPairs assumes a Datasets array like so: {pair1_element1, pair1_element2, pair2_element1, pair2_element2..., pairN_element1, pairN_element2}
+      if (histDatasetComparisonStructure.find("twoByTwoDatasetPairs") != std::string::npos) { //twoByTwoDatasetPairs assumes a Datasets array like so: {pair1_element1, pair1_element2, pair2_element1, pair2_element2..., pairN_element1, pairN_element2}
         if (iDataset < nHistPairRatio) {
           DatasetsNamesPairRatio[iDataset] = DatasetsNames[2*iDataset]+(TString)"/"+DatasetsNames[2*iDataset+1];
           H1D_trackPt_purity_ratios[iDataset] = (TH1D*)H1D_trackPt_purity_concatenated[2*iDataset]->Clone("H1D_trackPt_purity_concatenated_ratio"+Datasets[iDataset]+DatasetsNames[iDataset]);
@@ -1407,13 +1407,13 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
   }
   if (useSplit == true) {
     if (divideSuccess_SplitCorrected == true && divideSuccess_SplitCorrected_High == true) {
-      Draw_TH1_Histograms(H1D_trackPt_purity_concatenatedSplitCorrected, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_splitCorrected, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowPurity, legendPlacementPurity, contextPlacementAuto, "logx,efficiency,150MevLine"+histDrawColorsOption);
+      Draw_TH1_Histograms(H1D_trackPt_purity_concatenatedSplitCorrected, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_splitCorrected, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowPurity, legendPlacementPurity, contextPlacementAuto, "logx,efficiency,150MevLine"+histDatasetComparisonStructure);
     }
     else {
     cout << "Divide failed in Draw_Purity_Pt_DatasetComparison_legacy" << endl;
     }
     if (divideSuccess_Split == true && divideSuccess_Split_High == true) {
-      Draw_TH1_Histograms(H1D_trackPt_purity_concatenatedSplit, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_split, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowPuritySplit, legendPlacementPurity, contextPlacementAuto, "logx,efficiency,150MevLine"+histDrawColorsOption);
+      Draw_TH1_Histograms(H1D_trackPt_purity_concatenatedSplit, DatasetsNames, nDatasets, textContext, pdfNameEntriesNorm_split, texPtRec, texTrackPurity, texCollisionDataInfo, drawnWindowPuritySplit, legendPlacementPurity, contextPlacementAuto, "logx,efficiency,150MevLine"+histDatasetComparisonStructure);
     }
     else {
     cout << "Divide failed in Draw_Purity_Pt_DatasetComparison_legacy" << endl;
@@ -1426,12 +1426,12 @@ void Draw_Purity_Pt_DatasetComparison(float* etaRange, bool useSplit) {
   std::array<std::array<float, 2>, 2> legendPlacementPurityRatio = {{{0.2, 0.2}, {0.8, 0.4}}}; // {{xmin, xmax}, {ymin, ymax}}
   TString* pdfName_ratio = new TString("track_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio");
   if (divideSuccessRatio == true) {
-    if (histDrawColorsOption.find("colorPairs") != std::string::npos) {
+    if (histDatasetComparisonStructure.find("twoByTwoDatasetPairs") != std::string::npos) {
       Draw_TH1_Histograms(H1D_trackPt_purity_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPtX, texRatio, texCollisionDataInfo, drawnWindowLog, legendPlacementPurityRatio, contextPlacementPurityRatio, "logx,150MevLine,zoomToOneLarge,ratioLine");
       TString* pdfName_ratio_zoom = new TString("track_Pt_purity"+dummyName[0]+"_@eta["+Form("%.1f", etaRange[0])+","+Form("%.1f", etaRange[1])+"]_ratio_zoom");
       Draw_TH1_Histograms(H1D_trackPt_purity_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio_zoom, texPtX, texRatio, texCollisionDataInfo, drawnWindowLogZoom, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,ratioLine");
     } else {
-    Draw_TH1_Histograms(H1D_trackPt_purity_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,zoomToOneLarge,noMarkerFirst,ratioLine"+histDrawColorsOption);
+    Draw_TH1_Histograms(H1D_trackPt_purity_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowLog, legendPlacementAuto, contextPlacementAuto, "logx,150MevLine,zoomToOneLarge,noMarkerFirst,ratioLine"+histDatasetComparisonStructure);
     }
   }
   else {

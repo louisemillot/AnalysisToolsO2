@@ -395,7 +395,7 @@
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false};
-// const std::string histDrawColorsOption = "colorPairs";
+// const std::string histDatasetComparisonStructure = "twoByTwoDatasetPairs";
 
 // //////// -------- local pp test sim anchored to PbPb comparison to pp anchor -------- ////////
 // TString* texCollisionDataInfo = new TString("PbPb MC #sqrt{#it{s}} = 5.36 TeV");
@@ -434,30 +434,58 @@
 
 // const TString trainId = "";
 // const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false};
-// const std::string histDrawColorsOption = "colorPairs";
+// const std::string histDatasetComparisonStructure = "twoByTwoDatasetPairs";
 
 
 
-//////// -------- pp sim test Anchor Pb-Pb gap comparison-------- ////////
+// //////// -------- pp sim test Anchor Pb-Pb gap comparison-------- ////////
+// TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("gap value");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("MC anchored to Pb-Pb");
+// const int nDatasets = 4;
+// const TString Datasets[nDatasets] = {"pp_sim_anchored_to_PbPb_5360GeV_gap2", "pp_sim_anchored_to_PbPb_5360GeV_gap3", "pp_sim_anchored_to_PbPb_5360GeV_gap4", "pp_sim_anchored_to_PbPb_5360GeV_gap5"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"gap2", "gap3", "gap4", "gap5"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"track-efficiency",
+//                                           "track-efficiency",
+//                                           "track-efficiency",
+//                                           "track-efficiency"
+//                                           };
+
+// const TString trainId = "";
+// const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
+// const std::string histDatasetComparisonStructure = "";
+// const bool datasetsAreSubsetsofId0 = false;
+
+
+//////// -------- LHC25b6 - pp sim anchored to PbPb 10% ////////
 TString* texCollisionDataInfo = new TString("pp #sqrt{#it{s}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("gap value");
-const TString* texDatasetsComparisonCommonDenominator = new TString("MC anchored to Pb-Pb");
-const int nDatasets = 4;
-const TString Datasets[nDatasets] = {"pp_sim_anchored_to_PbPb_5360GeV_gap2", "pp_sim_anchored_to_PbPb_5360GeV_gap3", "pp_sim_anchored_to_PbPb_5360GeV_gap4", "pp_sim_anchored_to_PbPb_5360GeV_gap5"};
+const TString* texDatasetsComparisonType = new TString("");
+const TString* texDatasetsComparisonCommonDenominator = new TString("");
+const int nDatasets = 2;
+const TString Datasets[nDatasets] = {"LHC25b6_pp_sim_PbPbAnchor_10percent_train370115", "LHC25b4a_pp_ref_Tracks_train371362"};
 // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"gap2", "gap3", "gap4", "gap5"};
+const TString DatasetsNames[nDatasets] = {"jet-jet MC Pb-Pb anchor", "ppRef gen.purp. MC"};
 TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root")
+                                          new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                         };
+
 const TString analysisWorkflow[nDatasets] = {"track-efficiency",
-                                          "track-efficiency",
-                                          "track-efficiency",
-                                          "track-efficiency"
+                                             "track-efficiency"
                                           };
 
-const TString trainId = "";
-const bool isDatasetWeighted[nDatasets] = {false, false, false, false};
-const std::string histDrawColorsOption = "";
+const TString wagonId[nDatasets] = {"",
+                                    ""
+                                    };
+const bool isDatasetWeighted[nDatasets] = {true, false};
+const std::string histDatasetComparisonStructure = "";
 const bool datasetsAreSubsetsofId0 = false;
+
+
+
+

@@ -30,7 +30,7 @@ const int iJetType = 0;
 const int iJetLevel = 0;
 
 // Choice of jet QA type (uncorrected jets, background corrected jet (rho area version), event wise constituent subtraction
-const int iJetFinderQaType = 0;
+const int iJetFinderQaType = 1;
 
 // Choice of Random Cone method:
 const int iMethodRandomCone = 1; 

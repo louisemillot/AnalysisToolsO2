@@ -31,7 +31,7 @@ void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
   int ibinRec_min = H2D_jetPtResponseMatrix_fineBinning->GetXaxis()->FindBin(ptBinsJetsRec[iRadius][0]);
   int ibinRec_max = H2D_jetPtResponseMatrix_fineBinning->GetXaxis()->FindBin(ptBinsJetsRec[iRadius][nBinPtJetsRec[iRadius]])-1;
 
-  // cout << "ibinRec_min = " << ibinRec_min << ", ibinRec_max = " << ibinRec_max << ", ptmin = " << ptBinsJetsRec[iRadius][0] << ", ptmax = " << ptBinsJetsRec[iRadius][nBinPtJetsRec[iRadius]] << endl;
+  cout << "ibinRec_min = " << ibinRec_min << ", ibinRec_max = " << ibinRec_max << ", ptmin = " << ptBinsJetsRec[iRadius][0] << ", ptmax = " << ptBinsJetsRec[iRadius][nBinPtJetsRec[iRadius]] << endl;
 
   TH1D* H1D_kinematicEfficiency_preRebin = H2D_jetPtResponseMatrix_fineBinning->ProjectionY("H1D_kinematicEfficiency_preRebin"+name_H1D_kinematicEfficiency, ibinRec_min, ibinRec_max, "e");
   
@@ -42,7 +42,7 @@ void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
   for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
     int ibinGen_low = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen-1]);
     int ibinGen_high = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen])-1;
-    integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError( 1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
+    integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
 
 
     H1D_kinematicEfficiency->GetBinContent(iBinGen) == 0 ? binErrorB = 0 : binErrorB = H1D_kinematicEfficiency->GetBinError(iBinGen)*H1D_kinematicEfficiency->GetBinError(iBinGen) / (H1D_kinematicEfficiency->GetBinContent(iBinGen)*H1D_kinematicEfficiency->GetBinContent(iBinGen));
@@ -75,6 +75,14 @@ bool  Get_Pt_JetEfficiency(TH1D* &H1D_jetEfficiency, int iDataset, int iRadius, 
   if (!divideSuccess){
     cout << "################## Get_Pt_JetEfficiency FAILED!!!!! ##################" << endl;
   }
+  if (smoothenEfficiency) {
+    for(int i = 2; i <= H1D_jetEfficiency->GetNbinsX(); i++){
+      if ((H1D_jetEfficiency->GetBinContent(i) - H1D_jetEfficiency->GetBinContent(i-1)) < -0.005) {
+        H1D_jetEfficiency->SetBinContent(i, H1D_jetEfficiency->GetBinContent(i-1));
+        H1D_jetEfficiency->SetBinError(i, H1D_jetEfficiency->GetBinError(i-1));
+      }
+    }
+  }
   return divideSuccess;
 }
 bool  Get_Pt_JetEfficiency_fineBinning(TH1D* &H1D_jetEfficiency, int iDataset, int iRadius, std::string options){
@@ -89,6 +97,14 @@ bool  Get_Pt_JetEfficiency_fineBinning(TH1D* &H1D_jetEfficiency, int iDataset, i
   divideSuccess = H1D_jetEfficiency->Divide(H1D_jetEfficiency, H1D_jetPt_mcp, 1., 1., "b");
   if (!divideSuccess){
     cout << "################## Get_Pt_JetEfficiency FAILED!!!!! ##################" << endl;
+  }
+  if (smoothenEfficiency) {
+    for(int i = 2; i <= H1D_jetEfficiency->GetNbinsX(); i++){
+      if ((H1D_jetEfficiency->GetBinContent(i) - H1D_jetEfficiency->GetBinContent(i-1)) < -0.005) {
+        H1D_jetEfficiency->SetBinContent(i, H1D_jetEfficiency->GetBinContent(i-1));
+        H1D_jetEfficiency->SetBinError(i, H1D_jetEfficiency->GetBinError(i-1));
+      }
+    }
   }
   return divideSuccess;
 }
