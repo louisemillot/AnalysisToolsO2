@@ -672,7 +672,7 @@ void Draw_JetEta_vs_JetPt_RadiusComparison(int iDataset, float* PtRange) {
 
   // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfName, texPtX, texEtaX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
-  Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogz, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texEtaX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogz, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texEtaX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   // TString* pdfNamelogy = new TString(*pdfName + "_logx");
   // Draw_TH2_Histograms(H2D_jetEta, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texEtaX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logx");
   // TString* pdfNamelogyz = new TString(*pdfName + "_logxz");
@@ -740,7 +740,7 @@ void Draw_JetPhi_vs_JetEta_RadiusComparison(int iDataset) {
 
   // Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfName, texEtaX, texPhiX, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "");
   TString* pdfNamelogz = new TString(*pdfName + "_logz");
-  Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texJetArea, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfNamelogz, texPtX, texJetArea, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   // TString* pdfNamelogy = new TString(*pdfName + "_logx");
   // Draw_TH2_Histograms(H2D_jetPhijetEta, RadiusLegend, nRadius, textContext, pdfNamelogy, texPtX, texJetArea, texCollisionDataInfo, drawnWindowAuto, th2ContoursNone, contourNumberNone, "logx");
   // TString* pdfNamelogyz = new TString(*pdfName + "_logxz");
@@ -797,7 +797,13 @@ void Draw_Pt_DatasetComparison(float* etaRange, std::string options, float jetRa
     } else {
       cout << "Requested workflow is incorrect: it should be jet-finder-charged-qa or jet-spectra-charged" << endl;
     }
-    H1D_jetPt_rebinned[iDataset] = (TH1D*)H1D_jetPt[iDataset]->Rebin(5.,"jetPt_rebinned_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
+    // H1D_jetPt_rebinned[iDataset] = (TH1D*)H1D_jetPt[iDataset]->Rebin(5.,"jetPt_rebinned_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh));
+
+
+    int nBinPtJets = 16;
+    double ptBinsJets[17] = {-10., -5., 0., 5., 10., 15., 20., 25., 30., 35., 40., 50., 60., 80., 100., 140., 200.};
+    H1D_jetPt_rebinned[iDataset] = (TH1D*)H1D_jetPt[iDataset]->Rebin(nBinPtJets,"jetPt_rebinned_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", EtaCutLow)+"<eta<"+Form("%.1f", EtaCutHigh), ptBinsJets);
+
 
     if (options.find("normEntries") != std::string::npos) {
       NormaliseYieldToNEntries(H1D_jetPt_rebinned[iDataset]);
@@ -844,7 +850,7 @@ void Draw_Pt_DatasetComparison(float* etaRange, std::string options, float jetRa
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, "", "#splitline{"+contextJetRadius(jetRadius)+"}{"+contextEtaRange(etaRange)+"}", ""));
 
   std::array<std::array<float, 2>, 2> drawnWindow = {{{-25, 200},{-999, -999}}};
-  std::array<std::array<float, 2>, 2> drawnWindowZoom = {{{-10, 100},{0.5, 2}}};
+  std::array<std::array<float, 2>, 2> drawnWindowZoom = {{{-10, 200},{0.6, 1.6}}};
 
   std::array<std::array<float, 2>, 2> legendPlacement = {{{0.65, 0.6}, {0.85, 0.85}}}; // {{{x1, y1}, {x2, y2}}}
   std::array<std::array<float, 2>, 2> legendPlacementRatio = {{{0.6, 0.2}, {0.8, 0.45}}}; // {{{x1, y1}, {x2, y2}}}
@@ -918,6 +924,12 @@ void Draw_Eta_DatasetComparison(float jetRadius, float* PtRange, std::string opt
     cout << "getentries H3D = "<< H3D_jetRjetPtjetEta[iDataset]->GetEntries() << endl;
     cout << "getentries H1D = "<< H1D_jetEta_rebinned[iDataset]->GetEntries() << endl;
 
+    if (PtRange[0] < 40) {
+      H1D_jetEta_rebinned[iDataset] = (TH1D*)H1D_jetEta[iDataset]->Rebin(5.,"jetEta_rebinned_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
+    } else {
+      H1D_jetEta_rebinned[iDataset] = (TH1D*)H1D_jetEta[iDataset]->Rebin(20.,"jetEta_rebinned_"+Datasets[iDataset]+DatasetsNames[iDataset]+"Radius"+Form("%.1f",jetRadius)+Form("%.1f", PtCutLow)+"<pt<"+Form("%.1f", PtCutHigh));
+    }
+
     if (options.find("normEntries") != std::string::npos) {
       NormaliseYieldToNEntries(H1D_jetEta_rebinned[iDataset]);
       yAxisLabel = texJetEtaYield_EntriesNorm;
@@ -947,11 +959,12 @@ void Draw_Eta_DatasetComparison(float jetRadius, float* PtRange, std::string opt
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, "", "#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}", ""));
 
   const std::array<std::array<float, 2>, 2> drawnWindow = {{{-1, 1}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  const std::array<std::array<float, 2>, 2> legendPlacement = {{{0.65, 0.2}, {0.85, 0.45}}}; // xLeftLegend, yLowLegend, xRightLegend, yUpLegend
 
-  Draw_TH1_Histograms(H1D_jetEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, yAxisLabel, texCollisionDataInfo, drawnWindow, legendPlacementAuto, contextPlacementAuto, "");
+  Draw_TH1_Histograms(H1D_jetEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, yAxisLabel, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacementAuto, "");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms(H1D_jetEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindow, legendPlacementAuto, contextPlacementAuto, "noMarkerFirst"+histDatasetComparisonStructure);
+    Draw_TH1_Histograms(H1D_jetEta_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texEtaX, texRatioDatasets, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacementAuto, "noMarkerFirst"+histDatasetComparisonStructure);
   }
   else {
     cout << "Divide failed in Draw_Eta_DatasetComparison" << endl;
@@ -1033,10 +1046,13 @@ void Draw_Phi_DatasetComparison(float jetRadius, float* PtRange, std::string opt
   // TString textContext(contextDatasetCompAndRadiusAndVarRange(jetRadius, PtRange, "pt"));
   TString textContext(contextCustomThreeFields(*texDatasetsComparisonCommonDenominator, "", "#splitline{"+contextJetRadius(jetRadius)+"}{"+contextPtRange(PtRange)+"}", ""));
 
-  Draw_TH1_Histograms(H1D_jetPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texJetPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "histWithLine");
+  const std::array<std::array<float, 2>, 2> drawnWindowRatioCustom = {{{-999, -999}, {0, 1.9}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> legendPlacementCustom = {{{0.2, 0.2}, {0.4, 0.45}}}; // {{{x1, y1}, {x2, y2}}}
+
+  Draw_TH1_Histograms(H1D_jetPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, texJetPhiYield_EventNorm, texCollisionDataInfo, drawnWindowAuto, legendPlacementCustom, contextPlacementAuto, "histWithLine");
 
   if (divideSuccess == true) {
-    Draw_TH1_Histograms(H1D_jetPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "noMarkerFirst"+histDatasetComparisonStructure);
+    Draw_TH1_Histograms(H1D_jetPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowRatioCustom, legendPlacementCustom, contextPlacementAuto, "noMarkerFirst"+histDatasetComparisonStructure);
   }
   else {
     cout << "Divide failed in Draw_Phi_DatasetComparison" << endl;
@@ -2290,16 +2306,16 @@ void Draw_BkgFluctuations_CentralityProjection_withFit_CentralityComp(int iDatas
   // ------ plot the bkg fluctuation distributions with the fits ------ //
 
   // TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_"+DatasetsNames[iDataset]+"_BkgFluctuations");
-  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fit", gaussDrawn); 
+  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fitCollection", gaussDrawn); 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_BkgFluctuations_"+methodRandomConeHistNames[iMethodRandomCone]+"_"+DatasetsNames[iDataset]+"_logy");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowRCdefault, legendPlacementAuto, contextPlacementAuto, "logy,fit", gaussDrawn);
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowRCdefault, legendPlacementAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn);
 
   // zoom around 0
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
   //   H1D_fluctuations_rebinned[iCentralityBin]->GetXaxis()->SetRangeUser(zoomX[0], zoomX[1]);
   // }
   TString* pdfName_zoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_CentralityComp_BkgFluctuations_"+methodRandomConeHistNames[iMethodRandomCone]+"_"+DatasetsNames[iDataset]+"_logy_zoom");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName_zoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, legendPlacementAuto, contextPlacementAuto, "logy,fit", gaussDrawn); // replace ", texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with ", drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with drawnWindowAuto defined as something like {-999, -999}, and in hist drawing functino I chek for it, and if it's set I draw as set,else I do as usual
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nCentralityBins, textContext, pdfName_zoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, legendPlacementAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn); // replace ", texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with ", drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with drawnWindowAuto defined as something like {-999, -999}, and in hist drawing functino I chek for it, and if it's set I draw as set,else I do as usual
 
 
   // ------ plot the std deviation as f° of centrality ------ //
@@ -2448,16 +2464,16 @@ void Draw_BkgFluctuations_CentralityProjection_withFit_DatasetComp(float* centRa
   // ------ plot the bkg fluctuation distributions with the fits ------ //
 
   // TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DatasetComp_BkgFluctuations"+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]");
-  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, DatasetLegendWithFit, nDatasets, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fit", gaussDrawn); 
+  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, DatasetLegendWithFit, nDatasets, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fitCollection", gaussDrawn); 
   TString* pdfNameLogy = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DatasetComp_BkgFluctuations_"+methodRandomConeHistNames[iMethodRandomCone]+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_logy");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, DatasetLegendWithFit, nDatasets, textContext, pdfNameLogy, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowRCdefault, legendPlacementAuto, contextPlacementAuto, "logy,fit", gaussDrawn);
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, DatasetLegendWithFit, nDatasets, textContext, pdfNameLogy, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowRCdefault, legendPlacementAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn);
 
   // zoom around 0
   // for(int iDataset = 0; iDataset < nDatasets; iDataset++){
   //   H1D_fluctuations_rebinned[iDataset]->GetXaxis()->SetRangeUser(zoomX[0], zoomX[1]);
   // }
   TString* pdfName_zoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DatasetComp_BkgFluctuations_"+methodRandomConeHistNames[iMethodRandomCone]+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_logy_zoom");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, DatasetLegendWithFit, nDatasets, textContext, pdfName_zoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, legendPlacementAuto, contextPlacementAuto, "logy,fit", gaussDrawn); // replace ", texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with ", drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with drawnWindowAuto defined as something like {-999, -999}, and in hist drawing functino I chek for it, and if it's set I draw as set,else I do as usual
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, DatasetLegendWithFit, nDatasets, textContext, pdfName_zoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, legendPlacementAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn); // replace ", texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with ", drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with drawnWindowAuto defined as something like {-999, -999}, and in hist drawing functino I chek for it, and if it's set I draw as set,else I do as usual
 
 
   // ------ plot the std deviation as f° of centrality ------ //
@@ -2601,9 +2617,9 @@ void Draw_Rho_withFit_NTracksProjection(int iDataset) { /// should be bkgfluct v
 
   // ------ plot the bkg fluctuation distributions with the fits ------ //
   TString* pdfName2 = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_nTracksComp_"+DatasetsNames[iDataset]+"_Rho");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nTracksBins, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fit", gaussDrawn);
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nTracksBins, textContext, pdfName2, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fitCollection", gaussDrawn);
   // TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_nTracksComp_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_Rho_logy");
-  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nTracksBins, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logy,fit", gaussDrawn);
+  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, CentralityLegend, nTracksBins, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn);
 
   // // ------ plot the std deviation as f° of centrality ------ //
 
@@ -3225,18 +3241,18 @@ void Draw_BkgFluctuations_CentralityProjection_withFit_MethodComp(float* centRan
   std::array<std::array<float, 2>, 2> legendPlacementSemiAuto = {{{0.55, 0.75}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   // TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_MethodComp_"+DatasetsNames[iDataset]+"_BkgFluctuations"+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]");
-  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fit", gaussDrawn); 
+  // Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfName, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "fitCollection", gaussDrawn); 
   TString* pdfNameLogyStandard = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_MethodComp_BkgFluctuations_"+DatasetsNames[iDataset]+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_logy_standard");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfNameLogyStandard, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowRCdefault, legendPlacementSemiAuto, contextPlacementAuto, "logy,fit", gaussDrawn);
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfNameLogyStandard, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowRCdefault, legendPlacementSemiAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn);
   TString* pdfNamMaxout = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_MethodComp_BkgFluctuations_"+DatasetsNames[iDataset]+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_logy_maxout");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfNamMaxout, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowSemiAuto, legendPlacementSemiAuto, contextPlacementAuto, "logy,fit", gaussDrawn);
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfNamMaxout, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowSemiAuto, legendPlacementSemiAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn);
 
   // zoom around 0
   // for(int iCentralityBin = 0; iCentralityBin < nCentralityBins; iCentralityBin++){
   //   H1D_fluctuations_rebinned[iCentralityBin]->GetXaxis()->SetRangeUser(zoomX[0], zoomX[1]);
   // }
   TString* pdfNameZoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_MethodComp_BkgFluctuations_"+DatasetsNames[iDataset]+"_@cent["+Form("%.0f", centRange[0])+","+Form("%.0f", centRange[1])+"]"+"_logy_zoom");
-  Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfNameZoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, legendPlacementSemiAuto, contextPlacementAuto, "logy,fit", gaussDrawn); // replace ", texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with ", drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with drawnWindowAuto defined as something like {-999, -999}, and in hist drawing functino I chek for it, and if it's set I draw as set,else I do as usual
+  Draw_TH1_Histograms(H1D_fluctuations_rebinned, methodRandomConeHistLegend, nMethodRC, textContext, pdfNameZoom, texBkgFluctuationRandomCone, yAxisLabel, texCollisionDataInfo, drawnWindowZoom, legendPlacementSemiAuto, contextPlacementAuto, "logy,fitCollection", gaussDrawn); // replace ", texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with ", drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, " with drawnWindowAuto defined as something like {-999, -999}, and in hist drawing functino I chek for it, and if it's set I draw as set,else I do as usual
 
 
   // // ------ plot the std deviation as f° of centrality ------ //
@@ -3815,9 +3831,9 @@ void Draw_PtPeakPosition_vs_leadTrackCut(float* etaRange, float jetRadiusForJetF
     // ------ plot the jet pt distributions with the fits ------ //
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_"+jetFinderQaHistType[iJetFinderQaType]+"_logy");
-  Draw_TH1_Histograms(H1D_jetPt, DatasetsNames, nDatasets, textContext, pdfName, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetPtYield_EventNorm, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacementAuto, "logy,fit"+histDatasetComparisonStructure, gaussDrawn);
+  Draw_TH1_Histograms(H1D_jetPt, DatasetsNames, nDatasets, textContext, pdfName, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetPtYield_EventNorm, texCollisionDataInfo, drawnWindow, legendPlacement, contextPlacementAuto, "logy,fitCollection"+histDatasetComparisonStructure, gaussDrawn);
   TString* pdfNameZoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_DataComp_R="+Form("%.1f", jetRadius)+"_Pt_"+jetFinderQaHistType[iJetFinderQaType]+"_logy_zoom");
-  Draw_TH1_Histograms(H1D_jetPt, DatasetsNames, nDatasets, textContext, pdfNameZoom, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetPtYield_EventNorm, texCollisionDataInfo, drawnWindowZoom, legendPlacement, contextPlacementAuto, "logy,fit"+histDatasetComparisonStructure, gaussDrawn);
+  Draw_TH1_Histograms(H1D_jetPt, DatasetsNames, nDatasets, textContext, pdfNameZoom, iJetFinderQaType == 0 ? texPtJetRawX : texPtJetBkgCorrX, texJetPtYield_EventNorm, texCollisionDataInfo, drawnWindowZoom, legendPlacement, contextPlacementAuto, "logy,fitCollection"+histDatasetComparisonStructure, gaussDrawn);
 
 
   // ------ plot the peak position as f° of the dataset number ------ //

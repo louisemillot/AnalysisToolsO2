@@ -30,8 +30,8 @@ const float centralityRange[2] = {0, 10};
 
 char mergingPrior[] = "noPriorMerging";     // prior options: mcpPriorMerging, mcdPriorMerging, measuredPriorMerging, noPriorMerging, testAliPhysics //// THIS stemmed from amisunderstanding of what was being done by Marta; should be kept to noPriorMerging
 char unfoldingPrior[] = "mcpPriorUnfolding";     // prior options: mcpPriorUnfolding, mcdPriorUnfolding, measuredPriorUnfolding, noPriorUnfolding, testAliPhysics /////// if using mcp as prior, should have the leading track cut like data
-const bool doYSliceNormToOneDetResp = true; // should be true (done by marta)
-const bool doYSliceNormToOneCombinedResp = false; // should be false (not done by marta); breaks unfolding with svd if true
+const bool doYSliceNormToOneDetResp = true; // should be true in Pb-Pb analysis (done by marta) (because fluct. response matrix is probability distrib; in pp where we only have detector response, it's best to keep matrix of number of events as svd paper seems to advise: less weight on matrix entries with single count; if this is set to FALSE then noPriorUnfolding should be used, as det response already comes with weighting so it'd be done twice)
+const bool doYSliceNormToOneCombinedResp = false; // should be false (not done by marta); breaks unfolding with svd if true 
 const bool doUnfoldingPriorDivision = false; // keep false for now ; unfolding doesn't work anymore if this is done, gives almost flat pT distribution, though refolding test is good; I am not sure why, might be because roounfold already does that; one good reason to avoid it; anyway, is that roounfold already seems to deal with errors; my error propagation doesn't take into account off-diagonal covariance elements, and so can only be worse 
 const bool scaleRespByXYWidth = false; // keep false, does not work well if true; although necessary (along with matrixTransformationOrder 1) to get a good looking response matrix with every entry below 1, unfolding with this struggles a bit though not horrible, it's still not great looking
 const bool scaleRespByYWidth = false; // keep false
@@ -40,13 +40,13 @@ const bool matrixTransformationOrder = 0; // use 0
  //1: rebin, then YSliceNorm and scaleRespByXYWidth, then reweight; 
  //2: rebin, then reweight, then YSliceNorm and scaleRespByXYWidth
 
-char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
+char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
 const bool isDataPbPb = true; // if false -> pp
 const bool doBkgSubtractionInData = true;
 const bool doBkgSubtractionInMC = false;
-const bool useFactorisedMatrix = true; // use factorised response matrix for unfolding, or not
+const bool useFactorisedMatrix = true; // use factorised response matrix for unfolding, or not; if not, the fluctuations response it replaced by the identity matrix
 const bool mcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
 bool applyFakes = true; // only applied if useManualRespMatrixSettingMethod is true; 18/03: if false?
 int applyEfficiencies = 2 ; // 2 is best; kinematic efficiency is already be handled by roounfold (02/04/2025; one can check simply with a pp unfolding with just det matrix and fine-ish binning like "// Joonsuk binning for pp with smaller rec window to test kinematic efficiency")
@@ -61,7 +61,7 @@ const bool normGenAndMeasByNEvtsBeforeUnfolding = false;
 const bool normaliseDistribsAfterUnfolding = true; // keep true; both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with it they are 1E-j, so should be set to true
 const bool normaliseDistribsBeforeUnfolding = true; // keep true; both normaliseDistribsAfterUnfolding and normaliseDistribsBeforeUnfolding should be the same, else refolding test fails; without the counts are 1Ei, with they are 1E-j, so should be set to true
 
-const bool useManualRespMatrixSettingMethod = true; // keep true; false uses Joonsuk's resp matrix setup with roounfold methods; if set to true, both refold methods are constistent; if set to false, the roounfold one is identical as if true, but the manual one becomes different and bad
+const bool useManualRespMatrixSettingMethod = true; // keep true; false uses Joonsuk's resp matrix setup with roounfold methods; if set to true, both refold methods are constistent; if set to false, the roounfold one is identical as if true, but the manual one becomes different and bad; EDIT 25/04/2025: Joonsuk's method I haven't kept updated, and now gives bad results on trivial refolding test
 const bool normaliseRespYSliceForRefold = true; // keep true; THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
 
 // Debugging and checks:
@@ -73,15 +73,16 @@ bool comparePbPbWithRun2 = true; // if isDataPbPb == true, then do the compariso
 bool smoothenEfficiency = false;
 bool smoothenMCP = false;
 
+bool transposeResponseHistogramsInDrawing = false;
 
 bool automaticBestSvdParameter = false; // automatic function not well setup yet, should work on it; keep false for now
 
 
-float ptWindowDisplay[2] = {10, 140}; // used for drawn histograms of unfolded distrib
+float ptWindowDisplay[2] = {5, 140}; // used for drawn histograms of unfolded distrib
 std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindowDisplay[0], ptWindowDisplay[1]}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
-// I should change the naming of draw_mcp (to account for  unfolding control case), also change how unfolding control is done
-
+// TODOLIST:
+// 1) I should change the naming of draw_mcp (to account for  unfolding control case), also change how unfolding control is done
 
 ////////////////////////////////////////////////
 ////////// Unfolding settings - end ////////////
@@ -93,7 +94,11 @@ std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindow
 ////////////////////////////////////////////////
 //////////////// pt binning options ////////////
 ////////////////////////////////////////////////
-
+// ML paper binning
+double ptBinsJetsRec_run2[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
+int nBinPtJetsRec_run2[nRadius] = {19,19,19};
+double ptBinsJetsGen_run2[nRadius][30] = {{20., 30., 40., 50., 60., 70., 85., 100., 120., 140.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
+int nBinPtJetsGen_run2[nRadius] = {9,9,9};
 
 // // pT binning for jets - gen = rec
 // double ptBinsJetsRec[nRadius][30] = {{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.},{0.0, 5., 10., 15., 20., 25., 30., 40., 50., 60., 70., 80., 100., 120., 140., 200.}};
@@ -121,19 +126,32 @@ std::array<std::array<float, 2>, 2> drawnWindowUnfoldedMeasurement = {{{ptWindow
 // int nBinPtJetsGen[nRadius] = {9,9,9};
 
 
-// PbPb
-// ML paper identical fo run 2 comparison
-double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
-int nBinPtJetsRec[nRadius] = {19,19,19};
-double ptBinsJetsGen[nRadius][30] = {{10., 20., 30., 40., 50., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
-int nBinPtJetsGen[nRadius] = {11,9,9};
+// // PbPb
+// // ML paper binning for run2 comparisons
+// double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.}};
+// int nBinPtJetsRec[nRadius] = {19,19,19};
+// double ptBinsJetsGen[nRadius][30] = {{5., 10., 20., 30., 40., 50., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.},{10., 20., 40., 60., 70., 85., 100., 120., 140., 200.}};
+// int nBinPtJetsGen[nRadius] = {12,9,9};
 
 
-// // PbPb Aimeric default
-// double ptBinsJetsRec[nRadius][30] = {{10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
-// int nBinPtJetsRec[nRadius] = {21,22,22};
-// double ptBinsJetsGen[nRadius][30] = {{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.}};
+// PbPb Aimeric default
+// double ptBinsJetsRec[nRadius][30] = {{10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 130., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+// int nBinPtJetsRec[nRadius] = {22,22,22};
+// double ptBinsJetsGen[nRadius][30] = {{5., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.}};
 // int nBinPtJetsGen[nRadius] = {13,13,13};
+
+
+// PbPb Aimeric test finer - lead05
+double ptBinsJetsRec[nRadius][50] = {{10., 12, 14, 16, 18, 20., 22, 24, 26, 28, 30., 32, 34, 36, 38, 40., 42, 44, 46, 48., 50., 52, 54, 56, 58, 60., 62, 64, 66, 68, 70, 75., 80., 85., 90., 95., 100., 110., 120., 130., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+int nBinPtJetsRec[nRadius] = {40,22,22};
+double ptBinsJetsGen[nRadius][30] = {{5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95, 100., 120., 140., 160., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.}};
+int nBinPtJetsGen[nRadius] = {23,13,13};
+
+// // PbPb Aimeric test finer - lead03
+// double ptBinsJetsRec[nRadius][50] = {{20., 22, 24, 26, 28, 30., 32, 34, 36, 38, 40., 42, 44, 46, 48., 50., 52, 54, 56, 58, 60., 62, 64, 66, 68, 70, 75., 80., 85., 90., 95., 100., 110., 120., 130., 140.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{5., 10, 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
+// int nBinPtJetsRec[nRadius] = {35,22,22};
+// double ptBinsJetsGen[nRadius][30] = {{5., 10., 15., 20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95, 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.},{0., 10., 20., 30., 40., 50., 60., 70., 80., 90., 100., 120., 140., 200.}};
+// int nBinPtJetsGen[nRadius] = {22,13,13};
 
 // // PbPb Aimeric old
 // double ptBinsJetsRec[nRadius][30] = {{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.},{20., 25., 30., 35., 40., 45., 50., 55., 60., 65., 70., 75., 80., 85., 90., 95., 100., 110., 120., 140., 200.}};
@@ -458,10 +476,10 @@ int nBinPtJetsGen[nRadius] = {11,9,9};
 //                                        200.}}; // shift+option+left click hold lets one edit columns in vs code
 
 // // fine binning for jetfinderQA, 5GeV bins above 100
-// int nBinPtJetsFine[nRadius] = {120,120,120};
-// // int nBinPtJetsFine[nRadius] = {115,115,115};
-// // double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
-// double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+// // int nBinPtJetsFine[nRadius] = {120,120,120};
+// int nBinPtJetsFine[nRadius] = {115,115,115};
+// double ptBinsJetsFine[nRadius][201] = {{05., 06., 07., 08., 09.,
+// // double ptBinsJetsFine[nRadius][201] = {{ 0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
 //                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
 //                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
 //                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -482,8 +500,8 @@ int nBinPtJetsGen[nRadius] = {11,9,9};
 //                                        180., 185.,
 //                                        190., 195.,
 //                                        200.},
-//                                     //  {05., 06., 07., 08., 09.,
-//                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+//                                      {05., 06., 07., 08., 09.,
+//                                     //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
 //                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
 //                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
 //                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,
@@ -504,8 +522,8 @@ int nBinPtJetsGen[nRadius] = {11,9,9};
 //                                        180., 185.,
 //                                        190., 195.,
 //                                        200.},
-//                                     //  {05., 06., 07., 08., 09.,
-//                                      {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
+//                                      {05., 06., 07., 08., 09.,
+//                                     //  {   0., 01., 02., 03., 04., 05., 06., 07., 08., 09.,
 //                                         10., 11., 12., 13., 14., 15., 16., 17., 18., 19.,
 //                                         20., 21., 22., 23., 24., 25., 26., 27., 28., 29.,
 //                                         30., 31., 32., 33., 34., 35., 36., 37., 38., 39.,

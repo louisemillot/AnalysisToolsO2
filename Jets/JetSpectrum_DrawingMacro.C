@@ -93,30 +93,33 @@ void JetSpectrum_DrawingMacro() {
   int iDataset = 0;
   int iRadius = 0;
 
-  // // // find a way to input mcpPrior/mcdPrior and bayes/svd as a variables rather than typed out like this
+  // // find a way to input mcpPrior/mcdPrior and bayes/svd as a variables rather than typed out like this
   // Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
   // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
   // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
 
-  // // // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
+  // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
   // Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
   // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
 
   // Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
   // Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
   // Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
 
-  int unfoldParameterInput = 5;
-  Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput, optionsAnalysis);
-  // int unfoldParameterInput2 = 8;
-  // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
+  // int unfoldParameterInput = 5;
+  // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput, optionsAnalysis);
+  int unfoldParameterInput2 = 8;
+  Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
   // int unfoldParameterInput3 = 10;
   // Draw_Pt_spectrum_unfolded(iDataset, iRadius, unfoldParameterInput3, optionsAnalysis);
 
-  // int unfoldParameterInputMin = 3;
-  // int unfoldParameterInputMax = 6;
-  // int unfoldParameterInputStep = 1;
+  // int unfoldParameterInputMin = 4;
+  // int unfoldParameterInputMax = 45;
+  // int unfoldParameterInputStep = 3;
   // Draw_Pt_spectrum_unfolded_parameterVariation(iDataset, iRadius, unfoldParameterInputMin, unfoldParameterInputMax, unfoldParameterInputStep, optionsAnalysis);
 }
 
@@ -196,6 +199,84 @@ void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfol
   }
 }
 
+
+
+
+std::pair<TH1D*, TF1*> RebinWithTsallisFit(TH1D* &histogramInput, int nBinsX, double* binsX, double* xRangeFit) {
+  ////////////////////////////////// Fit initialisation //////////////////////////////////
+  //Fit tools initialisation
+  TF1 *fitFunctionInit;
+  TF1 *fitFunctionFinal;
+  TF1 *fitFunctionDrawn; // drawn over the full range
+
+  TFitResultPtr fFitResult;
+
+  double parfitFunctionInit[5]; //linear background
+  double parfitFunctionFinal[5]; //linear background
+
+  ////////////////////////////////////////////////////////////////////
+  //////////////////////////// Fit start /////////////////////////////
+  ////////////////////////////////////////////////////////////////////
+
+  // double xHistMax = xRange[1];
+  // double xHistMin = xRange[0];
+  
+  fitFunctionInit = new TF1("fitFunctionInit_", "x*(1+1/([0]*[1])*x)**(-[0])", xRangeFit[0], xRangeFit[1]);
+  // fitFunctionInit = new TF1("fitFunctionInit_", "[0]*exp(([1]-x)**[2])", xRangeFit[0], xRangeFit[1]);
+  fitFunctionInit->SetParName(0, "n");
+  fitFunctionInit->SetParName(1, "T");
+  // fitFunctionInit->SetParName(2, "b");
+  fitFunctionInit->SetParameters(8, 0.9);
+
+  histogramInput->Fit(fitFunctionInit, "R0QL"); // P: Use Pearson chi-square method, using expected errors instead of the observed one given by TH1::GetBinError (default case). The expected error is instead estimated from the square-root of the bin function value. (WL for weithged likelihood is currently bugged in root, the fit crashes)
+
+  fitFunctionInit->GetParameters(&parfitFunctionInit[0]);
+
+  fitFunctionFinal = new TF1("fitFunctionFinal_", "x*(1+1/([0]*[1])*x)**(-[0])", xRangeFit[0], xRangeFit[1]);
+  // fitFunctionFinal = new TF1("fitFunctionFinal_", "[0]*exp(([1]-x)**[2])", xRangeFit[0], xRangeFit[1]);
+  fitFunctionInit->SetParName(0, "n");
+  fitFunctionInit->SetParName(1, "T");
+  // fitFunctionInit->SetParName(2, "b");
+  fitFunctionFinal->SetParameters(parfitFunctionInit[0], parfitFunctionInit[1]);
+  // fitFunctionFinal->SetParameters(parfitFunctionInit[0], parfitFunctionInit[1], parfitFunctionInit[2]);
+  // fitFunctionFinal->SetParLimits(0, 0., 1.1*yHistMax);
+  // fitFunctionFinal->SetParLimits(1, -10, 10);
+  // fitFunctionFinal->SetParLimits(2, 0.1, 100);
+
+  fFitResult = histogramInput->Fit(fitFunctionFinal, "R0QPS"); // P: Use Pearson chi-square method, using expected errors instead of the observed one given by TH1::GetBinError (default case). The expected error is instead estimated from the square-root of the bin function value. (WL for weithged likelihood is currently bugged in root, the fit crashes)
+  // gauss->Draw("same");
+  fitFunctionFinal->GetParameters(&parfitFunctionFinal[0]);
+
+  fitFunctionDrawn = new TF1("fitFunctionDrawn_", "x*(1+1/([0]*[1])*x)**(-[0])", xRangeFit[0], xRangeFit[1]);
+  // fitFunctionDrawn = new TF1("fitFunctionDrawn_", "[0]*exp(([1]-x)**[2])", xRangeFit[0], xRangeFit[1]);
+  fitFunctionDrawn->SetParameters(parfitFunctionFinal[0], parfitFunctionFinal[1]);
+  // fitFunctionDrawn->SetParameters(parfitFunctionFinal[0], parfitFunctionFinal[1], parfitFunctionFinal[2]);
+  // fitFunctionDrawn->SetParameters(5, 0.9);
+
+  // cout << "init:  n = " << parfitFunctionInit[0] << ", T = " << parfitFunctionInit[1]<< endl;
+  // cout << "final: n = " << parfitFunctionFinal[0] << ", T = " << parfitFunctionFinal[1]<< endl;
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////// Rebin of input histogram /////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  TH1D* histogramRebinned = new TH1D("H1D_jetPt_run2_MLPaperFile_rebinned", "H1D_jetPt_run2_MLPaperFile_rebinned", nBinsX, binsX);
+  for(int iBin = 0; iBin < nBinsX; iBin++){
+    // histogramRebinned->SetBinContent(iBin, histogramInput->GetBinContent(iBin)); // Getting bin center here not ideal; should try to read and apply "Where to stick your data points: The treatment of measurements within wide bins"
+    histogramRebinned->SetBinContent(iBin, fitFunctionDrawn->Eval(histogramRebinned->GetXaxis()->GetBinCenter(iBin))); // Getting bin center here not ideal; should try to read and apply "Where to stick your data points: The treatment of measurements within wide bins"
+    // cout << "histogramRebinned(" << iBin << ") = " << histogramRebinned->GetBinContent(iBin) << endl; 
+    // histogramRebinned->SetBinError(iBin, fitFunctionDrawn->EvalUncertainty(histogramRebinned->GetXaxis()->GetBinCenter(iBin), nullptr));
+    double oneSigmaInterval = 0.683;
+    double errorEval[1] = {0};
+    double xEval[1] = {(double)histogramRebinned->GetXaxis()->GetBinCenter(iBin)};
+    fFitResult->GetConfidenceIntervals(1, 1, 1, xEval, errorEval, oneSigmaInterval, false);
+    histogramRebinned->SetBinError(iBin, errorEval[0]);
+  }
+
+  std::pair<TH1D*, TF1*> rebinResultAndFitFunction(histogramRebinned, fitFunctionDrawn);
+  return rebinResultAndFitFunction;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////// Spectrum plotting functions ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +286,11 @@ void Draw_Pt_spectrum_raw(int iDataset, int iRadius, std::string options) {
 
   TH1D* H1D_jetPt_raw;
 
-  Get_Pt_spectrum_bkgCorrected_recBinning(H1D_jetPt_raw, iDataset, iRadius, options);
+  if (options.find("noEventNormNorBinWidthScaling") != std::string::npos) {
+    Get_Pt_spectrum_bkgCorrected_recBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_raw, iDataset, iRadius, options);
+  } else {
+    Get_Pt_spectrum_bkgCorrected_recBinning(H1D_jetPt_raw, iDataset, iRadius, options);
+  }
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_raw");
 
@@ -216,6 +301,10 @@ void Draw_Pt_spectrum_raw(int iDataset, int iRadius, std::string options) {
   if (normaliseDistribsBeforeUnfolding) {
     yAxisLabel = texJetPtYield_EventNorm;
   }
+  if (options.find("noEventNormNorBinWidthScaling") != std::string::npos) {
+    yAxisLabel = texCount;
+    *pdfName = *pdfName+(TString)"_noEventNormNorBinWidthScaling";
+  }
 
   Draw_TH1_Histogram(H1D_jetPt_raw, textContext, pdfName, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
 }
@@ -225,8 +314,16 @@ void Draw_Pt_spectrum_mcp(int iDataset, int iRadius, std::string options) {
   TH1D* H1D_jetPt_mcp_genBinning;
   TH1D* H1D_jetPt_mcp_recBinning;
   TH1D* H1D_jetPt_mcp_collection[2];
-  Get_Pt_spectrum_mcp_genBinning(H1D_jetPt_mcp_genBinning, iDataset, iRadius, controlMC, options);
-  Get_Pt_spectrum_mcp_recBinning(H1D_jetPt_mcp_recBinning, iDataset, iRadius, controlMC, options);
+
+
+  if (options.find("noEventNormNorBinWidthScaling") != std::string::npos) {
+    Get_Pt_spectrum_mcp_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcp_genBinning, iDataset, iRadius, controlMC, options);
+    Get_Pt_spectrum_mcp_recBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcp_recBinning, iDataset, iRadius, controlMC, options);
+  } else {
+    Get_Pt_spectrum_mcp_genBinning(H1D_jetPt_mcp_genBinning, iDataset, iRadius, controlMC, options);
+    Get_Pt_spectrum_mcp_recBinning(H1D_jetPt_mcp_recBinning, iDataset, iRadius, controlMC, options);
+  }
+  
   H1D_jetPt_mcp_collection[0] = H1D_jetPt_mcp_genBinning;
   H1D_jetPt_mcp_collection[1] = H1D_jetPt_mcp_recBinning;
 
@@ -240,6 +337,10 @@ void Draw_Pt_spectrum_mcp(int iDataset, int iRadius, std::string options) {
   if (normaliseDistribsBeforeUnfolding) {
     yAxisLabel = texJetPtYield_EventNorm;
   }
+  if (options.find("noEventNormNorBinWidthScaling") != std::string::npos) {
+    yAxisLabel = texCount;
+    *pdfName = *pdfName+(TString)"_noEventNormNorBinWidthScaling";
+  }
   TString genVsRecBinningLegend[2] = {"gen binning", "rec binning"};
 
   Draw_TH1_Histograms(H1D_jetPt_mcp_collection, genVsRecBinningLegend, 2, textContext, pdfName, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logy"); 
@@ -248,7 +349,11 @@ void Draw_Pt_spectrum_mcp(int iDataset, int iRadius, std::string options) {
 void Draw_Pt_spectrum_mcdMatched(int iDataset, int iRadius, std::string options) {
 
   TH1D* H1D_jetPt_mcdMatched;
-  Get_Pt_spectrum_mcdMatched_genBinning(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+  if (options.find("noEventNormNorBinWidthScaling") != std::string::npos) {
+    Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+  } else {
+    Get_Pt_spectrum_mcdMatched_genBinning(H1D_jetPt_mcdMatched, iDataset, iRadius, options);
+  }
 
 
   TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_mcdMatched");
@@ -259,6 +364,10 @@ void Draw_Pt_spectrum_mcdMatched(int iDataset, int iRadius, std::string options)
   yAxisLabel = texCount;
   if (normaliseDistribsBeforeUnfolding) {
     yAxisLabel = texJetPtYield_EventNorm;
+  }
+  if (options.find("noEventNormNorBinWidthScaling") != std::string::npos) {
+    yAxisLabel = texCount;
+    *pdfName = *pdfName+(TString)"_noEventNormNorBinWidthScaling";
   }
 
   Draw_TH1_Histogram(H1D_jetPt_mcdMatched, textContext, pdfName, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
@@ -279,7 +388,7 @@ void Draw_Pt_efficiency_jets(int iDataset, int iRadius, std::string options) {
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
   if (divideSuccess){
-    Draw_TH1_Histogram(H1D_jetEfficiency, textContext, pdfName, texPtJetGenX, texJetEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "efficiency");
+    Draw_TH1_Histogram(H1D_jetEfficiency, textContext, pdfName, texPtJetGen, texJetEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "efficiency");
   }
 }
 
@@ -306,7 +415,7 @@ void Draw_kinematicEfficiency(int iDataset, int iRadius, std::string options) {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histogram(H1D_kinematicEfficiency, textContext, pdfName, texPtJetGenX, texJetKinematicEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
+  Draw_TH1_Histogram(H1D_kinematicEfficiency, textContext, pdfName, texPtJetGen, texJetKinematicEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
 }
 
 
@@ -323,7 +432,7 @@ void Draw_FakeRatio(int iDataset, int iRadius, std::string options) {
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histogram(H1D_fakeRatio, textContext, pdfName, texPtJetRecX, texFakeRatio, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "");
+  Draw_TH1_Histogram(H1D_fakeRatio, textContext, pdfName, texPtJetRec, texFakeRatio, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "");
 }
 
 void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
@@ -358,10 +467,21 @@ void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
 
 
   TString texCombinedMatrix = contextCustomOneField((TString)"ALICE Performance", ""); // Response matrix - "+(TString)*texEnergy
-  TString textContextMatrixDetails = contextCustomFourFields((TString)*texCollisionDataInfo, "", (TString)"Fluctuations response ", contextJetRadius(arrayRadius[iRadius]), "");
+  TString textContextMatrixDetails = contextCustomFiveFields((TString)"Bkg. fluctuation response ", "", (TString)*texCollisionDataType, (TString)*texEnergyPbPb, contextJetRadius(arrayRadius[iRadius]), "");
 
-  // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
-  TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_fluctuations).Clone("Draw_ResponseMatrices_Fluctuations"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+  // the matrix natural visualisation is actually the NON transposed histograms, rotated by 90° anti trigonometrically
+  TH2D* MatrixResponse;
+  TString* xLabel;
+  TString* yLabel;
+  if (transposeResponseHistogramsInDrawing) {
+    MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_fluctuations).Clone("Draw_ResponseMatrices_Fluctuations"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    xLabel = texPtJetBkgFreeX;
+    yLabel = texPtJetBkgCorrX;
+  } else {
+    MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_fluctuations->Clone("Draw_ResponseMatrices_Fluctuations"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    xLabel = texPtJetBkgCorrX;
+    yLabel = texPtJetBkgFreeX;
+  }
 
   double th2ContourCustom[1] = {0.000001}; // hardcoded at 10-6 for now
   int contourNumberCustom = 1;
@@ -369,8 +489,8 @@ void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
   // std::array<std::array<float, 2>, 3> drawnWindowYaxianRequest = {{{-999, -999}, {-999, -999}, {1e-6, 1e-1}}}; // {{xmin, xmax}, {ymin, ymax}, {zmin, zmax}} /// put AUTO again after perf figure is done
 
   // Draw_TH2_Histogram(H2D_jetPtResponseMatrix_fluctuations, textContext, pdfName_logz, texPtJetBkgCorrX, texPtJetBkgFreeX, texCollisionDataInfo, drawnWindow2DAuto, th2ContourCustom, contourNumberCustom, "logz");
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetBkgFreeX, texPtJetBkgCorrX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetBkgFreeX, texPtJetBkgCorrX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
 }
 
 void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius) {
@@ -404,14 +524,25 @@ void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius) {
   TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_detectorEffects_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
 
   TString texCombinedMatrix = contextCustomOneField((TString)"ALICE Simulation", ""); // Response matrix - "+(TString)*texEnergy
-  TString textContextMatrixDetails = contextCustomFourFields((TString)*texCollisionMCInfo, "", (TString)"Detector response ", contextJetRadius(arrayRadius[iRadius]), "");
+  TString textContextMatrixDetails = contextCustomFiveFields((TString)"Detector response ", "", (TString)*texCollisionMCType, (TString)*texEnergy, (TString)contextJetRadius(arrayRadius[iRadius]), "");
 
 
-  // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
-  TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorResponse).Clone("Draw_ResponseMatrices_detectorResponse"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+  // the matrix natural visualisation is actually the NON transposed histograms, rotated by 90° anti trigonometrically
+  TH2D* MatrixResponse;
+  TString* xLabel;
+  TString* yLabel;
+  if (transposeResponseHistogramsInDrawing) {
+    MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorResponse).Clone("Draw_ResponseMatrices_detectorResponse"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    xLabel = texPtJetGen;
+    yLabel = texPtJetRec;
+  } else {    MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorResponse->Clone("Draw_ResponseMatrices_detectorResponse"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    xLabel = texPtJetRec;
+    yLabel = texPtJetGen;
+  }
+  // std::array<std::array<float, 2>, 3> drawnWindowRaymondRequest = {{{-999, -999}, {-999, -999}, {1e-5, 6e-1}}}; // {{xmin, xmax}, {ymin, ymax}, {zmin, zmax}} /// put AUTO again after perf figure is done
 
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
 }
 
 void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRadius, std::string options) {
@@ -452,11 +583,22 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
   TString texCombinedMatrix = contextCustomOneField((TString)"Combined matrix - "+(TString)*texEnergy, "");
   TString textContextMatrixDetails = contextCustomFourFields((TString)"Detector response: "+(TString)*texCollisionMCType, "", (TString)"Fluctuations response: "+*texCollisionDataType, contextJetRadius(arrayRadius[iRadius]), "");
 
-  // the matrix natural visualisation is actually the transpose of histograms' visualisations we use
-  TH2D* MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined).Clone("Draw_ResponseMatrices_DetectorAndFluctuationsCombined"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+  // the matrix natural visualisation is actually the NON transposed histograms, rotated by 90° anti trigonometrically
+  TH2D* MatrixResponse;
+  TString* xLabel;
+  TString* yLabel;
+  if (transposeResponseHistogramsInDrawing) {
+    MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined).Clone("Draw_ResponseMatrices_DetectorAndFluctuationsCombined"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    xLabel = texPtJetGen;
+    yLabel = texPtJetRec;
+  } else {
+    MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("Draw_ResponseMatrices_DetectorAndFluctuationsCombined"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+    xLabel = texPtJetRec;
+    yLabel = texPtJetGen;
+  }
 
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, texPtJetGenX, texPtJetRecX, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
 }
 
 void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInput, std::string options) {
@@ -470,6 +612,8 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   TH1D* H1D_jetPt_mcpFolded2;
   TH1D* H1D_jetPt_mcpFoldedThenUnfolded;
   TH1D* H1D_jetPt_unfolded_mcpComp[2];
+  TH1D* H1D_jetPt_unfolded_run2Comp_fitRebin[3];
+  TH1D* H1D_jetPt_unfolded_run2Comp_shapeComp[2];
   TH1D* H1D_jetPt_unfolded_run2Comp[3];
   TH1D* H1D_jetPt_unfolded_measuredComp[2];
   TH1D* H1D_jetPt_unfolded_refoldedComp[3];
@@ -479,8 +623,12 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   TH1D* H1D_jetPt_mcp_recBinControl;
   TH1D* H1D_jetPt_run2_HannaBossiLauraFile;
   TGraph* Graph_jetPt_run2_MLPaperFile;
-  TH1D* H1D_jetPt_run2_MLPaperFile = new TH1D("H1D_jetPt_run2_MLPaperFile", "H1D_jetPt_run2_MLPaperFile", nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius]);
+  TH1D* H1D_jetPt_run2_MLPaperFile = new TH1D("H1D_jetPt_run2_MLPaperFile", "H1D_jetPt_run2_MLPaperFile", nBinPtJetsGen_run2[iRadius], ptBinsJetsGen_run2[iRadius]);
+  TH1D* H1D_jetPt_run2_MLPaperFile_rebinned;
+  TF1* TF1_jetPt_run2_MLPaperFile_fit[1];
   TH1D* H1D_jetPt_ratio_mcp;
+  TH1D* H1D_jetPt_ratio_run2_fitRebin[2];
+  TH1D* H1D_jetPt_ratio_run2_shapeComp[2];
   TH1D* H1D_jetPt_ratio_run2[2];
   TH1D* H1D_jetPt_ratio_measured;
   TH1D* H1D_jetPt_ratio_measuredRefolded[2];
@@ -495,15 +643,17 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
 
     double Ncoll;
     if (centralityRange[0] == 00 && centralityRange[1] == 10) {
-      Ncoll = (1780.9+1387.0)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf
+      // Ncoll = (1780.9+1387.0)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
+      Ncoll = (1956+1722+1521+1346)/4; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
     } else if (centralityRange[0] == 50 && centralityRange[1] == 70) {
-      Ncoll = (103.7+46.1)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf
+      // Ncoll = (103.7+46.1)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
+      Ncoll = (89.8+39.8)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
     } else {
       cout << "comparison with run2: Ncoll hasn't been calculated for this centrality interval" << endl;
     }
-    double sigmaNN = 68.4; // value for sqrt(s) = 5.44 closest to 5.36 https://arxiv.org/abs/1710.07098
+    double sigmaNN = 67.6; // value for sqrt(s) = 5.02 TeV https://arxiv.org/abs/1710.07098
     double T_AA = Ncoll / sigmaNN;
-    Graph_jetPt_run2_MLPaperFile = ((TGraph*)((TDirectoryFile*)file_O2Analysis_run2ComparisonFileMLPaper->Get("Figure 3a top R020"))->FindObjectAny("Graph1D_y1"));
+    Graph_jetPt_run2_MLPaperFile = ((TGraph*)((TDirectoryFile*)file_O2Analysis_run2ComparisonFileMLPaper->Get("Figure 3a top R020"))->FindObjectAny("Graph1D_y1")); // https://doi.org/10.1016/j.physletb.2023.138412
     // H1D_jetPt_run2_MLPaperFile = (TH1D*)((TH1D*)(file_O2Analysis_run2ComparisonFileMLPaper->Get("Figure 3a top R020"))->FindObject("Graph1D_y1"))->Clone("H1D_jetPt_run2_MLPaperFile");
     int Ngraph = Graph_jetPt_run2_MLPaperFile->GetN();
     for (int i=0; i < Ngraph; ++i) // setting bin contents to the TGraph values
@@ -519,6 +669,8 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
   }
 
   bool divideSuccessMcp;
+  bool divideSuccessRun2_fitRebin[2];
+  bool divideSuccessRun2_shapeComp[2];
   bool divideSuccessRun2[2];
   bool divideSuccessMeasured;
   bool divideSuccessMeasuredRefolded[2];
@@ -576,13 +728,43 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
 
   cout << "comparison with run2" << endl; 
   if (isDataPbPb && comparePbPbWithRun2) {
+    // comparison with run2 results rebinned using a fit (errors look way underestimated; tsallis function not great aboe 100+ GeV; where should one eval the function inside a bin? probably not just the center)
+    H1D_jetPt_unfolded_run2Comp_fitRebin[0] = (TH1D*)H1D_jetPt_unfolded->Clone("H1D_jetPt_unfolded_run2Comp_fitRebin"+partialUniqueSpecifier);
+    double fitPtRange[2] = {ptBinsJetsGen_run2[iRadius][0], ptBinsJetsGen_run2[iRadius][nBinPtJetsGen_run2[iRadius]]};
+    std::pair<TH1D*, TF1*> pairResult = RebinWithTsallisFit(H1D_jetPt_run2_MLPaperFile, nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius], fitPtRange);
+    H1D_jetPt_run2_MLPaperFile_rebinned = pairResult.first;
+    TF1_jetPt_run2_MLPaperFile_fit[0] = pairResult.second;
+    H1D_jetPt_unfolded_run2Comp_fitRebin[1] = (TH1D*)H1D_jetPt_run2_MLPaperFile_rebinned->Clone("H1D_jetPt_unfolded_run2_rebinned_fitRebin"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_run2Comp_fitRebin[2] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_unfolded_run2_fitRebin"+partialUniqueSpecifier);
+    // H1D_jetPt_unfolded_run2Comp[2] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_unfolded_run2Comp_HannaBossiLauraFile"+partialUniqueSpecifier);
+    H1D_jetPt_ratio_run2_fitRebin[0] = (TH1D*)H1D_jetPt_run2_MLPaperFile_rebinned->Clone("H1D_jetPt_ratio_run2_MLPaperFile_fitRebin"+partialUniqueSpecifier);
+    // H1D_jetPt_ratio_run2[1] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_ratio_run2_HannaBossiLauraFile"+partialUniqueSpecifier);
+    divideSuccessRun2_fitRebin[0] = H1D_jetPt_ratio_run2_fitRebin[0]->Divide(H1D_jetPt_unfolded);
+    // divideSuccessRun2[1] = H1D_jetPt_ratio_run2[1]->Divide(H1D_jetPt_unfolded);
+
+
+    // comparison with run2 results by rebinning Run3 into Run2 bins
     H1D_jetPt_unfolded_run2Comp[0] = (TH1D*)H1D_jetPt_unfolded->Clone("H1D_jetPt_unfolded_run2Comp"+partialUniqueSpecifier);
-    H1D_jetPt_unfolded_run2Comp[1] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_unfolded_run2Comp_MLPaperFile"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_run2Comp[1] = (TH1D*)H1D_jetPt_unfolded->Rebin(nBinPtJetsGen_run2[iRadius],"H1D_jetPt_unfolded_run2Comp_run2Rebin"+partialUniqueSpecifier, ptBinsJetsGen_run2[iRadius]);
+    
+    int scalingFactorRebin[9] = {2, 2, 2, 2, 2, 3, 3, 1, 1};
+    for (auto i = 1; i <= H1D_jetPt_unfolded_run2Comp[1]->GetNbinsX(); i++) {
+      H1D_jetPt_unfolded_run2Comp[1]->SetBinContent(i, 1./scalingFactorRebin[i-1]*H1D_jetPt_unfolded_run2Comp[1]->GetBinContent(i));
+      H1D_jetPt_unfolded_run2Comp[1]->SetBinError(i, 1./scalingFactorRebin[i-1]*H1D_jetPt_unfolded_run2Comp[1]->GetBinError(i));
+    }
+    H1D_jetPt_unfolded_run2Comp[2] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_unfolded_run2"+partialUniqueSpecifier);
     // H1D_jetPt_unfolded_run2Comp[2] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_unfolded_run2Comp_HannaBossiLauraFile"+partialUniqueSpecifier);
     H1D_jetPt_ratio_run2[0] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_ratio_run2_MLPaperFile"+partialUniqueSpecifier);
     // H1D_jetPt_ratio_run2[1] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_ratio_run2_HannaBossiLauraFile"+partialUniqueSpecifier);
-    divideSuccessRun2[0] = H1D_jetPt_ratio_run2[0]->Divide(H1D_jetPt_unfolded);
+    divideSuccessRun2[0] = H1D_jetPt_ratio_run2[0]->Divide(H1D_jetPt_unfolded_run2Comp[1]);
     // divideSuccessRun2[1] = H1D_jetPt_ratio_run2[1]->Divide(H1D_jetPt_unfolded);
+
+    H1D_jetPt_unfolded_run2Comp_shapeComp[0] = (TH1D*)H1D_jetPt_unfolded_run2Comp[1]->Clone("H1D_jetPt_unfolded_run2Comp_run3rebinned_shapeComp"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_run2Comp_shapeComp[1] = (TH1D*)H1D_jetPt_unfolded_run2Comp[2]->Clone("H1D_jetPt_unfolded_run2Comp_run2rescaled_shapeComp"+partialUniqueSpecifier);
+    H1D_jetPt_unfolded_run2Comp_shapeComp[1]->Scale(H1D_jetPt_unfolded_run2Comp_shapeComp[0]->GetBinContent(1)/H1D_jetPt_unfolded_run2Comp_shapeComp[1]->GetBinContent(1));
+
+    H1D_jetPt_ratio_run2_shapeComp[0] = (TH1D*)H1D_jetPt_unfolded_run2Comp_shapeComp[1]->Clone("H1D_jetPt_unfolded_run2Comp_run2rescaled_shapeComp_ratio"+partialUniqueSpecifier);
+    divideSuccessRun2_shapeComp[0] = H1D_jetPt_ratio_run2_shapeComp[0]->Divide(H1D_jetPt_unfolded_run2Comp_shapeComp[0]);
   }
  
   cout << "comparison with refolded" << endl; 
@@ -704,13 +886,28 @@ void Draw_Pt_spectrum_unfolded(int iDataset, int iRadius, int unfoldParameterInp
 
   // comparison with Run 2
   if (isDataPbPb && comparePbPbWithRun2) {
-  TString unfoldedRun2CompLegend[2] = {"unfolded Run3", "unfolded Run2 ML"};
+    TString unfoldedRun2CompLegend_fitRebin[3] = {"unfolded Run3", "unfolded Run2 ML rebinned", "unfolded Run2 ML initial"};
+    TString* pdfName_run2Comp_fitRebin = new TString(pdfTitleBase+unfoldingInfo+"_run2Comp_fitRebin");
+    Draw_TH1_Histograms(H1D_jetPt_unfolded_run2Comp_fitRebin, unfoldedRun2CompLegend_fitRebin, 3, textContext, pdfName_run2Comp_fitRebin, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy,fitSingle", TF1_jetPt_run2_MLPaperFile_fit);
+    if (divideSuccessRun2_fitRebin[0] || divideSuccessRun2_fitRebin[1]) {
+      TString* pdfName_ratio_run2_fitRebin = new TString(pdfTitleBase+unfoldingInfo+"_run2Comp_fitRebin_ratio");
+      Draw_TH1_Histogram(H1D_jetPt_ratio_run2_fitRebin[0], textContext, pdfName_ratio_run2_fitRebin, texPtX, texRatioRun2Unfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge, ratioLine");
+    }
+
+    TString unfoldedRun2CompLegend[3] = {"unfolded Run3", "unfolded Run3 rebinned", "unfolded Run2"};
     TString* pdfName_run2Comp = new TString(pdfTitleBase+unfoldingInfo+"_run2Comp");
-    Draw_TH1_Histograms(H1D_jetPt_unfolded_run2Comp, unfoldedRun2CompLegend, 2, textContext, pdfName_run2Comp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
-    cout << "divideSuccessRun2[0] = " << divideSuccessRun2[0] << ", divideSuccessRun2[1] = " << divideSuccessRun2[1] << endl;
+    Draw_TH1_Histograms(H1D_jetPt_unfolded_run2Comp, unfoldedRun2CompLegend, 3, textContext, pdfName_run2Comp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
     if (divideSuccessRun2[0] || divideSuccessRun2[1]) {
       TString* pdfName_ratio_run2 = new TString(pdfTitleBase+unfoldingInfo+"_run2Comp_ratio");
       Draw_TH1_Histogram(H1D_jetPt_ratio_run2[0], textContext, pdfName_ratio_run2, texPtX, texRatioRun2Unfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge, ratioLine");
+    }
+
+    TString unfoldedRun2CompLegend_shapeComp[2] = {"unfolded Run3 rebinned", "unfolded Run2 scaled up to Run 3"};
+    TString* pdfName_run2Comp_shapeComp = new TString(pdfTitleBase+unfoldingInfo+"_run2Comp_shapeComp");
+    Draw_TH1_Histograms(H1D_jetPt_unfolded_run2Comp_shapeComp, unfoldedRun2CompLegend_shapeComp, 2, textContext, pdfName_run2Comp_shapeComp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
+    if (divideSuccessRun2[0] || divideSuccessRun2[1]) {
+      TString* pdfName_ratio_shapeComp_run2 = new TString(pdfTitleBase+unfoldingInfo+"_run2Comp_shapeComp_ratio");
+      Draw_TH1_Histogram(H1D_jetPt_ratio_run2_shapeComp[0], textContext, pdfName_ratio_shapeComp_run2, texPtX, texRatioRun2Unfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge, ratioLine");
     }
   }
 
@@ -887,6 +1084,8 @@ void Draw_Pt_spectrum_unfolded_parameterVariation(int iDataset, int iRadius, int
   if (divideSuccessRefoldedComp_boolsum){
     TString* pdfName_ratio_refoldedComp = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+partialUniqueSpecifier+"_Pt_unfolded_"+unfoldingInfo+"_ratioRefoldedUnfolded");
     Draw_TH1_Histograms(H1D_jetPt_ratio_measuredRefolded, unfoldingIterationLegend, nUnfoldIteration, textContext, pdfName_ratio_refoldedComp, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine");
+    TString* pdfName_ratio_refoldedComp_zoom = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+partialUniqueSpecifier+"_Pt_unfolded_"+unfoldingInfo+"_ratioRefoldedUnfolded_zoom");
+    Draw_TH1_Histograms(H1D_jetPt_ratio_measuredRefolded, unfoldingIterationLegend, nUnfoldIteration, textContext, pdfName_ratio_refoldedComp_zoom, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine,zoomToOneMedium2");
   }
 }
 

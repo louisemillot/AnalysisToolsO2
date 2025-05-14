@@ -298,7 +298,7 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
   minX = findMinFloat(minX_collection, collectionSize);
   maxY = findMaxFloat(maxY_collection, collectionSize);
   minY = findMinFloat(minY_collection, collectionSize);
-  maxY > 0 ? yUpMarginScaling = 1.4 : yUpMarginScaling = 0.6;
+  maxY > 0 ? yUpMarginScaling = 1.5 : yUpMarginScaling = 0.6;
   maxY_ratio = findMaxFloat(maxY_ratio_collection, collectionSize);
   minY_ratio = findMinFloat(minY_ratio_collection, collectionSize);
 
@@ -483,7 +483,7 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
     legRatios->SetTextSize(gStyle->GetTextSize()*0.3);
   }
-  if (options.find("fit") != std::string::npos) {
+  if (options.find("fitCollection") != std::string::npos) {
     leg->SetTextSize(gStyle->GetTextSize()*0.3);
     legRatios->SetTextSize(gStyle->GetTextSize()*0.3);
   }
@@ -641,12 +641,17 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
   }
 
   // draws fit functions if requested
-  if (options.find("fit") != std::string::npos) {
+  if (options.find("fitCollection") != std::string::npos) {
     for (int i = 0; i < collectionSize; i++) {
       optionalFitCollection[i]->SetNpx(2000);
       optionalFitCollection[i]->Draw("same");
       optionalFitCollection[i]->SetLineColor(histograms_collection[i]->GetLineColor());
     }
+  }
+  if (options.find("fitSingle") != std::string::npos) {
+    optionalFitCollection[0]->SetNpx(2000);
+    optionalFitCollection[0]->Draw("same");
+    optionalFitCollection[0]->SetLineColor(colors[collectionSize]);
   }
 
   if (collectionSize >= 2) {
@@ -747,10 +752,12 @@ void Draw_TH1_Histograms_MasterFunction(TH1D** histograms_collection, const TStr
   // }
 }
 
+// ratio and distrib in same canvas (ratio just below distrib) Work in progress
 void Draw_TH1_Histograms_ratioInSameCanvas(TH1D** histograms_collection, const TString* legendList_string,TH1D** histograms_collection_ratios, const TString* legendList_string_ratios, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<float, 2> drawnWindowRatio, std::array<std::array<float, 2>, 2> legendPlacement, std::array<std::array<float, 2>, 2> legendPlacementRatio, std::array<float, 2> contextPlacement, std::string options, TF1** optionalFitCollection) {
   Draw_TH1_Histograms_MasterFunction(histograms_collection, legendList_string, histograms_collection_ratios, legendList_string_ratios, collectionSize, Context, pdfName, texXtitle, texYtitle, texCollisionDataInfo, drawnWindow, drawnWindowRatio, legendPlacement, legendPlacementRatio, contextPlacement, options+(std::string)"ratioInSameCanvas", optionalFitCollection);
 }
 
+// ratio and distrib in same canvas (ratio just below distrib) Work in progress
 void Draw_TH1_Histograms_ratioInSameCanvas(TH1D** histograms_collection, const TString* legendList_string,TH1D** histograms_collection_ratios, const TString* legendList_string_ratios, int collectionSize, TString Context, TString* pdfName, TString* &texXtitle, TString* &texYtitle, TString* texCollisionDataInfo, std::array<std::array<float, 2>, 2> drawnWindow, std::array<float, 2> drawnWindowRatio, std::array<std::array<float, 2>, 2> legendPlacement, std::array<std::array<float, 2>, 2> legendPlacementRatio, std::array<float, 2> contextPlacement, std::string options) {
   // is here to make optionalFitCollection an actual optional parameter; Draw_TH1_Histograms can be called without, and in that case optionalFitCollection is created empty for use by the actual Draw_TH1_Histograms function; it will only be used if 'options' has fit in it
   TF1* optionalFitCollectionDummy[collectionSize];

@@ -22,11 +22,11 @@ TString* texCentrality = new TString("Centrality (%)");
 TString* texSelectedMultiplicity = new TString("#it{N}_{tracks}^{selected}");
 TString* texLeadJetPt = new TString("#it{p}_{T,lead jet} (GeV/#it{c})");
 
-TString* texPtJetRecX = new TString("#it{p}_{T,jet rec} (GeV/#it{c})");
-TString* texPtJetGenX = new TString("#it{p}_{T,jet gen} (GeV/#it{c})");
+TString* texPtJetRec = new TString("#it{p}_{T,ch jet}^{rec} (GeV/#it{c})");
+TString* texPtJetGen = new TString("#it{p}_{T,ch jet}^{gen} (GeV/#it{c})");
 
-TString* texPtJetBkgCorrX = new TString("#it{p}_{T,jet rec} - #it{A}_{jet} * #it{#rho} (GeV/#it{c})");
-TString* texPtJetBkgFreeX = new TString("#it{p}_{T,jet rec}^{bkg-free} (GeV/#it{c})");
+TString* texPtJetBkgCorrX = new TString("#it{p}_{T,ch jet}^{rec} - #it{A}_{jet} #it{#rho} (GeV/#it{c})");
+TString* texPtJetBkgFreeX = new TString("#it{p}_{T,ch jet}^{rec, bkg-free} (GeV/#it{c})");
 TString* texPtJetRawX = new TString("#it{p}_{T,jet raw} (GeV/#it{c})");
 
 TString* texVx = new TString("part Vx");
@@ -37,7 +37,7 @@ TString* texIUy = new TString("track IU y (cm)");
 
 
 TString* texSvdK = new TString("k");
-TString* texSvdDvector = new TString("d_{k}");
+TString* texSvdDvector_k = new TString("d_{k}");
 
 
 ////////////////////////////////////////////
@@ -64,7 +64,7 @@ TString* texRatioDatasets = new TString(*texDatasetsComparisonType+"/("+*texData
 TString* texRatioRun3Run2 = new TString("Run3 / Run2"); 
 
 TString* texRho = new TString("#it{#rho} (GeV/#it{c})");
-TString* texBkgFluctuationRandomCone = new TString("#delta #it{p}_{T} = #it{p}_{T,random cone} - #it{A}_{random cone} * #it{#rho} (GeV/c)");
+TString* texBkgFluctuationRandomCone = new TString("#delta #it{p}_{T} = #it{p}_{T,random cone} - #it{A}_{random cone} #it{#rho} (GeV/c)");
 TString* texEntriesNorm_BkgFluctuationYield = new TString("1/#it{N}_{coll}^{in cent} d#it{N}_{coll}/d#it{#delta pt}");
 TString* texCollNorm_BkgFluctuationYield = new TString("1/#it{N}_{coll} d#it{N}_{coll}/d#it{#delta pt}");
 TString* texCollNorm_BkgFluctuationYield_CentWindow = new TString("1/#it{N}_{coll}^{in cent} d#it{N}_{coll}/d#it{#delta pt}");
@@ -97,8 +97,11 @@ TString* texPartVzYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{tr
 
 TString* texPartYYield_EntriesNorm = new TString("1/#it{N}_{tracks} d#it{N}_{track}/dy");
 
-TString* texPtPeak = new TString("#it{p}_{T,jet rec} - #it{A}_{jet} * #it{#rho} (GeV/#it{c}) of peak");
-TString* texPtAtThreshold = new TString("#it{p}_{T,jet rec} - #it{A}_{jet} * #it{#rho} (GeV/#it{c}) at 95% threshold");
+TString* texPtPeak = new TString("#it{p}_{T,ch jet}^{rec} - #it{A}_{jet} #it{#rho} (GeV/#it{c}) of peak");
+TString* texPtAtThreshold = new TString("#it{p}_{T,ch jet}^{rec} - #it{A}_{jet} #it{#rho} (GeV/#it{c}) at 95% threshold");
+
+TString* texSystematicsPercent = new TString ("systematic error (%)");
+
 
 //////////////////////////
 ////////// Jets //////////
@@ -159,7 +162,7 @@ TString* texMeanPt = new TString("<#it{p}_{T}>");
 TString* texMeanEta = new TString("<#eta>");
 TString* texMeanNtracks = new TString("<N_{tracks}>");
 TString* texTrackPtYield_JetsNorm = new TString("1/#it{N}_{jets} d#it{N}_{track}/d#it{p}_{T} (GeV/#it{c})^{-1}");
-
+TString* texDCAXY = new TString("DCA_{xy}");
 
 ////////////////////////////
 ////////// Events //////////

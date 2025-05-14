@@ -34,13 +34,30 @@ std::vector<double> MakeVariableBinning_twoWidths(double xMin, int nLeft, double
   return bins;
 }
 
-std::vector<double> MakeVariableBinning_logarithmic(double xMin, double xMax, int nBins) {
+std::vector<double> MakeVariableBinning_logarithmic(TH1D* histogram, int nBinsRough) {
+  double xMin = histogram->GetBinCenter(1); // center to avoid 0, which is where most histograms start at
+  double xMax = histogram->GetXaxis()->GetXmax();
   std::vector<double> bins;
   double xTemp = xMin;
-  double binLogWidth = (log10(xMax) - log10(xMin)) / nBins;
-  for(int i = 0; i < nBins; i++){
-    bins.push_back(xTemp);
-    xTemp = xTemp * pow(10, binLogWidth);
+  double binLogWidth = (log10(xMax) - log10(xMin)) / nBinsRough;
+  // int originalHistBin;
+  cout << "xMax = " << xMax << endl;
+  cout << "xMin = " << xMin << endl;
+  cout << "i = " << 0 << endl;
+  cout << "rough bin edge:   " << xTemp << endl;
+  int originalHistBin = histogram->GetXaxis()->FindBin(xTemp);
+  double xTempRefined = histogram->GetXaxis()->GetBinLowEdge(originalHistBin);
+  cout << "refined bin edge:   " << xTempRefined << endl;
+  bins.push_back(xTempRefined);
+  for(int i = 0; i < nBinsRough; i++){
+    if (i !=0 && xTempRefined != bins.back()) {
+    cout << "i = " << i << endl;
+    cout << "refined bin edge: " << xTempRefined << endl;
+      bins.push_back(xTempRefined);
+    }
+    xTemp = xTemp * pow(10, binLogWidth); // at this point, this edge is not necessarily matching any of the initial histogram edges
+    originalHistBin = histogram->GetXaxis()->FindBin(xTemp);
+    xTempRefined = histogram->GetXaxis()->GetBinLowEdge(originalHistBin);
   }
   bins.push_back(xMax);
   return bins;
@@ -240,8 +257,8 @@ TH2D RebinVariableBins2D_PriorWeightedBinMerging(TH2D* H2D_hist, int nBinsX, int
     TString textContext_preRebin((TString)"");
 
 
-    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
-    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin_logz, texPtJetRecX, texPtJetGenX, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
+    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin, texPtJetRec, texPtJetGen, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+    Draw_TH2_Histogram(H2D_hist_temp, textContext_preRebin, pdfName_preRebin_logz, texPtJetRec, texPtJetGen, texCollisionDataInfo, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
   std::stringstream ss;
@@ -437,6 +454,7 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
   int nBinsX_B = histB->GetNbinsX();
   int nBinsY_B = histB->GetNbinsY();
 
+
   if (nBinsY_A != nBinsX_B) {
     cout << "#########################################################################################" << endl;
     cout << "###################### MATRIX PRODUCT IMPOSSIBLE DUE TO DIMENSIONS ######################" << endl;
@@ -445,7 +463,7 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
   }
 
   int nBinsK = nBinsY_A;
-  
+
   std::vector<double> vectorBinsX_AB = GetTH1Bins(histB->ProjectionX(histB->GetName()+(TString)"projX", 1, nBinsX_B));
   std::vector<double> vectorBinsY_AB = GetTH1Bins(histA->ProjectionY(histA->GetName()+(TString)"projY", 1, nBinsY_A));
   double* binsX_AB = &vectorBinsX_AB[0];
@@ -464,11 +482,12 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
       productContent_iBinX_iBinY = 0;
       productError2_iBinX_iBinY = 0;
       if (0 < iBinX && iBinX < nBinsX_AB+1 && 0 < iBinY && iBinY < nBinsY_AB+1) { // reason we do this, is because we don't want the under/ofverflows spread inside the matrix when we multiply, which happens when we do ; by separating it, we can still have the under/overflows calculated correctly in the else case, so that we can use them for the kinematic efficiency
-        // ideally I want to take the over/underflows into account; or at least have them save how much of the distrib is cut
-        // maybe I have them be recalculated with the product, but I don't let them be part of the sum for the non-under/overflow parts of the final matrix
-        for(int iBinK = 1; iBinK <= nBinsK; iBinK++){ // 0 and n+1 take underflow and overflow into account
+        for(int iBinK = 1; iBinK <= nBinsK; iBinK++){ // 1 and n don't take underflow and overflow into account
           productContent_iBinX_iBinY += histA->GetBinContent(iBinX, iBinK) * histB->GetBinContent(iBinK, iBinY); 
           productError2_iBinX_iBinY += pow(histB->GetBinContent(iBinK, iBinY), 2)*pow(histA->GetBinError(iBinX, iBinK), 2) + pow(histA->GetBinContent(iBinX, iBinK), 2)*pow(histB->GetBinError(iBinK, iBinY), 2); // simple sigma_ab = b2sigma_a2 + a2sigma_b2 ; that assumes there are no correlations; here it s background fluct from PbPB sim, and detector effects from a pp sim, so we can maybe say theyre not correlated    
+          // if (iBinX < 7) {
+          //   cout << "A(" << iBinX << ", " << iBinK << ") = " << histA->GetBinContent(iBinX, iBinK) << ", B(" << iBinK << ", " << iBinY << ") = " << histB->GetBinContent(iBinK, iBinY) << endl;
+          // }
         }
       } else {
         for(int iBinK = 0; iBinK <= nBinsK+1; iBinK++){ // 0 and n+1 take underflow and overflow into account
@@ -478,11 +497,14 @@ TH2D GetMatrixProductTH2xTH2(TH2D* histA, TH2D* histB){
       }
       histAB.SetBinContent(iBinX, iBinY, productContent_iBinX_iBinY);
       histAB.SetBinError(iBinX, iBinY, sqrt(productError2_iBinX_iBinY));  
+      // if (iBinX < 7) {
+      //   cout << ". . . . . . . . . . . . . . . . . . . . . . ." << endl;
+      //   cout << "AB(" << iBinX << ", " << iBinY << ") = " << histAB.GetBinContent(iBinX, iBinY) << endl;
+      //   cout << "==========================================================" << endl;
+      // }
     }
   }
   return histAB;
-
-
 }
 
 TH1D GetMatrixVectorProductTH2xTH1(TH2D* histA, TH1D* histU){
