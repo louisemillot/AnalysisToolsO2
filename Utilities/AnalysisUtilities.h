@@ -20,5 +20,6 @@ long int GetNEventsSel8Centrality(TFile* file_O2Analysis, float centralityLow, f
 long int GetNEventsSelectedCentrality_JetFramework(TFile* file_O2Analysis, float centralityLow, float centralityHigh, const char wagonId[]);
 
 void TransformRawHistToYield(TH1D* histogram);
+void TransformYieldToEtaDifferentialYield(TH1D* histogram, double deltaEta);
 
 #endif

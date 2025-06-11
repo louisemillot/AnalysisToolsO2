@@ -36,19 +36,21 @@ void TransformRawHistToYield(TH1D* histogram){
   histogram->Scale(1.,"width"); // If option contains "width" the bin contents and errors are divided by the bin width.
 }
 
+void TransformYieldToEtaDifferentialYield(TH1D* histogram, double deltaEta){
+  histogram->Scale(1./deltaEta,"");
+}
+
+
 long int GetNEventsSel8(TFile* file_O2Analysis) {
   return ((TH1I*)file_O2Analysis->Get("event-selection-task/hColCounterAcc"))->GetEntries(); //this is only sel8 (no sel8Full for example) and doesn't exclude collisions cut by the vertexZ pos cut
 }
 
 long int GetNEventsSelected_JetFramework(TFile* file_O2Analysis, const char analysisWorkflow[]) {
   return ((TH1I*)file_O2Analysis->Get((TString)analysisWorkflow+"/h_collisions"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account;
-
 }
 double GetNEventsSelected_JetFramework_weighted(TFile* file_O2Analysis, const char analysisWorkflow[]) {
   return ((TH1F*)file_O2Analysis->Get((TString)analysisWorkflow+"/h_collisions_weighted"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account; 
-
 }
-
 
 long int GetNEventsSelected_TrackEffWorkflow(TFile* file_O2Analysis, const char analysisWorkflow[]) {
   return ((TH1I*)file_O2Analysis->Get((TString)analysisWorkflow+"/h_collisions"))->GetBinContent(3); //this should be the actual selection AND take vertexZ into account; 

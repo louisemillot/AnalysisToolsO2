@@ -69,6 +69,7 @@ const bool normaliseRespYSliceForRefold = true; // keep true; THAT IS APPARENTLY
 const bool useMatrixOverflows = false; // false by default, haven't tried true recently
 
 // Debugging and checks:
+const bool doManualErrorPropagForKineEff = true; // false is likely better, but hasn't been tested yet
 const bool useFineBinningTest = false;
 bool controlMC = false; // use file_O2Analysis_ppSimDetectorEffect_unfoldingControl MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file), rather than real data, and as comparison to gen (with h_jet_pt_part distrib on file); weighted control MC, and control for PbPb are not yet implemented
 const bool drawIntermediateResponseMatrices = false;

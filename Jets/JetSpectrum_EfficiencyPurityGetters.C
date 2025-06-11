@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH2D* H2D_jetPtResponseMatrix_fineBinning, TString name_H1D_kinematicEfficiency, int iRadius){
+bool  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH2D* H2D_jetPtResponseMatrix_fineBinning, TString name_H1D_kinematicEfficiency, int iRadius){
   // assumes the response matrix has the fine binning, and will get the kinematic efficiency for rec axis binning equals to ptBinsJetsRec
   bool divideSuccess; 
 
@@ -62,7 +62,7 @@ void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
   } else {
     // use histograms and option "b"
 
-    H1D_denominator = (TH1D*)H1D_kinematicEfficiency->Clone("H1D_kineDenominator"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius]));
+    TH1D* H1D_denominator = (TH1D*)H1D_kinematicEfficiency->Clone("H1D_kineDenominator"+name_H1D_kinematicEfficiency+RadiusLegend[iRadius]);
     H1D_denominator->Reset("M");
     for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
       H1D_denominator->SetBinContent(iBinGen, integralOfResponse_iBinGen);
