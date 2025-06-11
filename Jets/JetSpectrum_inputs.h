@@ -22,16 +22,22 @@ TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+", "+(TSt
 const TString* texDatasetsComparisonType = new TString("0#font[122]{-}10% centrality");
 // const TString* texDatasetsComparisonType = new TString("50-70% centrality");
 const TString* texDatasetsComparisonCommonDenominator = new TString("ALICE performance");
-const int nDatasets = 1;
-const TString Datasets[nDatasets] = {"LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068"};
-const TString DatasetsNames[nDatasets] = {""};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root")
+const int nDatasets = 2;
+const TString Datasets[nDatasets] = {"LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068",
+                                    "LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068"};
+const TString DatasetsNames[nDatasets] = {"noTrackEff", "withTrackEff"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+                                      new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
                                       };
 // TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
 // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
 // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
-TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root");
-TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
+TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root"),
+                                                    new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_trackEffCorrection_cent0010_train420439/AnalysisResults.root"),
+                                                    };
+TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root"),
+                                                                        new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_trackEffCorrection_cent0010_train420439/AnalysisResults.root")
+                                                                        }; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
 
 // const TString trainId = "_id12832";
 // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;

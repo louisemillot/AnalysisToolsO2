@@ -12,7 +12,9 @@ const float arrayRadius[nRadius] = {0.2, 0.4, 0.6};
 const int nRandomConeTypes = 5;
 const TString randomConeTypeList[nRandomConeTypes] = {"", "withoutleadingjet", "randomtrackdirection", "randomtrackdirectionwithoutoneleadingjets", "randomtrackdirectionwithouttwoleadingjets"};
 
-const double etaAnalysisRange[2] = {-0.5, 0.5};
+const double trackEtaRange[2] = {-0.9, 0.9};
+float deltaJetEta[3] = {1.4, 1, 0.6};
+
 // Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
 const int iJetType = 0;
 const int iJetLevel = 0;

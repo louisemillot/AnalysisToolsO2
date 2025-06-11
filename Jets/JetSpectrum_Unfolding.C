@@ -325,7 +325,7 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
-    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postUnfolding"+(TStringpartialUniqueSpecifier);
+    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postUnfolding"+(TString)partialUniqueSpecifier);
     TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_postUnfolding"+(TString)partialUniqueSpecifier+"_logz");
 
 
@@ -366,9 +366,9 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEnd(TH1D* &
       NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflowData));
     } else {
       if (mcIsWeighted) {
-        NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelected_JetFramework_weighted(  file_O2Analysis_ppSimDetectorEffect_unfoldingControl[iDataset][iDataset], analysisWorkflow_unfoldingControl));
+        NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelected_JetFramework_weighted(file_O2Analysis_ppSimDetectorEffect_unfoldingControl[iDataset], analysisWorkflow_unfoldingControl));
       } else {
-        NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelected_JetFramework( file_O2Analysis_ppSimDetectorEffect_unfoldingControl[iDataset], analysisWorkflow_unfoldingControl));
+        NormaliseRawHistToNEvents(H1D_jetPt_unfolded, GetNEventsSelected_JetFramework(file_O2Analysis_ppSimDetectorEffect_unfoldingControl[iDataset], analysisWorkflow_unfoldingControl));
       }
     }
   }
@@ -382,6 +382,9 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, T
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_unfolded);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_unfolded, deltaJetEta[iRadius]);
+
   return unfoldInfo;
 }
 
@@ -577,6 +580,8 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded(TH1D* &H1D_jetPt_unfoldedThenRefol
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_unfoldedThenRefolded);
   }
+  
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_unfoldedThenRefolded, deltaJetEta[iRadius]);
 }
 
 
@@ -693,6 +698,8 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_RooUnfoldMethod(TH1D* &H1D_jetPt_u
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_unfoldedThenRefolded);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_unfoldedThenRefolded, deltaJetEta[iRadius]);
 }
 
 
@@ -765,28 +772,6 @@ void Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEndAndEvtNorm(TH
     TransformRawHistToYield(H1D_jetPt_mcpFolded);
   }
 }
-// void Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcpFolded, int iDataset, int iRadius, std::string options) {
-//   Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcpFolded, iDataset, iRadius, options);
-
-//   if (normaliseDistribsAfterUnfolding){
-//     if (!controlMC) {
-//       NormaliseRawHistToNEvents(H1D_jetPt_mcpFolded, GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflowData));
-//     } else {
-//       if (!mcIsWeighted) {
-//         NormaliseRawHistToNEvents(H1D_jetPt_mcpFolded, GetNEventsSelected_JetFramework_weighted( file_O2Analysis_ppSimDetectorEffect_unfoldingControl[iDataset], analysisWorkflow_unfoldingControl));
-//       } else {
-//         NormaliseRawHistToNEvents(H1D_jetPt_mcpFolded, GetNEventsSelected_JetFramework( file_O2Analysis_ppSimDetectorEffect_unfoldingControl[iDataset], analysisWorkflow_unfoldingControl));
-//       }
-//     }
-//   }
-// }
-// void Get_Pt_spectrum_mcpFoldedWithFluctuations(TH1D* &H1D_jetPt_mcpFolded, int iDataset, int iRadius, std::string options) {
-//   Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEnd(H1D_jetPt_mcpFolded, iDataset, iRadius, options);
-
-//   if (doWidthScalingAtEnd) {
-//     TransformRawHistToYield(H1D_jetPt_mcpFolded);
-//   }
-// }
 void Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcpFolded, int iDataset, int iRadius, std::string options) {
   Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_mcpFolded, iDataset, iRadius, options);
 
@@ -804,6 +789,8 @@ void Get_Pt_spectrum_mcpFoldedWithFluctuations(TH1D* &H1D_jetPt_mcpFolded, int i
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcpFolded);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcpFolded, deltaJetEta[iRadius]);
 }
 
 #endif

@@ -467,6 +467,8 @@ void Get_Pt_spectrum_bkgCorrected_recBinning(TH1D* &H1D_jetPt, int iDataset, int
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt, deltaJetEta[iRadius]);
 }
 void Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
   Get_Pt_spectrum_bkgCorrected_genBinning_preWidthScalingAtEndAndEvtNorm(H1D_jetPt, iDataset, iRadius, options);
@@ -491,6 +493,8 @@ void Get_Pt_spectrum_bkgCorrected_genBinning(TH1D* &H1D_jetPt, int iDataset, int
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_bkgCorrected_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt, int iDataset, int iRadius, std::string options) {
@@ -514,6 +518,8 @@ void Get_Pt_spectrum_bkgCorrected_fineBinning(TH1D* &H1D_jetPt, int iDataset, in
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt, deltaJetEta[iRadius]);
 }
 
 
@@ -542,6 +548,8 @@ void Get_Pt_spectrum_mcp_genBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRad
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcp, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcp_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
@@ -569,6 +577,8 @@ void Get_Pt_spectrum_mcp_fineBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRa
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcp, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcd_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
@@ -588,6 +598,8 @@ void Get_Pt_spectrum_mcd_fineBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRa
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcd, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcd_recBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
@@ -607,6 +619,8 @@ void Get_Pt_spectrum_mcd_recBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRad
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcd, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcd_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcd, int iDataset, int iRadius, std::string options) {
@@ -626,6 +640,8 @@ void Get_Pt_spectrum_mcd_genBinning(TH1D* &H1D_jetPt_mcd, int iDataset, int iRad
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcd);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcd, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcdMatched_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
@@ -645,6 +661,8 @@ void Get_Pt_spectrum_mcdMatched_genBinning(TH1D* &H1D_jetPt_mcdMatched, int iDat
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcdMatched, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcdMatched_recBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
@@ -664,6 +682,8 @@ void Get_Pt_spectrum_mcdMatched_recBinning(TH1D* &H1D_jetPt_mcdMatched, int iDat
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcdMatched, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcdMatched_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcdMatched, int iDataset, int iRadius, std::string options) {
@@ -683,6 +703,8 @@ void Get_Pt_spectrum_mcdMatched_fineBinning(TH1D* &H1D_jetPt_mcdMatched, int iDa
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcdMatched);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcdMatched, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcpMatched_genBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
@@ -702,6 +724,8 @@ void Get_Pt_spectrum_mcpMatched_genBinning(TH1D* &H1D_jetPt_mcpMatched, int iDat
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcpMatched);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcpMatched, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcpMatched_fineBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcpMatched, int iDataset, int iRadius, std::string options) {
@@ -721,6 +745,8 @@ void Get_Pt_spectrum_mcpMatched_fineBinning(TH1D* &H1D_jetPt_mcpMatched, int iDa
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcpMatched);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcpMatched, deltaJetEta[iRadius]);
 }
 
 void Get_Pt_spectrum_mcp_recBinning_preWidthScalingAtEnd(TH1D* &H1D_jetPt_mcp, int iDataset, int iRadius, bool fcontrolMC, std::string options) {
@@ -748,6 +774,8 @@ void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRad
   if (doWidthScalingAtEnd) {
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
+
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcpMatched, deltaJetEta[iRadius]);
 }
 
 #endif

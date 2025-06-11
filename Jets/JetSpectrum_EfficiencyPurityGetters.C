@@ -26,7 +26,7 @@
 
 void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH2D* H2D_jetPtResponseMatrix_fineBinning, TString name_H1D_kinematicEfficiency, int iRadius){
   // assumes the response matrix has the fine binning, and will get the kinematic efficiency for rec axis binning equals to ptBinsJetsRec
-  // cout << "Get_ResponseMatrix_Pt_KinematicEffiency" << endl; 
+  // TODOLIST: handle errors better; numerator is a subsample of denominator, so error of ratio should take this into account; make both histograms, then use divide with option "b" to have a better estimator of errors (though still not perfect)
   
   int ibinRec_min = H2D_jetPtResponseMatrix_fineBinning->GetXaxis()->FindBin(ptBinsJetsRec[iRadius][0]);
   int ibinRec_max = H2D_jetPtResponseMatrix_fineBinning->GetXaxis()->FindBin(ptBinsJetsRec[iRadius][nBinPtJetsRec[iRadius]])-1;
@@ -56,6 +56,7 @@ void  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
     H1D_kinematicEfficiency->SetBinError(iBinGen, sqrt(binContent*binContent * (binErrorA + binErrorB))); // sigma(A/B)2 / (A/B) = sigma(A)2 /A2 + sigma(B)2 /B2
     // cout << "H1D_kinematicEfficiency(" << iBinGen << ") = " << binContent << ", error= = " << H1D_kinematicEfficiency->GetBinError(iBinGen) << endl;
 
+  // erreurs à retravailler? peut-être
   }
 }
 

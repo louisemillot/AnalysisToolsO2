@@ -442,7 +442,7 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
   TH2D* H2D_gen_det_geoMatched_rebinned;
   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
   if (analysisWorkflowMC.Contains("jet-finder-charged-qa") == true) {
-    H3D_jetRpartPtdetPt = (TH3D*)((TH3D*)  file_O2Analysis_MCfileForMatrix[iDataset][iDataset]->Get(analysisWorkflowMC+"/h3_jet_r_jet_pt_tag_jet_pt_base_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+partialUniqueSpecifier);// base is mcd in jetfinderQA as of 06/2024, thus tag is mcp, and so hist is (x=r, y=mcp, z=mcd)
+    H3D_jetRpartPtdetPt = (TH3D*)((TH3D*)  file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h3_jet_r_jet_pt_tag_jet_pt_base_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+partialUniqueSpecifier);// base is mcd in jetfinderQA as of 06/2024, thus tag is mcp, and so hist is (x=r, y=mcp, z=mcd)
     H3D_jetRpartPtdetPt->Sumw2();
 
     int ibinJetRadius = H3D_jetRpartPtdetPt->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
