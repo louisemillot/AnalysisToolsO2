@@ -173,7 +173,10 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     }
 
     cout << "Get_Pt_spectrum_unfolded(): should I use response->UseOverflow() ? using it gives a ratio unfolded/mcp much higher than without using it" << endl;
-    // response->UseOverflow();
+    if (useMatrixOverflows) {
+      response->UseOverflow(); // is off by default
+    }
+    // cout << "UseOverflowStatus:" << response->UseOverflowStatus() << endl;
 
   } else {
     TH2D *Respt;
@@ -234,7 +237,9 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
 
 
     // Get_ResponseMatrix_Pt_KinematicEffiency(H1D_kinematicEfficiency, (TH2D*)response->Hresponse(), partialUniqueSpecifier, iRadius); // I want the efficiency before the reweighting and normalisation
-
+    if (useMatrixOverflows) {
+      response->UseOverflow(); // is off by default
+    }
   }
   cout << "RooUnfoldResponse setting - end" << endl;
 

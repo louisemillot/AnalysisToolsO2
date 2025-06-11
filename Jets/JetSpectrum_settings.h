@@ -40,7 +40,7 @@ const bool matrixTransformationOrder = 0; // use 0
  //1: rebin, then YSliceNorm and scaleRespByXYWidth, then reweight; 
  //2: rebin, then reweight, then YSliceNorm and scaleRespByXYWidth
 
-char unfoldingMethod[] = "Bayes"; // unfolding method options: Bayes, Svd
+char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
 const bool isDataPbPb = true; // if false -> pp
@@ -63,6 +63,8 @@ const bool normaliseDistribsBeforeUnfolding = true; // keep true; both normalise
 
 const bool useManualRespMatrixSettingMethod = true; // keep true; false uses Joonsuk's resp matrix setup with roounfold methods; if set to true, both refold methods are constistent; if set to false, the roounfold one is identical as if true, but the manual one becomes different and bad; EDIT 25/04/2025: Joonsuk's method I haven't kept updated, and now gives bad results on trivial refolding test
 const bool normaliseRespYSliceForRefold = true; // keep true; THAT IS APPARENTLY REQUIRED TO REFOLD MANUALLY! even though the initial resp matrix used for the unfolding isn't normalised like this
+
+const bool useMatrixOverflows = false; // false by default, haven't tried true recently
 
 // Debugging and checks:
 const bool useFineBinningTest = false;
