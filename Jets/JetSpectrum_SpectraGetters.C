@@ -775,7 +775,7 @@ void Get_Pt_spectrum_mcp_recBinning(TH1D* &H1D_jetPt_mcp, int iDataset, int iRad
     TransformRawHistToYield(H1D_jetPt_mcp);
   }
 
-  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcpMatched, deltaJetEta[iRadius]);
+  TransformYieldToEtaDifferentialYield(H1D_jetPt_mcp, deltaJetEta[iRadius]);
 }
 
 #endif
