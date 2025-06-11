@@ -442,7 +442,7 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
   TH2D* H2D_gen_det_geoMatched_rebinned;
   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
   if (analysisWorkflowMC.Contains("jet-finder-charged-qa") == true) {
-    H3D_jetRpartPtdetPt = (TH3D*)((TH3D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h3_jet_r_jet_pt_tag_jet_pt_base_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+partialUniqueSpecifier);// base is mcd in jetfinderQA as of 06/2024, thus tag is mcp, and so hist is (x=r, y=mcp, z=mcd)
+    H3D_jetRpartPtdetPt = (TH3D*)((TH3D*)  file_O2Analysis_MCfileForMatrix[iDataset][iDataset]->Get(analysisWorkflowMC+"/h3_jet_r_jet_pt_tag_jet_pt_base_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+partialUniqueSpecifier);// base is mcd in jetfinderQA as of 06/2024, thus tag is mcp, and so hist is (x=r, y=mcp, z=mcd)
     H3D_jetRpartPtdetPt->Sumw2();
 
     int ibinJetRadius = H3D_jetRpartPtdetPt->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
@@ -451,12 +451,12 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
     H2D_gen_det_geoMatched = (TH2D*)H3D_jetRpartPtdetPt->Project3D(partialUniqueSpecifier+"_genrec_e_yz"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
   } else if (analysisWorkflowMC.Contains("jet-spectra-charged") == true) {
     if (doBkgSubtractionInMC) {
-      H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
+      H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*) file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
     } else {
       if (etaCutOnMatchedJetsIsObsoleteVersion == true) {
-        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*) file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
       } else {
-        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*)file_O2Analysis_MCfileForMatrix->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcpetaconstraint"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
+        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*) file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcpetaconstraint"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
       }
     }
     H2D_jetPtMcdjetPtMcd->Sumw2();
@@ -473,16 +473,16 @@ void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detect
   }
   if (normDetRespByNEvts) {
     if (mcIsWeighted) {
-      H2D_response->Scale(1./GetNEventsSelected_JetFramework_weighted(file_O2Analysis_MCfileForMatrix, analysisWorkflowMC));
+      H2D_response->Scale(1./GetNEventsSelected_JetFramework_weighted( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC));
     } else {
-      double Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_MCfileForMatrix, analysisWorkflowMC);
+      double Nevents = GetNEventsSelected_JetFramework( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC);
       for (int iBinX = 0; iBinX < H2D_response->GetNbinsX(); iBinX++) {
         for (int iBinY = 0; iBinY < H2D_response->GetNbinsY(); iBinY++) {
           H2D_response->SetBinContent(iBinX, iBinY, H2D_response->GetBinContent(iBinX, iBinY) * 1./Nevents);
           H2D_response->SetBinError(iBinX, iBinY, H2D_response->GetBinError(iBinX, iBinY) * 1./Nevents);
         }
       }
-      // H2D_response->Scale(1./GetNEventsSelected_JetFramework(file_O2Analysis_MCfileForMatrix, analysisWorkflowMC));
+      // H2D_response->Scale(1./GetNEventsSelected_JetFramework( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC));
     }
   }
   cout << "Detector response building: errors here should probably be reduced to take into account correlations, as the normalisation factor is built from same matrix" << endl;
