@@ -50,7 +50,7 @@ int GetSvdBestRegularisationParameter_notYetSatisfying(TSVDUnfold* unfoldTSvd){
 std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_unfolded, TH1D* &measuredInput, int iDataset, int iRadius, int unfoldParameterInput, std::string options) {
   //for now makes the assumption gen and rec have the same pT binning
 
-  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+  TString partialUniqueSpecifier = Datasets[iDataset]+DatasetsNames[iDataset]+Form("%.1d",iDataset)+"_R="+Form("%.1f",arrayRadius[iRadius]);
 
   TH1D* measured = (TH1D*)measuredInput->Clone("measured_Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNorm"+partialUniqueSpecifier);;
   TH1D* mcp;
@@ -135,8 +135,8 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
-    TString* pdfNamePost = new TString("ResponseMatrices/responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
-    TString* pdfNamePost_logz = new TString("ResponseMatrices/responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_logz");
+    TString* pdfNamePost = new TString("ResponseMatrices/responseMatrix_combined_postWeighting"+(TString)partialUniqueSpecifier);
+    TString* pdfNamePost_logz = new TString("ResponseMatrices/responseMatrix_combined_postWeighting"+(TString)partialUniqueSpecifier+"_logz");
 
 
     TString texCombinedMatrix = contextCustomOneField((TString)"Combined matrix - "+(TString)*texEnergy, "");
@@ -147,11 +147,11 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     TString* xLabel;
     TString* yLabel;
     if (transposeResponseHistogramsInDrawing) {
-      MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting).Clone("responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+      MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting).Clone("responseMatrix_combined_postWeighting"+(TString)partialUniqueSpecifier+"_"+priorInfo);
       xLabel = texPtJetGen;
       yLabel = texPtJetRec;
     } else {
-      MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting->Clone("responseMatrix_combined_postWeighting"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+      MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postWeighting->Clone("responseMatrix_combined_postWeighting"+(TString)partialUniqueSpecifier+"_"+priorInfo);
       xLabel = texPtJetRec;
       yLabel = texPtJetGen;
     }
@@ -270,7 +270,7 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     // plot svd d distribution
     TH1D* H1D_D = tsvdUnfold->GetD();
     TString inputUnfoldingName = (options.find("inputIsMCPFoldedTest") != std::string::npos) ? "_mcpFoldedTestInput" : "";
-    TString* pdfName_regparam = new TString("Svd_regularisationd_distribution_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+(TString)mergingPrior+"_"+(TString)unfoldingPrior+inputUnfoldingName);
+    TString* pdfName_regparam = new TString("Svd_regularisationd_distribution_"+(TString)partialUniqueSpecifier+"_"+(TString)mergingPrior+"_"+(TString)unfoldingPrior+inputUnfoldingName);
     TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, contextJetRadius(arrayRadius[iRadius]), ""));
     std::array<std::array<float, 2>, 2> drawnWindowSvdParam = {{{0, 30}, {0.01, 10000}}}; // {{xmin, xmax}, {ymin, ymax}}
     Draw_TH1_Histogram(H1D_D, textContext, pdfName_regparam, texSvdK, texSvdDvector_k, texCollisionDataInfo, drawnWindowSvdParam, legendPlacementAuto, contextPlacementAuto, "logy");
@@ -325,8 +325,8 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
-    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
-    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_logz");
+    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_postUnfolding"+(TStringpartialUniqueSpecifier);
+    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_postUnfolding"+(TString)partialUniqueSpecifier+"_logz");
 
 
     TString texCombinedMatrix = contextCustomOneField((TString)"Combined matrix - "+(TString)*texEnergy, "");
@@ -337,11 +337,11 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNo
     TString* xLabel;
     TString* yLabel;
     if (transposeResponseHistogramsInDrawing) {
-      MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding).Clone("responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+      MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding).Clone("responseMatrix_combined_postUnfolding"+(TString)partialUniqueSpecifier+"_"+priorInfo);
       xLabel = texPtJetGen;
       yLabel = texPtJetRec;
     } else {
-      MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding->Clone("responseMatrix_combined_postUnfolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+      MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_postUnfolding->Clone("responseMatrix_combined_postUnfolding"+(TString)partialUniqueSpecifier+"_"+priorInfo);
       xLabel = texPtJetRec;
       yLabel = texPtJetGen;
     }
@@ -393,7 +393,7 @@ std::pair<int, RooUnfold*> Get_Pt_spectrum_unfolded(TH1D* &H1D_jetPt_unfolded, T
 void Get_Pt_spectrum_dataUnfoldedThenRefolded_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_unfoldedThenRefolded, TH1D* &measuredInput, int iDataset, int iRadius, int unfoldParameterInput, std::string options) {
   TH1D* H1D_jetPt_unfolded;
   // TH1D* H1D_jetPt_raw[nRadius];
-  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+  TString partialUniqueSpecifier = Datasets[iDataset]+DatasetsNames[iDataset]+Form("%.1d",iDataset)+"_R="+Form("%.1f",arrayRadius[iRadius]);
 
 
   RooUnfold* unfold = Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_unfolded, measuredInput, iDataset, iRadius, unfoldParameterInput, options).second;
@@ -438,8 +438,8 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_preWidthScalingAtEndAndEvtNorm(TH1
 
     TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
-    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_duringRefolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]);
-    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_duringRefolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_logz");
+    TString* pdfName = new TString("ResponseMatrices/responseMatrix_combined_duringRefolding"+(TString)partialUniqueSpecifier);
+    TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_combined_duringRefolding"+(TString)partialUniqueSpecifier+"_logz");
 
     TString texCombinedMatrix = contextCustomOneField((TString)"Combined matrix - "+(TString)*texEnergy, "");
     TString textContextMatrixDetails = contextCustomFourFields((TString)"Detector response: "+(TString)*texCollisionMCType, "", (TString)"Fluctuations response: "+*texCollisionDataType, contextJetRadius(arrayRadius[iRadius]), "");
@@ -449,11 +449,11 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_preWidthScalingAtEndAndEvtNorm(TH1
     TString* xLabel;
     TString* yLabel;
     if (transposeResponseHistogramsInDrawing) {
-      MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding).Clone("responseMatrix_combined_duringRefolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+      MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding).Clone("responseMatrix_combined_duringRefolding"+(TString)partialUniqueSpecifier+"_"+priorInfo);
       xLabel = texPtJetGen;
       yLabel = texPtJetRec;
     } else {
-      MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding->Clone("responseMatrix_combined_duringRefolding"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
+      MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_duringRefolding->Clone("responseMatrix_combined_duringRefolding"+(TString)partialUniqueSpecifier+"_"+priorInfo);
       xLabel = texPtJetRec;
       yLabel = texPtJetGen;
     }
@@ -588,7 +588,7 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_RooUnfoldMethod_preWidthScalingAtE
 
   TH1D* H1D_jetPt_unfolded;
   // TH1D* H1D_jetPt_raw[nRadius];
-  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+  TString partialUniqueSpecifier = Datasets[iDataset]+DatasetsNames[iDataset]+Form("%.1d",iDataset)+"_R="+Form("%.1f",arrayRadius[iRadius]);
 
 
   RooUnfold* unfold = Get_Pt_spectrum_unfolded_preWidthScalingAtEndAndEvtNorm(H1D_jetPt_unfolded, measuredInput, iDataset, iRadius, unfoldParameterInput, options).second;
@@ -700,7 +700,7 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_RooUnfoldMethod(TH1D* &H1D_jetPt_u
 
 
 void Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEndAndEvtNorm(TH1D* &H1D_jetPt_mcpFolded, int iDataset, int iRadius, std::string options) {
-  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+  TString partialUniqueSpecifier = Datasets[iDataset]+DatasetsNames[iDataset]+Form("%.1d",iDataset)+"_R="+Form("%.1f",arrayRadius[iRadius]);
 
   TH1D* H1D_jetPt_mcp_control;
   // Get_Pt_spectrum_mcp_genBinning(H1D_jetPt_mcp_control, iDataset, iRadius, true, options);
@@ -742,7 +742,7 @@ void Get_Pt_spectrum_mcpFoldedWithFluctuations_preWidthScalingAtEndAndEvtNorm(TH
   // TH1D* H1D_jetPt_mcp_control_folded = (TH1D*)H1D_jetPt_mcp_control->Clone("Get_Pt_spectrum_mcpFoldedWithFluctuationsThenUnfolded_preWidthScalingAtEndAndEvtNorm"+partialUniqueSpecifier);
 
   if (!useFineBinningTest) {
-    H1D_jetPt_mcpFolded = (TH1D*)H1D_jetPt_mcp_control_folded->Rebin(nBinPtJetsRec[iRadius],"H1D_jetPt_mcp_control_folded_recBinning_mcpFoldedWithFluctuationsThenUnfolded"+RadiusLegend[iRadius]+Datasets[iDataset]+DatasetsNames[iDataset], ptBinsJetsRec[iRadius]);
+    H1D_jetPt_mcpFolded = (TH1D*)H1D_jetPt_mcp_control_folded->Rebin(nBinPtJetsRec[iRadius],"H1D_jetPt_mcp_control_folded_recBinning_mcpFoldedWithFluctuationsThenUnfolded"+partialUniqueSpecifier, ptBinsJetsRec[iRadius]);
   } else {
     H1D_jetPt_mcpFolded = (TH1D*)H1D_jetPt_mcp_control_folded->Clone("Get_Pt_spectrum_mcpFoldedWithFluctuationsThenUnfolded_preWidthScalingAtEndAndEvtNorm_Clone"+partialUniqueSpecifier);
   }
