@@ -38,15 +38,20 @@ bool  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
   H1D_kinematicEfficiency = (TH1D*)H1D_kinematicEfficiency_preRebin->Rebin(nBinPtJetsGen[iRadius],"H1D_kinematicEfficiency"+name_H1D_kinematicEfficiency+RadiusLegend[iRadius], ptBinsJetsGen[iRadius]);
 
   double integralOfResponse_iBinGen, integralOfResponse_iBinGen_error;
-  for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
-    int ibinGen_low = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen-1]);
-    int ibinGen_high = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen])-1;
-    integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
-  }
+  int ibinGen_low, ibinGen_high;
+  // for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
+  //   int ibinGen_low = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen-1]);
+  //   int ibinGen_high = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen])-1;
+  //   integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
+  // }
 
   if (doManualErrorPropagForKineEff) {
     double binContent, binError, binErrorA, binErrorB;
     for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
+      ibinGen_low = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen-1]);
+      ibinGen_high = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen])-1;
+      integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
+
       H1D_kinematicEfficiency->GetBinContent(iBinGen) == 0 ? binErrorB = 0 : binErrorB = H1D_kinematicEfficiency->GetBinError(iBinGen)*H1D_kinematicEfficiency->GetBinError(iBinGen) / (H1D_kinematicEfficiency->GetBinContent(iBinGen)*H1D_kinematicEfficiency->GetBinContent(iBinGen));
       integralOfResponse_iBinGen == 0                                    ? binErrorA = 0 : binErrorA = integralOfResponse_iBinGen_error*integralOfResponse_iBinGen_error / (integralOfResponse_iBinGen*integralOfResponse_iBinGen);
       integralOfResponse_iBinGen == 0                                    ? binContent = 0 : binContent = H1D_kinematicEfficiency->GetBinContent(iBinGen) *1./integralOfResponse_iBinGen; // do I really give the value 0 if denominator is 0 ? 
@@ -65,6 +70,10 @@ bool  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
     TH1D* H1D_denominator = (TH1D*)H1D_kinematicEfficiency->Clone("H1D_kineDenominator"+name_H1D_kinematicEfficiency+RadiusLegend[iRadius]);
     H1D_denominator->Reset("M");
     for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
+      ibinGen_low = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen-1]);
+      ibinGen_high = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen])-1;
+      integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
+
       H1D_denominator->SetBinContent(iBinGen, integralOfResponse_iBinGen);
       H1D_denominator->SetBinError(iBinGen, integralOfResponse_iBinGen_error);
     }
@@ -72,7 +81,6 @@ bool  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
   }
   return divideSuccess;
 }
-
 
 
 
