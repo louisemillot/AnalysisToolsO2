@@ -68,9 +68,9 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
 void Draw_Pt_TestSpectrum_unfolded(int iDataset, int iRadius, std::string options);
 void Draw_Pt_spectrum_unfolded_parameterVariation_singleDataset(int iDataset, int iRadius, int unfoldIterationMin, int unfoldIterationMax, int step, std::string options);
 
-void Draw_Pt_efficiency_jets(int iDataset, int iRadius, std::string options);
-void Draw_kinematicEfficiency(int iDataset, int iRadius, std::string options);
-void Draw_FakeRatio(int iDataset, int iRadius, std::string options);
+void Draw_Pt_efficiency_jets(int iRadius, std::string options);
+void Draw_kinematicEfficiency(int iRadius, std::string options);
+void Draw_FakeRatio(int iRadius, std::string options);
 
 /////////////////////////////////////////////////////
 ///////////////////// Main Macro ////////////////////
@@ -107,15 +107,15 @@ void JetSpectrum_DrawingMacro() {
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
 
-  Draw_Pt_efficiency_jets(iDataset, iRadius, optionsAnalysis);
-  Draw_kinematicEfficiency(iDataset, iRadius, optionsAnalysis);
-  Draw_FakeRatio(iDataset, iRadius, optionsAnalysis);
+  Draw_Pt_efficiency_jets(iRadius, optionsAnalysis);
+  Draw_kinematicEfficiency(iRadius, optionsAnalysis);
+  Draw_FakeRatio(iRadius, optionsAnalysis);
 
   // int unfoldParameterInput = 5;
   // Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput, optionsAnalysis);
-  int unfoldParameterInput2 = 8;
-  Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
-  Draw_Pt_spectrum_unfolded_datasetComparison(iRadius, unfoldParameterInput2, optionsAnalysis);
+  // int unfoldParameterInput2 = 8;
+  // Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
+  // Draw_Pt_spectrum_unfolded_datasetComparison(iRadius, unfoldParameterInput2, optionsAnalysis);
   // int unfoldParameterInput3 = 10;
   // Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput3, optionsAnalysis);
 
@@ -377,65 +377,66 @@ void Draw_Pt_spectrum_mcdMatched(int iDataset, int iRadius, std::string options)
 }
 
 
-void Draw_Pt_efficiency_jets(int iDataset, int iRadius, std::string options) {
-  TH1D* H1D_jetEfficiency;
-  bool divideSuccess;
-  if (useFineBinningTest) {
-    divideSuccess = Get_Pt_JetEfficiency_fineBinning(H1D_jetEfficiency, iDataset, iRadius, options);
-  } else {
-    divideSuccess = Get_Pt_JetEfficiency(H1D_jetEfficiency, iDataset, iRadius, options);
+void Draw_Pt_efficiency_jets(int iRadius, std::string options) {
+  TH1D* H1D_jetEfficiency[nDatasets];
+  bool divideSuccess[nDatasets];
+  for (int iDataset = 0; iDataset < nDatasets; ++iDataset) {
+    if (useFineBinningTest) {
+      divideSuccess[iDataset] = Get_Pt_JetEfficiency_fineBinning(H1D_jetEfficiency[iDataset], iDataset, iRadius, options);
+    } else {
+      divideSuccess[iDataset] = Get_Pt_JetEfficiency(H1D_jetEfficiency[iDataset], iDataset, iRadius, options);
+    }
   }
-  
-  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_efficiency");
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  if (divideSuccess){
-    Draw_TH1_Histogram(H1D_jetEfficiency, textContext, pdfName, texPtJetGen, texJetEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "efficiency");
+  TString* pdfName = new TString("jet_"+jetType[iJetType]+"_"+jetLevel[iJetLevel]+"_R="+Form("%.1f", arrayRadius[iRadius])+"_Pt_efficiency");
+  if (std::all_of(std::begin(divideSuccess), std::end(divideSuccess), [](bool booleanEntry) {return booleanEntry;})){ // checks all entries of divideSuccess are true
+    Draw_TH1_Histograms(H1D_jetEfficiency, DatasetsNames, nDatasets, textContext, pdfName, texPtJetGen, texJetEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "efficiency");
   }
 }
 
-void Draw_kinematicEfficiency(int iDataset, int iRadius, std::string options) {
+void Draw_kinematicEfficiency(int iRadius, std::string options) {
 
-  TH2D* H2D_jetPtResponseMatrix_fluctuations;
-  TH2D* H2D_jetPtResponseMatrix_detectorResponse;
-  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning;
-  TH1D* H1D_kinematicEfficiency;
+  TH2D* H2D_jetPtResponseMatrix_fluctuations[nDatasets];
+  TH2D* H2D_jetPtResponseMatrix_detectorResponse[nDatasets];
+  TH2D* H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning[nDatasets];
+  TH1D* H1D_kinematicEfficiency[nDatasets];
 
-  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
-  TString name_H1D_kinematicEfficiency = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+  for (int iDataset = 0; iDataset < nDatasets; ++iDataset) {
+    TString name_H1D_kinematicEfficiency = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
 
-  Get_PtResponseMatrix_detectorResponse(H2D_jetPtResponseMatrix_detectorResponse, iDataset, iRadius);
+    Get_PtResponseMatrix_detectorResponse(H2D_jetPtResponseMatrix_detectorResponse[iDataset], iDataset, iRadius);
 
-  Get_PtResponseMatrix_Fluctuations(H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius);
-  Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning, H2D_jetPtResponseMatrix_detectorResponse, H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius, options);
+    Get_PtResponseMatrix_Fluctuations(H2D_jetPtResponseMatrix_fluctuations[iDataset], iDataset, iRadius);
+    Get_PtResponseMatrix_DetectorAndFluctuationsCombined_fineBinning(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning[iDataset], H2D_jetPtResponseMatrix_detectorResponse[iDataset], H2D_jetPtResponseMatrix_fluctuations[iDataset], iDataset, iRadius, options);
 
-  Get_ResponseMatrix_Pt_KinematicEffiency(H1D_kinematicEfficiency, H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning, name_H1D_kinematicEfficiency, iRadius);
-
+    Get_ResponseMatrix_Pt_KinematicEffiency(H1D_kinematicEfficiency[iDataset], H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined_fineBinning[iDataset], name_H1D_kinematicEfficiency, iRadius);
+  }
   TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
 
+  TString partialUniqueSpecifier = (TString)"R="+Form("%.1f",arrayRadius[iRadius]);
   TString* pdfName = new TString("kinematicEfficiency_"+partialUniqueSpecifier+priorInfo);
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histogram(H1D_kinematicEfficiency, textContext, pdfName, texPtJetGen, texJetKinematicEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
+  Draw_TH1_Histograms(H1D_kinematicEfficiency, DatasetsNames, nDatasets, textContext, pdfName, texPtJetGen, texJetKinematicEfficiency, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "");
 }
 
 
-void Draw_FakeRatio(int iDataset, int iRadius, std::string options) {
-  TH1D* H1D_fakeRatio;
+void Draw_FakeRatio(int iRadius, std::string options) {
+  TH1D* H1D_fakeRatio[nDatasets];
 
-  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
-  TString name_H1D_fakeRatio = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+  TString partialUniqueSpecifier = (TString)" R="+Form("%.1f",arrayRadius[iRadius]);
 
-
-  Get_Pt_JetFakes(H1D_fakeRatio, iDataset, iRadius, options);
-
+  for (int iDataset = 0; iDataset < nDatasets; ++iDataset) {
+    Get_Pt_JetFakes(H1D_fakeRatio[iDataset], iDataset, iRadius, options);
+  }
   TString* pdfName = new TString("fakeRatio_"+partialUniqueSpecifier);
 
   TString textContext(contextCustomOneField(*texDatasetsComparisonCommonDenominator, ""));
 
-  Draw_TH1_Histogram(H1D_fakeRatio, textContext, pdfName, texPtJetRec, texFakeRatio, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "");
+  Draw_TH1_Histograms(H1D_fakeRatio, DatasetsNames, nDatasets, textContext, pdfName, texPtJetRec, texFakeRatio, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "");
 }
 
 void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
@@ -673,7 +674,7 @@ void Draw_Pt_spectrum_unfolded_singleDataset(int iDataset, int iRadius, int unfo
 
   bool divideSuccessMcp;
   bool divideSuccessRun2_fitRebin[2];
-  bool divideSuccessRun2_shapeComp[2];
+  bool divideSuccessRun2_shapeComp;
   bool divideSuccessRun2[2];
   bool divideSuccessMeasured;
   bool divideSuccessMeasuredRefolded[2];
@@ -750,7 +751,7 @@ void Draw_Pt_spectrum_unfolded_singleDataset(int iDataset, int iRadius, int unfo
     H1D_jetPt_unfolded_run2Comp[0] = (TH1D*)H1D_jetPt_unfolded->Clone("H1D_jetPt_unfolded_run2Comp"+partialUniqueSpecifier);
     H1D_jetPt_unfolded_run2Comp[1] = (TH1D*)H1D_jetPt_unfolded->Rebin(nBinPtJetsGen_run2[iRadius],"H1D_jetPt_unfolded_run2Comp_run2Rebin"+partialUniqueSpecifier, ptBinsJetsGen_run2[iRadius]);
     
-    int scalingFactorRebin[9] = {2, 2, 2, 2, 2, 3, 3, 1, 1};
+    int scalingFactorRebin[9] = {2, 2, 2, 2, 2, 3, 3, 1, 1}; //width of run 2 histogram
     for (auto i = 1; i <= H1D_jetPt_unfolded_run2Comp[1]->GetNbinsX(); i++) {
       H1D_jetPt_unfolded_run2Comp[1]->SetBinContent(i, 1./scalingFactorRebin[i-1]*H1D_jetPt_unfolded_run2Comp[1]->GetBinContent(i));
       H1D_jetPt_unfolded_run2Comp[1]->SetBinError(i, 1./scalingFactorRebin[i-1]*H1D_jetPt_unfolded_run2Comp[1]->GetBinError(i));
@@ -767,7 +768,7 @@ void Draw_Pt_spectrum_unfolded_singleDataset(int iDataset, int iRadius, int unfo
     H1D_jetPt_unfolded_run2Comp_shapeComp[1]->Scale(H1D_jetPt_unfolded_run2Comp_shapeComp[0]->GetBinContent(1)/H1D_jetPt_unfolded_run2Comp_shapeComp[1]->GetBinContent(1));
 
     H1D_jetPt_ratio_run2_shapeComp[0] = (TH1D*)H1D_jetPt_unfolded_run2Comp_shapeComp[1]->Clone("H1D_jetPt_unfolded_run2Comp_run2rescaled_shapeComp_ratio"+partialUniqueSpecifier);
-    divideSuccessRun2_shapeComp[0] = H1D_jetPt_ratio_run2_shapeComp[0]->Divide(H1D_jetPt_unfolded_run2Comp_shapeComp[0]);
+    divideSuccessRun2_shapeComp = H1D_jetPt_ratio_run2_shapeComp[0]->Divide(H1D_jetPt_unfolded_run2Comp_shapeComp[0]);
   }
  
   cout << "comparison with refolded" << endl; 
@@ -1097,6 +1098,7 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
   TH1D* H1D_jetPt_measured[nDatasets];
   TH1D* H1D_jetPt_measured_genBinning[nDatasets];
   TH1D* H1D_jetPt_unfolded[nDatasets];
+  TH1D* H1D_jetPt_unfolded_ratio_datasets[nDatasets];
   TH1D* H1D_jetPt_unfoldedThenRefolded[nDatasets];
   // TH1D* H1D_jetPt_mcpFolded[nDatasets];
   // TH1D* H1D_jetPt_mcpFolded2[nDatasets];
@@ -1111,12 +1113,19 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
   TH1D* H1D_jetPt_ratio_mcp[nDatasets];
   TH1D* H1D_jetPt_ratio_measured[nDatasets];
   TH1D* H1D_jetPt_ratio_measuredRefolded[nDatasets];
+
+  TH1D* H1D_jetPt_unfolded_run2Comp[nDatasets+1];
+  TH1D* H1D_jetPt_ratio_run2[nDatasets];
+  
   // TH1D* H1D_jetPt_ratio_mcpFoldedMcp[nDatasets];
   // TH1D* H1D_jetPt_ratio_mcpFoldedUnfoldedMcp[nDatasets];
 
+
+  bool divideSuccessDatasets[nDatasets];
   bool divideSuccessMcp[nDatasets];
   bool divideSuccessMeasured[nDatasets];
   bool divideSuccessMeasuredRefolded[nDatasets];
+  bool divideSuccessRun2[nDatasets];
   // bool divideSuccessMcpFoldedMcp[nDatasets];
   // bool divideSuccessMcpFoldedUnfoldedMcp[nDatasets];
 
@@ -1124,6 +1133,39 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
   TString datasetNameSpecifier[nDatasets];
 
   int unfoldParameter[nDatasets];
+
+
+  // RUN 2 settings
+  TH1D* H1D_jetPt_run2_MLPaperFile = new TH1D("H1D_jetPt_run2_MLPaperFile", "H1D_jetPt_run2_MLPaperFile", nBinPtJetsGen_run2[iRadius], ptBinsJetsGen_run2[iRadius]);
+  if (isDataPbPb && comparePbPbWithRun2) {
+    TGraph* Graph_jetPt_run2_MLPaperFile;
+    double Ncoll;
+    if (centralityRange[0] == 00 && centralityRange[1] == 10) {
+      // Ncoll = (1780.9+1387.0)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
+      Ncoll = (1956+1722+1521+1346)/4; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
+    } else if (centralityRange[0] == 50 && centralityRange[1] == 70) {
+      // Ncoll = (103.7+46.1)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
+      Ncoll = (89.8+39.8)/2; // https://alice-notes.web.cern.ch/system/files/notes/analysis/1541/2024-04-30-Centrality_Studies_2023%20%281%29.pdf in Run 3, https://alice-notes.web.cern.ch/system/files/notes/analysis/453/2017-Sep-26-analysis_note-ALICE_analysis_note.pdf in Run 2
+    } else {
+      cout << "comparison with run2: Ncoll hasn't been calculated for this centrality interval" << endl;
+    }
+    double sigmaNN = 67.6; // value for sqrt(s) = 5.02 TeV https://arxiv.org/abs/1710.07098
+    double T_AA = Ncoll / sigmaNN;
+    Graph_jetPt_run2_MLPaperFile = ((TGraph*)((TDirectoryFile*)file_O2Analysis_run2ComparisonFileMLPaper->Get("Figure 3a top R020"))->FindObjectAny("Graph1D_y1")); // https://doi.org/10.1016/j.physletb.2023.138412
+    // H1D_jetPt_run2_MLPaperFile = (TH1D*)((TH1D*)(file_O2Analysis_run2ComparisonFileMLPaper->Get("Figure 3a top R020"))->FindObject("Graph1D_y1"))->Clone("H1D_jetPt_run2_MLPaperFile");
+    int Ngraph = Graph_jetPt_run2_MLPaperFile->GetN();
+    for (int i=0; i < Ngraph; ++i) // setting bin contents to the TGraph values
+    {
+      double x,y;
+      Graph_jetPt_run2_MLPaperFile->GetPoint(i, x, y);
+      H1D_jetPt_run2_MLPaperFile->Fill(x, y); // uncertainties are of course screwed up
+      int iHist = H1D_jetPt_run2_MLPaperFile->GetXaxis()->FindBin(x);
+      H1D_jetPt_run2_MLPaperFile->SetBinError(iHist, Graph_jetPt_run2_MLPaperFile->GetErrorY(i));
+    }
+    H1D_jetPt_run2_MLPaperFile->Scale(T_AA);
+    // now the spectre from the file is 1/N d2N/dpTdeta, instead of 1/T_AA 1/N d2N/dpTdeta
+    H1D_jetPt_unfolded_run2Comp[nDatasets] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_unfolded_run2Comp_run2Rebin_Run2"+partialUniqueSpecifier);
+  }
 
   for (int iDataset = 0; iDataset < nDatasets; ++iDataset) {
     // getting inputs to unfolding
@@ -1151,7 +1193,8 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
     // doing the unfolding
     unfoldParameter[iDataset] = Get_Pt_spectrum_unfolded(H1D_jetPt_unfolded[iDataset], measuredInput[iDataset], iDataset, iRadius, unfoldParameterInput, options).first;
     // TH1D* H1D_jetPt_unfolded2 = (TH1D*)H1D_jetPt_unfolded->Clone(H1D_jetPt_unfolded->GetName()+(TString)"H1D_jetPt_unfolded2");
-
+    H1D_jetPt_unfolded_ratio_datasets[iDataset] = (TH1D*)H1D_jetPt_unfolded[iDataset]->Clone("H1D_jetPt_unfolded_ratio_datasets"+partialUniqueSpecifier+datasetNameSpecifier[iDataset]);
+    divideSuccessDatasets[iDataset] = H1D_jetPt_unfolded_ratio_datasets[iDataset]->Divide(H1D_jetPt_unfolded[0]);
     // Creating to-be-plotted histograms
     datasetNameSpecifier[iDataset] = "_"+DatasetsNames[iDataset]+Form("%.1d",iDataset);
 
@@ -1179,6 +1222,36 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
     H1D_jetPt_unfolded_refoldedComp[iDataset] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iDataset]->Clone("H1D_jetPt_refolded_refoldedComp"+partialUniqueSpecifier+datasetNameSpecifier[iDataset]);
     H1D_jetPt_ratio_measuredRefolded[iDataset] = (TH1D*)H1D_jetPt_unfoldedThenRefolded[iDataset]->Clone("H1D_jetPt_ratio_refoldedComp"+partialUniqueSpecifier+datasetNameSpecifier[iDataset]);
     divideSuccessMeasuredRefolded[iDataset] = H1D_jetPt_ratio_measuredRefolded[iDataset]->Divide(H1D_jetPt_measured[iDataset]);
+
+    cout << "comparison with run2" << endl; 
+    if (isDataPbPb && comparePbPbWithRun2) {
+      // // comparison with run2 results rebinned using a fit (errors look way underestimated; tsallis function not great aboe 100+ GeV; where should one eval the function inside a bin? probably not just the center)
+      // H1D_jetPt_unfolded_run2Comp_fitRebin[0][iDataset] = (TH1D*)H1D_jetPt_unfolded[iDataset]->Clone("H1D_jetPt_unfolded_run2Comp_fitRebin"+partialUniqueSpecifier);
+      // double fitPtRange[2] = {ptBinsJetsGen_run2[iRadius][0], ptBinsJetsGen_run2[iRadius][nBinPtJetsGen_run2[iRadius]]};
+      // std::pair<TH1D*, TF1*> pairResult = RebinWithTsallisFit(H1D_jetPt_run2_MLPaperFile, nBinPtJetsGen[iRadius], ptBinsJetsGen[iRadius], fitPtRange);
+      // H1D_jetPt_run2_MLPaperFile_rebinned = pairResult.first;
+      // TF1_jetPt_run2_MLPaperFile_fit[0] = pairResult.second;
+      // H1D_jetPt_unfolded_run2Comp_fitRebin[1][iDataset] = (TH1D*)H1D_jetPt_run2_MLPaperFile_rebinned->Clone("H1D_jetPt_unfolded_run2_rebinned_fitRebin"+partialUniqueSpecifier);
+      // H1D_jetPt_unfolded_run2Comp_fitRebin[2][iDataset] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_unfolded_run2_fitRebin"+partialUniqueSpecifier);
+      // // H1D_jetPt_unfolded_run2Comp[2] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_unfolded_run2Comp_HannaBossiLauraFile"+partialUniqueSpecifier);
+
+
+      // H1D_jetPt_ratio_run2_fitRebin[0][iDataset] = (TH1D*)H1D_jetPt_run2_MLPaperFile_rebinned->Clone("H1D_jetPt_ratio_run2_MLPaperFile_fitRebin"+partialUniqueSpecifier);
+      // // H1D_jetPt_ratio_run2[1] = (TH1D*)H1D_jetPt_run2_HannaBossiLauraFile->Clone("H1D_jetPt_ratio_run2_HannaBossiLauraFile"+partialUniqueSpecifier);
+      // divideSuccessRun2_fitRebin[0][iDataset] = H1D_jetPt_ratio_run2_fitRebin[0][iDataset]->Divide(H1D_jetPt_unfolded[iDataset]);
+      // // divideSuccessRun2[1] = H1D_jetPt_ratio_run2[1]->Divide(H1D_jetPt_unfolded);
+
+
+      // comparison with run2 results by rebinning Run3 into Run2 bins
+      H1D_jetPt_unfolded_run2Comp[iDataset] = (TH1D*)H1D_jetPt_unfolded[iDataset]->Rebin(nBinPtJetsGen_run2[iRadius],"H1D_jetPt_unfolded_run2Comp_run2Rebin"+partialUniqueSpecifier+datasetNameSpecifier[iDataset], ptBinsJetsGen_run2[iRadius]);
+      int scalingFactorRebin[9] = {2, 2, 2, 2, 2, 3, 3, 1, 1}; //width of run 2 histogram
+      for (auto i = 1; i <= H1D_jetPt_unfolded_run2Comp[iDataset]->GetNbinsX(); i++) {
+        H1D_jetPt_unfolded_run2Comp[iDataset]->SetBinContent(i, 1./scalingFactorRebin[i-1]*H1D_jetPt_unfolded_run2Comp[iDataset]->GetBinContent(i));
+        H1D_jetPt_unfolded_run2Comp[iDataset]->SetBinError(i, 1./scalingFactorRebin[i-1]*H1D_jetPt_unfolded_run2Comp[iDataset]->GetBinError(i));
+      }
+      H1D_jetPt_ratio_run2[iDataset] = (TH1D*)H1D_jetPt_run2_MLPaperFile->Clone("H1D_jetPt_ratio_run2_MLPaperFile"+partialUniqueSpecifier+datasetNameSpecifier[iDataset]);
+      divideSuccessRun2[iDataset] = H1D_jetPt_ratio_run2[iDataset]->Divide(H1D_jetPt_unfolded_run2Comp[iDataset]);
+    }
 
     // if (isDataPbPb) {
     //   cout << "comparison mcp folded with fluctuations vs mcp" << endl; 
@@ -1247,9 +1320,14 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
 
   TString* pdfName_unfolded = new TString(pdfTitleBase+"_unfoldedSpectrum");
   Draw_TH1_Histograms(H1D_jetPt_unfolded, DatasetsNames, nDatasets, textContext, pdfName_unfolded, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
+  if (std::all_of(std::begin(divideSuccessDatasets), std::end(divideSuccessDatasets), [](bool booleanEntry) {return booleanEntry;})){ // checks all entries of divideSuccessMeasured are true
+    TString* pdfName_unfolded_ratio = new TString(pdfTitleBase+"_unfoldedSpectrum_ratio");
+    Draw_TH1_Histograms(H1D_jetPt_unfolded_ratio_datasets, DatasetsNames, nDatasets, textContext, pdfName_unfolded_ratio, texPtX, texRatioDatasets, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine");
+    // TString* pdfName_ratio_measured_zoom = new TString(pdfTitleBase+"_ratioToMeasured_zoom");
+    // Draw_TH1_Histograms(H1D_jetPt_ratio_measured, DatasetsNames, nDatasets, textContext, pdfName_unfolded_ratio, texPtX, texRatioMeasuredUnfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine,zoomToOneMedium2");
+  }
 
     // comparison with raw measured
-  TString* pdfName_measuredComp = new TString(pdfTitleBase+"_ratioToMeasured");
   if (std::all_of(std::begin(divideSuccessMeasured), std::end(divideSuccessMeasured), [](bool booleanEntry) {return booleanEntry;})){ // checks all entries of divideSuccessMeasured are true
     TString* pdfName_ratio_measured = new TString(pdfTitleBase+"_ratioToMeasured");
     Draw_TH1_Histograms(H1D_jetPt_ratio_measured, DatasetsNames, nDatasets, textContext, pdfName_ratio_measured, texPtX, texRatioMeasuredUnfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine");
@@ -1276,6 +1354,20 @@ void Draw_Pt_spectrum_unfolded_datasetComparison(int iRadius, int unfoldParamete
     Draw_TH1_Histograms(H1D_jetPt_ratio_measuredRefolded, DatasetsNames, nDatasets, textContext, pdfName_ratio_refoldedComp_zoom, texPtX, texRatioRefoldedMeasured, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge,ratioLine,zoomToOneMedium2");
   }
 
+
+  // comparison with run2
+  TString* pdfName_run2Comp = new TString(pdfTitleBase+"_run2Comp");
+  TString DatasetsNamesAppended[nDatasets+1];
+  for (int iDataset = 0; iDataset < nDatasets; ++iDataset) {
+    DatasetsNamesAppended[iDataset] = DatasetsNames[iDataset];
+  }
+  DatasetsNamesAppended[nDatasets] = "Run2 ML";
+
+  Draw_TH1_Histograms(H1D_jetPt_unfolded_run2Comp, DatasetsNamesAppended, nDatasets+1, textContext, pdfName_run2Comp, texPtX, yAxisLabel, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "logy");
+  if (std::all_of(std::begin(divideSuccessRun2), std::end(divideSuccessRun2), [](bool booleanEntry) {return booleanEntry;})){ // checks all entries of divideSuccessRun2 are true
+    TString* pdfName_ratio_run2 = new TString(pdfTitleBase+"_run2Comp_ratio");
+    Draw_TH1_Histograms(H1D_jetPt_ratio_run2, DatasetsNames, nDatasets, textContext, pdfName_ratio_run2, texPtX, texRatioRun2Unfolded, texCollisionDataInfo, drawnWindowUnfoldedMeasurement, legendPlacementAuto, contextPlacementAuto, "zoomToOneLarge, ratioLine");
+  }
 
   // if (isDataPbPb) {
   //   // comparison mcp folded with fluctuations vs mcp
