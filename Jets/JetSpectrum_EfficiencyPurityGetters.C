@@ -89,7 +89,8 @@ bool  Get_Pt_JetEfficiency(TH1D* &H1D_jetEfficiency, int iDataset, int iRadius, 
   TH1D* H1D_jetPt_mcpMatched;
   bool divideSuccess;
 
-  Get_Pt_spectrum_mcp_genBinning(H1D_jetPt_mcp, iDataset, iRadius, false, options);
+  bool controlMC = false;
+  Get_Pt_spectrum_mcp_genBinning(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
   Get_Pt_spectrum_mcpMatched_genBinning(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   H1D_jetEfficiency = (TH1D*)H1D_jetPt_mcpMatched->Clone("H1D_jetEfficiency"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius]));
@@ -112,7 +113,8 @@ bool  Get_Pt_JetEfficiency_fineBinning(TH1D* &H1D_jetEfficiency, int iDataset, i
   TH1D* H1D_jetPt_mcpMatched;
   bool divideSuccess;
 
-  Get_Pt_spectrum_mcp_fineBinning(H1D_jetPt_mcp, iDataset, iRadius, false, options);
+  bool controlMC = false;
+  Get_Pt_spectrum_mcp_fineBinning(H1D_jetPt_mcp, iDataset, iRadius, controlMC, options);
   Get_Pt_spectrum_mcpMatched_fineBinning(H1D_jetPt_mcpMatched, iDataset, iRadius, options);
 
   H1D_jetEfficiency = (TH1D*)H1D_jetPt_mcpMatched->Clone("H1D_jetEfficiency_fineBinning"+Datasets[iDataset]+DatasetsNames[iDataset]+"_R="+Form("%.1f", arrayRadius[iRadius]));
