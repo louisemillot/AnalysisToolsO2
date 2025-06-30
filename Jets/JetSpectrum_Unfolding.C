@@ -465,12 +465,12 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_preWidthScalingAtEndAndEvtNorm(TH1
     Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
   }
 
-  cout << "((((((((((((((((()))))))))))))))))" << endl;
-  cout << "REFOLDING TEST: pre efficiency" << endl;
-  for(int iBinX = 0; iBinX <= H1D_jetPt_unfolded->GetNbinsX()+1; iBinX++){
-    cout << "  H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinContent(iBinX) << endl;
-    cout << "e_H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinError(iBinX) << endl;
-  }
+  // cout << "((((((((((((((((()))))))))))))))))" << endl;
+  // cout << "REFOLDING TEST: pre efficiency" << endl;
+  // for(int iBinX = 0; iBinX <= H1D_jetPt_unfolded->GetNbinsX()+1; iBinX++){
+  //   cout << "  H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinContent(iBinX) << endl;
+  //   cout << "e_H1D_jetPt_unfolded(" << iBinX << ") = " << H1D_jetPt_unfolded->GetBinError(iBinX) << endl;
+  // }
   
 
   bool divideSuccessEff;
@@ -502,9 +502,13 @@ void Get_Pt_spectrum_dataUnfoldedThenRefolded_preWidthScalingAtEndAndEvtNorm(TH1
       refoldingResponseMatrix = (TH2D*)H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined->Clone("refoldingResponseMatrix"+partialUniqueSpecifier);
     }
   } else {
-    refoldingResponseMatrix = (TH2D*)unfold->response()->HresponseNoOverflow();
+    if (useMatrixOverflows) {
+      refoldingResponseMatrix = (TH2D*)unfold->response()->Hresponse();
+    } else {
+      refoldingResponseMatrix = (TH2D*)unfold->response()->HresponseNoOverflow();
+    }
     // refoldingResponseMatrix = (TH2D*)unfold->response()->Hresponse();
-    cout << "refold why use HresponseNoOverflow instead of Hresponse?" << endl;
+    // cout << "refold why use HresponseNoOverflow instead of Hresponse?" << endl;
   }
 
   if (normaliseRespYSliceForRefold){

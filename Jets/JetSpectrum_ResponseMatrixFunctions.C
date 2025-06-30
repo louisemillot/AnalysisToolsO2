@@ -258,6 +258,12 @@ void MergeResponseMatrixBins(TH2D* &H2D_jetPtResponseMatrix, int iDataset, int i
 
   // When looking at combined response matrix before normalisation, large bins in y will look strange, and out of place compared to other bin slices of same size; this is because it potentially merges A LOT of bins together; it'll look a lot better after normalisation:
 
+  if (!useMatrixOverflows){
+    H2D_jetPtResponseMatrix->SetBinContent(0, 0);
+    H2D_jetPtResponseMatrix->SetBinError(0, 0);
+    H2D_jetPtResponseMatrix->SetBinContent(nBinPtJetsRec[iRadius], 0);
+    H2D_jetPtResponseMatrix->SetBinError(nBinPtJetsRec[iRadius], 0);
+  }
 
   // debug
   // for(int iBinY = 0; iBinY <= H2D_jetPtResponseMatrix_detectorResponse->GetNbinsY()+1; iBinY++){ // 0 and n+1 take underflow and overflow into account

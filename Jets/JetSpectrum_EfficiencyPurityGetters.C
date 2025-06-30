@@ -47,10 +47,10 @@ bool  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
 
   if (doManualErrorPropagForKineEff) {
     double binContent, binError, binErrorA, binErrorB;
-    for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
+    for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius] + usePtOverflowForKineEff; iBinGen++){
       ibinGen_low = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen-1]);
       ibinGen_high = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen])-1;
-      integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
+      integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(0, nBinPtJetsFine[iRadius]+1, ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
 
       H1D_kinematicEfficiency->GetBinContent(iBinGen) == 0 ? binErrorB = 0 : binErrorB = H1D_kinematicEfficiency->GetBinError(iBinGen)*H1D_kinematicEfficiency->GetBinError(iBinGen) / (H1D_kinematicEfficiency->GetBinContent(iBinGen)*H1D_kinematicEfficiency->GetBinContent(iBinGen));
       integralOfResponse_iBinGen == 0                                    ? binErrorA = 0 : binErrorA = integralOfResponse_iBinGen_error*integralOfResponse_iBinGen_error / (integralOfResponse_iBinGen*integralOfResponse_iBinGen);
@@ -72,7 +72,7 @@ bool  Get_ResponseMatrix_Pt_KinematicEffiency(TH1D* &H1D_kinematicEfficiency, TH
     for(int iBinGen = 1; iBinGen <= nBinPtJetsGen[iRadius]; iBinGen++){
       ibinGen_low = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen-1]);
       ibinGen_high = H2D_jetPtResponseMatrix_fineBinning->GetYaxis()->FindBin(ptBinsJetsGen[iRadius][iBinGen])-1;
-      integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(1, nBinPtJetsFine[iRadius], ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
+      integralOfResponse_iBinGen = H2D_jetPtResponseMatrix_fineBinning->IntegralAndError(0, nBinPtJetsFine[iRadius]+1, ibinGen_low, ibinGen_high, integralOfResponse_iBinGen_error);
 
       H1D_denominator->SetBinContent(iBinGen, integralOfResponse_iBinGen);
       H1D_denominator->SetBinError(iBinGen, integralOfResponse_iBinGen_error);
