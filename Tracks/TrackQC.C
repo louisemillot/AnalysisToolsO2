@@ -112,7 +112,7 @@ void TrackQC() {
   float jetPtMinCutArray[nPtBins+1] = {0, 200};
 
 
-  Draw_Pt_DatasetComparison("evtNorm");
+  // Draw_Pt_DatasetComparison("evtNorm");
   // Draw_Pt_DatasetComparison("entriesNorm");
   for(int iPtBin = 0; iPtBin < nPtBins; iPtBin++){
     jetPtMinCut = jetPtMinCutArray[iPtBin];
@@ -128,7 +128,7 @@ void TrackQC() {
   // Draw_Phi_DatasetComparison_trackSelComp();
   }
 
-  // Draw_Sigmapt_vs_pt_DatasetComp();
+  Draw_Sigmapt_vs_pt_DatasetComp();
   // Draw_Sigmapt_nonGlobal_uniformTracks();
   // Draw_Sigmapt_nonGlobal_uniformTracks_fromSubtraction();
   // Draw_Sigmapt_nonGlobal_uniformTracks_centralEta();
@@ -269,7 +269,7 @@ void Draw_Pt_DatasetComparison(std::string options) {
 
     if (options.find("evtNorm") != std::string::npos) {
       if (isDatasetWeighted[iDataset]) {
-        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]), analysisWorkflow[iDataset];
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
       } else {
         Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
       }
@@ -370,7 +370,7 @@ void Draw_Eta_DatasetComparison(float* ptRange, std::string options) {
 
     if (options.find("evtNorm") != std::string::npos) {
       if (isDatasetWeighted[iDataset]) {
-        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]), analysisWorkflow[iDataset];
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
       } else {
         Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
       }
@@ -477,7 +477,7 @@ void Draw_Phi_DatasetComparison(float* ptRange, std::string options) {
 
     if (options.find("evtNorm") != std::string::npos) {
       if (isDatasetWeighted[iDataset]) {
-        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]), analysisWorkflow[iDataset];
+        Nevents = GetNEventsSelected_JetFramework_weighted(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
       } else {
         Nevents = GetNEventsSelected_JetFramework(file_O2Analysis_list[iDataset], analysisWorkflow[iDataset]);
       }
@@ -1022,8 +1022,8 @@ void Draw_Sigmapt_vs_pt_DatasetComp() {
   Draw_TH2_Histograms(H2D_sigmapt_pt_concatenated, DatasetsNames, nDatasets, textContext, pdfName_logy, texPtX, texSigmaPt, texCollisionDataInfo, drawnWindow2DSigma, th2ContoursNone, contourNumberNone, "logx,logy,logz,autoRangeSame"); // ?
 
   // Draw_TH1_Histograms(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx");
-  std::array<std::array<float, 2>, 2> drawnWindowSigmaAverage = {{{0.1, 100}, {0.001, 10}}}; // {{xmin, xmax}, {ymin, ymax}}
-  Draw_TH1_Histograms(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowSigmaAverage, legendPlacementAuto, contextPlacementAuto, "logx,logy");
+  std::array<std::array<float, 2>, 2> drawnWindowSigmaAverage = {{{0.1, 100}, {0.005, 2}}}; // {{xmin, xmax}, {ymin, ymax}}
+  Draw_TH1_Histograms(H1D_sigmapt_pt_mean_withProfile_concatenated, DatasetsNames, nDatasets, textContext, pdfName_mean_withProfile_logy, texPtX, texSigmaPtMean, texCollisionDataInfo, drawnWindowSigmaAverage, legendPlacementAuto, contextPlacementAuto, "logx,logy"+histDatasetComparisonStructure);
 
   // Draw_TH1_Histograms(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx");
   // Draw_TH1_Histograms(H1D_sigmapt_pt_median, DatasetsNames, nDatasets, textContext, pdfName_median_logy, texPtX, texSigmaPtMedian, texCollisionDataInfo, drawnWindowAuto, legendPlacementAuto, contextPlacementAuto, "logx,logy");
