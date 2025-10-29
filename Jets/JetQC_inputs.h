@@ -1863,71 +1863,71 @@ TFile* file_AliAnalysis;
 
 
 //////// -------- LHC23zzh - apass 4 with area and leadingtrackpt cuts  - central leadTrackPt 5 - run(IR) comparison - run 544013 6.2kHz moved to 2d place, as it has ome issues and puts most ratio above 1, and has less tracks/jets than other low IR runs-------- ////////
-TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}_{NN}} = 5.36 TeV");
-const TString* texDatasetsComparisonType = new TString("run");
-const TString* texDatasetsComparisonCommonDenominator = new TString("Centrality: 50-70%");
-const int nDatasets = 28;
-const TString Datasets[nDatasets] = {"run544124","run544013","run544123","run544477","run544392","run544492","run544391","run544122","run544476","run544390","run544098","run544454","run544475","run544121","run544032","run544491","run544095","run544389","run544451","run544510","run544474","run544185","run544091","run544028","run544184","run544116","run544508","run544490"};
-// const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
-const TString DatasetsNames[nDatasets] = {"6.6 kHz - run544124","6.2 kHz - run544013","11 kHz - run544123","13 kHz - run544477","13 kHz - run544392","15 kHz - run544492","15 kHz - run544391","16 kHz - run544122","16 kHz - run544476","18 kHz - run544390","18 kHz - run544098","19 kHz - run544454","19 kHz - run544475","22 kHz - run544121","23 kHz - run544032","24 kHz - run544491","25 kHz - run544095","27 kHz - run544389","28 kHz - run544451","29 kHz - run544510","29 kHz - run544474","29 kHz - run544185","29 kHz - run544091","30 kHz - run544028","32 kHz - run544184","38 kHz - run544116","39 kHz - run544508","43 kHz - run544490"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[11]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[12]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[13]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[14]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[15]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[16]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[17]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[18]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[19]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[20]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[21]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[22]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[23]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[24]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[25]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[26]+"/AnalysisResults.root"),
-                                        new TFile("Datasets/"+Datasets[27]+"/AnalysisResults.root")
-                                        };
-const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156",
-                                          "jet-spectra-charged_peripheral_id26156"
-                                          };
+// TString* texCollisionDataInfo = new TString("Pb-Pb #sqrt{#it{s}_{NN}} = 5.36 TeV");
+// const TString* texDatasetsComparisonType = new TString("run");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("Centrality: 50-70%");
+// const int nDatasets = 28;
+// const TString Datasets[nDatasets] = {"run544124","run544013","run544123","run544477","run544392","run544492","run544391","run544122","run544476","run544390","run544098","run544454","run544475","run544121","run544032","run544491","run544095","run544389","run544451","run544510","run544474","run544185","run544091","run544028","run544184","run544116","run544508","run544490"};
+// // const TString DatasetsNames[nDatasets] = {"0-10%", "50-90%"};
+// const TString DatasetsNames[nDatasets] = {"6.6 kHz - run544124","6.2 kHz - run544013","11 kHz - run544123","13 kHz - run544477","13 kHz - run544392","15 kHz - run544492","15 kHz - run544391","16 kHz - run544122","16 kHz - run544476","18 kHz - run544390","18 kHz - run544098","19 kHz - run544454","19 kHz - run544475","22 kHz - run544121","23 kHz - run544032","24 kHz - run544491","25 kHz - run544095","27 kHz - run544389","28 kHz - run544451","29 kHz - run544510","29 kHz - run544474","29 kHz - run544185","29 kHz - run544091","30 kHz - run544028","32 kHz - run544184","38 kHz - run544116","39 kHz - run544508","43 kHz - run544490"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[2]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[3]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[4]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[5]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[6]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[7]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[8]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[9]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[10]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[11]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[12]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[13]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[14]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[15]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[16]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[17]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[18]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[19]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[20]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[21]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[22]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[23]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[24]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[25]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[26]+"/AnalysisResults.root"),
+//                                         new TFile("Datasets/"+Datasets[27]+"/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156",
+//                                           "jet-spectra-charged_peripheral_id26156"
+//                                           };
 // const TString analysisWorkflow[nDatasets] = {"jet-background-analysis",
 //                                           "jet-background-analysis",
 //                                           "jet-background-analysis",
@@ -1958,7 +1958,156 @@ const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_peripheral_id2
 //                                           "jet-background-analysis"
 //                                           };
 
-const TString wagonId = "";
-const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+// const TString wagonId = "";
+// const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+// const std::string histDatasetComparisonStructure = "";
+// const bool datasetsAreSubsetsofId0 = false;
+
+
+
+
+// TString* texCollisionDataInfo = new TString("LHC23zzh_apass5");
+// const TString* texDatasetsComparisonType = new TString("data");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("Centrality 0-10%");
+// const int nDatasets = 9;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small"};
+// const TString DatasetsNames[nDatasets] = {"6,6 kHz - run544124","11,6 kHz - run544123","16,5 kHz - run544122","18 kHz - run544098","22,6 kHz - run544121","25,1 kHz - run544095","29,3 kHz - run544091","38,3 kHz - run544116"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile(Datasets[0]+"/hy_2226525/AnalysisResults.root"),
+//                                           new TFile(Datasets[1]+"/hy_2226482/AnalysisResults.root"),
+//                                           new TFile(Datasets[2]+"/hy_2226444/AnalysisResults.root"),           
+//                                           new TFile(Datasets[3]+"/hy_2226431/AnalysisResults.root"),
+//                                           new TFile(Datasets[4]+"/hy_2226443/AnalysisResults.root"),
+//                                           new TFile(Datasets[5]+"/hy_2226430/AnalysisResults.root"),
+//                                           new TFile(Datasets[6]+"/hy_2226429/AnalysisResults.root"),                                   
+//                                           new TFile(Datasets[7]+"/hy_2226442/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central"
+                                         
+//                                           };
+// const TString wagonId[nDatasets] = {"","","","","","","",""};
+// const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false};
+// const std::string histDatasetComparisonStructure = "";
+// const bool datasetsAreSubsetsofId0 = false;
+// const bool trackHistsObsoleteVersion[nDatasets] = {false,false,false,false,false,false,false,false};
+
+
+//Comparison LHC23 pass5 / pass 4 (golden runs)
+// TString* texCollisionDataInfo = new TString("Comparison LHC23 pass5 / pass 4 (golden runs)");
+// const TString* texDatasetsComparisonType = new TString("data");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("Centrality 0-10%");
+// const int nDatasets = 14;
+// const TString Datasets[nDatasets] = {"../LHC23_PbPb_pass5","../LHC23_GoldenRuns_jetsQA","../LHC23_PbPb_pass5","../LHC23_GoldenRuns_jetsQA","../LHC23_PbPb_pass5","../LHC23_GoldenRuns_jetsQA","../LHC23_PbPb_pass5","../LHC23_GoldenRuns_jetsQA","../LHC23_PbPb_pass5","../LHC23_GoldenRuns_jetsQA","../LHC23_PbPb_pass5","../LHC23_GoldenRuns_jetsQA","../LHC23_PbPb_pass5","../LHC23_GoldenRuns_jetsQA"};
+// const TString DatasetsNames[nDatasets] = {"6,6 kHz - run544124 - pass5",
+//                                           "6,6 kHz - run544124 - pass4",
+
+//                                           "6,2 kHz - run544013 - pass5",
+//                                           "6,2 kHz - run544013 - pass4",
+
+//                                           "15 kHz - run544492 - pass5",
+//                                           "15 kHz - run544492 - pass4",
+
+//                                           "19 kHz - run544475 - pass5",
+//                                           "19 kHz - run544475 - pass4",
+
+//                                           "29 kHz - run544510 - pass5",
+//                                           "29 kHz - run544510 - pass4",
+
+//                                           "32 kHz - run544184 - pass5",
+//                                           "32 kHz - run544184 - pass4",
+
+//                                           "38 kHz - run544116 - pass5",
+//                                           "38 kHz - run544116 - pass4"};
+// TFile* file_O2Analysis_list[nDatasets] = {
+                                          
+//                                           new TFile(Datasets[0]+"/Run544124/AnalysisResults.root"),
+//                                           new TFile(Datasets[1]+"/run544124/AnalysisResults.root"),
+
+//                                           new TFile(Datasets[2]+"/Run544013/AnalysisResults.root"),
+//                                           new TFile(Datasets[3]+"/run544013/AnalysisResults.root"),
+                                          
+//                                           new TFile(Datasets[4]+"/Run544492/AnalysisResults.root"),
+//                                           new TFile(Datasets[5]+"/run544492/AnalysisResults.root"),
+                                          
+//                                           new TFile(Datasets[6]+"/Run544475/AnalysisResults.root"),
+//                                           new TFile(Datasets[7]+"/run544475/AnalysisResults.root"),
+                                          
+//                                           new TFile(Datasets[8]+"/Run544510/AnalysisResults.root"),
+//                                           new TFile(Datasets[9]+"/run544510/AnalysisResults.root"),
+                                          
+//                                           new TFile(Datasets[10]+"/Run544184/AnalysisResults.root"),
+//                                           new TFile(Datasets[11]+"/run544184/AnalysisResults.root"),
+
+//                                           new TFile(Datasets[12]+"/Run544116/AnalysisResults.root"),
+//                                           new TFile(Datasets[13]+"/run544116/AnalysisResults.root")
+                                          
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_central","jet-spectra-charged_central_id26156","jet-spectra-charged_central","jet-spectra-charged_central_id26156","jet-spectra-charged_central","jet-spectra-charged_central_id26156","jet-spectra-charged_central","jet-spectra-charged_central_id26156","jet-spectra-charged_central","jet-spectra-charged_central_id26156","jet-spectra-charged_central","jet-spectra-charged_central_id26156","jet-spectra-charged_central","jet-spectra-charged_central_id26156"
+//                                           };
+// const TString wagonId[nDatasets] = {"","","","","","","",""};
+// const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+// const std::string histDatasetComparisonStructure = "twoByTwoDatasetPairs";
+// const bool datasetsAreSubsetsofId0 = false;
+// const bool trackHistsObsoleteVersion[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+
+
+// // WROOONGGGGG 
+// TString* texCollisionDataInfo = new TString("Comparison LHC23 pass5 / pass 4 (golden runs)");
+// const TString* texDatasetsComparisonType = new TString("data");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("Centrality 0-10%");
+// const int nDatasets = 16;
+// const TString Datasets[nDatasets] = {"LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23zzh_apass5_small","LHC23_GoldenRuns_jetsQA","LHC23_GoldenRuns_jetsQA","LHC23_GoldenRuns_jetsQA","LHC23_GoldenRuns_jetsQA","LHC23_GoldenRuns_jetsQA","LHC23_GoldenRuns_jetsQA","LHC23_GoldenRuns_jetsQA","LHC23_GoldenRuns_jetsQA"};
+// const TString DatasetsNames[nDatasets] = {"6,6 kHz - run544124","11,6 kHz - run544123","16,5 kHz - run544122","18 kHz - run544098","22,6 kHz - run544121","25,1 kHz - run544095","29,3 kHz - run544091","38,3 kHz - run544116","6,6 kHz - run544124 - apass4","11,6 kHz - run544123 - apass4","16,5 kHz - run544122 - apass4","18 kHz - run544098 - apass4","22,6 kHz - run544121 - apass4","25,1 kHz - run544095 - apass4","29,3 kHz - run544091 - apass4","38,3 kHz - run544116 - apass4"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile(Datasets[0]+"/hy_2226525/AnalysisResults.root"),
+//                                           new TFile(Datasets[1]+"/hy_2226482/AnalysisResults.root"),
+//                                           new TFile(Datasets[2]+"/hy_2226444/AnalysisResults.root"),           
+//                                           new TFile(Datasets[3]+"/hy_2226431/AnalysisResults.root"),
+//                                           new TFile(Datasets[4]+"/hy_2226443/AnalysisResults.root"),
+//                                           new TFile(Datasets[5]+"/hy_2226430/AnalysisResults.root"),
+//                                           new TFile(Datasets[6]+"/hy_2226429/AnalysisResults.root"),                                   
+//                                           new TFile(Datasets[7]+"/hy_2226442/AnalysisResults.root"),
+//                                           new TFile(Datasets[8]+"/run544124/AnalysisResults.root"),
+//                                           new TFile(Datasets[9]+"/run544123/AnalysisResults.root"),
+//                                           new TFile(Datasets[10]+"/run544122/AnalysisResults.root"),
+//                                           new TFile(Datasets[11]+"/run544098/AnalysisResults.root"),
+//                                           new TFile(Datasets[12]+"/run544121/AnalysisResults.root"),
+//                                           new TFile(Datasets[13]+"/run544095/AnalysisResults.root"),
+//                                           new TFile(Datasets[14]+"/run544091/AnalysisResults.root"),
+//                                           new TFile(Datasets[15]+"/run544116/AnalysisResults.root")
+//                                         };
+// const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central_id26156","jet-spectra-charged_central_id26156","jet-spectra-charged_central_id26156","jet-spectra-charged_central_id26156","jet-spectra-charged_central_id26156","jet-spectra-charged_central_id26156","jet-spectra-charged_central_id26156","jet-spectra-charged_central_id26156"
+//                                           };
+// const TString wagonId[nDatasets] = {"","","","","","","","","","","","","","","",""};
+// const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+// const std::string histDatasetComparisonStructure = "twoByTwoDatasetPairs";
+// const bool datasetsAreSubsetsofId0 = false;
+// const bool trackHistsObsoleteVersion[nDatasets] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+
+
+
+//"LHC23 PbPb pass5 full"
+TString* texCollisionDataInfo = new TString("LHC23 PbPb pass5 full");
+const TString* texDatasetsComparisonType = new TString("data");
+const TString* texDatasetsComparisonCommonDenominator = new TString("Centrality 0-10%");
+const int nDatasets = 9;
+const TString Datasets[nDatasets] = {"../LHC23_PbPb_pass5","../LHC23_PbPb_pass5","../LHC23_PbPb_pass5","../LHC23_PbPb_pass5","../LHC23_PbPb_pass5","../LHC23_PbPb_pass5","../LHC23_PbPb_pass5","../LHC23_PbPb_pass5","../LHC23_PbPb_pass5"};
+const TString DatasetsNames[nDatasets] = {"6,6 kHz - run544124 - pass5","6,2 kHz - run544013 - pass5","13 kHz - run544392 - pass5","15 kHz - run544492 - pass5","19 kHz - run544475 - pass5","29 kHz - run544510 - pass5","30 kHz - run544028 - pass5","32 kHz - run544184 - pass5","38 kHz - run544116 - pass5"};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile(Datasets[0]+"/Run544124/AnalysisResults.root"),
+
+                                          new TFile(Datasets[1]+"/Run544013/AnalysisResults.root"),
+                                          new TFile(Datasets[2]+"/Run544392/AnalysisResults.root"),
+                                          new TFile(Datasets[3]+"/Run544492/AnalysisResults.root"),
+                                          new TFile(Datasets[4]+"/Run544475/AnalysisResults.root"),
+                                          new TFile(Datasets[5]+"/Run544510/AnalysisResults.root"),
+                                          new TFile(Datasets[6]+"/Run544028/AnalysisResults.root"),
+                                          new TFile(Datasets[7]+"/Run544184/AnalysisResults.root"),
+                                          new TFile(Datasets[8]+"/Run544116/AnalysisResults.root"),
+
+                                          
+                                        };
+const TString analysisWorkflow[nDatasets] = {"jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central","jet-spectra-charged_central"
+                                          }; 
+const TString wagonId[nDatasets] = {"","","","","","","",""};
+const bool isDatasetWeighted[nDatasets] = {false,false,false,false,false,false,false,false,false};
 const std::string histDatasetComparisonStructure = "";
 const bool datasetsAreSubsetsofId0 = false;
+const bool trackHistsObsoleteVersion[nDatasets] = {false,false,false,false,false,false,false,false,false};
