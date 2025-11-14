@@ -15,6 +15,9 @@ const TString randomConeTypeList[nRandomConeTypes] = {"", "withoutleadingjet", "
 const double trackEtaRange[2] = {-0.9, 0.9};
 float deltaJetEta[3] = {1.4, 1, 0.6};
 
+const double ptmin = 20.0;
+const double ptmax = 80.0;
+
 // Choice of jet type (charged, neutral, full) and level (data, detector level, particle level)
 const int iJetType = 0;
 const int iJetLevel = 0;
@@ -45,10 +48,10 @@ const bool matrixTransformationOrder = 0; // use 0
 char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
-const bool isDataPbPb = true; // if false -> pp
-const bool doBkgSubtractionInData = true;
+const bool isDataPbPb = false; // if false -> pp
+const bool doBkgSubtractionInData = false;
 const bool doBkgSubtractionInMC = false;
-const bool useFactorisedMatrix = true; // use factorised response matrix for unfolding, or not; if not, the fluctuations response it replaced by the identity matrix
+const bool useFactorisedMatrix = false; // use factorised response matrix for unfolding, or not; if not, the fluctuations response it replaced by the identity matrix
 const bool mcIsWeighted = true; // use if the MC has been weighted to have more high pt jets?
 bool applyFakes = true; // only applied if useManualRespMatrixSettingMethod is true; 18/03: if false?
 int applyEfficiencies = 2; // 2 is best; kinematic efficiency is already be handled by roounfold (02/04/2025; one can check simply with a pp unfolding with just det matrix and fine-ish binning like "// Joonsuk binning for pp with smaller rec window to test kinematic efficiency")
@@ -74,13 +77,13 @@ const int usePtOverflowForKineEff = 0; // false by default, not tested yet, migh
 const bool doManualErrorPropagForKineEff = false; // false is likely better, but hasn't been tested yet
 const bool useFineBinningTest = false;
 bool controlMC = false; // use file_O2Analysis_ppSimDetectorEffect_unfoldingControl MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file), rather than real data, and as comparison to gen (with h_jet_pt_part distrib on file); weighted control MC, and control for PbPb are not yet implemented
-const bool drawIntermediateResponseMatrices = false;
+const bool drawIntermediateResponseMatrices = true;
 bool comparePbPbWithRun2 = true; // if isDataPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFileHannaBossiLauraFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
 
 bool smoothenEfficiency = false;
 bool smoothenMCP = false;
 
-bool transposeResponseHistogramsInDrawing = false;  // default is false; if set to true, then one can just rotate the result matrices 90 degrees to have the correct visualisation of the response as a matrix, rather than as a histogram as is default (when false) 
+bool transposeResponseHistogramsInDrawing = true;  // default is false; if set to true, then one can just rotate the result matrices 90 degrees to have the correct visualisation of the response as a matrix, rather than as a histogram as is default (when false) 
 
 bool automaticBestSvdParameter = false; // automatic function not well setup yet, should work on it; keep false for now
 

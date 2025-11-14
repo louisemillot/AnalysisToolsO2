@@ -440,73 +440,6 @@ void ReweightResponseMatrixWithPrior_fineBinningOnly(TH2D* &H2D_jetPtResponseMat
   }
 }
 
-void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detectorResponse, int iDataset, int iRadius) {
-  TH3D* H3D_jetRpartPtdetPt;
-  TH2D* H2D_jetPtMcdjetPtMcd;
-
-  TH2D* H2D_gen_det_geoMatched;
-  TH2D* H2D_gen_det_geoMatched_rebinned;
-  TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
-  if (analysisWorkflowMC.Contains("jet-finder-charged-qa") == true) {
-    H3D_jetRpartPtdetPt = (TH3D*)((TH3D*)  file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h3_jet_r_jet_pt_tag_jet_pt_base_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+partialUniqueSpecifier);// base is mcd in jetfinderQA as of 06/2024, thus tag is mcp, and so hist is (x=r, y=mcp, z=mcd)
-    H3D_jetRpartPtdetPt->Sumw2();
-
-    int ibinJetRadius = H3D_jetRpartPtdetPt->GetXaxis()->FindBin(arrayRadius[iRadius]+GLOBAL_epsilon);
-    H3D_jetRpartPtdetPt->GetXaxis()->SetRange(ibinJetRadius, ibinJetRadius);
-    // project H3D onto a H2D, option "yz" means y goes on y-axis while z goes on x-axis, and so H2D_gen_det_geoMatched will be (x=mcd, y=mcp)
-    H2D_gen_det_geoMatched = (TH2D*)H3D_jetRpartPtdetPt->Project3D(partialUniqueSpecifier+"_genrec_e_yz"); //can't use letter D in this or it seems to replace the histogram in current pad (see documentation of ProjectionX function. Isn't mentioned in project3D sadly)
-  } else if (analysisWorkflowMC.Contains("jet-spectra-charged") == true) {
-    if (doBkgSubtractionInMC) {
-      H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*) file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_rhoareasubtracted"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
-    } else {
-      if (etaCutOnMatchedJetsIsObsoleteVersion == true) {
-        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*) file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
-      } else {
-        H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*) file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcpetaconstraint"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
-      }
-    }
-    H2D_jetPtMcdjetPtMcd->Sumw2();
-
-    // H2D_gen_det_geoMatched = (TH2D*)GetTransposeHistogram(H2D_jetPtMcdjetPtMcd).Clone(partialUniqueSpecifier+"_genrec");
-    H2D_gen_det_geoMatched = (TH2D*)H2D_jetPtMcdjetPtMcd->Clone(partialUniqueSpecifier+"_genrec");
-  }
-
-  // keep (gen, gen) for the bins; rec will be introduced in the fluctuation response, and by multiplication will stay in the combined matrix
-  TH2D* H2D_response = (TH2D*)RebinVariableBins2D(H2D_gen_det_geoMatched, nBinPtJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], ptBinsJetsFine[iRadius]).Clone("Get_PtResponseMatrix_detectorResponse_rebinned"+partialUniqueSpecifier);
-
-  if (doYSliceNormToOneDetResp) {
-    NormaliseYSlicesToOne(H2D_response);
-  }
-  if (normDetRespByNEvts) {
-    if (mcIsWeighted) {
-      H2D_response->Scale(1./GetNEventsSelected_JetFramework_weighted( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC));
-    } else {
-      double Nevents = GetNEventsSelected_JetFramework( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC);
-      for (int iBinX = 0; iBinX < H2D_response->GetNbinsX(); iBinX++) {
-        for (int iBinY = 0; iBinY < H2D_response->GetNbinsY(); iBinY++) {
-          H2D_response->SetBinContent(iBinX, iBinY, H2D_response->GetBinContent(iBinX, iBinY) * 1./Nevents);
-          H2D_response->SetBinError(iBinX, iBinY, H2D_response->GetBinError(iBinX, iBinY) * 1./Nevents);
-        }
-      }
-      // H2D_response->Scale(1./GetNEventsSelected_JetFramework( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC));
-    }
-  }
-  cout << "Detector response building: errors here should probably be reduced to take into account correlations, as the normalisation factor is built from same matrix" << endl;
-
-  // H2D_jetPtResponseMatrix_detectorResponse = (TH2D*)H2D_gen_det_geoMatched_rebinned->Clone("H2D_jetPtResponseMatrix_detectorResponse"+partialUniqueSpecifier); // should be using the one below; this one is just a test
-  H2D_jetPtResponseMatrix_detectorResponse = (TH2D*)H2D_response->Clone("H2D_jetPtResponseMatrix_detectorResponse"+partialUniqueSpecifier); 
-
-  // cout << "............................................................." <<endl;
-  // cout << "............................................................." <<endl;
-  // for(int iBinX = 1; iBinX <= H2D_jetPtResponseMatrix_detectorResponse->GetNbinsX(); iBinX++){ // 0 and n+1 would take underflow and overflow into account, don't want that
-  //   for(int iBinY = 1; iBinY <= H2D_jetPtResponseMatrix_detectorResponse->GetNbinsY(); iBinY++){ // 0 and n+1 would take underflow and overflow into account, don't want that
-  //     cout << "iBinX = " << iBinX << ", iBinY = " << iBinY << "         --------          detResponseContent = " << H2D_jetPtResponseMatrix_detectorResponse->GetBinContent(iBinX, iBinY) << ", detResponseError = " << H2D_jetPtResponseMatrix_detectorResponse->GetBinError(iBinX, iBinY) << endl;
-  //   }
-  // }
-  // cout << "............................................................." <<endl;
-  // cout << "............................................................." <<endl;
-}
-
 void Get_thetagMatrix_detectorResponse4D(TH2D* &H2D_thetagMatrix_detectorResponse,
                                        int iDataset,
                                        int iRadius,
@@ -549,14 +482,12 @@ void Get_thetagMatrix_detectorResponse4D(TH2D* &H2D_thetagMatrix_detectorRespons
   // =============================
   cout << Form("🔧 Application du cut en pT^MCP : %.1f < pT < %.1f GeV/c", ptmin, ptmax) << endl;
   h4->GetAxis(axisPtMCP)->SetRangeUser(ptmin, ptmax);
+
   // =============================
   // === 3. Projection en 2D ===
   // =============================
   // Projection : X = thetagMCD, Y = thetagMCP
-  TH2D* h2 = (TH2D*) h4->Projection(axisThetagMCD, axisThetagMCP);
-  cout << "   - Entries dans la projection 2D : " << h2->GetEntries() << endl;
-
-
+  TH2D* h2 = (TH2D*) h4->Projection(axisThetagMCP, axisThetagMCD);
   h2->SetName(Form("H2D_thetagMatrix_detectorResponse_R%.1f_%s_pt%.0f_%.0f",
                    arrayRadius[iRadius],
                    Datasets[iDataset].Data(),

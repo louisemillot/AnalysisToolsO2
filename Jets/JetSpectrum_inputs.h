@@ -11,49 +11,49 @@ TFile* file_O2Analysis_run2ComparisonFileHannaBossiLaura = new TFile("Datasets/R
 TFile* file_O2Analysis_run2ComparisonFileMLPaper = new TFile("Datasets/Run2_Unfolding_MachineLearningMethod_R020/Ch-jetSuppression_PbPb502TeV.root");
 
 
-//////// -------- LHC23zzh pass 4 with - pp sim anchored to PbPb 10% - lead05 ///////
-TString* texEnergyPbPb = new TString("#sqrt{#it{s}_{NN}} = 5.36 TeV"); 
-TString* texEnergy = new TString("pp, #sqrt{#it{s}} = 5.36 TeV"); 
-// TString* texCollisionDataType = new TString("0#minus10% Pb#minusPb"); 
-TString* texCollisionDataType = new TString("0#font[122]{-}10% Pb#font[122]{-}Pb"); 
-TString* texCollisionDataInfo = new TString((TString)*texCollisionDataType+", "+(TString)*texEnergyPbPb); 
-TString* texCollisionMCType = new TString("PYTHIA + GEANT4"); 
-TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+", "+(TString)*texEnergy); 
-const TString* texDatasetsComparisonType = new TString("0#font[122]{-}10% centrality");
-// const TString* texDatasetsComparisonType = new TString("50-70% centrality");
-const TString* texDatasetsComparisonCommonDenominator = new TString("ALICE performance");
-const int nDatasets = 2;
-const TString Datasets[nDatasets] = {"LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068",
-                                    "LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068"};
-const TString DatasetsNames[nDatasets] = {"noTrackEff", "withTrackEff"};
-TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
-                                      new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
-                                      };
-// TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
-// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
-// TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
-TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root"),
-                                                    new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_trackEffCorrection_cent0010_train420439/AnalysisResults.root"),
-                                                    };
-TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root"),
-                                                                        new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_trackEffCorrection_cent0010_train420439/AnalysisResults.root")
-                                                                        }; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
+// //////// -------- LHC23zzh pass 4 with - pp sim anchored to PbPb 10% - lead05 ///////
+// TString* texEnergyPbPb = new TString("#sqrt{#it{s}_{NN}} = 5.36 TeV"); 
+// TString* texEnergy = new TString("pp, #sqrt{#it{s}} = 5.36 TeV"); 
+// // TString* texCollisionDataType = new TString("0#minus10% Pb#minusPb"); 
+// TString* texCollisionDataType = new TString("0#font[122]{-}10% Pb#font[122]{-}Pb"); 
+// TString* texCollisionDataInfo = new TString((TString)*texCollisionDataType+", "+(TString)*texEnergyPbPb); 
+// TString* texCollisionMCType = new TString("PYTHIA + GEANT4"); 
+// TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+", "+(TString)*texEnergy); 
+// const TString* texDatasetsComparisonType = new TString("0#font[122]{-}10% centrality");
+// // const TString* texDatasetsComparisonType = new TString("50-70% centrality");
+// const TString* texDatasetsComparisonCommonDenominator = new TString("ALICE performance");
+// const int nDatasets = 2;
+// const TString Datasets[nDatasets] = {"LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068",
+//                                     "LHC23_PbPb_pass4_goldenRuns_occupancy01000_train372068"};
+// const TString DatasetsNames[nDatasets] = {"noTrackEff", "withTrackEff"};
+// TFile* file_O2Analysis_list[nDatasets] = {new TFile("Datasets/"+Datasets[0]+"/AnalysisResults.root"),
+//                                       new TFile("Datasets/"+Datasets[1]+"/AnalysisResults.root")
+//                                       };
+// // TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = new TFile("Datasets/ppSim_LHC23d4/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/ppSim_LHC23d4_weighted_withLeadingTrackCut/AnalysisResults.root");
+// // TFile* file_O2Analysis_MCfileForMatrix = new TFile("Datasets/MC_halfMCAngantyr/AnalysisResults.root");
+// TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root"),
+//                                                     new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_trackEffCorrection_cent0010_train420439/AnalysisResults.root"),
+//                                                     };
+// TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_noTrackEffCorrection_train395261/AnalysisResults.root"),
+//                                                                         new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_trackEffCorrection_cent0010_train420439/AnalysisResults.root")
+//                                                                         }; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
 
-// const TString trainId = "_id12832";
-// const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
-// const TString trainId = "_id12436";
-// const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
-const TString trainIdData = "_id26156"; // lead05
-const TString analysisWorkflowData = "jet-spectra-charged_central"+trainIdData;
-// const TString analysisWorkflowData = "jet-spectra-charged_peripheral"+trainIdData;
-const TString trainIdBkg = "";
-const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
-const TString trainIdUnfoldingControl = "";
-const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_lead_05_100"+trainIdUnfoldingControl;
+// // const TString trainId = "_id12832";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_5090_lead5"+trainId;
+// // const TString trainId = "_id12436";
+// // const TString analysisWorkflowData = "jet-finder-charged-qa_central_0010_lead5"+trainId;
+// const TString trainIdData = "_id26156"; // lead05
+// const TString analysisWorkflowData = "jet-spectra-charged_central"+trainIdData;
+// // const TString analysisWorkflowData = "jet-spectra-charged_peripheral"+trainIdData;
+// const TString trainIdBkg = "";
+// const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
+// const TString trainIdUnfoldingControl = "";
+// const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged_lead_05_100"+trainIdUnfoldingControl;
 
-const TString trainIdMC = "";
-const TString analysisWorkflowMC = "jet-spectra-charged_lead_05_100"+trainIdMC;
-const bool etaCutOnMatchedJetsIsObsoleteVersion = false;
+// const TString trainIdMC = "";
+// const TString analysisWorkflowMC = "jet-spectra-charged_lead_05_100"+trainIdMC;
+// const bool etaCutOnMatchedJetsIsObsoleteVersion = false;
 
 
 
@@ -269,4 +269,77 @@ const bool etaCutOnMatchedJetsIsObsoleteVersion = false;
 // const bool etaCutOnMatchedJetsIsObsoleteVersion = false;
 
 
+
+
+// //////// -------- test LHC25b6 unfolding4D ///////
+TString* texEnergyPbPb = new TString("#sqrt{#it{s}_{NN}} = 5.36 TeV"); 
+TString* texEnergy = new TString("LHC25b6"); 
+// TString* texEnergy = new TString("pp, #sqrt{#it{s}} = 5.36 TeV"); 
+// TString* texCollisionDataType = new TString("0#minus10% Pb#minusPb"); 
+TString* texCollisionDataType = new TString("0#font[122]{-}10% Pb#font[122]{-}Pb"); 
+TString* texCollisionDataInfo = new TString((TString)*texCollisionDataType+", "+(TString)*texEnergyPbPb); 
+TString* texCollisionMCType = new TString(""); 
+TString* texCollisionMCInfo = new TString((TString)*texCollisionMCType+", "+(TString)*texEnergy); 
+const TString* texDatasetsComparisonType = new TString("");
+const TString* texDatasetsComparisonCommonDenominator = new TString("ALICE performance");
+const int nDatasets = 1;
+const TString Datasets[nDatasets] = {"LHC25b6"};
+const TString DatasetsNames[nDatasets] = {""};
+TFile* file_O2Analysis_list[nDatasets] = {new TFile("AnalysisResults_wise.root")
+                                      };
+TFile* file_O2Analysis_MCfileForMatrix[nDatasets] = {new TFile("AnalysisResults_wise.root")};
+TFile* file_O2Analysis_ppSimDetectorEffect_unfoldingControl[nDatasets] = {new TFile("Datasets/LHC25b6_pp_sim_PbPbAnchor_FullStats_R02_train388528_leadTrack03/AnalysisResults.root")}; // use this MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file) and as comparison to gen (with h_jet_pt_part distrib on file)
+
+const TString trainIdData = "_id26155"; // lead03
+const TString analysisWorkflowData = "jet-spectra-charged_central"+trainIdData;
+// const TString analysisWorkflowData = "jet-spectra-charged_peripheral"+trainIdData;
+const TString trainIdBkg = "";
+const TString analysisWorkflowBkg = "jet-background-analysis"+trainIdBkg;
+const TString trainIdUnfoldingControl = "";
+const TString analysisWorkflow_unfoldingControl = "jet-spectra-charged"+trainIdUnfoldingControl;
+
+const TString trainIdMC = "";
+const TString analysisWorkflowMC = "jet-substructure-softdrop"+trainIdMC;
+const bool etaCutOnMatchedJetsIsObsoleteVersion = false;
+
+
 #endif
+
+
+
+
+// void Get_PtResponseMatrix_detectorResponse(TH2D* &H2D_jetPtResponseMatrix_detectorResponse, int iDataset, int iRadius) {
+//   TH2D* H2D_jetPtMcdjetPtMcd;
+//   TH2D* H2D_gen_det_geoMatched;
+//   TString partialUniqueSpecifier = Datasets[iDataset]+"_R="+Form("%.1f",arrayRadius[iRadius]);
+//   if (analysisWorkflowMC.Contains("jet-spectra-charged") == true) {
+//     if (etaCutOnMatchedJetsIsObsoleteVersion == false) {
+//         H2D_jetPtMcdjetPtMcd = (TH2D*)((TH2D*) file_O2Analysis_MCfileForMatrix[iDataset]->Get(analysisWorkflowMC+"/h2_jet_pt_mcd_jet_pt_mcp_matchedgeo_mcpetaconstraint"))->Clone("Get_PtResponseMatrix_detectorResponse"+Datasets[iDataset]+DatasetsNames[iDataset]);
+//     }
+//     H2D_jetPtMcdjetPtMcd->Sumw2();
+//     H2D_gen_det_geoMatched = (TH2D*)H2D_jetPtMcdjetPtMcd->Clone(partialUniqueSpecifier+"_genrec");
+//   }
+
+//   // keep (gen, gen) for the bins; rec will be introduced in the fluctuation response, and by multiplication will stay in the combined matrix
+//   TH2D* H2D_response = (TH2D*)RebinVariableBins2D(H2D_gen_det_geoMatched, nBinPtJetsFine[iRadius], nBinPtJetsFine[iRadius], ptBinsJetsFine[iRadius], ptBinsJetsFine[iRadius]).Clone("Get_PtResponseMatrix_detectorResponse_rebinned"+partialUniqueSpecifier);
+
+//   if (doYSliceNormToOneDetResp) {
+//     NormaliseYSlicesToOne(H2D_response);
+//   }
+//   if (normDetRespByNEvts) {
+//     if (mcIsWeighted) {
+//       H2D_response->Scale(1./GetNEventsSelected_JetFramework_weighted( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC));
+//     } else {
+//       double Nevents = GetNEventsSelected_JetFramework( file_O2Analysis_MCfileForMatrix[iDataset], analysisWorkflowMC);
+//       for (int iBinX = 0; iBinX < H2D_response->GetNbinsX(); iBinX++) {
+//         for (int iBinY = 0; iBinY < H2D_response->GetNbinsY(); iBinY++) {
+//           H2D_response->SetBinContent(iBinX, iBinY, H2D_response->GetBinContent(iBinX, iBinY) * 1./Nevents);
+//           H2D_response->SetBinError(iBinX, iBinY, H2D_response->GetBinError(iBinX, iBinY) * 1./Nevents);
+//         }
+//       }
+//     }
+//   }
+//   cout << "Detector response building: errors here should probably be reduced to take into account correlations, as the normalisation factor is built from same matrix" << endl;
+
+//   H2D_jetPtResponseMatrix_detectorResponse = (TH2D*)H2D_response->Clone("H2D_jetPtResponseMatrix_detectorResponse"+partialUniqueSpecifier); 
+// }

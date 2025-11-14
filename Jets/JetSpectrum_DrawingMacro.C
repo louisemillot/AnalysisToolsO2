@@ -56,7 +56,8 @@ void LoadLibs();
 void IterationLegend(TString* iterationLegend, int unfoldIterationMin, int unfoldIterationMax, int step);
 
 void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius);
-void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius);
+void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius, double ptmin, double ptmax);
+
 void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRadius, std::string options);
 
 void Draw_Pt_spectrum_raw(int iDataset, int iRadius, std::string options);
@@ -96,7 +97,7 @@ void JetSpectrum_DrawingMacro() {
 
   // // find a way to input mcpPrior/mcdPrior and bayes/svd as a variables rather than typed out like this
   // Draw_ResponseMatrices_Fluctuations(iDataset, iRadius);
-  // Draw_ResponseMatrices_detectorResponse(iDataset, iRadius);
+  Draw_ResponseMatrices_detectorResponse(iDataset, iRadius,ptmin,ptmax);
   // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(iDataset, iRadius, optionsAnalysis);
 
   // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
@@ -107,9 +108,9 @@ void JetSpectrum_DrawingMacro() {
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
   // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
 
-  Draw_Pt_efficiency_jets(iRadius, optionsAnalysis);
-  Draw_kinematicEfficiency(iRadius, optionsAnalysis);
-  Draw_FakeRatio(iRadius, optionsAnalysis);
+  // Draw_Pt_efficiency_jets(iRadius, optionsAnalysis);
+  // Draw_kinematicEfficiency(iRadius, optionsAnalysis);
+  // Draw_FakeRatio(iRadius, optionsAnalysis);
 
   // int unfoldParameterInput = 5;
   // Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput, optionsAnalysis);
@@ -497,56 +498,48 @@ void Draw_ResponseMatrices_Fluctuations(int iDataset, int iRadius) {
   Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
 }
 
-void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius) {
-
-  TH2D* H2D_jetPtResponseMatrix_detectorResponse;
-  cout << "Draw_ResponseMatrices_detectorResponse 1" << endl;
-  Get_PtResponseMatrix_detectorResponse(H2D_jetPtResponseMatrix_detectorResponse, iDataset, iRadius);
-  cout << "Draw_ResponseMatrices_detectorResponse 2" << endl;
-
+void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius,double ptmin, double ptmax) {
+  //partie thetag
+  cout << "▶️ Draw_ResponseMatrices_thetagDetectorResponse()" << endl;
+  TH2D* H2D_thetagMatrix_detectorResponse;
+  Get_thetagMatrix_detectorResponse4D(H2D_thetagMatrix_detectorResponse, iDataset, iRadius, ptmin,ptmax);
+  if (!H2D_thetagMatrix_detectorResponse) {
+    cerr << " ERREUR : histogramme 2D non construit, arrêt." << endl;
+    return;
+  }
+  
   TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
-
 
   std::error_code errPDF, errPNG, errEPS;
   CreateDirectoryRecursive((std::string)"pdfFolder/ResponseMatrices", errPDF);
   CreateDirectoryRecursive((std::string)"pngFolder/ResponseMatrices", errPNG);
   CreateDirectoryRecursive((std::string)"epsFolder/ResponseMatrices", errEPS);
-  // struct stat st1{};
-  // if (stat("pdfFolder/ResponseMatrices", &st1) == -1) {
-  //     mkdir("pdfFolder/ResponseMatrices", 0700);
-  // }
-  // struct stat st2{};
-  // if (stat("pngFolder/ResponseMatrices", &st2) == -1) {
-  //     mkdir("pngFolder/ResponseMatrices", 0700);
-  // }
-  // struct stat st3{};
-  // if (stat("epsFolder/ResponseMatrices", &st3) == -1) {
-  //     mkdir("epsFolder/ResponseMatrices", 0700);
-  // }
 
-  TString* pdfName = new TString("ResponseMatrices/responseMatrix_detectorEffects_"+jetType[iJetType]+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-  TString* pdfName_logz = new TString("ResponseMatrices/responseMatrix_detectorEffects_"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo+"_logz");
+  TString tag = Form("R%.1f_%s_pt%.0f_%.0f", arrayRadius[iRadius], Datasets[iDataset].Data(), (double)ptmin, (double)ptmax);
+  TString* pdfName     = new TString("ResponseMatrices/thetagMatrix_detectorEffects_" + tag + "_" + priorInfo);
+  TString* pdfName_logz= new TString("ResponseMatrices/thetagMatrix_detectorEffects_" + tag + "_" + priorInfo + "_logz");
 
   TString texCombinedMatrix = contextCustomOneField((TString)"ALICE Simulation", ""); // Response matrix - "+(TString)*texEnergy
-  TString textContextMatrixDetails = contextCustomFiveFields((TString)"Detector response ", "", (TString)*texCollisionMCType, (TString)*texEnergy, (TString)contextJetRadius(arrayRadius[iRadius]), "");
+  // TString textContextMatrixDetails = contextCustomFiveFields((TString)"#theta_{g}^{MCD} vs #theta_{g}^{MCP} detector response","",(TString)*texCollisionMCType, (TString)*texEnergy,(TString)contextJetRadius(arrayRadius[iRadius]),Form("%.0f < p_{T}^{MCP} < %.0f GeV/c", ptmin, ptmax));
+  // TString textContextMatrixDetails = contextCustomFiveFields((TString)"#theta_{g}^{MCD} vs #theta_{g}^{MCP} detector response","", (TString)*texCollisionMCType,(TString)*texEnergy,Form("%.0f < p_{T}^{MCP} < %.0f GeV/c", ptmin, ptmax),""  // avec le pt range
+  TString textContextMatrixDetails = contextCustomFiveFields((TString)"#theta_{g}^{MCD} vs #theta_{g}^{MCP} detector response","", (TString)*texCollisionMCType,(TString)*texEnergy,Form(""),""  // sans le pt range
+
+);
 
 
   // the matrix natural visualisation is actually the NON transposed histograms, rotated by 90° anti trigonometrically
   TH2D* MatrixResponse;
-  TString* xLabel;
-  TString* yLabel;
+  TString* xLabel = new TString("#theta_{g}^{MCDEventWise} (detector)");
+  TString* yLabel = new TString("#theta_{g}^{MCP} (particle)");
   if (transposeResponseHistogramsInDrawing) {
-    MatrixResponse = (TH2D*)GetTransposeHistogram(H2D_jetPtResponseMatrix_detectorResponse).Clone("Draw_ResponseMatrices_detectorResponse"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-    xLabel = texPtJetGen;
-    yLabel = texPtJetRec;
-  } else {    MatrixResponse = (TH2D*)H2D_jetPtResponseMatrix_detectorResponse->Clone("Draw_ResponseMatrices_detectorResponse"+(TString)"_R="+Form("%.1f",arrayRadius[iRadius])+"_"+Datasets[iDataset]+DatasetsNames[iDataset]+"_"+priorInfo);
-    xLabel = texPtJetRec;
-    yLabel = texPtJetGen;
+    MatrixResponse = (TH2D*) GetTransposeHistogram(H2D_thetagMatrix_detectorResponse).Clone("Draw_ResponseMatrices_thetagDetectorResponse_transposed");
+    yLabel = new TString("#theta_{g}^{MCP} (particle)");
+    xLabel = new TString("#theta_{g}^{MCDEventWise} (detector)");
+  } else {
+    MatrixResponse = (TH2D*) H2D_thetagMatrix_detectorResponse->Clone("Draw_ResponseMatrices_thetagDetectorResponse");
   }
-  // std::array<std::array<float, 2>, 3> drawnWindowRaymondRequest = {{{-999, -999}, {-999, -999}, {1e-5, 6e-1}}}; // {{xmin, xmax}, {ymin, ymax}, {zmin, zmax}} /// put AUTO again after perf figure is done
-
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
-  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName_logz, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
+  Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails, pdfName,xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "");
+  // Draw_TH2_Histogram(MatrixResponse, textContextMatrixDetails,pdfName_logz, xLabel, yLabel, &texCombinedMatrix, drawnWindow2DAuto, th2ContoursNone, contourNumberNone, "logz");
 }
 
 void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRadius, std::string options) {
@@ -558,7 +551,9 @@ void Draw_ResponseMatrices_DetectorAndFluctuationsCombined(int iDataset, int iRa
 
   Get_PtResponseMatrix_Fluctuations(H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius);
   Get_PtResponseMatrix_detectorResponse(H2D_jetPtResponseMatrix_detectorResponse, iDataset, iRadius);
+  cout << " On a : Get_PtResponseMatrix_detectorResponse()" << endl;
   Get_PtResponseMatrix_DetectorAndFluctuationsCombined(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, H2D_jetPtResponseMatrix_detectorResponse, H2D_jetPtResponseMatrix_fluctuations, iDataset, iRadius, options);
+  cout << " On a : Get_PtResponseMatrix_DetectorAndFluctuationsCombined()" << endl;
   // FinaliseResponseMatrix(H2D_jetPtResponseMatrix_detectorAndFluctuationsCombined, iDataset, iRadius, options);
 
   TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
