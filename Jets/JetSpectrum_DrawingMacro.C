@@ -106,12 +106,12 @@ void JetSpectrum_DrawingMacro() {
   // Draw_ResponseMatrices_DetectorAndFluctuationsCombined(1, iRadius, optionsAnalysis);
 
   // // Draw_Pt_spectrum_unfolded_FluctResponseOnly(iDataset, iRadius, optionsAnalysis); // NOT FIXED YET - result meaningless
-  Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis);
-  Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
-  Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
-  Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
-  Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
-  Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
+  // Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_raw(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
+  // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_mcp(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
+  // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis);
+  // Draw_Pt_spectrum_mcdMatched(iDataset, iRadius, optionsAnalysis+(std::string)"noEventNormNorBinWidthScaling");
 
   // Draw_Pt_efficiency_jets(iRadius, optionsAnalysis);
   // Draw_kinematicEfficiency(iRadius, optionsAnalysis);
@@ -120,7 +120,7 @@ void JetSpectrum_DrawingMacro() {
   // int unfoldParameterInput = 5;
   // Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput, optionsAnalysis);
   int unfoldParameterInput2 = 8;
-  Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
+  // Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput2, optionsAnalysis);
   // Draw_Pt_spectrum_unfolded_datasetComparison(iRadius, unfoldParameterInput2, optionsAnalysis);
   // int unfoldParameterInput3 = 10;
   // Draw_Pt_spectrum_unfolded_singleDataset(iDataset, iRadius, unfoldParameterInput3, optionsAnalysis);
@@ -513,7 +513,7 @@ void Draw_ResponseMatrices_detectorResponse(int iDataset, int iRadius,double ptm
     return;
   }
   
-  TString priorInfo = (TString)(TString)mergingPrior+"-"+(TString)unfoldingPrior;
+  TString priorInfo = (TString)unfoldingPrior;
 
   std::error_code errPDF, errPNG, errEPS;
   CreateDirectoryRecursive((std::string)"pdfFolder/ResponseMatrices", errPDF);
