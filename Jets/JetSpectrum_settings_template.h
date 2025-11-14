@@ -83,14 +83,11 @@ bool controlMC = false; // use file_O2Analysis_ppSimDetectorEffect_unfoldingCont
 // Debugging and checks:
 const bool doManualErrorPropagForKineEff = false; // false is likely better, but hasn't been tested yet
 const bool useFineBinningTest = false;
-<<<<<<< HEAD:Jets/JetSpectrum_settings.h
 bool controlMC = false; // use file_O2Analysis_ppSimDetectorEffect_unfoldingControl MC file as input to unfolding (with h_jet_pt_rhoareasubtracted distrib on file), rather than real data, and as comparison to gen (with h_jet_pt_part distrib on file); weighted control MC, and control for PbPb are not yet implemented
 const bool drawIntermediateResponseMatrices = true;
 bool comparePbPbWithRun2 = true; // if isDataPbPb == true, then do the comparison with file_O2Analysis_run2ComparisonFileHannaBossiLauraFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
-=======
 const bool drawIntermediateResponseMatrices = false;
 bool comparePbPbWithRun2 = false; // if doComparisonMcpFoldedWithFluct == true, then do the comparison with file_O2Analysis_run2ComparisonFileHannaBossiLauraFile (Nevents for this is hardcoded to what Laura told me: see mattermost discussion)
->>>>>>> upstream/master:Jets/JetSpectrum_settings_template.h
 
 bool smoothenEfficiency = false;
 bool smoothenMCP = false;
