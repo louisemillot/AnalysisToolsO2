@@ -49,12 +49,9 @@ const bool matrixTransformationOrder = 0; // use 0
 char unfoldingMethod[] = "Svd"; // unfolding method options: Bayes, Svd
 char optionsAnalysis[100] = "";
 
-<<<<<<< HEAD:Jets/JetSpectrum_settings.h
 const bool isDataPbPb = false; // if false -> pp
-=======
 const bool doComparisonMcpFoldedWithFluct = false; // if true, uses file_O2Analysis_ppSimDetectorEffect_unfoldingControl mcp distribution, folds it with the background fluctuation matrix, unfolds it with the merged det x bkg response matrix, and compares it to the mcp distribution in file_O2Analysis_ppSimDetectorEffect_unfoldingControl
 // 13/11/2025: check this comparison; for some reason it's not a ratio of 1 when running on pp even though the bkg fluctuation matrix is identity
->>>>>>> upstream/master:Jets/JetSpectrum_settings_template.h
 const bool doBkgSubtractionInData = false;
 const bool doBkgSubtractionInMC = false;
 const bool useFactorisedMatrix = false; // use factorised response matrix for unfolding, or not; if not, the fluctuations response it replaced by the identity matrix
