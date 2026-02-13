@@ -78,6 +78,7 @@ void Draw_Mean_Ntrack_vs_Dataset();
 void Draw_Mean_Pt_vs_Dataset();
 void Draw_Mean_Eta_vs_Dataset();
 void Draw_DcaXY_DatasetComp();
+void Draw_MeanTracksVsOccupancy();
 
 void Draw_TrackSelDistribs_DatasetComparison();
 
@@ -113,7 +114,7 @@ void TrackQC() {
   const int nPtBins = 1;
   float jetPtMinCut, jetPtMaxCut;
   // float jetPtMinCutArray[nPtBins+1] = {0, 1, 2, 4, 6, 8, 10, 15, 20, 30, 200};
-  float jetPtMinCutArray[nPtBins+1] = {0.15, 100};
+  float jetPtMinCutArray[nPtBins+1] = {0.15, 200};
 
 
   // Draw_Pt_DatasetComparison("evtNorm");
@@ -146,6 +147,8 @@ void TrackQC() {
   // Draw_Mean_Eta_vs_Dataset();
   // Draw_Mean_Ntrack_vs_Dataset();
   // Draw_DcaXY_DatasetComp();
+  Draw_MeanTracksVsOccupancy();
+
 
   Draw_TrackSelDistribs_DatasetComparison();
 }
@@ -295,7 +298,7 @@ void Draw_Pt_DatasetComparison(std::string options) {
         else {
             //no need of increment because we want to stop at 100
             ptBinsNew[iBinNew++] = pt;   // left edge of the large bin
-            ptBinsNew[iBinNew++] = 100.0; // right edge of the large bin
+            ptBinsNew[iBinNew++] = 200.0; // right edge of the large bin
             break;
       }
         ptBinsNew[iBinNew++] = pt;
@@ -303,7 +306,7 @@ void Draw_Pt_DatasetComparison(std::string options) {
     }
 
     // security to ensure the last bin edge is 100 GeV
-    if (ptBinsNew[iBinNew-1] < 100.0) ptBinsNew[iBinNew++] = 100.0;
+    if (ptBinsNew[iBinNew-1] < 200.0) ptBinsNew[iBinNew++] = 200.0;
 
     int nBinsNew = iBinNew - 1;
 
@@ -377,9 +380,10 @@ void Draw_Pt_DatasetComparison(std::string options) {
   TString* pdfName_ratio_zoom = new TString("track_Pt_DataComp"+pdfNameNorm+"_ratio_zoom");
 
   std::array<std::array<float, 2>, 2> drawnWindowCustomRatio_zoom = {{{0.1, 100}, {0.9, 1.1}}}; // {{xmin, xmax}, {ymin, ymax}}
+  // const std::array<std::array<float, 2>, 2> drawnWindowPt = {{{-999, -999}, {1e-8, 10}}}; // {{{xmin, xmax}, {ymin, ymax}}}
   const std::array<std::array<float, 2>, 2> drawnWindowPt = {{{-999, -999}, {-999, -999}}}; // {{{xmin, xmax}, {ymin, ymax}}}
   const std::array<std::array<float, 2>, 2> legendPlacementPt = {{{0.7, 0.65}, {0.85, 0.85}}}; // {{{x1, y1}, {x2, y2}}}
-  const std::array<std::array<float, 2>, 2> drawnWindowPtRatio = {{{-999, -999}, {0.3, 1.8}}}; // {{{xmin, xmax}, {ymin, ymax}}}
+  const std::array<std::array<float, 2>, 2> drawnWindowPtRatio = {{{-999, -999}, {0.5, 1.7}}}; // {{{xmin, xmax}, {ymin, ymax}}}
   const std::array<std::array<float, 2>, 2> legendPlacementPtRatio = {{{0.17, 0.72}, {0.45, 0.81}}}; // {{{x1, y1}, {x2, y2}}}
 
 
@@ -486,15 +490,15 @@ void Draw_Eta_DatasetComparison(float* ptRange, std::string options) {
   TString* pdfName_ratio_zoom = new TString((TString)"track_Eta_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]"+pdfNameNorm+"_ratio_zoom");
   TString* pdfName_ratio_zoom2 = new TString((TString)"track_Eta_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]"+pdfNameNorm+"_ratio_zoom2");
 
-  std::array<std::array<float, 2>, 2> drawnWindowEta = {{{-1, 1}, {260, 390}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<std::array<float, 2>, 2> drawnWindowEtaZoom = {{{-1, 1}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowEta = {{{-1, 1}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowEtaZoom = {{{-1, 1}, {26, 30}}}; // {{xmin, xmax}, {ymin, ymax}}
   std::array<std::array<float, 2>, 2> drawnWindowEtaTwoByTwoRatio = {{{-1, 1}, {0.5, 1.3}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<std::array<float, 2>, 2> legendPlacementCustom = {{{0.65, 0.65}, {0.85, 0.85}}}; // {{{x1, y1}, {x2, y2}}}
+  std::array<std::array<float, 2>, 2> legendPlacementCustom = {{{0.7, 0.68}, {0.89, 0.87}}}; // {{{x1, y1}, {x2, y2}}}
   std::array<std::array<float, 2>, 2> legendPlacementCustom2 = {{{0.2, 0.2}, {0.7, 0.38}}}; // {{{x1, y1}, {x2, y2}}}
 
 
 
-  Draw_TH1_Histograms(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, textYaxis, texCollisionDataInfo, drawnWindowEtaZoom, legendPlacementCustom, contextPlacementAuto, ""+histDatasetComparisonStructure);
+  Draw_TH1_Histograms(H1D_trackEta_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texEtaX, textYaxis, texCollisionDataInfo, drawnWindowEta, legendPlacementCustom, contextPlacementAuto, ""+histDatasetComparisonStructure);
   if (divideSuccess == true) {
     if (histDatasetComparisonStructure.find("twoByTwoDatasetPairs") != std::string::npos) {
       Draw_TH1_Histograms(H1D_trackEta_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texEtaX, texRatio, texCollisionDataInfo, drawnWindowEtaTwoByTwoRatio, legendPlacementCustom2, contextPlacementAuto, ",zoomToOneExtra");
@@ -595,15 +599,15 @@ void Draw_Phi_DatasetComparison(float* ptRange, std::string options) {
   TString* pdfName = new TString((TString)"track_Phi_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]"+pdfNameNorm);
   TString* pdfName_ratio = new TString((TString)"track_Phi_DataComp_@pT["+Form("%03.0f", ptCutLow)+","+Form("%03.0f", ptCutHigh)+"]"+pdfNameNorm+"_ratio");
   
-  std::array<std::array<float, 2>, 2> drawnWindowEtaTwoByTwoRatio = {{{-1, 7}, {0.5, 1.7}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<std::array<float, 2>, 2> legendPlacementCustomRatio = {{{0.2, 0.2}, {0.5, 0.3}}}; // {{{x1, y1}, {x2, y2}}}
-  std::array<std::array<float, 2>, 2> legendPlacementCustom = {{{0.65, 0.68}, {0.85, 0.85}}}; // {{{x1, y1}, {x2, y2}}}
-  std::array<std::array<float, 2>, 2> drawnWindowEta = {{{-999, -999}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> drawnWindowPhiTwoByTwoRatio = {{{-1, 7}, {0.4, 1.75}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 2> legendPlacementCustomRatio = {{{0.2, 0.18}, {0.7, 0.33}}}; // {{{x1, y1}, {x2, y2}}}
+  std::array<std::array<float, 2>, 2> legendPlacementCustom = {{{0.7, 0.68}, {0.89, 0.87}}}; // {{{x1, y1}, {x2, y2}}}
+  std::array<std::array<float, 2>, 2> drawnWindowPhi = {{{-999, -999}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
-  Draw_TH1_Histograms(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, textYaxis, texCollisionDataInfo, drawnWindowEta, legendPlacementCustom, contextPlacementAuto, "histWithLine"+histDatasetComparisonStructure);
+  Draw_TH1_Histograms(H1D_trackPhi_rebinned, DatasetsNames, nDatasets, textContext, pdfName, texPhiX, textYaxis, texCollisionDataInfo, drawnWindowPhi, legendPlacementCustom, contextPlacementAuto, "histWithLine"+histDatasetComparisonStructure);
   if (divideSuccess == true) {
     if (histDatasetComparisonStructure.find("twoByTwoDatasetPairs") != std::string::npos) {
-      Draw_TH1_Histograms(H1D_trackPhi_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPhiX, texRatio, texCollisionDataInfo, drawnWindowEtaTwoByTwoRatio, legendPlacementCustomRatio, contextPlacementAuto, "zoomToOneExtraExtra");
+      Draw_TH1_Histograms(H1D_trackPhi_rebinned_ratios, DatasetsNamesPairRatio, nHistPairRatio, textContext, pdfName_ratio, texPhiX, texRatio, texCollisionDataInfo, drawnWindowPhiTwoByTwoRatio, legendPlacementCustomRatio, contextPlacementAuto, "zoomToOneExtraExtra");
     } else {
       Draw_TH1_Histograms(H1D_trackPhi_rebinned_ratios, DatasetsNames, nDatasets, textContext, pdfName_ratio, texPhiX, texRatioDatasets, texCollisionDataInfo, drawnWindowAuto, legendPlacementCustom, contextPlacementAuto, "noMarkerFirst"+histDatasetComparisonStructure);
     }
@@ -1383,6 +1387,191 @@ void Draw_DcaXY_DatasetComp() {
   cout << "tesst3" << endl;
 
 }
+
+void Draw_MeanTracksVsOccupancy() {
+
+    TH2D* H2D_centrality_track[nDatasets];
+    TH1D* H1D_collisions[nDatasets];      
+
+    const int nOccupancyBins = 20;
+    double occupancyBins[nOccupancyBins+1] =
+        {0,500,1000,1500,2000,2500,3000,3500,4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000,8500,9000,9500,10000};
+
+    TH1D* hMeanMC   = new TH1D("hMeanMC","",nOccupancyBins,occupancyBins);
+    hMeanMC->Reset();
+    TH1D* hMeanDATA = new TH1D("hMeanDATA","",nOccupancyBins,occupancyBins);
+    hMeanDATA->Reset();
+
+    int nHistPairRatio = nDatasets/2;
+
+    std::cout << "\n========== TWO BY TWO FILL ==========\n";
+
+    for(int iDataset=0; iDataset<nDatasets; iDataset++){
+
+            if(iDataset < nHistPairRatio){
+
+                int iMC   = 2*iDataset;
+                int iDATA = 2*iDataset + 1;
+                int occBin = iDataset + 1;
+
+                std::cout << "\nPAIR " << iDataset<< "  occBin=" << occBin << "\n";
+
+                // ---------- MC ----------
+                H2D_centrality_track[iMC] =(TH2D*)file_O2Analysis_list[iMC]->Get(analysisWorkflow[iMC]+"/h2_centrality_track_pt");
+                H1D_collisions[iMC] =(TH1D*)file_O2Analysis_list[iMC]->Get(analysisWorkflow[iMC]+"/h_collisions");
+
+                double tracksMC = H2D_centrality_track[iMC]->Integral(0, H2D_centrality_track[iMC]->GetNbinsX()+1,0, H2D_centrality_track[iMC]->GetNbinsY()+1);
+                double collMC =H1D_collisions[iMC]->GetBinContent(H1D_collisions[iMC]->GetNbinsX());
+
+                double errTracks = sqrt(tracksMC);
+                double errColl   = sqrt(collMC);
+                
+                double meanMC = tracksMC / collMC;
+                double errMC  = meanMC * sqrt( (errTracks/tracksMC)*(errTracks/tracksMC)+ (errColl/collMC)*(errColl/collMC) );
+
+                hMeanMC->SetBinContent(occBin, meanMC);
+                hMeanMC->SetBinError(occBin, errMC);
+
+                std::cout << "MC dataset=" << DatasetsNames[iMC]<< " tracks=" << tracksMC <<  " collisions=" << collMC << "\n";
+
+                // ---------- DATA ----------
+                H2D_centrality_track[iDATA] =(TH2D*)file_O2Analysis_list[iDATA]->Get(analysisWorkflow[iDATA]+"/h2_centrality_track_pt");
+                H1D_collisions[iDATA] =(TH1D*)file_O2Analysis_list[iDATA]->Get(analysisWorkflow[iDATA]+"/h_collisions");
+
+                double tracksDATA =H2D_centrality_track[iDATA]->Integral(0, H2D_centrality_track[iDATA]->GetNbinsX()+1,0, H2D_centrality_track[iDATA]->GetNbinsY()+1);
+                double collDATA =H1D_collisions[iDATA]->GetBinContent(H1D_collisions[iDATA]->GetNbinsX());
+
+                double errTracksDATA = sqrt(tracksDATA);
+                double errCollDATA   = sqrt(collDATA);
+
+                double meanDATA = tracksDATA / collDATA;
+                double errDATA  = meanDATA * sqrt( (errTracksDATA/tracksDATA)*(errTracksDATA/tracksDATA)+ (errCollDATA/collDATA)*(errCollDATA/collDATA) );
+
+                hMeanDATA->SetBinContent(occBin, meanDATA);
+                hMeanDATA->SetBinError(occBin, errDATA);
+
+                std::cout << "DATA dataset=" << DatasetsNames[iDATA]<< " tracks=" << tracksDATA<< " collisions=" << collDATA << "\n";
+            }
+        
+    }
+
+    // ===============================
+    // Mean tracks / collision
+    // ===============================
+    // TH1D* hMeanMC = (TH1D*)hTracksMC->Clone("hMeanMC");
+    // hMeanMC->Reset();
+    // hMeanMC->Divide(hTracksMC, hCollMC, 1., 1., "");
+
+    // TH1D* hMeanDATA = (TH1D*)hTracksDATA->Clone("hMeanDATA");
+    // hMeanDATA->Reset();
+    // hMeanDATA->Divide(hTracksDATA, hCollDATA, 1., 1., "");
+
+    // std::cout << "\n========== MEAN TRACKS ==========\n";
+    // for(int b=1;b<=nHistPairRatio;b++){
+    //     std::cout << "Bin " << b
+    //               << "  MC=" << hMeanMC->GetBinContent(b)
+    //               << "  DATA=" << hMeanDATA->GetBinContent(b)
+    //               << "\n";
+    // }
+
+    // ===============================
+    // Ratio MC / DATA
+    // ===============================
+    // TH1D* hRatio = (TH1D*)hMeanMC->Clone("hRatioMCoverDATA");
+    // hRatio->Reset();
+    // hRatio->Divide(hMeanMC, hMeanDATA, 1., 1., "");
+
+    // std::cout << "\n========== RATIO MC/DATA ==========\n";
+    // for(int b=1;b<=nHistPairRatio;b++){
+    //     std::cout << "Bin " << b
+    //               << "  ratio=" << hRatio->GetBinContent(b)
+    //               << "\n";
+    // }
+
+    // ===============================
+    // DRAW
+    // ===============================
+    // TH1D* toDraw[2] = {hMeanMC, hMeanDATA};
+    // TString names[2] = {"MC","DATA"};
+
+    TString textContextStr = contextTrackDatasetComp("");
+    TString* texMeanTracks = new TString("Mean tracks per collision");
+    // TString* texMC= new TString("MC");
+    // TString* pdfName = new TString("MeanTracksVsOccupancy"); 
+    TString* pdfNameMC = new TString("MC"); 
+    TString* pdfNameDATA = new TString("DATA"); 
+
+    // // bonne couleur de bin avec un histo rempli par meanMC et meanData ->Aimeric
+    // toDraw[0]->SetLineColor(kRed);    // MC
+    // toDraw[1]->SetLineColor(kBlue);   // DATA
+    // Draw_TH1_Histograms(
+    //     toDraw, names, 2,
+    //     textContextStr, pdfName,
+    //     texWeightOccupancy,
+    //     texMeanTracks,
+    //     texCollisionDataInfo,
+    //     drawnWindowAuto,
+    //     legendPlacementAuto,
+    //     contextPlacementAuto,
+    //     ""
+    // );
+    // //histo pour ratio
+    // TString* pdfName_ratio =
+    //     new TString("MeanTracksVsOccupancy_ratio");
+
+    // Draw_TH1_Histogram(
+    //     hRatio,
+    //     textContextStr,
+    //     pdfName_ratio,
+    //     texWeightOccupancy,
+    //     texRatio,
+    //     texCollisionDataInfo,
+    //     drawnWindowAuto,
+    //     legendPlacementAuto,
+    //     contextPlacementAuto,
+    //     ""
+    // );
+
+    // Draw_TH1_Histogram(
+    //     hMeanMC,
+    //     textContextStr,
+    //     pdfNameMC,
+    //     texWeightOccupancy,
+    //     texMC ,
+    //     texCollisionDataInfo,
+    //     drawnWindowAuto,
+    //     legendPlacementAuto,
+    //     contextPlacementAuto,
+    //     ""
+    // );
+    // Crée le tableau des histos à dessiner
+    TH1D* toDraw[2] = {hMeanMC, hMeanDATA};
+    TString names[2] = {"MC", "DATA"};
+
+    // Appelle la fonction master
+    Draw_TH1_Histograms(
+          toDraw,        // tableau des histos
+          names,         // légendes
+          2,             // taille du tableau
+          textContextStr,
+          pdfNameMC,
+          texWeightOccupancy,
+          texMeanTracks,
+          texCollisionDataInfo,
+          drawnWindowAuto,
+          legendPlacementAuto,
+          contextPlacementAuto,
+          ""             // options (tu peux ajouter "histWithLine" ou autre)
+    );
+
+
+}
+
+
+
+
+
+
 
 
 

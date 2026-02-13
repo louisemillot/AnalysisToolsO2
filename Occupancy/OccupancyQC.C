@@ -158,7 +158,6 @@ void Draw_Ntracks_vs_Occupancy_DatasetComparison_JetVersion(std::string options)
 
   // TString* yAxisLabel;
   for(int iDataset = 0; iDataset < nDatasets; iDataset++){
-    cout << "test1" << endl;
     H2D_occupancy_ntracksselptetacuts_postcollsel[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_occupancy_ntracksselptetacuts_postsel"))->Clone("Draw_Ntracks_vs_Occupancy_DatasetComparison_ntracksselptetacuts_postcollsel"+Datasets[iDataset]+DatasetsNames[iDataset]);
     H2D_occupancy_ntracksselptetacuts_postcollsel[iDataset]->Sumw2();
     H2D_occupancy_ntracksselptetacuts_precollsel[iDataset] = (TH2D*)((TH2D*)file_O2Analysis_list[iDataset]->Get(analysisWorkflow[iDataset]+"/h2_occupancy_ntracksselptetacuts_presel"))->Clone("Draw_Ntracks_vs_Occupancy_DatasetComparison_ntracksselptetacuts_precollsel"+Datasets[iDataset]+DatasetsNames[iDataset]);
@@ -222,7 +221,7 @@ void Draw_Ntracks_vs_Occupancy_DatasetComparison_JetVersion(std::string options)
   // TString textContext(contextDatasetCompAndRadiusAndVarRange(jetRadius, etaRange, "eta"));
   TString textContext(contextCustomTwoFields(*texDatasetsComparisonCommonDenominator, (TString)"globalTracks", ""));
   std::array<std::array<float, 2>, 2> drawnWindow = {{{-999, -999}, {0, 2500}}}; // {{xmin, xmax}, {ymin, ymax}}
-  std::array<std::array<float, 3>, 3> drawnWindow2D = {{{000, 2000}, {0, 6000}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
+  std::array<std::array<float, 2>, 3> drawnWindow2D = {{{000, 2000}, {0, 6000}, {-999, -999}}}; // {{xmin, xmax}, {ymin, ymax}}
 
   const std::array<float, 2> contextPlacementCustom = {{-999, 0.4}}; // {{x_topleft, y_topleft}}
 
